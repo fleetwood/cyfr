@@ -4,11 +4,11 @@ import { getSession, signOut } from "next-auth/react";
 import { useState } from "react";
 import MainLayout from "../components/layouts/MainLayout";
 import { useSession } from "../lib/next-auth-react-query";
-import { GetResponseError, ResponseCode, ResponseError } from "../types/Errors";
+import { GetResponseError, ResponseError, ResponseResult } from "../types/Response";
 import { __prod__ } from "../utils/constants";
 import { log } from "../utils/log";
 
-type AccountPageResponse = ResponseError<{
+type AccountPageResponse = ResponseResult<{
   account: {
     title: string;
     content: string;
@@ -19,7 +19,7 @@ type AccountPageResponse = ResponseError<{
 const Account: NextPage = (
   props: AccountPageResponse
 ) => {
-  const [error, setError] = useState<ResponseCode>();
+  const [error, setError] = useState<ResponseError>();
   const [account, setAccount] = useState();
   const [user, setUser] = useState<DefaultSession["user"] | undefined>();
 

@@ -2,7 +2,7 @@ import { DefaultSession } from "next-auth";
 
 import { useEffect, useState } from "react";
 import { useSession } from "../../lib/next-auth-react-query";
-import { ResponseCode } from "../../types/Errors";
+import { ResponseError } from "../../types/Response";
 
 export const UserSession = (props?: {
   required: boolean|undefined;
@@ -10,7 +10,7 @@ export const UserSession = (props?: {
 }) => {
   const { required = false, redirectTo } = { ...props };
   const [user, setUser] = useState<DefaultSession["user"] | undefined>();
-  const [error, setError] = useState<ResponseCode | undefined>();
+  const [error, setError] = useState<ResponseError | undefined>();
   const [session] = useSession({
     required,
     redirectTo,
