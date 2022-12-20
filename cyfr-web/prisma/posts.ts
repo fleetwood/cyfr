@@ -1,6 +1,6 @@
 import { Post } from ".prisma/client";
 import { GetResponseError, ResponseResult } from "../types/Response";
-import { jsonify } from "../utils/log";
+import { cleanResult } from "../utils/api";
 import { prisma } from "./prismaContext";
 
 type PostAllProps = {
@@ -8,9 +8,18 @@ type PostAllProps = {
   skip?: number | undefined;
 };
 
-type PostResponse = ResponseResult<Post[]>;
+type PostCreateProps = {
+  authorid: string,
+  title :string,
+  subtitle?:string,
+  headerImage?:string,
+  content: string 
+}
 
-const all = async (props?: PostAllProps): Promise<PostResponse> => {
+type PostsResponse = ResponseResult<Post[]>;
+type PostResponse = ResponseResult<Post>;
+
+const all = async (props?: PostAllProps): Promise<PostsResponse> => {
   try {
     const { take = 10, skip = 0 } = { ...props };
     const results = await prisma.post.findMany({
@@ -29,7 +38,7 @@ const all = async (props?: PostAllProps): Promise<PostResponse> => {
       ],
     });
     if (results) {
-      return { result: JSON.parse(jsonify(results)) };
+      return cleanResult(results)
     }
     throw { code: "posts/all", message: "No posts were returned!" };
   } catch (error) {
@@ -37,4 +46,17 @@ const all = async (props?: PostAllProps): Promise<PostResponse> => {
   }
 };
 
-export const Posts = { all };
+const create = async (props:PostCreateProps): Promise<PostResponse> => {
+  const data = {...props}
+  try {
+    const result = await prisma.post.create({data});
+    if (result) {
+      return cleanResult(result)
+    }
+    throw { code: "posts/create", message: "Post was not created!" };
+  } catch (error) {
+    return { error: GetResponseError(error) };
+  }
+}
+
+export const Posts = { all, create };

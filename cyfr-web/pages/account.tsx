@@ -1,8 +1,9 @@
 import type { GetServerSidePropsContext, NextPage } from "next";
 import { DefaultSession, Session } from "next-auth";
 import { getSession, signOut } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MainLayout from "../components/layouts/MainLayout";
+import { useCyfrUser } from "../hooks/useCyfrUser";
 import { useSession } from "../lib/next-auth-react-query";
 import { GetResponseError, ResponseError, ResponseResult } from "../types/Response";
 import { __prod__ } from "../utils/constants";
@@ -16,12 +17,10 @@ type AccountPageResponse = ResponseResult<{
   session: Session
 }>
 
-const Account: NextPage = (
-  props: AccountPageResponse
-) => {
+const Account: NextPage = (props: AccountPageResponse) => {
   const [error, setError] = useState<ResponseError>();
   const [account, setAccount] = useState();
-  const [user, setUser] = useState<DefaultSession["user"] | undefined>();
+  const [cfyrUser, setCfyrUser] = useCyfrUser(null);
 
   const [session, loading] = useSession({
     required: true,
@@ -31,6 +30,12 @@ const Account: NextPage = (
       refetchInterval: 60 * 1000 * 5, // 5 minutes
     },
   });
+
+  useEffect(() => {
+    setCfyrUser({
+      name: "Me"
+    })
+  },[])
 
   const handleLogout = async () => {
     setError(undefined);
@@ -49,7 +54,7 @@ const Account: NextPage = (
         sectionTitle="Cyfr"
         subTitle="The Writer's Site"
       >
-        <h1>{user?.name}</h1>
+        <h1>{cfyrUser?.name}</h1>
         <button className="btn btn-primary mx-4 rounded-full w-fit" onClick={handleLogout}>Logout</button>
       </MainLayout>
     </div>

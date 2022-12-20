@@ -1,8 +1,9 @@
 import { __host__, __port__ } from "./constants";
 import useSWR from "swr";
-import { log } from "./log";
+import { jsonify, log } from "./log";
 
 const apiUrl = (url: string) => `http://${__host__}:${__port__}/api/${url}`;
+
 const postData = (data: any) => {
   return {
     body: JSON.stringify(data),
@@ -25,4 +26,8 @@ export const sendApi = async (url: string, data: any, invalidate = false) => {
     post = postData(data);
   log("sendApi", sendTo, post);
   return await (await fetch(sendTo, post)).json();
+};
+
+export const cleanResult = (result: any) => {
+  return { result: JSON.parse(jsonify(result)) };
 };

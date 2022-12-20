@@ -8,7 +8,8 @@ import {
   getCsrfToken,
 } from "next-auth/react";
 import { BuiltInProviderType } from "next-auth/providers";
-
+import { useSession } from "../lib/next-auth-react-query";
+import MainLayout from "../components/layouts/MainLayout";
 import {
   FacebookSVG,
   GoogleSVG,
@@ -16,33 +17,52 @@ import {
   WordpressSVG,
 } from "../components/ui/svgs";
 import { __host__, __port__ } from "../utils/constants";
-import MainLayout from "./../components/layouts/MainLayout";
-import PageStatus from "../components/containers/PageStatus";
-import { UserSession } from "../components/protected/UserSession";
-import { log } from "console";
+import { DefaultSession } from "next-auth";
+import { log } from "../utils/log";
 
-type NextAuthProvider = Record<LiteralUnion<BuiltInProviderType, string>,ClientSafeProvider> | null
-
-const Login = (props: { csrfToken: string | number | readonly string[] | undefined; }) => {
-  const [providers, setProviders] = useState<NextAuthProvider>();
-  const {session,user,error} = UserSession()
+const Login: FC = (props) => {
+  const [providers, setproviders] = useState<Record<
+    LiteralUnion<BuiltInProviderType, string>,
+    ClientSafeProvider
+  > | null>();
+  const [user, setUser] = useState<DefaultSession["user"]>();
+  const [session, loading] = useSession({
+    required: false,
+    queryConfig: {
+      staleTime: 60 * 1000 * 60 * 3, // 3 hours
+      refetchInterval: 60 * 1000 * 5, // 5 minutes
+    },
+  });
 
   useEffect(() => {
-    const providerConfig = async () => setProviders(await getProviders());
-    providerConfig();
+    const setTheProviders = async () => {
+      const setupProviders = await getProviders();
+      setproviders(setupProviders);
+    };
+    setTheProviders();
   }, []);
+
+  useEffect(() => {
+    if (session?.user) {
+      setUser(session.user);
+    }
+  }, [session]);
 
   return (
     <MainLayout
-      sectionTitle="Cyfr"
-      subTitle="Login"
+      sectionTitle="Login"
+      subTitle={
+        user
+          ? user.name || user.email || undefined
+          : "Please login"
+      }
       className="text-gray-400"
     >
       <div className="m-0">
-        <PageStatus error={error} watch={user} />
+        {/* {error && <div className="text-red-400 italic">{error.code }: {error.message}</div>} */}
         {session && (
           <>
-            Signed in as {user?.email} <br />
+            Signed in as {session.user?.email} <br />
             <button
               onClick={() => signOut()}
               className="bg-primary hover:bg-primary-focus text-primary-content p-2 mx-2 transition-colors duration-200 ease-in-out"
@@ -114,7 +134,7 @@ const Login = (props: { csrfToken: string | number | readonly string[] | undefin
 };
 
 export async function getServerSideProps(context: any) {
-  const csrfToken = await getCsrfToken(context) || null;
+  const csrfToken = await getCsrfToken(context);
   log("Login SSP", csrfToken);
   return {
     props: {

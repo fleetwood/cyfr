@@ -1,25 +1,29 @@
 import { Post } from ".prisma/client";
-import type { NextPage } from "next";
-
+import type { GetServerSidePropsContext, NextPage } from "next";
 import { useEffect, useState } from "react";
 import PageStatus from "../components/containers/PageStatus";
+import { useCyfrUser } from "../hooks/useCyfrUser";
 import MainLayout from "../components/layouts/MainLayout";
+import { useSession } from "../lib/next-auth-react-query";
 import { Posts } from "../prisma/posts";
 import { ResponseResult, ResponseError } from "../types/Response";
 import { __prod__ } from "../utils/constants";
-import { log } from "../utils/log";
+import { jsonify } from "../utils/log";
 
-const Home: NextPage = (props: ResponseResult<Post[]>) => {
+type HomePageProps = ResponseResult<Post[]>;
+
+const Home = (props: HomePageProps) => {
   const [posts, setPosts] = useState<Post[]>();
   const [error, setError] = useState<ResponseError>();
+  const [session] = useSession({required:false});
+  const [cyfrUser,setCyfrUser]=useCyfrUser(null)
 
   useEffect(() => {
     if (props.result) {
       setPosts(props.result);
-    } else if (props.error) {
+    }
+    if (props.error) {
       setError(props.error);
-    } else {
-      log("Weird response from props?", props);
     }
   }, []);
 
@@ -30,17 +34,23 @@ const Home: NextPage = (props: ResponseResult<Post[]>) => {
         sectionTitle="Cyfr"
         subTitle="The Writer's Site"
       >
+        {cyfrUser && <>
+          {cyfrUser.name || 'Cyfr User has no name'}
+        </>}
         <PageStatus watch={posts} error={error} />
         {posts && posts.map((post) => <div>{post.content}</div>)}
+        {session && <pre>{jsonify(session)}</pre>}
       </MainLayout>
     </div>
   );
 };
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   const posts = await Posts.all({ take: 25 });
   return {
-    props: posts,
+    props: {
+      ...posts,
+    },
   };
 }
 
