@@ -10,14 +10,31 @@ import { ResponseResult, ResponseError } from "../types/Response"
 import { __prod__ } from "../utils/constants"
 import { jsonify } from "../utils/log"
 import MainPagePostListItem from "../components/containers/Post/MainPagePostListItem"
+import { parseResult } from "../utils/api"
 
 type HomePageProps = ResponseResult<Post[]>
+
+const getPosts = async () => await Posts.all({ take: 25 })
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const posts = parseResult(await getPosts())
+  return {
+    props: {
+      ...posts,
+    },
+  }
+}
 
 const Home = (props: HomePageProps) => {
   const [posts, setPosts] = useState<Post[]>()
   const [error, setError] = useState<ResponseError>()
   const [session] = useSession({required:false})
   const [cyfrUser,setCyfrUser]=useCyfrUser(null)
+    // const { data, isLoading, isFetching } = useQuery("posts", getPosts);
+  // if (!isLoading && !isFetching && data) {
+  //   setPosts(data.result)
+  // }
+
 
   useEffect(() => {
     if (props.result) {
@@ -42,15 +59,6 @@ const Home = (props: HomePageProps) => {
         {session && <pre>{jsonify(session)}</pre>}
       </MainLayout>
   )
-}
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const posts = await Posts.all({ take: 25 })
-  return {
-    props: {
-      ...posts,
-    },
-  }
 }
 
 export default Home

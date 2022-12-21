@@ -28,6 +28,6 @@ export const sendApi = async (url: string, data: any, invalidate = false) => {
   return await (await fetch(sendTo, post)).json();
 };
 
-export const cleanResult = (result: any) => {
+export const parseResult = (result: any) => {
   return { result: JSON.parse(jsonify(result)) };
 };

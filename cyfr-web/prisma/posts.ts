@@ -1,12 +1,11 @@
-import { Post } from ".prisma/client";
-import { GetResponseError, ResponseResult } from "../types/Response";
-import { cleanResult } from "../utils/api";
-import { prisma } from "./prismaContext";
+import { Post } from ".prisma/client"
+import { ResponseResult } from "../types/Response"
+import { prisma } from "./prismaContext"
 
 type PostAllProps = {
-  take?: number | undefined;
-  skip?: number | undefined;
-};
+  take?: number | undefined
+  skip?: number | undefined
+}
 
 type PostCreateProps = {
   authorid: string,
@@ -16,13 +15,13 @@ type PostCreateProps = {
   content: string 
 }
 
-type PostsResponse = ResponseResult<Post[]>;
-type PostResponse = ResponseResult<Post>;
+type PostsResponse = ResponseResult<Post[]>
+type PostResponse = ResponseResult<Post>
 
-const all = async (props?: PostAllProps): Promise<PostsResponse> => {
+const all = async (props?: PostAllProps): Promise<Post[]> => {
   try {
-    const { take = 10, skip = 0 } = { ...props };
-    const results = await prisma.post.findMany({
+    const { take = 10, skip = 0 } = { ...props }
+    return await prisma.post.findMany({
       take,
       skip,
       where: {
@@ -36,27 +35,19 @@ const all = async (props?: PostAllProps): Promise<PostsResponse> => {
           updatedAt: "desc",
         },
       ],
-    });
-    if (results) {
-      return cleanResult(results)
-    }
-    throw { code: "posts/all", message: "No posts were returned!" };
+    })
   } catch (error) {
-    return { error: GetResponseError(error) };
-  }
-};
-
-const create = async (props:PostCreateProps): Promise<PostResponse> => {
-  const data = {...props}
-  try {
-    const result = await prisma.post.create({data});
-    if (result) {
-      return cleanResult(result)
-    }
-    throw { code: "posts/create", message: "Post was not created!" };
-  } catch (error) {
-    return { error: GetResponseError(error) };
+    throw { code: "posts/all", message: "No posts were returned!" }
   }
 }
 
-export const Posts = { all, create };
+const create = async (props:PostCreateProps): Promise<Post> => {
+  const data = {...props}
+  try {
+    return await prisma.post.create({data})
+  } catch (error) {
+    throw { code: "posts/create", message: "Post was not created!" }
+  }
+}
+
+export const Posts = { all, create }

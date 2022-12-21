@@ -1,6 +1,6 @@
 import { User } from ".prisma/client";
 import { GetResponseError, ResponseResult } from "../types/Response";
-import { cleanResult } from "../utils/api";
+import { parseResult } from "../utils/api";
 import { prisma } from "./prismaContext";
 
 type UsersResponse = ResponseResult<User[]>;
@@ -17,7 +17,7 @@ const byEmail = async (email:string):Promise<UserResponse> => {
             }
         })
         if (user) {
-            return cleanResult(user)
+            return parseResult(user)
         }
         throw({code:'users/byEmail',message:`Did not find user for ${email}`})
     }
