@@ -4,7 +4,7 @@ import { classnameProps } from "../../types/props";
 
 const Footer = ({ className }: classnameProps) => {
   return (
-    <footer className={`sticky bottom-0 bg-secondary text-opacity-70 mt-32 pb-6 min-w-full border-t border-t-secondary-content pt-6 ${className}`}>
+    <footer className={`static bottom-0 bg-secondary text-opacity-70 mt-32 pb-6 min-w-full border-t border-t-secondary-content pt-6 ${className}`}>
       <div className="mx-auto flex max-w-5xl flex-col items-center justify-center px-6 sm:px-12 lg:px-0">
         <div className="flex w-full flex-wrap items-center justify-center gap-4 gap-y-6 text-sm md:justify-between">
          

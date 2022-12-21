@@ -3,7 +3,7 @@ import { timeDifference } from "../../../utils/helpers"
 
 const MainPagePostListItem = (post:Post) => {
   return (
-    <div key={post.id} className="mt-4 p-4 bg-base-200 even:bg-base-300">
+    <div className="mt-4 p-4 bg-base-200 even:bg-base-300">
         <div className="border-b border-primary-content">
             <div>{post.authorid}</div>
             <div>Posted {timeDifference(post.createdAt)}</div>

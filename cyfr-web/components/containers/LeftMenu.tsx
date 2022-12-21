@@ -6,7 +6,7 @@ import { ClipbardIcon, QuestionMarkIcon } from "../ui/icons";
 
 const LeftMenu = () => {
   return (
-  <div className="fixed mt-32">
+  <div className="fixed mt-32 top-0">
     <ul className="ml-4 space-y-6 text-lg font-medium">
       <li>
         <ShrinkableIconLink href={'/about'} target="_self" label="About Us" icon={QuestionMarkIcon} />
@@ -15,13 +15,13 @@ const LeftMenu = () => {
         <ShrinkableIconLink href="https://hypercolor.dev/generator" target="_blank" label="Gradients" icon={ClipbardIcon} />
       </li>
       <li>
-        <Link href="https://materialdesignicons.com/" title="Material Icons"><GoogleSVG /></Link>
+        <a href="https://materialdesignicons.com/" title="Material Icons">Material Designs</a>
       </li>
       <li>
-        <Link href="https://unpkg.com/browse/@heroicons/react@2.0.13/24/outline/" title="Heroicon List">Heroicon List</Link>
+        <a href="https://unpkg.com/browse/@heroicons/react@2.0.13/24/outline/" title="Heroicon List">Heroicon List</a>
       </li>
       <li>
-        <Link href="https://tailwindui.com/components" title="Tailwind Components">Tailwind Components</Link>
+        <a href="https://tailwindui.com/components" title="Tailwind Components">Tailwind Components</a>
       </li>
     </ul>
   </div>
