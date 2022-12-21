@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { ResponseCode } from "../../types/Errors";
+import { ResponseError } from "../../types/Response";
 import Spinner, { SpinnerSize } from "../ui/spinner";
 
 export type StatusProps = {
   watch?: any,
   isLoading?: boolean;
-  error?: ResponseCode;
+  error?: ResponseError;
 };
 
 export default function PageStatus(props: StatusProps) {
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<ResponseCode|null>(null)
+  const [error, setError] = useState<ResponseError|null>(null)
   const [watch] = useState(undefined)
 
   useEffect(() => {

@@ -68,17 +68,17 @@ export default function NavMenu(props:NavMenuProps) {
       >
         <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-primary shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
-            {items?.map((item, index) => 
+            {items?.map((item,index) => 
                 (item.handler ? 
-                    <Menu.Item key={`nav${index}`}>
+                    <Menu.Item key={index}>
                     {({ active }) => (                  
-                      <NavAction {...item} />
+                        <NavAction {...item} key={index}/>
                     )}
                     </Menu.Item>
                 :
-                    <Menu.Item key={`nav${index}`}>
+                    <Menu.Item key={index}>
                     {({ active }) => (                  
-                        <NavLink {...item} />
+                        <NavLink {...item} key={index}/>
                     )}
                     </Menu.Item>
             ))}

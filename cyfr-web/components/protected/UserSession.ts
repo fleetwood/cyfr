@@ -1,16 +1,13 @@
-import { DefaultSession } from "next-auth";
-
-import { useEffect, useState } from "react";
 import { useSession } from "../../lib/next-auth-react-query";
-import { ResponseCode } from "../../types/Errors";
+import { Users } from "../../prisma/users";
 
-export const UserSession = (props?: {
-  required: boolean|undefined;
-  redirectTo: string|undefined;
+export const UserSession = async (props?: {
+  required: boolean | undefined;
+  redirectTo: string | undefined;
+  setUser: Function;
+  setError: Function;
 }) => {
-  const { required = false, redirectTo } = { ...props };
-  const [user, setUser] = useState<DefaultSession["user"] | undefined>();
-  const [error, setError] = useState<ResponseCode | undefined>();
+  const { required = false, redirectTo, setUser } = { ...props };
   const [session] = useSession({
     required,
     redirectTo,
@@ -20,18 +17,10 @@ export const UserSession = (props?: {
     },
   });
 
-  useEffect(() => {
-    if (session?.user) {
-      setUser(session.user);
+  if (session?.user) {
+    const getUser = await Users.byEmail(session.user.email);
+    if (getUser.result) {
+      setUser!(getUser.result);
     }
-    if (session?.error) {
-        setError(session.error)
-    }
-  }, [session]);
-
-  return {
-    session,
-    user,
-    error
   }
 };

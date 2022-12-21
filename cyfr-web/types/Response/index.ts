@@ -1,8 +1,14 @@
-import {ResponseCode, ResponseError} from './ResponseErrors'
+export type ResponseError = {
+  code: string
+  message: string
+}
 
-export type {ResponseCode, ResponseError}
+export type ResponseResult<T> = {
+  error?: ResponseError|undefined
+  result?: T|undefined
+}
 
-export const ResponseErrors = {
+export const ResponseErrorList = {
     loginRequired: {
       code: "auth/no-user-session",
       message: "Please login to continue",
@@ -43,14 +49,14 @@ export const ResponseErrors = {
 
 export const GetResponseError = (
     error?: any,
-    defaultTo?: ResponseCode
+    defaultTo?: ResponseError
   ) => {
     try {
-      const e = Object.values(ResponseErrors).filter(
+      const e = Object.values(ResponseErrorList).filter(
         (e) => JSON.stringify(e).indexOf(error.code) >= 0
       )[0];
       if (e) return e;
     } catch (e) {}
   
-    return defaultTo || ResponseErrors.generic;
+    return defaultTo || ResponseErrorList.generic;
   };

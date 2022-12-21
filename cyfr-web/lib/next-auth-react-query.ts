@@ -18,7 +18,7 @@ export type SessionProps = {
 
 export function useSession({
   required,
-  redirectTo = "/api/auth/signin",
+  redirectTo = "/login",
   queryConfig = {},
 }: SessionProps) {
   const router = useRouter();

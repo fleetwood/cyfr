@@ -35,6 +35,21 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Post {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
+  visible        Boolean  @default(true)
+  title          String   @db.VarChar(255)
+  subtitle       String?  @db.VarChar(255)
+  headerImage    String?  @db.VarChar(255)
+  content        String
+  thread         Post[]   @relation("post_thread")
+  threadRelation Post[]   @relation("post_thread")
+  authorid       String
+  author         User     @relation("user_posts", fields: [authorid], references: [id])
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -43,6 +58,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  posts         Post[]    @relation("user_posts")
 }
 
 model VerificationToken {

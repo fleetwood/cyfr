@@ -1,34 +1,57 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import MainLayout from '../components/layouts/MainLayout'
-import { ResponseError } from '../types/Errors'
-import { __prod__ } from '../utils/constants'
+import { Post } from ".prisma/client";
+import type { GetServerSidePropsContext, NextPage } from "next";
+import { useEffect, useState } from "react";
+import PageStatus from "../components/containers/PageStatus";
+import { useCyfrUser } from "../hooks/useCyfrUser";
+import MainLayout from "../components/layouts/MainLayout";
+import { useSession } from "../lib/next-auth-react-query";
+import { Posts } from "../prisma/posts";
+import { ResponseResult, ResponseError } from "../types/Response";
+import { __prod__ } from "../utils/constants";
+import { jsonify } from "../utils/log";
 
-type HomePageProps = {
-  title?: string, 
-  content: string
-}
+type HomePageProps = ResponseResult<Post[]>;
 
-const Home: NextPage = () => {
-  const thing:ResponseError<HomePageProps> = {result: {
-    title: "Home",
-    content: "Jump five feet high and sideways when a shadow moves pet me pet me don't pet me. Sit on the laptop i'm bored inside, let me out i'm lonely outside, let me in i can't make up my mind whether to go in or out, guess i'll just stand partway in and partway out, contemplating the universe for half an hour how dare you nudge me with your foot?!?! leap into the air in greatest offense! meow to be let in for cats secretly make all the worlds muffins. Jump around on couch, meow constantly until given food, love yet stare at ceiling light leave dead animals as gifts take a deep sniff of sock then walk around with mouth half open. Ooooh feather moving feather! meow plop down in the middle where everybody walks get video posted to internet for chasing red dot or jump up to edge of bath, fall in then scramble in a mad panic to get out plop down in the middle where everybody walks. Destroy couch cats making all the muffins. My slave human didn't give me any food so i pooped on the floor growl at dogs in my sleep. I'm so hungry i'm so hungry but ew not for that has closed eyes but still sees you but attack the child and swat turds around the house."
-  }}
+const Home = (props: HomePageProps) => {
+  const [posts, setPosts] = useState<Post[]>();
+  const [error, setError] = useState<ResponseError>();
+  const [session] = useSession({required:false});
+  const [cyfrUser,setCyfrUser]=useCyfrUser(null)
+
+  useEffect(() => {
+    if (props.result) {
+      setPosts(props.result);
+    }
+    if (props.error) {
+      setError(props.error);
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      
-
-      <MainLayout 
+      <MainLayout
         className="scroll-smooth"
         sectionTitle="Cyfr"
         subTitle="The Writer's Site"
       >
-        <h1>{thing.result?.title}</h1>
-        <p>{thing.result?.content}</p>
+        {cyfrUser && <>
+          {cyfrUser.name || 'Cyfr User has no name'}
+        </>}
+        <PageStatus watch={posts} error={error} />
+        {posts && posts.map((post) => <div>{post.content}</div>)}
+        {session && <pre>{jsonify(session)}</pre>}
       </MainLayout>
     </div>
-  )
+  );
+};
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const posts = await Posts.all({ take: 25 });
+  return {
+    props: {
+      ...posts,
+    },
+  };
 }
 
-export default Home
+export default Home;

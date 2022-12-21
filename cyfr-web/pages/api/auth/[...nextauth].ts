@@ -6,6 +6,8 @@ import FacebookProvider from "next-auth/providers/facebook";
 import WordpressProvider from "next-auth/providers/wordpress";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
+import { log } from "../../../utils/log";
+import { Users } from "../../../prisma/users";
 
 const prisma = new PrismaClient();
 
@@ -120,6 +122,7 @@ export default NextAuth({
   callbacks: {
     // async signIn(user, account, profile) { return true },
     // async redirect(url, baseUrl) { return baseUrl },
+    // @ts-ignore
     // async session(session, user) { return session },
     // async jwt(token, user, account, profile, isNewUser) { return token }
   },
