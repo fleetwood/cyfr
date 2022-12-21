@@ -1,4 +1,4 @@
-import { MouseEventHandler, ReactNode } from "react";
+import { MouseEventHandler, MutableRefObject, ReactNode } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 
@@ -11,6 +11,7 @@ type NavMenuLink = {
     href?: string,
     active?: boolean,
     handler?: MouseEventHandler
+    ref?:MutableRefObject<any>
 }
 
 type NavMenuProps = {
@@ -41,6 +42,7 @@ const NavAction = (item:NavMenuLink) => (
             "block px-4 py-2 text-sm"
         )}
         onClick={item.handler}
+        ref={item.ref}
     >
         {item.label}
     </button>
