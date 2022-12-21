@@ -9,6 +9,7 @@ import { Posts } from "../prisma/posts";
 import { ResponseResult, ResponseError } from "../types/Response";
 import { __prod__ } from "../utils/constants";
 import { jsonify } from "../utils/log";
+import MainPagePostListItem from "../components/containers/Post/MainPagePostListItem";
 
 type HomePageProps = ResponseResult<Post[]>;
 
@@ -35,10 +36,10 @@ const Home = (props: HomePageProps) => {
         subTitle="The Writer's Site"
       >
         {cyfrUser && <>
-          {cyfrUser.name || 'Cyfr User has no name'}
+          <h1>Cyfr User {cyfrUser.name || 'Cyfr User has no name'}</h1>
         </>}
         <PageStatus watch={posts} error={error} />
-        {posts && posts.map((post) => <div>{post.content}</div>)}
+        {posts && posts.map((post) => <MainPagePostListItem key={post.id} {...post} />)}
         {session && <pre>{jsonify(session)}</pre>}
       </MainLayout>
     </div>
