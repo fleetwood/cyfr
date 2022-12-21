@@ -1,17 +1,14 @@
-import { HouseIcon, UserIcon } from "../ui/icons";
+import { GearIcon, HouseIcon, UserIcon } from "../ui/icons";
 import { classnameProps } from "../../types/props";
 import ShrinkableIconLink from "../ui/shrinkableIconLink";
 import { useSession } from "../../lib/next-auth-react-query";
 import NavMenu from "../ui/navMenu";
 import { signOut } from "next-auth/react";
+import { useRef } from "react";
 
 const Navbar = ({ className }: classnameProps) => {
   const navbarClass = "";
   const [session] = useSession({required:false})
-  const items = [
-    { label: "My Account", href:"/account"},
-    { label: "Logout", handler:() => signOut()},
-  ]
 
   return (
     <>
@@ -29,7 +26,12 @@ const Navbar = ({ className }: classnameProps) => {
           />
           
           {session ? (
-            <NavMenu label="Account" items={items} />
+            <ShrinkableIconLink
+              href='/account'
+              label="Account"
+              icon={GearIcon}
+              className={navbarClass}
+              />
           ) : (
             <ShrinkableIconLink
               href="/login"

@@ -1,4 +1,4 @@
-import { MouseEventHandler, ReactNode } from "react";
+import { MouseEventHandler, MutableRefObject, ReactNode } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 
@@ -11,6 +11,7 @@ type NavMenuLink = {
     href?: string,
     active?: boolean,
     handler?: MouseEventHandler
+    ref?:MutableRefObject<any>
 }
 
 type NavMenuProps = {
@@ -41,6 +42,7 @@ const NavAction = (item:NavMenuLink) => (
             "block px-4 py-2 text-sm"
         )}
         onClick={item.handler}
+        ref={item.ref}
     >
         {item.label}
     </button>
@@ -66,15 +68,15 @@ export default function NavMenu(props:NavMenuProps) {
       >
         <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-primary shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
-            {items?.map((item) => 
+            {items?.map((item, index) => 
                 (item.handler ? 
-                    <Menu.Item>
+                    <Menu.Item key={`nav${index}`}>
                     {({ active }) => (                  
-                        <NavAction {...item} />
+                      <NavAction {...item} />
                     )}
                     </Menu.Item>
                 :
-                    <Menu.Item>
+                    <Menu.Item key={`nav${index}`}>
                     {({ active }) => (                  
                         <NavLink {...item} />
                     )}
