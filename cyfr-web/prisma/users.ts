@@ -1,12 +1,16 @@
 import { User } from ".prisma/client";
+import { Post } from "@prisma/client";
 import { GetResponseError, ResponseResult } from "../types/Response";
 import { parseResponse } from "../utils/api";
 import { prisma } from "./prismaContext";
 
-type UsersResponse = ResponseResult<User[]>;
-type UserResponse = ResponseResult<User>;
+export type UsersResponse = ResponseResult<User[]>;
+export type UserResponse = ResponseResult<User>;
+export type UserWithPosts = (User & {
+    posts: Post[]
+})
 
-const byEmail = async (email:string):Promise<UserResponse> => {
+const byEmail = async (email:string):Promise<UserWithPosts|null> => {
     try {
         const user = await prisma.user.findUnique({
             where: {
@@ -16,13 +20,13 @@ const byEmail = async (email:string):Promise<UserResponse> => {
                 posts: true
             }
         })
-        if (user) {
-            return parseResponse(user)
+        if (!user) {
+            throw({code:'users/byEmail',message:`Did not find user for ${email}`})
         }
-        throw({code:'users/byEmail',message:`Did not find user for ${email}`})
+        return user;
     }
     catch(error) {
-        return { error: GetResponseError(error) };
+        throw GetResponseError(error)
     }
 }
 

@@ -20,7 +20,7 @@ type AccountPageResponse = ResponseResult<{
 const Account: NextPage = (props: AccountPageResponse) => {
   const [error, setError] = useState<ResponseError>();
   const [account, setAccount] = useState();
-  const [cfyrUser, setCfyrUser] = useCyfrUser(null);
+  const [cyfrUser, setCyfrUser] = useCyfrUser(null);
 
   const [session, loading] = useSession({
     required: true,
@@ -30,12 +30,6 @@ const Account: NextPage = (props: AccountPageResponse) => {
       refetchInterval: 60 * 1000 * 5, // 5 minutes
     },
   });
-
-  useEffect(() => {
-    setCfyrUser({
-      name: "Me"
-    })
-  },[])
 
   const handleLogout = async () => {
     setError(undefined);
@@ -54,7 +48,9 @@ const Account: NextPage = (props: AccountPageResponse) => {
         sectionTitle="Cyfr"
         subTitle="The Writer's Site"
       >
-        <h1>{cfyrUser?.name}</h1>
+        {cyfrUser &&
+          <h1>{cyfrUser?.name}</h1>
+        }
         <button className="btn btn-primary mx-4 rounded-full w-fit" onClick={handleLogout}>Logout</button>
       </MainLayout>
     </div>
