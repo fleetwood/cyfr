@@ -1,19 +1,16 @@
 import React from "react"
+import { TailwindFormProps } from "../../types/props"
 
-type TextAreaProps = {
-    label: string,
-    placeholder?: string,
-    value: string|null, 
-    setValue: React.Dispatch<React.SetStateAction<string | null>>
+type TextAreaProps = TailwindFormProps & {
     rows?: 3 | 5 |10,
 }
 
-const TailwindTextarea = ({label, value, setValue, placeholder='', rows=3}:TextAreaProps) => {
+const TailwindTextarea = ({label, value, setValue, cardClassName, labelClassName, inputClassName, placeholder='', rows=3}:TextAreaProps) => {
   return (
-    <label className="block">
-      <span className="text-base-content">{label}</span>
+    <label className={`block ${cardClassName}`}>
+      <span className={labelClassName}>{label}</span>
       <textarea
-        className="
+        className={`
           mt-1
           block
           w-full
@@ -23,7 +20,8 @@ const TailwindTextarea = ({label, value, setValue, placeholder='', rows=3}:TextA
           focus:border-base-content 
           focus:ring 
           focus:ring-accent-focus 
-          focus:ring-opacity-50"
+          focus:ring-opacity-50
+          ${inputClassName}`}
         rows={rows}
         placeholder={placeholder}
         value={value||''}

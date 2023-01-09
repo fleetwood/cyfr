@@ -46,7 +46,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   }, [title, content]);
 
   return cyfrUser ? (
-    <div className="rounded-xl mb-3 w-full bg-base-100 bg-opacity-50 text-base-content">
+    <div className="rounded-xl mb-3 w-full bg-primary bg-opacity-70 mix-blend-color-dodge text-primary-content">
       <div className="w-full mx-auto p-2 sm:p-6 lg:p-4">
         <form className=" flex flex-col" onSubmit={handleSubmit}>
           <TailwindInput
