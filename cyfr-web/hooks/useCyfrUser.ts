@@ -12,12 +12,12 @@ const cyfrUserQuery = 'cyfrUserQuery'
 type useCyfrUserQuery = {
     cyfrUser?: UserWithPosts,
     setCyfrUser: Dispatch<SetStateAction<UserWithPosts | undefined>>,
-    invalidate: Promise<void>
+    invalidate: () => Promise<void>
 }
 
 const fetchUser = async (email:string) =>  await getApi(`user/byEmail/${email}`)
 
-const useCyfrUser = (owner?: string) => {
+const useCyfrUser = (owner?: string):useCyfrUserQuery => {
     const qc = useQueryClient()
     const [session] = useSession({required:false})
     const [cyfrUser, setCyfrUser] = useState<UserWithPosts>();

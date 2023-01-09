@@ -1,10 +1,19 @@
-import MainLayout from "../components/layouts/MainLayout"
-import { __prod__ } from "../utils/constants"
+import CreatePost from "../components/containers/Post/CreatePost";
+import MainPagePostListItem from "../components/containers/Post/MainPagePostListItem";
+import MainLayout from "../components/layouts/MainLayout";
+import usePostsApi from "../hooks/usePostsApi";
+import { __prod__ } from "../utils/constants";
 
 const Home = () => {
-  return (
-    <MainLayout sectionTitle="Cyfr" subTitle="The Writer's Site"></MainLayout>
-  )
-}
+  const { posts, error, invalidate } = usePostsApi();
 
-export default Home
+  return (
+    <MainLayout sectionTitle="Cyfr" subTitle="The Writer's Site">
+      <CreatePost onCreate={invalidate} />
+      {posts &&
+        posts.map((post) => <MainPagePostListItem {...post} key={post.id} />)}
+    </MainLayout>
+  );
+};
+
+export default Home;

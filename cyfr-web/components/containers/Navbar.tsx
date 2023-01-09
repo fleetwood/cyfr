@@ -1,12 +1,12 @@
-import { GearIcon, HouseIcon, UserIcon } from "../ui/icons";
-import { classnameProps } from "../../types/props";
-import ShrinkableIconLink from "../ui/shrinkableIconLink";
-import { useSession } from "../../lib/next-auth-react-query";
-import useCyfrUser from "../../hooks/useCyfrUser";
+import { GearIcon, HouseIcon, UserIcon } from "../ui/icons"
+import { classnameProps } from "../../types/props"
+import ShrinkableIconLink from "../ui/shrinkableIconLink"
+import { useSession } from "../../lib/next-auth-react-query"
+import useCyfrUser from "../../hooks/useCyfrUser"
 
 const Navbar = ({ className }: classnameProps) => {
-  const navbarClass = "";
-  const [session] = useSession({ required: false });
+  const navbarClass = ""
+  const [session] = useSession({ required: false })
   const {cyfrUser} = useCyfrUser()
 
   return (
@@ -42,7 +42,7 @@ const Navbar = ({ className }: classnameProps) => {
         </div>
       </nav>
     </>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

@@ -1,5 +1,6 @@
 import { Post } from ".prisma/client"
 import { ResponseResult } from "../types/response"
+import { log } from "../utils/log"
 import { prisma } from "./prismaContext"
 
 type PostAllProps = {
@@ -60,8 +61,10 @@ const all = async (props?: PostAllProps): Promise<Post[]> => {
 const create = async (props:PostCreateProps): Promise<Post> => {
   const data = {...props}
   try {
+    log('Posts.create',data)
     return await prisma.post.create({data})
   } catch (error) {
+    log('\tERROR: ',error)
     throw { code: "posts/create", message: "Post was not created!" }
   }
 }

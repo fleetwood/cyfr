@@ -10,6 +10,6 @@ const RightColumn = () => {
       </div>
       
   </div>
-)};
+)}
 
-export default RightColumn;
+export default RightColumn
