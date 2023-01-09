@@ -1,7 +1,6 @@
-import { User } from ".prisma/client";
+import { Account, User } from ".prisma/client";
 import { Post } from "@prisma/client";
-import { GetResponseError, ResponseResult } from "../types/Response";
-import { parseResponse } from "../utils/api";
+import { ResponseResult, GetResponseError } from "../types/response";
 import { prisma } from "./prismaContext";
 
 export type UsersResponse = ResponseResult<User[]>;

@@ -1,53 +1,47 @@
-import { ReactNode } from "react"
-import LeftMenu from "../containers/LeftMenu"
-import Section from "../ui/section"
-import Footer from "../containers/Footer"
-import Navbar from "../containers/Navbar"
-import { __prod__ } from "../../utils/constants"
-
-export enum Layouts {
-  MAIN = "MAIN",
-  LEFT_MENU = "LEFTMENU",
-}
+import { ReactNode } from "react";
+import Section from "../ui/section";
+import Footer from "../containers/Footer";
+import Navbar from "../containers/Navbar";
+import { __prod__ } from "../../utils/constants";
+import RightColumn from "../containers/RightColumn";
+import LeftColumn from "../containers/LeftColumn";
 
 type MainLayoutProps = {
-  sectionTitle: string
-  pageTitle?: string
-  subTitle?: string
-  children?: ReactNode
-  className?: string
-}
+  sectionTitle: string;
+  pageTitle?: string;
+  subTitle?: string;
+  children?: ReactNode;
+};
 
-const MainLayout = ({
-  sectionTitle,
-  subTitle,
-  children,
-  className,
-}: MainLayoutProps) => {
-
+const MainLayout = ({ sectionTitle, subTitle, children }: MainLayoutProps) => {
   return (
-    <div className={`
-      max-w-7xl mx-auto 
-      grid grid-cols-12
-      h-screen
-      ${className}`
-    }
-    >
 
-      <div className="col-span-2 flex flex-col h-screen">
-        <LeftMenu />
+    <div className="grad-1">
+    <div className="grad-2">
+      <div className="grad-3">
+        <div className="grad-4">
+    <div className="w-full min-h-screen flex flex-col sm:flex-row flex-wrap sm:flex-nowrap flex-grow">
+      <div className="w-fixed w-full flex-shrink flex-grow-0">
+        <LeftColumn />
       </div>
-
-      <div className="col-span-8 flex flex-col h-screen justify-between">
+      <main role="main" className="w-full h-screen flex-grow m-0 overflow-auto">
         <Navbar className="min-w-full" />
-        <Section className="min-w-full overflow-clip mb-auto" sectionTitle={sectionTitle} subTitle={subTitle}>
+
+        <Section
+          className="box-border"
+          sectionTitle={sectionTitle}
+          subTitle={subTitle}
+        >
           {children}
         </Section>
-        <Footer className="" />
+        <Footer />
+      </main>
+      <div className="w-fixed w-full flex-shrink flex-grow-0 px-2">
+        <RightColumn />
       </div>
-      
-      <div className="col-span-2 mr-0 text-right flex flex-col h-screen"></div>
+
     </div>
-  )
-}
-export default MainLayout
+    </div></div></div></div>
+  );
+};
+export default MainLayout;

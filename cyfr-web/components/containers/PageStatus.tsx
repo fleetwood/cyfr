@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ResponseError } from "../../types/Response";
+import { ResponseError } from "../../types/response";
 import Spinner, { SpinnerSize } from "../ui/spinner";
 
 export type StatusProps = {

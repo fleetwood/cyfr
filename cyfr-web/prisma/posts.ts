@@ -1,5 +1,5 @@
 import { Post } from ".prisma/client"
-import { ResponseResult } from "../types/Response"
+import { ResponseResult } from "../types/response"
 import { prisma } from "./prismaContext"
 
 type PostAllProps = {
@@ -17,6 +17,22 @@ type PostCreateProps = {
 
 type PostsResponse = ResponseResult<Post[]>
 type PostResponse = ResponseResult<Post>
+
+const byId = async (id:string): Promise<Post|null> => {
+  try {
+    return await prisma.post.findFirst({
+      where: {
+        id: id,
+        visible: true
+      },
+      include: {
+        author: true,
+      },
+    })
+  } catch (error) {
+    throw { code: "posts/byId", message: "No posts were returned!" }
+  }
+}
 
 const all = async (props?: PostAllProps): Promise<Post[]> => {
   try {
@@ -50,4 +66,4 @@ const create = async (props:PostCreateProps): Promise<Post> => {
   }
 }
 
-export const Posts = { all, create }
+export const Posts = { all, create, byId }

@@ -1,7 +1,8 @@
 import { User } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Users } from "../../../../prisma/users";
-import { ResponseResult } from "../../../../types/Response";
+
+import { ResponseResult } from "../../../../types/response";
 import { logError, jsonify } from "../../../../utils/log";
 
 export default async function handle(
