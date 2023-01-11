@@ -6,7 +6,7 @@ import TailwindInput from "../../forms/TailwindInput";
 import TailwindTextarea from "../../forms/TailwindTextarea";
 
 type CreatePostProps = {
-  onCreate: () => Promise<void>;
+  onCreate: () => void
 };
 
 const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
