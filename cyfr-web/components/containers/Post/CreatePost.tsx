@@ -54,23 +54,34 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
             type="text"
             value={title}
             setValue={setTitle}
+            inputClassName="text-base-content"
           />
           <TailwindInput
             label="Subtitle"
             type="text"
             value={subtitle}
             setValue={setSubtitle}
+            inputClassName="text-base-content"
           />
           <TailwindTextarea
             label="What do you want to say?"
             value={content}
             setValue={setContent}
+            inputClassName="text-base-content"
           />
 
           <div className="w-full grid place-items-end mt-2">
             <button
               disabled={isDisabled}
-              className="btn lg:btn-sm btn-primary p-2 text-primary-content"
+              className="btn lg:btn-sm p-2 
+                bg-secondary text-primary-content
+                shadow-sm shadow-primary-content
+                disabled:shadow-none
+                disabled:bg-accent
+                disabled:bg-opacity-40
+                disabled:text-opacity-20
+                disabled:bg-blend-color-dodge
+                "
               onClick={handleSubmit}
             >
               Post
