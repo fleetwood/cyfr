@@ -28,7 +28,7 @@ const MainLayout = ({ sectionTitle, subTitle, children }: MainLayoutProps) => {
         <Navbar className="min-w-full" />
 
         <Section
-          className="box-border"
+          className="box-border snap-y"
           sectionTitle={sectionTitle}
           subTitle={subTitle}
         >

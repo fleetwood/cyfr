@@ -46,7 +46,10 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   }, [title, content]);
 
   return cyfrUser ? (
-    <div className="rounded-xl mb-3 w-full bg-primary bg-opacity-70 mix-blend-color-dodge text-primary-content">
+    <div className="mb-3 rounded-xl w-full 
+      bg-primary text-primary-content 
+      md:bg-blend-hard-light md:bg-opacity-80
+      ">
       <div className="w-full mx-auto p-2 sm:p-6 lg:p-4">
         <form className=" flex flex-col" onSubmit={handleSubmit}>
           <TailwindInput
@@ -75,12 +78,8 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
               disabled={isDisabled}
               className="btn lg:btn-sm p-2 
                 bg-secondary text-primary-content
-                shadow-sm shadow-primary-content
-                disabled:shadow-none
-                disabled:bg-accent
                 disabled:bg-opacity-40
-                disabled:text-opacity-20
-                disabled:bg-blend-color-dodge
+                disabled:text-primary
                 "
               onClick={handleSubmit}
             >
