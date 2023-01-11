@@ -1,4 +1,4 @@
-import { Post } from ".prisma/client"
+import { Post, User } from ".prisma/client"
 import { ResponseResult } from "../types/response"
 import { log } from "../utils/log"
 import { prisma } from "./prismaContext"
@@ -19,6 +19,10 @@ type PostCreateProps = {
 type PostsResponse = ResponseResult<Post[]>
 type PostResponse = ResponseResult<Post>
 
+export type PostWithAuthor = Post & {
+  author:User
+}
+
 const byId = async (id:string): Promise<Post|null> => {
   try {
     return await prisma.post.findFirst({
@@ -35,7 +39,7 @@ const byId = async (id:string): Promise<Post|null> => {
   }
 }
 
-const all = async (props?: PostAllProps): Promise<Post[]> => {
+const all = async (props?: PostAllProps): Promise<PostWithAuthor[]> => {
   try {
     const { take = 10, skip = 0 } = { ...props }
     return await prisma.post.findMany({

@@ -1,12 +1,12 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import useCyfrUser from "../../../hooks/useCyfrUser";
-import { getApi, sendApi } from "../../../utils/api";
+import { sendApi } from "../../../utils/api";
 import { log } from "../../../utils/log";
 import TailwindInput from "../../forms/TailwindInput";
 import TailwindTextarea from "../../forms/TailwindTextarea";
 
 type CreatePostProps = {
-  onCreate: () => void
+  onCreate: () => void;
 };
 
 const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
@@ -46,10 +46,12 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   }, [title, content]);
 
   return cyfrUser ? (
-    <div className="mb-3 rounded-xl w-full 
+    <div
+      className="mb-3 rounded-xl w-full 
       bg-primary text-primary-content 
       md:bg-blend-hard-light md:bg-opacity-80
-      ">
+      "
+    >
       <div className="w-full mx-auto p-2 sm:p-6 lg:p-4">
         <form className=" flex flex-col" onSubmit={handleSubmit}>
           <TailwindInput
