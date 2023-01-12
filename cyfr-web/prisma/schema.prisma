@@ -59,6 +59,26 @@ model User {
   accounts      Account[]
   sessions      Session[]
   posts         Post[]    @relation("user_posts")
+  following     Follow[]  @relation("user_following")
+  followedBy    Follow[]  @relation("user_followed_by")
+  fanOf         Fan[]     @relation("user_fans")
+  fans          Fan[]     @relation("user_fan_of")
+}
+
+model Follow {
+  id          String @id @default(cuid())
+  followedId  String
+  followedBy  User   @relation("user_followed_by", fields: [followedId], references: [id])
+  followingId String
+  following   User   @relation("user_following", fields: [followingId], references: [id])
+}
+
+model Fan {
+  id     String @id @default(cuid())
+  fanId  String
+  fan    User   @relation("user_fans", fields: [fanId], references: [id])
+  starId String
+  fanOf  User   @relation("user_fan_of", fields: [starId], references: [id])
 }
 
 model VerificationToken {

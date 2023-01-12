@@ -1,4 +1,7 @@
+import { stringify } from "querystring";
 import { __prod__ } from "./constants";
+
+export const prismaStringify = (obj:any) => JSON.parse(stringify(obj))
 
 export const jsonify = (obj: any) => JSON.stringify(obj, null, 2);
 
