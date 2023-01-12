@@ -29,5 +29,5 @@ export const sendApi = async (url: string, body: any) => {
 };
 
 export const parseResponse = (response: any) => {
-  return JSON.parse(jsonify(response));
+  return JSON.parse(JSON.stringify(response));
 };

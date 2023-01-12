@@ -1,12 +1,13 @@
 import { GearIcon, HouseIcon, UserIcon } from "../ui/icons"
-import { classnameProps } from "../../types/props"
 import ShrinkableIconLink from "../ui/shrinkableIconLink"
-import { useSession } from "../../lib/next-auth-react-query"
 import useCyfrUser from "../../hooks/useCyfrUser"
 
-const Navbar = ({ className }: classnameProps) => {
-  const navbarClass = ""
-  const [session] = useSession({ required: false })
+type NavbarProps = {
+  className?: string
+  iconClassName?: string
+}
+
+const Navbar = ({ className, iconClassName }: NavbarProps) => {
   const {cyfrUser} = useCyfrUser()
 
   return (
@@ -21,7 +22,7 @@ const Navbar = ({ className }: classnameProps) => {
             href="/"
             label="Home"
             icon={HouseIcon}
-            className={navbarClass}
+            className={iconClassName}
           />
           {cyfrUser ? ( 
             <ShrinkableIconLink
@@ -29,14 +30,14 @@ const Navbar = ({ className }: classnameProps) => {
             // @ts-ignore
             label={cyfrUser.name}
             icon={GearIcon}
-            className={navbarClass}
+            className={iconClassName}
             />
           ) : (
             <ShrinkableIconLink
             href={"/login"}
             label={"Login"}
             icon={UserIcon}
-            className={navbarClass}
+            className={iconClassName}
             />
           )}
         </div>

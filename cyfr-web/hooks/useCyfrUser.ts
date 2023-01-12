@@ -28,6 +28,7 @@ const useCyfrUser = (owner?: string):useCyfrUserQuery => {
             if (user.result) {
                 setCyfrUser(user.result)
             } else if (user.error) {
+                log('getCyfrUser error', user)
                 setError(user.error)
             }
         })
@@ -37,7 +38,7 @@ const useCyfrUser = (owner?: string):useCyfrUserQuery => {
         getCyfrUser, 
         { 
             enabled: session?.user?.email !== undefined,
-            refetchInterval: cyfrUser ? 60000 : 50
+            refetchInterval: cyfrUser ? 60000 : 1000
         })
 
     const invalidate = () => qc.invalidateQueries([cyfrUserQuery])
