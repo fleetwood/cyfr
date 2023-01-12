@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import MainLayout from "../../components/layouts/MainLayout";
+import JsonBlock from "../../components/ui/jsonBlock";
 import { UserDetail, Users } from "../../prisma/users";
-import { prismaStringify } from "../../utils/log";
 
 export async function getServerSideProps(context: any) {
   const userId = context.params.id;
@@ -18,15 +18,14 @@ type UserDetailProps = {
   user: UserDetail;
 };
 
-const UserDetail = (props: UserDetailProps) => {
-  const [user, setUser] = useState(props.user);
+const UserDetail = ({user}: UserDetailProps) => {
   return (
     <MainLayout
       pageTitle="User Detail"
       sectionTitle=""
       subTitle={user?.name || ""}
     > {user && 
-        <pre>{prismaStringify(user)}</pre>
+        <JsonBlock data={user} theme='adventure' />
         }
     </MainLayout>
   );

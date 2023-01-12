@@ -5,7 +5,12 @@ import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons";
 import { log } from "../../../utils/log";
 
-const MainPagePostListItem = (post: PostWithAuthor) => {
+type MainPagePostProps = {
+  post: PostWithAuthor
+  key: string|number
+}
+
+const MainPagePostListItem = ({post}:MainPagePostProps) => {
 
   const likePost = () => {
     log('likePost',post.id)
@@ -78,4 +83,4 @@ const MainPagePostListItem = (post: PostWithAuthor) => {
   );
 };
 
-export default MainPagePostListItem;
+export default MainPagePostListItem

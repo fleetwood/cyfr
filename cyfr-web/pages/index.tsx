@@ -3,6 +3,7 @@ import CreatePost from "../components/containers/Post/CreatePost"
 import MainPagePostListItem from "../components/containers/Post/MainPagePostListItem"
 import MainLayout from "../components/layouts/MainLayout"
 import usePostsApi from "../hooks/usePostsApi"
+import { PostWithAuthor } from "../prisma/posts"
 import { __prod__ } from "../utils/constants"
 import { log } from "../utils/log"
 
@@ -21,7 +22,7 @@ const Home = () => {
     <MainLayout sectionTitle="Cyfr" subTitle="The Writer's Site">
       <label htmlFor={createPostModal} className="btn">New Post</label>
       {posts &&
-        posts.map((post) => <MainPagePostListItem {...post} key={post.id} />)}
+        posts.map((post) => <MainPagePostListItem post={post} key={post.id} />)}
         <input type="checkbox" id={createPostModal} className="modal-toggle" />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box bg-opacity-0 shadow-none">

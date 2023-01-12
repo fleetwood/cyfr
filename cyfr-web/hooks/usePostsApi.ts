@@ -1,6 +1,7 @@
 import { Post } from "@prisma/client";
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
+import { PostWithAuthor } from "../prisma/posts";
 import { GetResponseError, ResponseError } from "../types/response";
 import { getApi } from "../utils/api";
 
@@ -9,7 +10,7 @@ const fetchPosts = async () => await getApi(`post`);
 
 const usePostsApi = () => {
   const qc = useQueryClient();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [error, setError] = useState<ResponseError>();
 
   const getPosts = () =>
