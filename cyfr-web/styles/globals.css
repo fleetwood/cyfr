@@ -109,4 +109,12 @@
         background: -ms-linear-gradient(269deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 1) 100%);
         background: linear-gradient(181deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 1) 100%);
     }
+
+    li.react-tabs__tab > button {
+        color: yellow!
+    }
+    
+    li.react-tabs__tab.react-tabs__tab--selected > button {
+        color: white!
+    }
 }
