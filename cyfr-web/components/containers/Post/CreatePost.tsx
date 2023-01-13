@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import useCyfrUser from "../../../hooks/useCyfrUser";
 import { sendApi } from "../../../utils/api";
@@ -45,7 +46,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
     setIsDisabled((current) => disabled);
   }, [title, content]);
 
-  return cyfrUser ? (
+  return (
     <div
       className="mb-3 rounded-xl w-full 
       bg-primary text-primary-content 
@@ -53,7 +54,8 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
       "
     >
       <div className="w-full mx-auto p-2 sm:p-6 lg:p-4">
-        <form className=" flex flex-col" onSubmit={handleSubmit}>
+        {cyfrUser && (
+          <form className=" flex flex-col" onSubmit={handleSubmit}>
           <TailwindInput
             label="Title"
             type="text"
@@ -89,11 +91,14 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
             </button>
           </div>
         </form>
+        )}
+        {!cyfrUser &&
+          <>
+            <h2>You are not logged in</h2>
+            <p>But you can do so <Link href='/login'><button className="btn btn-secondary">here</button></Link> :)</p>
+          </>
+        }
       </div>
     </div>
-  ) : (
-    <></>
-  );
-};
-
+)}
 export default CreatePost;

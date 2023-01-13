@@ -45,12 +45,14 @@
     "react-json-pretty": "^2.2.0",
     "react-query": "^3.39.2",
     "react-quill": "^2.0.0",
+    "react-tabs": "^6.0.0",
     "redis": "^4.5.0",
     "superjson": "^1.12.1",
     "swr": "^2.0.0",
     "theme-change": "^2.2.0",
     "ts-node": "^10.9.1",
     "typeorm": "^0.3.11",
+    "uuidv4": "^6.2.13",
     "yup": "^0.32.11"
   },
   "devDependencies": {
