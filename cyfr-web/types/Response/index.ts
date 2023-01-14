@@ -58,6 +58,21 @@ export const GetResponseError = (error?: any, defaultTo?: ResponseError) => {
   return defaultTo || ResponseErrorList.generic;
 };
 
-export const GenericResponseError = (message:string, code:string = ResponseErrorList.generic.code):ResponseError => {
-  return {message,code}
+type GenericResponseErrorType = {
+  error?: ResponseError
+  message?: string
+  code?: string
+}
+export const GenericResponseError = ({message, code, error}:GenericResponseErrorType):ResponseError => {
+  return error?.message ? 
+        {
+          message: error.message,
+          code: error.code || ResponseErrorList.generic.code
+        } 
+        : message ? 
+        {
+          message,
+          code: code || ResponseErrorList.generic.code
+        }
+        : ResponseErrorList.generic
 }

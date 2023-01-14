@@ -1,15 +1,18 @@
-import { Follow } from '@prisma/client'
 import React from 'react'
+import { UserFollows } from '../../../prisma/users'
+import Avatar from '../../ui/avatar'
 import JsonBlock from '../../ui/jsonBlock'
 
 type UserDetailFollowsProps = {
-    follow: Follow
+    following?: UserFollows
+    follower?: UserFollows
 }
 
-const UserDetailFollow = ({follow}:UserDetailFollowsProps) => {
+const UserDetailFollow = ({following, follower}:UserDetailFollowsProps) => {
     return (
     <div>
-        <JsonBlock data={follow} />
+        {following && <Avatar user={following.following} />}
+        {follower && <Avatar user={follower.follower} />}
     </div>
 )}
 

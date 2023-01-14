@@ -36,18 +36,18 @@ model Session {
 }
 
 model Post {
-  id             String   @id @default(cuid())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
-  visible        Boolean  @default(true)
-  title          String   @db.VarChar(255)
-  subtitle       String?  @db.VarChar(255)
-  headerImage    String?  @db.VarChar(255)
-  content        String
-  thread         Post[]   @relation("post_thread")
-  threadRelation Post[]   @relation("post_thread")
-  authorid       String
-  author         User     @relation("user_posts", fields: [authorid], references: [id])
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  visible     Boolean  @default(true)
+  title       String   @db.VarChar(255)
+  subtitle    String?  @db.VarChar(255)
+  headerImage String?  @db.VarChar(255)
+  content     String
+  authorid    String
+  author      User     @relation("user_posts", fields: [authorid], references: [id])
+  Post_A      Post[]   @relation("post_thread")
+  Post_B      Post[]   @relation("post_thread")
 }
 
 model User {
@@ -57,27 +57,27 @@ model User {
   emailVerified DateTime?
   image         String?
   accounts      Account[]
-  sessions      Session[]
-  posts         Post[]    @relation("user_posts")
-  following     Follow[]  @relation("user_following")
-  followedBy    Follow[]  @relation("user_followed_by")
   fanOf         Fan[]     @relation("user_fans")
   fans          Fan[]     @relation("user_fan_of")
+  follower      Follow[]  @relation("user_followed_by")
+  following     Follow[]  @relation("user_following")
+  posts         Post[]    @relation("user_posts")
+  sessions      Session[]
 }
 
 model Follow {
   id          String @id @default(cuid())
-  followedId  String
-  followedBy  User   @relation("user_followed_by", fields: [followedId], references: [id])
+  followerId  String
   followingId String
+  follower    User   @relation("user_followed_by", fields: [followerId], references: [id])
   following   User   @relation("user_following", fields: [followingId], references: [id])
 }
 
 model Fan {
   id     String @id @default(cuid())
   fanId  String
-  fan    User   @relation("user_fans", fields: [fanId], references: [id])
   starId String
+  fan    User   @relation("user_fans", fields: [fanId], references: [id])
   fanOf  User   @relation("user_fan_of", fields: [starId], references: [id])
 }
 

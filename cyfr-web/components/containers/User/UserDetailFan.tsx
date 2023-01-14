@@ -1,15 +1,16 @@
-import { Fan } from '@prisma/client'
-import React from 'react'
-import JsonBlock from '../../ui/jsonBlock'
+import { User } from '@prisma/client'
+import Avatar from '../../ui/avatar'
+import { uuid } from './../../../utils/helpers'
 
 type UserDetailFansProps = {
-    fan: Fan
+    fan: User,
+    key?: string
 }
 
-const UserDetailFan = ({fan}:UserDetailFansProps) => {
+const UserDetailFan = ({fan, ...props}:UserDetailFansProps) => {
     return (
-    <div>
-        <JsonBlock data={fan} />
+    <div key={uuid(props.key)}>
+        <Avatar user={fan} />
     </div>
 )}
 

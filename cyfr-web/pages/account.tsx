@@ -1,5 +1,6 @@
 import {signOut} from "next-auth/react"
 import { useEffect, useState } from "react"
+import UserAccountDetail from "../components/containers/User/UserAccountDetail"
 import MainLayout from "../components/layouts/MainLayout"
 import useCyfrUser from "../hooks/useCyfrUser"
 import { useSession } from "../lib/next-auth-react-query"
@@ -40,7 +41,7 @@ const Account = () => {
           {currentPane === 'User' && cyfrUser && 
             <div>
               <h2 className="subtitle">CyfrUser</h2>
-              <pre>{jsonify(cyfrUser)}</pre>
+              <UserAccountDetail currentUser={cyfrUser} />
             </div>
           }
         </div>

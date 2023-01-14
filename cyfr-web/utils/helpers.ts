@@ -1,4 +1,6 @@
+import { useId } from "react";
 import { __prod__ } from "./constants";
+import { v4 as uid } from 'uuid'
 
 export const URLify = (content: string) => {
   const urls = content.match(
@@ -131,6 +133,8 @@ export const rand = (min: number = 0, max: number = 1) => {
 }
 
 export const randArray = (arr:any[]) => arr[rand(0, arr.length-1)]
+
+export const uuid = (key?:string) => key || uid()
 
 export const valToLabel = (val: number) => {
   let result = val.toString();

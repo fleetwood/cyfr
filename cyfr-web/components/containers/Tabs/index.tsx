@@ -6,7 +6,6 @@ import React, {
 import { log } from "../../../utils/log"
 import Tab from './Tab'
 import TabContent from "./TabContent"
-import { v4 as uid } from 'uuid'
 
 interface TypeProps {
   type: string

@@ -1,5 +1,5 @@
-import { Post } from "@prisma/client";
-import React, { useState } from "react";
+import { stringify } from "querystring";
+import React from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import UserDetailPostItem from "../../components/containers/Post/UserDetailPostItem";
 import UserDetailFan from "../../components/containers/User/UserDetailFan";
@@ -7,11 +7,11 @@ import UserDetailFollow from "../../components/containers/User/UserDetailFollow"
 import MainLayout from "../../components/layouts/MainLayout";
 import Avatar from "../../components/ui/avatar";
 import { FireIcon, HeartIcon } from "../../components/ui/icons";
-import JsonBlock from "../../components/ui/jsonBlock";
 import ShrinkableIconButton from "../../components/ui/shrinkableIconButton";
 import useCyfrUser from "../../hooks/useCyfrUser";
 import { UserDetail, Users } from "../../prisma/users";
-import { log } from "../../utils/log";
+import { sendApi } from "../../utils/api";
+import { log, todo } from "../../utils/log";
 
 export async function getServerSideProps(context: any) {
   const userId = context.params.id;
@@ -31,12 +31,38 @@ type UserDetailProps = {
 const UserDetail = ({ user }: UserDetailProps) => {
   const {cyfrUser }= useCyfrUser()
 
-  const followUser = () => {
-    log(`followUser(${user.id},${cyfrUser?.id})`)
+  const followUser = async () => {
+    todo('Toast results and Invalidate user')
+    todo('Move this functionality to a provider?')
+    if (!cyfrUser) {
+      log('User is not logged in???')
+      return
+    }
+    const follow = await sendApi(`user/follow`, {
+      following: user.id,
+      follower: cyfrUser.id
+    })
+    
+    if (follow) {
+      alert(JSON.stringify(follow))
+    }
   }
   
-  const stanUser = () => {
-    log(`stanUser(${user.id},${cyfrUser?.id})`)
+  const stanUser = async () => {
+    todo('Toast results and Invalidate user')
+    todo('Move this functionality to a provider?')
+    if (!cyfrUser) {
+      log('User is not logged in???')
+      return
+    }
+    const stan = await sendApi(`user/stan`, {
+      stan: user.id,
+      fan: cyfrUser.id
+    })
+
+    if (stan) {
+      alert(JSON.stringify(stan))
+    }
   }
 
   return (
@@ -74,10 +100,10 @@ const UserDetail = ({ user }: UserDetailProps) => {
                   <strong>Posts:</strong> {user.posts.length}
                 </div>
                 <div>
-                  <strong>Follows:</strong> {user.following.length}
+                  <strong>Follows:</strong> {user.follower.length}
                 </div>
                 <div>
-                  <strong>Followers:</strong> {user.followedBy.length}
+                  <strong>Followers:</strong> {user.following.length}
                 </div>
                 <div>
                   <strong>Fans:</strong> {user.fans.length}
@@ -100,7 +126,7 @@ const UserDetail = ({ user }: UserDetailProps) => {
                 h-[50%]"
                 >
                 <ShrinkableIconButton
-                  label="Like"
+                  label="Follow"
                   icon={HeartIcon}
                   className="bg-opacity-0 hover:shadow-none"
                   iconClassName="text-primary"
@@ -134,7 +160,7 @@ const UserDetail = ({ user }: UserDetailProps) => {
             <TabPanel>
               <div className="p-2 md:p-4 rounded-lg text-base-content">
                 {user.posts.map((post) => (
-                  <UserDetailPostItem post={post} />
+                  <UserDetailPostItem post={post} key={post.id} />
                 ))}
               </div>
             </TabPanel>
@@ -142,14 +168,14 @@ const UserDetail = ({ user }: UserDetailProps) => {
               <div className="p-2 md:p-4 rounded-lg text-base-content flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Following</h2>
-                  {user.following.map((follow) => (
-                    <UserDetailFollow follow={follow} />
+                  {user.follower.map((follow) => (
+                    <UserDetailFollow following={follow} key={follow.id} />
                   ))}
                 </div>
                 <div>
                   <h2>Followers</h2>
-                  {user.followedBy.map((follow) => (
-                    <UserDetailFollow follow={follow} />
+                  {user.following.map((follow) => (
+                    <UserDetailFollow follower={follow} key={follow.id} />
                   ))}
                 </div>
               </div>
@@ -159,13 +185,13 @@ const UserDetail = ({ user }: UserDetailProps) => {
                 <div>
                   <h2>Fans</h2>
                   {user.fans.map((fan) => (
-                    <UserDetailFan fan={fan} />
+                    <UserDetailFan fan={fan.fan} key={fan.id} />
                   ))}
                 </div>
                 <div>
                   <h2>Stans</h2>
                   {user.fanOf.map((fan) => (
-                    <UserDetailFan fan={fan} />
+                    <UserDetailFan fan={fan.fanOf} key={fan.id} />
                   ))}
                 </div>
               </div>
