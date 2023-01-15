@@ -110,6 +110,18 @@
         background: linear-gradient(181deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 1) 100%);
     }
 
+    .alert-info {
+        @apply bg-info text-info-content
+    }
+
+    .alert-success {
+        @apply bg-success text-success-content
+    }
+
+    .alert-warning {
+        @apply bg-warning text-warning-content
+    }
+
     li.react-tabs__tab > button {
         color: yellow!
     }

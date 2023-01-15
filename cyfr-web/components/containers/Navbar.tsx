@@ -13,7 +13,7 @@ const Navbar = ({ className, iconClassName }: NavbarProps) => {
   return (
     <>
       <nav
-        className={`${className} sticky top-0 bg-secondary flex flex-col z-50`}
+        className={`${className} sticky top-0 bg-secondary flex flex-col z-40`}
       >
         <div
           className={`space-x-6 flex justify-end`}

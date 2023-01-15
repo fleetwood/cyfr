@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Tabs, TabList, Tab, TabPanel } from 'react-tabs'
-import { UserDetail, UserWithPosts } from '../../../prisma/users'
-import { getApi } from '../../../utils/api'
-import { logError } from '../../../utils/log'
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
+import useUserDetailApi from '../../../hooks/useUserDetailApi'
+import { UserWithPosts } from '../../../prisma/users'
 import Avatar from '../../ui/avatar'
 import UserDetailPostItem from '../Post/UserDetailPostItem'
 import UserDetailFan from './UserDetailFan'
@@ -13,19 +11,7 @@ type UserAccountDetailProps = {
 }
 
 const UserAccountDetail = ({currentUser}:UserAccountDetailProps) => {
-    const [userDetail, setUserDetail] = useState<UserDetail>();
-    useEffect(() => {
-        const getUser = async () => {
-         getApi(`user/byId/${currentUser.id}`)
-         .then(user => {
-            if (user.error) {
-                logError(user.error)
-            }
-            setUserDetail(user.result)
-         })
-        }
-        getUser()
-    }, [])
+    const {userDetail, error, invalidate} = useUserDetailApi(currentUser.id)
 
   return (
     <div>

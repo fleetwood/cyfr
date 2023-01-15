@@ -1,5 +1,4 @@
-import { Post } from "@prisma/client";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { PostWithAuthor } from "../prisma/posts";
 import { GetResponseError, ResponseError } from "../types/response";
