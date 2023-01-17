@@ -48,6 +48,7 @@ model Post {
   author      User     @relation("user_posts", fields: [authorid], references: [id])
   Post_A      Post[]   @relation("post_thread")
   Post_B      Post[]   @relation("post_thread")
+  likes       User[]   @relation("user_likes")
 }
 
 model User {
@@ -63,6 +64,7 @@ model User {
   following     Follow[]  @relation("user_following")
   posts         Post[]    @relation("user_posts")
   sessions      Session[]
+  likes         Post[]    @relation("user_likes")
 }
 
 model Follow {

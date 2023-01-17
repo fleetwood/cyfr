@@ -8,12 +8,14 @@ import { jsonify } from "../utils/log"
 
 const Account = () => {
   const [session] = useSession({ required: true, redirectTo: '/login', queryConfig: { refetchInterval: 60000 }})
-  const {cyfrUser, setCyfrUser, invalidate} = useCyfrUser()
+  const {cyfrUser, setCyfrUser, invalidateUser} = useCyfrUser()
   const [currentPane, setCurrentPane] = useState('Billing');
 
   useEffect(() => {
-    invalidate()
-  },[session])
+    if (!cyfrUser || !session) {
+      invalidateUser()
+    }
+  },[session, cyfrUser])
 
   return (
     <MainLayout sectionTitle="Account">
@@ -28,18 +30,18 @@ const Account = () => {
         </div>
         <div className="flex border-t-4 border-secondary rounded-b-lg p-2">
           {currentPane === 'Billing' &&
-            <div>
+            <div className="w-full">
               <h2 className="subtitle">Billing</h2>
             </div>
           }
           {currentPane === 'Session' && session && 
-            <div>
+            <div className="w-full">
               <h2 className="subtitle">Session</h2>
               <pre>{jsonify(session)}</pre>
             </div>
           }
           {currentPane === 'User' && cyfrUser && 
-            <div>
+            <div className="w-full">
               <h2 className="subtitle">CyfrUser</h2>
               <UserAccountDetail currentUser={cyfrUser} />
             </div>

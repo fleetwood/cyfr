@@ -1,29 +1,16 @@
-import { PostWithAuthor } from "./../../../prisma/posts";
+import Link from "next/link";
 import { timeDifference } from "../../../utils/helpers";
+import { PostWithDetails } from "./../../../prisma/posts";
 import Avatar from "./../../ui/avatar";
-import ShrinkableIconButton from "../../ui/shrinkableIconButton";
-import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons";
-import { log } from "../../../utils/log";
+import PostItemFooter from "./PostItemFooter";
 
 type MainPagePostProps = {
-  post: PostWithAuthor
+  post: PostWithDetails
   key: string|number
 }
 
 const MainPagePostListItem = ({post}:MainPagePostProps) => {
-
-  const likePost = () => {
-    log('likePost',post.id)
-  }
   
-  const sharePost = () => {
-    log('sharePost',post.id)
-  }
-  
-  const replyPost = () => {
-    log('replyPost',post.id)
-  }
-
   return (
     <div
       className="
@@ -43,41 +30,21 @@ const MainPagePostListItem = ({post}:MainPagePostProps) => {
         </div>
       </div>
       <div>
-        <h1 className="h-title">{post.title}</h1>
-        <div className="text-base-content">{post.content}</div>
+        <div className="">
+          <Link href={`/post/${post.id}`}>
+          <h2 className="post-title">{post.title}</h2>
+          {post.subtitle &&
+            <h3 className="post-title">{post.subtitle}</h3>
+          }
+          </Link>
+        </div>
+        <div className="bg-base-300 bg-opacity-50 p-4 rounded-lg text-base-content">{post.content}</div>
       </div>
-
       <div className="
         flex flex-row 
         justify-around 
-        py-4
-        border-t 
-        border-base-content 
-        border-opacity-50">
-        <ShrinkableIconButton 
-          label="Like" 
-          icon={HeartIcon} 
-          className="bg-opacity-0 hover:shadow-none" 
-          iconClassName="text-primary"
-          labelClassName="text-primary"
-          onClick={likePost}
-          />
-        <ShrinkableIconButton 
-          label="Share" 
-          icon={ShareIcon} 
-          className="bg-opacity-0 hover:shadow-none" 
-          iconClassName="text-primary"
-          labelClassName="text-primary"
-          onClick={sharePost}
-          />
-        <ShrinkableIconButton 
-          label="Reply" 
-          icon={ReplyIcon} 
-          className="bg-opacity-0 hover:shadow-none" 
-          iconClassName="text-primary"
-          labelClassName="text-primary"
-          onClick={replyPost}
-          />
+        py-4">
+        <PostItemFooter post={post} />
       </div>
     </div>
   );

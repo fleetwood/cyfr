@@ -2,31 +2,30 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { useSession } from "../lib/next-auth-react-query";
-import { UserWithPosts } from "../prisma/users";
+import { UserWithPostsLikes } from "../prisma/users";
 import { GetResponseError, ResponseError } from "../types/response";
 import { getApi } from "../utils/api";
 import { log } from "../utils/log";
 
 const cyfrUserQuery = 'cyfrUserQuery'
 
-type useCyfrUserQuery = {
-    cyfrUser?: UserWithPosts,
-    setCyfrUser: Dispatch<SetStateAction<UserWithPosts | undefined>>,
-    invalidate: () => Promise<void>
+export type useCyfrUserHookType = {
+    cyfrUser?: UserWithPostsLikes,
+    setCyfrUser: Dispatch<SetStateAction<UserWithPostsLikes | undefined>>,
+    invalidateUser: () => Promise<void>
 }
 
 const fetchUser = async (email:string) =>  await getApi(`user/byEmail/${email}`)
 
-const useCyfrUser = (owner?: string):useCyfrUserQuery => {
+const useCyfrUser = (owner?: string):useCyfrUserHookType => {
     const qc = useQueryClient()
     const [session] = useSession({required:false})
-    const [cyfrUser, setCyfrUser] = useState<UserWithPosts>();
+    const [cyfrUser, setCyfrUser] = useState<UserWithPostsLikes>();
     const [error, setError] = useState<ResponseError>()
 
     const getCyfrUser = () => fetchUser(session.user.email)
         .then(user => {
             if (user.result) {
-                // log('getCyfrUser', user.result)
                 setCyfrUser(user.result)
             } else if (user.error) {
                 log('getCyfrUser error', user)
@@ -39,12 +38,12 @@ const useCyfrUser = (owner?: string):useCyfrUserQuery => {
         getCyfrUser, 
         { 
             enabled: session?.user?.email !== undefined,
-            refetchInterval: cyfrUser ? 60000 : 100
+            refetchInterval: 60000
         })
 
-    const invalidate = () => qc.invalidateQueries([cyfrUserQuery])
+    const invalidateUser = () => qc.invalidateQueries([cyfrUserQuery])
     
-    return {cyfrUser, setCyfrUser, invalidate}
+    return {cyfrUser, setCyfrUser, invalidateUser}
 }
 
 export default useCyfrUser

@@ -10,14 +10,19 @@ type ToastType = {
 const Toasty = ({ message, type, toastId }: ToastType) => {
   const { slice } = useContext(ToastContext);
   return (
-    <div className={`relative flex flex-row alert alert-${type || "info"}`}>
+    <div className={`
+      relative w-full
+      border border-accent
+      flex flex-row 
+      alert alert-${type || "info"}`
+      }>
       <button
         onClick={() => slice(toastId)}
         className="btn btn-sm btn-circle absolute right-2 top-2"
       >
         ✕
       </button>
-      <div>
+      <div className="">
         <span>{message}</span>
       </div>
     </div>

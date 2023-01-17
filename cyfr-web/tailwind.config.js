@@ -6,14 +6,18 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        serif: ['Ibarra', 'serif'],
+      },
+    },
   },
   daisyui: {
     styled: true,
     base: true,
     utils: true,
     prefix: "",
-    darkTheme: "fantasy",
+    darkTheme: "emerald",
     themes: [
       "light",
       "dark",

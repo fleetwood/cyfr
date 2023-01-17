@@ -22,6 +22,16 @@
     src: url('./../assets/fonts/PassionOne-Black.ttf');
 }
 
+@font-face {
+    font-family: 'Ibarra';
+    src: url('./../assets/fonts/IbarraRealNova-VariableFont_wght.ttf');
+}
+
+@font-face {
+    font-family: 'IbarraItalic';
+    src: url('./../assets/fonts/IbarraRealNova-Italic-VariableFont_wght.ttf');
+}
+
 @media (min-width: 640px) {
     .w-fixed {
         flex: 0 1 230px;
@@ -44,6 +54,12 @@
     }
     .h-subtitle {
         @apply text-transparent max-w-fit bg-clip-text bg-gradient-to-r from-secondary to-accent [text-shadow:_0_0_0_rgb(155_155_155_/_50%)]
+    }
+    h2.post-title {
+        @apply text-lg text-transparent max-w-fit bg-clip-text bg-gradient-to-r from-primary to-secondary font-extrabold [text-shadow:_0_0_0_rgb(155_155_155_/_50%)]
+    }
+    h3.post-title {
+        @apply text-lg text-transparent max-w-fit bg-clip-text bg-gradient-to-r from-secondary to-accent [text-shadow:_0_0_0_rgb(155_155_155_/_50%)]
     }
     .accent {
         @apply text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-content
@@ -128,5 +144,14 @@
     
     li.react-tabs__tab.react-tabs__tab--selected > button {
         color: white!
+    }
+}
+
+@layer utilities {
+    .font-ibarra {
+        font-family: 'Ibarra', serif
+    }
+    .font-ibarra-talic {
+        font-family: 'IbarraItalic', serif
     }
 }

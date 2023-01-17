@@ -1,49 +1,57 @@
-import { GearIcon, HouseIcon, UserIcon } from "../ui/icons"
-import ShrinkableIconLink from "../ui/shrinkableIconLink"
-import useCyfrUser from "../../hooks/useCyfrUser"
+import { GearIcon, HouseIcon, UserIcon } from "../ui/icons";
+import ShrinkableIconLink from "../ui/shrinkableIconLink";
+import {
+  useCyfrUserContext,
+} from "../context/CyfrUserProvider";
+import { useContext } from "react";
+import { ToastContext } from "../context/ToastContextProvider";
 
 type NavbarProps = {
-  className?: string
-  iconClassName?: string
-}
+  className?: string;
+  iconClassName?: string;
+};
 
 const Navbar = ({ className, iconClassName }: NavbarProps) => {
-  const {cyfrUser} = useCyfrUser()
+  const { cyfrUser } = useCyfrUserContext();
 
   return (
     <>
       <nav
-        className={`${className} sticky top-0 bg-secondary flex flex-col z-40`}
+        className={`
+          ${className} 
+          sticky top-0 
+          bg-secondary 
+          flex flex-col 
+          z-40`}
       >
-        <div
-          className={`space-x-6 flex justify-end`}
-        >
+        <div className={`space-x-6 flex justify-end`}>
           <ShrinkableIconLink
             href="/"
             label="Home"
             icon={HouseIcon}
             className={iconClassName}
           />
-          {cyfrUser ? ( 
+          {cyfrUser ? (
             <ShrinkableIconLink
-            href={"/account"}
-            // @ts-ignore
-            label={cyfrUser.name}
-            icon={GearIcon}
-            className={iconClassName}
+              href={"/account"}
+              // @ts-ignore
+              label={cyfrUser.name}
+              icon={GearIcon}
+              className={iconClassName}
             />
           ) : (
             <ShrinkableIconLink
-            href={"/login"}
-            label={"Login"}
-            icon={UserIcon}
-            className={iconClassName}
+              href={"/login"}
+              label={"Login"}
+              icon={UserIcon}
+              className={iconClassName}
             />
           )}
+
         </div>
       </nav>
     </>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

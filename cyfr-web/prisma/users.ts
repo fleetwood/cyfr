@@ -1,4 +1,3 @@
-
 import { Fan, Post, User, Follow } from ".prisma/client";
 import { stringify } from "superjson";
 
@@ -9,30 +8,33 @@ import {
   ResponseError,
 } from "../types/response";
 import { log } from "../utils/log";
+import { PostWithDetails } from "./posts";
 import { prisma } from "./prismaContext";
 
 export type UsersResponse = ResponseResult<User[]>;
 export type UserResponse = ResponseResult<User>;
-export type UserWithPosts = User & {
+export type UserWithPostsLikes = User & {
   posts: Post[];
+  likes: Post[];
 };
 
 export type UserFollows = Follow & {
-  following: User
-  follower: User
+  following: User;
+  follower: User;
 };
 
 export type UserFans = Fan & {
-  fan: User
-  fanOf: User
+  fan: User;
+  fanOf: User;
 };
 
 export type UserDetail = User & {
-  posts: Post[];
-  following: UserFollows[]
-  follower: UserFollows[]
-  fans: UserFans[]
-  fanOf: UserFans[]
+  posts: PostWithDetails[];
+  likes: Post[];
+  following: UserFollows[];
+  follower: UserFollows[];
+  fans: UserFans[];
+  fanOf: UserFans[];
 };
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
@@ -41,10 +43,6 @@ const follow = async (follows: string, follower: string): Promise<Follow> => {
     followingId: follows,
   };
   try {
-    log(`api/follow
-      \n${stringify({ follows, follower })}
-      \n${stringify(data)}
-    `);
     if (follows === follower) {
       throw {
         code: "user/error",
@@ -52,31 +50,17 @@ const follow = async (follows: string, follower: string): Promise<Follow> => {
       };
     }
     const exists = await prisma.follow.findFirst({ where: data });
-    if (exists) {
-      log(`api/follow Follow already exists...
-        \n${stringify({ follows, follower })}
-        \n${stringify(data)}
-      `);
-      return exists;
-    }
+    if (exists) return exists
     const follow = await prisma.follow.create({ data });
     if (!follow) {
-      log(`api/follow follow.create did not return data
-        \n${stringify({ follows, follower })}
-        \n${stringify(data)}
-      `);
       throw {
         code: "users/follow",
         message: `Unable to follow (follows:${follows}, follower: ${follower})`,
       };
     }
-    log(`api/follow Success...
-      \n${stringify({ follows, follower })}
-      \n${stringify(data)}
-    `);
     return follow;
   } catch (error) {
-    log(`api/follow some weird error...
+    log(`api/follow error...
       \n${stringify({ follows, follower })}
       \n${stringify(data)}
       \n${JSON.stringify(error, null, 2)}
@@ -128,18 +112,24 @@ const byId = async (id: string): Promise<UserDetail> => {
         id: id?.toString(),
       },
       include: {
-        posts: true,
+        posts: {
+          include: {
+            author: true,
+            likes: true
+          }
+        },
+        likes: true,
         following: {
-            include: {
-                following: true,
-                follower: true
-            }
+          include: {
+            following: true,
+            follower: true,
+          },
         },
         follower: {
-            include: {
-                following: true,
-                follower: true
-            }
+          include: {
+            following: true,
+            follower: true,
+          },
         },
         fanOf: {
           include: {
@@ -164,7 +154,7 @@ const byId = async (id: string): Promise<UserDetail> => {
   }
 };
 
-const byEmail = async (email: string): Promise<UserWithPosts | null> => {
+const byEmail = async (email: string): Promise<UserWithPostsLikes | null> => {
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -172,6 +162,7 @@ const byEmail = async (email: string): Promise<UserWithPosts | null> => {
       },
       include: {
         posts: true,
+        likes: true,
       },
     });
     if (!user) {

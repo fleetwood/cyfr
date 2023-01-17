@@ -1,18 +1,20 @@
-import { ReactNode } from "react";
+import { ReactNode, useContext } from "react";
 import Footer from "../containers/Footer";
 import LeftColumn from "../containers/LeftColumn";
 import Navbar from "../containers/Navbar";
 import RightColumn from "../containers/RightColumn";
+import { ToastContext } from "../context/ToastContextProvider";
 import Section from "../ui/section";
 
 type MainLayoutProps = {
-  sectionTitle: string;
-  pageTitle?: string;
-  subTitle?: string;
-  children?: ReactNode;
+  sectionTitle: string
+  pageTitle?: string | null
+  subTitle?: string | null
+  children?: ReactNode
 };
 
-const MainLayout = ({ sectionTitle, subTitle, children }: MainLayoutProps) => {
+const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
+  const {toasts} = useContext(ToastContext)
   return (
     <div className="grad-1">
       <div className="grad-2">
@@ -28,10 +30,14 @@ const MainLayout = ({ sectionTitle, subTitle, children }: MainLayoutProps) => {
               >
                 <Navbar className="min-w-full" />
 
+                <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
+                  {toasts.map((toast) => toast.toast)}
+                </div>
+                
                 <Section
                   className="box-border snap-y"
                   sectionTitle={sectionTitle}
-                  subTitle={subTitle}
+                  subTitle={props.subTitle}
                 >
                   {children}
                 </Section>
