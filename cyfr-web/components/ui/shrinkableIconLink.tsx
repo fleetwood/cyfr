@@ -8,6 +8,7 @@ type ShrinkableIconLinkProps = LinkProps & {
   iconClassName?: string;
   titleClassName?: string;
   linkColor?: string;
+  dir?: 'right' | 'left' | 'center'
 };
 
 const ShrinkableIconLink = (props: ShrinkableIconLinkProps) => {
@@ -20,6 +21,7 @@ const ShrinkableIconLink = (props: ShrinkableIconLinkProps) => {
     iconClassName,
     titleClassName,
     linkColor,
+    dir = 'right'
   } = props;
   const t = target || "_self";
   return (
@@ -38,8 +40,13 @@ const ShrinkableIconLink = (props: ShrinkableIconLinkProps) => {
   `}
     >
       <>
+        {dir === 'left' && label && (
+            <span className={`hidden lg:inline-block ${titleClassName || ""}`}>
+              {label}
+            </span>
+        )}
         {icon}
-        {label && (
+        {dir !== 'left' && label && (
           <span className={`hidden lg:inline-block ${titleClassName || ""}`}>
             {label}
           </span>

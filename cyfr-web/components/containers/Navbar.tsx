@@ -5,6 +5,7 @@ import {
 } from "../context/CyfrUserProvider";
 import { useContext } from "react";
 import { ToastContext } from "../context/ToastContextProvider";
+import Avatar from "../ui/avatar";
 
 type NavbarProps = {
   className?: string;
@@ -36,8 +37,9 @@ const Navbar = ({ className, iconClassName }: NavbarProps) => {
               href={"/account"}
               // @ts-ignore
               label={cyfrUser.name}
-              icon={GearIcon}
+              icon={<Avatar user={cyfrUser} sz="wee" />}
               className={iconClassName}
+              dir='left'
             />
           ) : (
             <ShrinkableIconLink

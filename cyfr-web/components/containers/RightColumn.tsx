@@ -9,7 +9,7 @@ const RightColumn = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default RightColumn
