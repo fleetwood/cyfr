@@ -1,12 +1,12 @@
-import { ReactNode } from "react";
-import SectionTitle from "./sectionTitle";
+import { ReactNode } from "react"
+import SectionTitle from "./sectionTitle"
 
 type SectionProps = {
-  sectionTitle: string;
-  subTitle?: string | null;
-  className?: string | null;
-  children: ReactNode;
-};
+  sectionTitle: string | ReactNode
+  subTitle?: string | null
+  className?: string | null
+  children: ReactNode
+}
 
 const Section = ({ sectionTitle, children, ...props }: SectionProps) => {
   return (
@@ -19,7 +19,7 @@ const Section = ({ sectionTitle, children, ...props }: SectionProps) => {
       </div>
       <div className="mx-auto max-w-5xl px-8 lg:px-0">{children}</div>
     </section>
-  );
-};
+  )
+}
 
-export default Section;
+export default Section

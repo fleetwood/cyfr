@@ -3,6 +3,7 @@ import CreatePost from "../components/containers/Post/CreatePost"
 import MainPagePostListItem from "../components/containers/Post/MainPagePostListItem"
 import { ToastContext } from "../components/context/ToastContextProvider"
 import MainLayout from "../components/layouts/MainLayout"
+import { CyfrLogo } from "../components/ui/icons"
 import usePostsApi from "../hooks/usePostsApi"
 
 const Home = () => {
@@ -17,8 +18,13 @@ const Home = () => {
     invalidatePosts()
   }
 
+  const CyfrHome = 
+    <div className="flex">
+      <CyfrLogo className="animate-pulse text-primary w-[3.75rem] mt-2" /><div>Cyfr</div>
+    </div>
+
   return (
-    <MainLayout sectionTitle="Cyfr" subTitle="The Creative Site">
+    <MainLayout sectionTitle={CyfrHome} subTitle="The Creative Site">
 
       <button className="btn btn-secondary p4 rounded-lg" onClick={() => notify({message: 'Testig notifs'})}>Notify</button>
       <label htmlFor={createPostModal} className="btn">New Post</label>

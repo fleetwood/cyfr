@@ -49,6 +49,7 @@
     "redis": "^4.5.0",
     "superjson": "^1.12.1",
     "swr": "^2.0.0",
+    "tailwind-scrollbar-hide": "^1.1.7",
     "theme-change": "^2.2.0",
     "ts-node": "^10.9.1",
     "typeorm": "^0.3.11",

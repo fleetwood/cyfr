@@ -1,4 +1,6 @@
-import { ReactNode, useContext } from "react";
+import { Main } from "next/document";
+import { ReactNode, useContext, useRef, useState } from "react";
+import { log } from "../../utils/log";
 import Footer from "../containers/Footer";
 import LeftColumn from "../containers/LeftColumn";
 import Navbar from "../containers/Navbar";
@@ -7,14 +9,22 @@ import { ToastContext } from "../context/ToastContextProvider";
 import Section from "../ui/section";
 
 type MainLayoutProps = {
-  sectionTitle: string
+  sectionTitle: string | ReactNode
   pageTitle?: string | null
   subTitle?: string | null
   children?: ReactNode
 };
 
 const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
+  const [scrollActive, setScrollActive] = useState(false);
   const {toasts} = useContext(ToastContext)
+  const mainRef = useRef<HTMLElement>(null)
+
+  const handleScroll = (e:any) => {
+    const position = mainRef?.current?.scrollTop
+    setScrollActive(current => position && position > 120 || false)
+  }
+
   return (
     <div className="grad-1">
       <div className="grad-2">
@@ -26,9 +36,11 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
               </div>
               <main
                 role="main"
-                className="w-full h-screen flex-grow m-0 overflow-auto"
+                className="w-full h-screen flex-grow m-0 overflow-auto scrollbar-hide"
+                onScroll={handleScroll}
+                ref={mainRef}
               >
-                <Navbar className="min-w-full" />
+                <Navbar className="min-w-full transition-all duration-200 ease-out" active={scrollActive} />
 
                 <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
                   {toasts.map((toast) => toast.toast)}

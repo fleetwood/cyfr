@@ -1,19 +1,25 @@
-import { GearIcon, HouseIcon, UserIcon } from "../ui/icons";
-import ShrinkableIconLink from "../ui/shrinkableIconLink";
+import { useEffect, useState } from "react";
 import {
-  useCyfrUserContext,
+  useCyfrUserContext
 } from "../context/CyfrUserProvider";
-import { useContext } from "react";
-import { ToastContext } from "../context/ToastContextProvider";
 import Avatar from "../ui/avatar";
+import { CyfrLogo, HouseIcon, UserIcon } from "../ui/icons";
+import ShrinkableIconLink from "../ui/shrinkableIconLink";
+import ShrinkableLink from "../ui/shrinkableLink";
 
 type NavbarProps = {
-  className?: string;
-  iconClassName?: string;
+  className?: string
+  iconClassName?: string
+  active: boolean
 };
 
-const Navbar = ({ className, iconClassName }: NavbarProps) => {
-  const { cyfrUser } = useCyfrUserContext();
+const Navbar = ({ className, iconClassName, active }: NavbarProps) => {
+  const { cyfrUser } = useCyfrUserContext()
+  const [navActive, setNavActive] = useState(false);
+
+  useEffect(() => {
+    setNavActive(active)
+  }, [active])
 
   return (
     <>
@@ -22,10 +28,21 @@ const Navbar = ({ className, iconClassName }: NavbarProps) => {
           ${className} 
           sticky top-0 
           bg-secondary 
-          flex flex-col 
-          z-40`}
+          flex 
+          z-40
+          ${navActive ? 'shadow-lg shadow-black' : ''}
+          `}
       >
-        <div className={`space-x-6 flex justify-end`}>
+        <div className="flex justify-start">
+          <ShrinkableLink
+            href="/"
+            label="Cyfr"
+            className={`ml-1 text-primary transition-all duration-200 ease-linear ${active ? 'mt-0' : '-mt-20'}`}
+            >
+            <CyfrLogo size="sm" className="text-primary" />
+          </ShrinkableLink>
+        </div>
+        <div className={`space-x-6 flex w-full justify-end`}>
           <ShrinkableIconLink
             href="/"
             label="Home"
