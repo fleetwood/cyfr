@@ -54,7 +54,13 @@ const Navbar = ({ className, iconClassName, active }: NavbarProps) => {
               href={"/account"}
               // @ts-ignore
               label={cyfrUser.name}
-              icon={<Avatar user={cyfrUser} sz="wee" />}
+              icon={
+                <div className="avatar">
+                  <div className={`w-6 mask mask-squircle`}>
+                      <img src={cyfrUser.image!} />
+                  </div>
+                </div>
+              }
               className={iconClassName}
               dir='left'
             />

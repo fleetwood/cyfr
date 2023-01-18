@@ -1,5 +1,5 @@
 import { stringify } from "querystring";
-import React from "react";
+import React, { useContext } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import UserDetailPostItem from "../../components/containers/Post/UserDetailPostItem";
 import UserDetailFan from "../../components/containers/User/UserDetailFan";
@@ -12,6 +12,7 @@ import useCyfrUser from "../../hooks/useCyfrUser";
 import { UserDetail, Users } from "../../prisma/users";
 import { sendApi } from "../../utils/api";
 import { log, todo } from "../../utils/log";
+import { ToastContext } from "../../components/context/ToastContextProvider";
 
 export async function getServerSideProps(context: any) {
   const userId = context.params.id;
@@ -29,7 +30,8 @@ type UserDetailProps = {
 };
 
 const UserDetail = ({ user }: UserDetailProps) => {
-  const {cyfrUser }= useCyfrUser()
+  const {cyfrUser, invalidateUser }= useCyfrUser()
+  const {notify} = useContext(ToastContext)
 
   const followUser = async () => {
     todo('Toast results and Invalidate user')
@@ -44,7 +46,11 @@ const UserDetail = ({ user }: UserDetailProps) => {
     })
     
     if (follow) {
-      alert(JSON.stringify(follow))
+      notify({
+        message: `You are now following ${user.name}!`,
+        type: 'success'
+      })
+      invalidateUser()
     }
   }
   
@@ -100,10 +106,10 @@ const UserDetail = ({ user }: UserDetailProps) => {
                   <strong>Posts:</strong> {user.posts.length}
                 </div>
                 <div>
-                  <strong>Follows:</strong> {user.follower.length}
+                  <strong>Followers:</strong> {user.following.length}
                 </div>
                 <div>
-                  <strong>Followers:</strong> {user.following.length}
+                  <strong>Follows:</strong> {user.follower.length}
                 </div>
                 <div>
                   <strong>Fans:</strong> {user.fans.length}
@@ -167,15 +173,15 @@ const UserDetail = ({ user }: UserDetailProps) => {
             <TabPanel>
               <div className="p-2 md:p-4 rounded-lg text-base-content flex flex-col sm:flex-row justify-evenly">
                 <div>
-                  <h2>Following</h2>
-                  {user.follower.map((follow) => (
-                    <UserDetailFollow following={follow} key={follow.id} />
-                  ))}
-                </div>
-                <div>
                   <h2>Followers</h2>
                   {user.following.map((follow) => (
                     <UserDetailFollow follower={follow} key={follow.id} />
+                  ))}
+                </div>
+                <div>
+                  <h2>Following</h2>
+                  {user.follower.map((follow) => (
+                    <UserDetailFollow following={follow} key={follow.id} />
                   ))}
                 </div>
               </div>
