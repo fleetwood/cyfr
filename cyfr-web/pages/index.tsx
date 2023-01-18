@@ -1,57 +1,46 @@
-import { Post } from ".prisma/client";
-import type { GetServerSidePropsContext, NextPage } from "next";
-import { useEffect, useState } from "react";
-import PageStatus from "../components/containers/PageStatus";
-import { useCyfrUser } from "../hooks/useCyfrUser";
-import MainLayout from "../components/layouts/MainLayout";
-import { useSession } from "../lib/next-auth-react-query";
-import { Posts } from "../prisma/posts";
-import { ResponseResult, ResponseError } from "../types/Response";
-import { __prod__ } from "../utils/constants";
-import { jsonify } from "../utils/log";
+import { useContext } from "react"
+import CreatePost from "../components/containers/Post/CreatePost"
+import MainPagePostListItem from "../components/containers/Post/MainPagePostListItem"
+import { ToastContext } from "../components/context/ToastContextProvider"
+import MainLayout from "../components/layouts/MainLayout"
+import { CyfrLogo } from "../components/ui/icons"
+import usePostsApi from "../hooks/usePostsApi"
 
-type HomePageProps = ResponseResult<Post[]>;
+const Home = () => {
+  const { posts, error, invalidatePosts } = usePostsApi()
+  const {notify} = useContext(ToastContext)
+  const createPostModal = 'createPostModal'
 
-const Home = (props: HomePageProps) => {
-  const [posts, setPosts] = useState<Post[]>();
-  const [error, setError] = useState<ResponseError>();
-  const [session] = useSession({required:false});
-  const [cyfrUser,setCyfrUser]=useCyfrUser(null)
+  const onCreate = () => {
+    const modal = document.getElementById(createPostModal)
+    // @ts-ignore
+    modal!.checked = false
+    invalidatePosts()
+  }
 
-  useEffect(() => {
-    if (props.result) {
-      setPosts(props.result);
-    }
-    if (props.error) {
-      setError(props.error);
-    }
-  }, []);
+  const CyfrHome = 
+    <div className="flex">
+      <CyfrLogo className="animate-pulse text-primary w-[3.75rem] mt-2" /><div>Cyfr</div>
+    </div>
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <MainLayout
-        className="scroll-smooth"
-        sectionTitle="Cyfr"
-        subTitle="The Writer's Site"
-      >
-        {cyfrUser && <>
-          {cyfrUser.name || 'Cyfr User has no name'}
-        </>}
-        <PageStatus watch={posts} error={error} />
-        {posts && posts.map((post) => <div>{post.content}</div>)}
-        {session && <pre>{jsonify(session)}</pre>}
-      </MainLayout>
-    </div>
-  );
-};
+    <MainLayout sectionTitle={CyfrHome} subTitle="The Creative Site">
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const posts = await Posts.all({ take: 25 });
-  return {
-    props: {
-      ...posts,
-    },
-  };
+      <button className="btn btn-secondary p4 rounded-lg" onClick={() => notify({message: 'Testig notifs'})}>Notify</button>
+      <label htmlFor={createPostModal} className="btn">New Post</label>
+      {posts && posts.map((post) => 
+        <MainPagePostListItem post={post} key={post.id} />
+      )}
+
+      <input type="checkbox" id={createPostModal} className="modal-toggle" />
+      <div className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box bg-opacity-0 shadow-none">
+          <label htmlFor={createPostModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+          <CreatePost onCreate={onCreate} />
+        </div>
+      </div>
+    </MainLayout>
+  )
 }
 
-export default Home;
+export default Home

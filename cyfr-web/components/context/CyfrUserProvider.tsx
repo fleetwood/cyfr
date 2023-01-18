@@ -1,21 +1,16 @@
-import * as React from "react";
-import { useCyfrUser, UseCyfrUser } from "./../../hooks/useCyfrUser";
-import { createGenericContext } from "./createGenericContext";
+import React, { createContext, ReactNode, useContext } from "react"
+import useCyfrUser, { useCyfrUserHookType } from "../../hooks/useCyfrUser"
 
-interface Props {children: React.ReactNode;}
+type CyfrUserProviderProps = {
+  children?: ReactNode
+}
 
-// Generate context
-const [useCyfrUserContext, CyfrUserContextProvider] = createGenericContext<UseCyfrUser>();
+export const CyfrUserContext = createContext({} as useCyfrUserHookType)
+export const useCyfrUserContext = () => useContext(CyfrUserContext)
 
-// Generate provider
-const CyfrUserProvider = ({ children }: Props) => {
-  const [cyfrUser, setCyfrUser] = useCyfrUser(null);
-
-  return (
-    <CyfrUserContextProvider value={[cyfrUser, setCyfrUser]}>
+const CyfrUserProvider = ({ children }: CyfrUserProviderProps) => 
+    <CyfrUserContext.Provider value={useCyfrUser()}>
       {children}
-    </CyfrUserContextProvider>
-  );
-};
+    </CyfrUserContext.Provider>
 
-export { useCyfrUserContext, CyfrUserProvider };
+export default CyfrUserProvider

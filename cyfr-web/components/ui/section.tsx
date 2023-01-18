@@ -1,21 +1,25 @@
-import { ReactNode } from "react";
-import SectionTitle from "./sectionTitle";
+import { ReactNode } from "react"
+import SectionTitle from "./sectionTitle"
 
 type SectionProps = {
-  sectionTitle: String;
-  subTitle?: String;
-  children: ReactNode;
-};
+  sectionTitle: string | ReactNode
+  subTitle?: string | null
+  className?: string | null
+  children: ReactNode
+}
 
-const Section = ({ sectionTitle, subTitle, children }: SectionProps) => {
+const Section = ({ sectionTitle, children, ...props }: SectionProps) => {
   return (
-    <section>
+    <section className={props.className || ""}>
       <div className="col-span-3 mx-auto max-w-5xl py-8 md:py-16">
-        <SectionTitle title={sectionTitle} subTitle={subTitle} />
+        <SectionTitle
+          title={sectionTitle}
+          subTitle={props.subTitle ? props.subTitle : undefined}
+        />
       </div>
       <div className="mx-auto max-w-5xl px-8 lg:px-0">{children}</div>
     </section>
-  );
-};
+  )
+}
 
-export default Section;
+export default Section

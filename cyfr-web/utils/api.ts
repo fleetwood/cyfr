@@ -1,12 +1,13 @@
 import { __host__, __port__ } from "./constants";
-import useSWR from "swr";
 import { jsonify, log } from "./log";
+import axios from "axios";
 
-const apiUrl = (url: string) => `http://${__host__}:${__port__}/api/${url}`;
+export const apiUrl = (url: string) =>
+  `http://${__host__}:${__port__}/api/${url}`;
 
-const postData = (data: any) => {
+const postData = (body: any) => {
   return {
-    body: JSON.stringify(data),
+    body,
     headers: {
       "Content-Type": "application/json",
     },
@@ -17,17 +18,16 @@ const postData = (data: any) => {
 const fetcher = async (url: any) =>
   fetch(url).then((results) => results.json());
 
-export const getApi = async (url: string, invalidate = false) => {
-  return await (await fetch(apiUrl(url))).json();
+export const getApi = async (url: string): Promise<any> => {
+  return parseResponse((await axios.get(apiUrl(url))).data);
 };
 
-export const sendApi = async (url: string, data: any, invalidate = false) => {
-  const sendTo = apiUrl(url),
-    post = postData(data);
-  log("sendApi", sendTo, post);
-  return await (await fetch(sendTo, post)).json();
+export const sendApi = async (url: string, body: any) => {
+  const sendTo = apiUrl(url);
+  const post = postData(body)
+  return axios.post(sendTo, post);
 };
 
-export const cleanResult = (result: any) => {
-  return { result: JSON.parse(jsonify(result)) };
+export const parseResponse = (response: any) => {
+  return JSON.parse(JSON.stringify(response));
 };

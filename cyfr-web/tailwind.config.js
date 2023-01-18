@@ -6,14 +6,18 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        serif: ['Ibarra', 'serif'],
+      },
+    },
   },
   daisyui: {
     styled: true,
     base: true,
     utils: true,
     prefix: "",
-    darkTheme: "fantasy",
+    darkTheme: "emerald",
     themes: [
       "light",
       "dark",
@@ -46,5 +50,9 @@ module.exports = {
       "winter"
     ],
   },
-  plugins: [require("daisyui")],
+  plugins: [
+    require("daisyui"),
+    require('@tailwindcss/forms'),
+    require('tailwind-scrollbar-hide'),
+  ],
 }

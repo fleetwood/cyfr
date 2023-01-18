@@ -1,6 +1,7 @@
 import { __prod__ } from "./constants";
+import superjson from 'superjson';
 
-export const jsonify = (obj: any) => JSON.stringify(obj, null, 2);
+export const jsonify = (obj: any) => superjson.stringify(obj);
 
 export const log = (message?: any, ...optionalParams: any[]) => {
   if (!__prod__) {
