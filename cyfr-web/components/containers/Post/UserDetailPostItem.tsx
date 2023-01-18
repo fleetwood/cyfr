@@ -1,8 +1,8 @@
-import { Post } from "@prisma/client";
 import Link from "next/link";
 import { PostWithDetails } from "../../../prisma/posts";
 import { timeDifference } from "../../../utils/helpers";
 import PostItemFooter from "./PostItemFooter";
+import ReactHtmlParser from "react-html-parser";
 
 type UserPostDetailProps = {
   post: PostWithDetails
@@ -23,7 +23,7 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) => (
       </div>
 
       <div className="bg-base-300 bg-opacity-50 p-4 rounded-lg text-base-content">
-        {post.content}
+        {ReactHtmlParser(post.content)}
       </div>
 
       <div

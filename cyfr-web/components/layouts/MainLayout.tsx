@@ -1,6 +1,4 @@
-import { Main } from "next/document";
 import { ReactNode, useContext, useRef, useState } from "react";
-import { log } from "../../utils/log";
 import Footer from "../containers/Footer";
 import LeftColumn from "../containers/LeftColumn";
 import Navbar from "../containers/Navbar";
@@ -30,13 +28,13 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
       <div className="grad-2">
         <div className="grad-3">
           <div className="grad-4">
-            <div className="w-full min-h-screen flex flex-col sm:flex-row flex-wrap sm:flex-nowrap flex-grow">
+            <div className="w-full min-h-screen max-h-screen flex flex-col sm:flex-row flex-wrap sm:flex-nowrap flex-grow">
               <div className="w-fixed w-full flex-shrink flex-grow-0">
                 <LeftColumn />
               </div>
               <main
                 role="main"
-                className="w-full h-screen flex-grow m-0 overflow-auto scrollbar-hide"
+                className="w-full min-h-screen flex-grow m-0 overflow-auto scrollbar-hide relative"
                 onScroll={handleScroll}
                 ref={mainRef}
               >
@@ -47,7 +45,7 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
                 </div>
                 
                 <Section
-                  className="box-border snap-y"
+                  className="box-border snap-y min-h-full"
                   sectionTitle={sectionTitle}
                   subTitle={props.subTitle}
                 >
