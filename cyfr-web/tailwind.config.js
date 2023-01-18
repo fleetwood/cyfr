@@ -8,10 +8,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ['Ibarra', 'serif'],
-      },
+      'ibarra': ['Ibarra', 'serif'],
+      'ibarra-italic': ['IbarraItalic', 'serif'],
     },
   },
+},
   daisyui: {
     styled: true,
     base: true,
