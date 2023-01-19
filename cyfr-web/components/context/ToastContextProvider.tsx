@@ -1,6 +1,5 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react"
 import { uuid } from "../../utils/helpers"
-import { log, logError, todo } from "../../utils/log"
 import Toasty from "../ui/toasty"
 
 type ToastProviderProps = {
@@ -28,13 +27,7 @@ export const ToastContext = createContext({} as ToastProviderType)
 const ToastProvider = ({ children }: ToastProviderProps) => {
   const [toasts, setToasts] = useState<Array<ToastyElement>>([])
 
-  const toastCrumb = () => {
-    todo('remove based on timestamp...')
-    setToasts((current) => current.length>0 ? [...current.splice(1,current.length-1)] : [])
-  }
-  
   const slice = (toastId: string) => {
-    todo('change class, and sleep this so it will transition cleanly')
     setToasts((current) =>
       current.filter((toast) => toast.toastId !== toastId)
     )
@@ -55,11 +48,6 @@ const ToastProvider = ({ children }: ToastProviderProps) => {
     }
     setToasts([...toasts, toast])
   }
-
-  useEffect(() => {
-    const sliceToast = setInterval(toastCrumb, 3000)
-    return () => clearInterval(sliceToast)
-  }, [])
 
   return (
     <ToastContext.Provider value={{ toasts, notify, slice }}>

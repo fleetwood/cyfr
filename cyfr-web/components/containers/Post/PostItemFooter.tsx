@@ -6,6 +6,8 @@ import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import AvatarList from "../../ui/avatarList";
 import { HeartIcon, ShareIcon, ReplyIcon } from "../../ui/icons";
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
+import { useContext } from "react";
+import { ToastContext } from "../../context/ToastContextProvider";
 
 type PostItemFooterProps = {
   post: PostWithDetails;
@@ -13,7 +15,25 @@ type PostItemFooterProps = {
 
 const PostItemFooter = ({ post }: PostItemFooterProps) => {
   const { cyfrUser } = useCyfrUserContext();
-  const { share, like, comment } = usePostsApi();
+  const { share, like, comment, invalidatePosts } = usePostsApi();
+  const {notify} = useContext(ToastContext)
+
+  const handleLike = async () => {
+    if (!cyfrUser) {
+      notify({
+        type: "warning",
+        message: "You need to login to like a post",
+      })
+    }
+
+    const liked = await like({ postid: post.id, userid: cyfrUser!.id })
+    if (liked) {
+      notify({ type: "success", message: 'You liked this post' })
+      invalidatePosts()
+      return
+    }
+    notify({ type: "warning", message: "Well that didn't work..." })
+  }
 
   return  (
     <>
@@ -25,10 +45,10 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         iconClassName="text-primary"
         labelClassName="text-primary"
         label={`Likes (${post.likes.length})`}
-        onClick={() => like({postid: post.id, userid: cyfrUser.id})}
+        onClick={() => handleLike()}
         />
       }
-      <AvatarList users={post.likes} />
+      <AvatarList users={post.likes} sz="wee" />
       </div>
     <div className="font-semibold uppercase">
       {cyfrUser &&
@@ -41,7 +61,7 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         onClick={() => share({postid: post.id, userid: cyfrUser.id})}
         />
       }
-      <AvatarList users={post.likes} />
+      <AvatarList users={post.likes} sz="wee" />
     </div>
     <div className="font-semibold uppercase">
       {cyfrUser &&
