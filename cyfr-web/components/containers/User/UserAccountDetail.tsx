@@ -1,21 +1,24 @@
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs'
-import useUserDetailApi from '../../../hooks/useUserDetailApi'
-import { UserWithPostsLikes } from '../../../prisma/users'
-import Avatar from '../../ui/avatar'
-import UserDetailPostItem from '../Post/UserDetailPostItem'
-import UserDetailFan from './UserDetailFan'
-import UserDetailFollow from './UserDetailFollow'
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
+import useUserDetailApi from "../../../hooks/useUserDetailApi"
+import { UserWithPostsLikes } from "../../../prisma/users"
+import Avatar from "../../ui/avatar"
+import UserDetailPostItem from "../Post/UserDetailPostItem"
+import UserDetailFan from "./UserDetailFan"
+import UserDetailFollow from "./UserDetailFollow"
+import JsonBlock from "../../ui/jsonBlock"
 
 type UserAccountDetailProps = {
-    currentUser: UserWithPostsLikes
+  currentUser: UserWithPostsLikes
 }
 
-const UserAccountDetail = ({currentUser}:UserAccountDetailProps) => {
-    const {userDetail, error, invalidate} = useUserDetailApi(currentUser.id)
+const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
+  const { userDetail, error, invalidate } = useUserDetailApi(currentUser.id)
 
   return (
-    <div className=''>
-        {userDetail && <>
+    <div className="">
+      <JsonBlock data={currentUser} />
+      {userDetail && (
+        <>
           <div
             className="
             grid grid-cols-9
@@ -31,13 +34,15 @@ const UserAccountDetail = ({currentUser}:UserAccountDetailProps) => {
               <Avatar user={userDetail} sz="lg" />
             </div>
             <div className="col-span-9">
-              <div className="
+              <div
+                className="
                 flex items-start
                 flex-col
                 md:flex-row
                 justify-between
                 h-[50%]
-                ">
+                "
+              >
                 <div>
                   <strong>Posts:</strong> {userDetail.posts.length}
                 </div>
@@ -109,7 +114,8 @@ const UserAccountDetail = ({currentUser}:UserAccountDetailProps) => {
               </div>
             </TabPanel>
           </Tabs>
-        </>}
+        </>
+      )}
     </div>
   )
 }

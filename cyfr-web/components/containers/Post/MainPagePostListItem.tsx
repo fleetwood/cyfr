@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { timeDifference } from "../../../utils/helpers";
 import { PostWithDetails } from "./../../../prisma/posts";
 import Avatar from "./../../ui/avatar";
@@ -29,15 +28,11 @@ const MainPagePostListItem = ({ post }: MainPagePostProps) => (
       </div>
     </div>
     <div>
-      <div className="">
-        <Link href={`/post/${post.id}`}>
-          <h2 className="post-title">{post.title}</h2>
-          {post.subtitle && <h3 className="post-title">{post.subtitle}</h3>}
-        </Link>
-      </div>
+      {post.content && 
       <div className="bg-base-300 bg-opacity-50 p-4 rounded-lg text-base-content">
         {ReactHtmlParser(post.content)}
       </div>
+      }
     </div>
     <div
       className="
