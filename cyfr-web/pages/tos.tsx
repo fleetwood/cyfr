@@ -1,11 +1,11 @@
-import MainLayout from "../components/layouts/MainLayout";
+import StaticLayout from "../components/layouts/StaticLayout";
 
 const tos = () => {
   return (
-    <MainLayout pageTitle="Terms of Service" sectionTitle="Terms of Service">
+    <StaticLayout pageTitle="Terms of Service" sectionTitle="Terms of Service" subTitle="Egregious but Necessary Legal Jargon. Meh.">
       <>
-        <div className="title">
-          <h1>TERMS AND CONDITIONS</h1>
+        <div>
+          <h3 className="text-base-content">TERMS AND CONDITIONS AAAAy!!!</h3>
           <p>Last updated January 22, 2023</p>
           <div>
             <p>
@@ -33,12 +33,12 @@ const tos = () => {
               Supplemental terms and conditions or documents that may be posted
               on the Site from time to time are hereby expressly incorporated
               herein by reference. We reserve the right, in our sole discretion,
-              to make changes or modifications to these{" "}
+              to make changes or modifications to these bla bla bla bla bla bla
             </p>
           </div>
         </div>
       </>
-    </MainLayout>
+    </StaticLayout>
   );
 };
 

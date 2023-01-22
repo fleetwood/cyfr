@@ -1,34 +1,27 @@
-import { useContext } from "react";
-import CreatePost from "../components/containers/Post/CreatePost";
-import MainPagePostListItem from "../components/containers/Post/MainPagePostListItem";
-import { ToastContext } from "../components/context/ToastContextProvider";
-import MainLayout from "../components/layouts/MainLayout";
-import { CyfrLogo } from "../components/ui/icons";
-import usePostsApi from "../hooks/usePostsApi";
+import StaticLayout from "../components/layouts/StaticLayout";
 
 const Home = () => {
   return (
-    <MainLayout sectionTitle="Privacy Policy" subTitle="The Creative Site">
-      <p>
-        We think privacy is important. Economists (and pundits) began reporting
-        back in 2014 that{" "}
-        <a href="https://www.wired.com/insights/2014/07/data-new-oil-digital-economy/">
-          data passed oil
-        </a>{" "}
-        as the most valuable commodity on the planet.
+    <StaticLayout sectionTitle="Privacy Policy" subTitle="We think privacy is important">
+      
+      <p className="my-2">
+        Economists (and pundits) began reporting back in 2014 that <a className="text-primary underline" href="https://www.wired.com/insights/2014/07/data-new-oil-digital-economy/"> data passed oil </a> as the most valuable commodity on the planet.
       </p>
 
-      <p>
-        Unlike{" "}
-        <a href="https://www.forbes.com/sites/forbestechcouncil/2019/11/15/data-is-the-new-oil-and-thats-a-good-thing/?sh=5ac7010f7304">
-          Forbes
-        </a>
-        , we don't think that's a good thing.
+      <p className="my-2">
+        Unlike <a className="text-primary underline" href="https://www.forbes.com/sites/forbestechcouncil/2019/11/15/data-is-the-new-oil-and-thats-a-good-thing/?sh=5ac7010f7304">Forbes</a>, we don't think that's a good thing.
       </p>
 
-      <p>We will always do our best to keep your information private.</p>
+      <p className="my-2">
+        <strong>We don't share your information with anybody.</strong> We don't sell your data to anybody. We don't use your data to advertise anything.
+      </p>
 
-      <div>
+      <p className="my-2">
+         We will always do our best to keep your information private.
+      </p>
+
+      <div className="p-4 text-sm">
+        <h3 className="text-base-content my-2">The following is an excerpt.</h3>
         <p>
           <strong>
             Transparency and informing the public about how their data are being
@@ -281,7 +274,7 @@ const Home = () => {
         <p>Email:</p>
         <p>Address</p>
       </div>
-    </MainLayout>
+    </StaticLayout>
   );
 };
 
