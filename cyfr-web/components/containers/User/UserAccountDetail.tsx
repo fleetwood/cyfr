@@ -16,7 +16,6 @@ const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
 
   return (
     <div className="">
-      <JsonBlock data={currentUser} />
       {userDetail && (
         <>
           <div
@@ -61,7 +60,7 @@ const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
               </div>
             </div>
           </div>
-          <Tabs defaultIndex={0} className="border border-accent">
+          <Tabs defaultIndex={0}>
             <TabList className="flex justify-around">
               <Tab>
                 <button className="btn btn-primary">Posts</button>

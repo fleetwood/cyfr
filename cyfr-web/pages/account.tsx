@@ -41,8 +41,7 @@ const Account = ({user}:AccountProps) => {
             </div>
           }
           {currentPane === 'User' && cyfrUser && 
-            <div className="w-full">
-              <h2 className="subtitle">CyfrUser</h2>
+            <div className="w-full mt-8">
               <UserAccountDetail currentUser={cyfrUser} />
             </div>
           }

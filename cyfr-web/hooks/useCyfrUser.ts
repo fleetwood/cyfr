@@ -23,7 +23,7 @@ const useCyfrUser = ():useCyfrUserHookType => {
 
     const getCyfrUser = async () => {
         const me = await getApi('/me')
-        setRefetchInterval((c) => me ? 1000 : __cyfr_refetch__)
+        setRefetchInterval((c) => me ? __cyfr_refetch__ : 1000)
         if (me.result) {
             setCyfrUser((user) => me.result)
         }
