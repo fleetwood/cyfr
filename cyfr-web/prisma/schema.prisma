@@ -40,14 +40,12 @@ model Post {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
   visible     Boolean  @default(true)
-  title       String   @db.VarChar(255)
-  subtitle    String?  @db.VarChar(255)
-  headerImage String?  @db.VarChar(255)
-  content     String
+  content     String?
+  shareId     String?
+  share       Post?    @relation("post_shares", fields: [shareId], references: [id])
+  post_shares Post[]   @relation("post_shares")
   authorid    String
   author      User     @relation("user_posts", fields: [authorid], references: [id])
-  Post_A      Post[]   @relation("post_thread")
-  Post_B      Post[]   @relation("post_thread")
   likes       User[]   @relation("user_likes")
 }
 
