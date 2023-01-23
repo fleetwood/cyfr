@@ -1,15 +1,16 @@
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
+import { TabPanel } from "react-tabs"
 import useUserDetailApi from "../../../hooks/useUserDetailApi"
 import { UserWithPostsLikes } from "../../../prisma/users"
+import Tabby from "../../ui/Tabby"
 import Avatar from "../../ui/avatar"
 import UserDetailPostItem from "../Post/UserDetailPostItem"
-import UserDetailFan from "./UserDetailFan"
 import UserDetailFollow from "./UserDetailFollow"
-import JsonBlock from "../../ui/jsonBlock"
+import UserDetailFan from "./UserDetailFan"
 
 type UserAccountDetailProps = {
   currentUser: UserWithPostsLikes
 }
+
 
 const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
   const { userDetail, error, invalidate } = useUserDetailApi(currentUser.id)
@@ -60,28 +61,13 @@ const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
               </div>
             </div>
           </div>
-          <Tabs defaultIndex={0}>
-            <TabList className="flex justify-around">
-              <Tab>
-                <button className="btn btn-primary">Posts</button>
-              </Tab>
-              <Tab>
-                <button className="btn btn-primary">Follows</button>
-              </Tab>
-              <Tab>
-                <button className="btn btn-primary">Fans</button>
-              </Tab>
-            </TabList>
-
-            <TabPanel>
-              <div className="p-2 md:p-4 min-w-fit rounded-lg text-base-content">
+          <Tabby>
+            <TabPanel title="Posts" className="p-2 md:p-4 min-w-fit">
                 {userDetail.posts.map((post) => (
                   <UserDetailPostItem post={post} key={post.id} />
                 ))}
-              </div>
             </TabPanel>
-            <TabPanel>
-              <div className="p-2 md:p-4 min-w-fit rounded-lg text-base-content flex flex-col sm:flex-row justify-evenly">
+            <TabPanel title="Follows" className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Following</h2>
                   {userDetail.follower.map((follow) => (
@@ -94,10 +80,8 @@ const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
                     <UserDetailFollow follower={follow} key={follow.id} />
                   ))}
                 </div>
-              </div>
             </TabPanel>
-            <TabPanel>
-              <div className="p-2 md:p-4 min-w-fit rounded-lg text-base-content flex flex-col sm:flex-row justify-evenly">
+            <TabPanel title="Fans" className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Fans</h2>
                   {userDetail.fans.map((fan) => (
@@ -110,9 +94,8 @@ const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
                     <UserDetailFan fan={fan.fanOf} key={fan.id} />
                   ))}
                 </div>
-              </div>
             </TabPanel>
-          </Tabs>
+          </Tabby>
         </>
       )}
     </div>

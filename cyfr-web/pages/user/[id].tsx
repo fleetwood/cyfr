@@ -13,6 +13,7 @@ import { UserDetail, Users } from "../../prisma/users";
 import { sendApi } from "../../utils/api";
 import { log, todo } from "../../utils/log";
 import { ToastContext } from "../../components/context/ToastContextProvider";
+import Tabby from "../../components/ui/Tabby";
 
 export async function getServerSideProps(context: any) {
   const userId = context.params.id;
@@ -150,28 +151,13 @@ const UserDetail = ({ user }: UserDetailProps) => {
               </div>
             </div>
           </div>
-          <Tabs defaultIndex={0}>
-            <TabList className="flex justify-around">
-              <Tab>
-                <button className="btn btn-primary">Posts</button>
-              </Tab>
-              <Tab>
-                <button className="btn btn-primary">Follows</button>
-              </Tab>
-              <Tab>
-                <button className="btn btn-primary">Fans</button>
-              </Tab>
-            </TabList>
-
-            <TabPanel>
-              <div className="p-2 md:p-4 rounded-lg text-base-content">
+          <Tabby defaultIndex={0}>
+            <TabPanel title="Posts">
                 {user.posts.map((post) => (
                   <UserDetailPostItem post={post} key={post.id} />
                 ))}
-              </div>
             </TabPanel>
-            <TabPanel>
-              <div className="p-2 md:p-4 rounded-lg text-base-content flex flex-col sm:flex-row justify-evenly">
+            <TabPanel title="Follows" className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Followers</h2>
                   {user.following.map((follow) => (
@@ -184,10 +170,8 @@ const UserDetail = ({ user }: UserDetailProps) => {
                     <UserDetailFollow following={follow} key={follow.id} />
                   ))}
                 </div>
-              </div>
             </TabPanel>
-            <TabPanel>
-              <div className="p-2 md:p-4 rounded-lg text-base-content flex flex-col sm:flex-row justify-evenly">
+            <TabPanel title="fans" className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Fans</h2>
                   {user.fans.map((fan) => (
@@ -200,9 +184,8 @@ const UserDetail = ({ user }: UserDetailProps) => {
                     <UserDetailFan fan={fan.fanOf} key={fan.id} />
                   ))}
                 </div>
-              </div>
             </TabPanel>
-          </Tabs>
+          </Tabby>
         </div>
       )}
     </MainLayout>
