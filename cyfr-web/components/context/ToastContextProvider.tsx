@@ -18,7 +18,7 @@ type ToastyElement = {
 }
 
 export type ToastyNotif = {
-  message: string
+  message: ReactNode|string
   type?: "info" | "success" | "warning"
 }
 

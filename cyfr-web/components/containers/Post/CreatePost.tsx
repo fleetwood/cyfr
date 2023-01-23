@@ -1,50 +1,44 @@
-import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
-import useCyfrUser from "../../../hooks/useCyfrUser";
-import { sendApi } from "../../../utils/api";
-import { log } from "../../../utils/log";
-import TailwindInput from "../../forms/TailwindInput";
-import TailwindTextarea from "../../forms/TailwindTextarea";
+import { FormEvent, useContext, useEffect, useState } from "react"
+import useCyfrUser from "../../../hooks/useCyfrUser"
+import { sendApi } from "../../../utils/api"
+import { log } from "../../../utils/log"
+import TailwindTextarea from "../../forms/TailwindTextarea"
+import { ToastContext } from "../../context/ToastContextProvider"
+import { LoggedIn } from "../../ui/toasty"
 
 type CreatePostProps = {
-  onCreate: () => void;
-};
+  onCreate: () => void
+}
 
 const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
-  const { cyfrUser } = useCyfrUser();
-  const [title, setTitle] = useState<string | null>(null);
-  const [subtitle, setSubtitle] = useState<string | null>(null);
-  const [content, setContent] = useState<string | null>(null);
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const { cyfrUser } = useCyfrUser()
+  const { notify } = useContext(ToastContext)
+  const [content, setContent] = useState<string | null>(null)
+  const [isDisabled, setIsDisabled] = useState<boolean>(true)
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (isDisabled) {
-      return;
+      return
     }
 
     const post = await sendApi("post/create", {
-      title,
-      subtitle,
       content,
-      headerImage: null,
       authorid: cyfrUser!.id,
-    });
+    })
     if (post) {
-      setTitle(null);
-      setSubtitle(null);
-      setContent(null);
-      onCreate();
+      setContent(null)
+      onCreate()
     } else {
-      log("Error creating post!");
+      log("Error creating post!")
     }
-  };
+  }
 
   useEffect(() => {
     const disabled =
-      !cyfrUser || !title || title.length < 1 || !content || content.length < 1;
-    setIsDisabled((current) => disabled);
-  }, [title, content]);
+      !cyfrUser || !content || content.length < 1
+    setIsDisabled((current) => disabled)
+  }, [content])
 
   return (
     <div
@@ -53,23 +47,9 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
       md:bg-blend-hard-light md:bg-opacity-80
       "
     >
+      {cyfrUser &&
       <div className="w-full mx-auto p-2 sm:p-6 lg:p-4">
-        {cyfrUser && (
           <form className=" flex flex-col" onSubmit={handleSubmit}>
-          <TailwindInput
-            label="Title"
-            type="text"
-            value={title}
-            setValue={setTitle}
-            inputClassName="text-base-content"
-          />
-          <TailwindInput
-            label="Subtitle"
-            type="text"
-            value={subtitle}
-            setValue={setSubtitle}
-            inputClassName="text-base-content"
-          />
           <TailwindTextarea
             label="What do you want to say?"
             value={content}
@@ -91,14 +71,9 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
             </button>
           </div>
         </form>
-        )}
-        {!cyfrUser &&
-          <>
-            <h2>You are not logged in</h2>
-            <p>But you can do so <Link href='/login'><button className="btn btn-secondary">here</button></Link> :)</p>
-          </>
-        }
       </div>
+      }
+      {!cyfrUser && <div className="w-full mx-auto p-2 sm:p-6 lg:p-4"><div className="bg-base-200 p-4 rounded-md text-base-content"><LoggedIn /></div></div>}
     </div>
 )}
-export default CreatePost;
+export default CreatePost

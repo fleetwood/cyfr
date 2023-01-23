@@ -14,6 +14,7 @@ import { UserDetail } from "../../prisma/types/user"
 import { Users } from "../../prisma/users"
 import { sendApi } from "../../utils/api"
 import { log, todo } from "../../utils/log"
+import { uuid } from "../../utils/helpers"
 
 export async function getServerSideProps(context: any) {
   const userId = context.params.id
@@ -152,12 +153,12 @@ const UserDetail = ({ user }: UserDetailProps) => {
             </div>
           </div>
           <Tabby defaultIndex={0}>
-            <TabPanel title="Posts">
+            <TabPanel title="Posts" key={uuid()}>
                 {user.posts.map((post) => (
                   <UserDetailPostItem post={post} key={post.id} />
                 ))}
             </TabPanel>
-            <TabPanel title="Follows" className="flex flex-col sm:flex-row justify-evenly">
+            <TabPanel title="Follows" key={uuid()} className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Followers</h2>
                   {user.following.map((follow) => (
@@ -171,7 +172,7 @@ const UserDetail = ({ user }: UserDetailProps) => {
                   ))}
                 </div>
             </TabPanel>
-            <TabPanel title="fans" className="flex flex-col sm:flex-row justify-evenly">
+            <TabPanel title="fans" key={uuid()} className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Fans</h2>
                   {user.fans.map((fan) => (

@@ -13,9 +13,9 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<Post>>
 ) {
   todo('Why is this posting req.body.body????')
-  const { title, subtitle, content, headerImage, authorid } = req.body.body
+  const { content, authorid } = req.body.body
   try {
-    const result = await Posts.create({title, content, subtitle, headerImage, authorid})
+    const result = await Posts.create({content, authorid})
     if (result) {
       res.status(200).json({ result })
     } else {

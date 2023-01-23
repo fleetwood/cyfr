@@ -7,6 +7,8 @@ import AvatarList from "../../ui/avatarList"
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
 import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import { PostWithAuthor } from "../../../prisma/types/post"
+import { useSession } from "../../../lib/next-auth-react-query"
+import { LoggedIn } from "../../ui/toasty"
 
 type ShareItemFooterProps = {
   sharedPost: Post & {
@@ -23,13 +25,19 @@ const ShareItemFooter = ({ sharedPost }: ShareItemFooterProps) => {
   const { notify } = useContext(ToastContext)
   const [shareAuthors, setShareAuthors] = useState<User[]>([])
 
-  const handleLike = async () => {
+  const isLoggedIn = () => {
     if (!cyfrUser) {
       notify({
         type: "warning",
-        message: "You need to login to like a post",
+        message: <LoggedIn />
       })
+      return false
     }
+    return true
+  }
+
+  const handleLike = async () => {
+    if (!isLoggedIn()) return
 
     const liked = await like({ postid: sharedPost.id, userid: cyfrUser!.id })
     if (liked) {
@@ -41,22 +49,14 @@ const ShareItemFooter = ({ sharedPost }: ShareItemFooterProps) => {
   }
 
   const handleComment = async () => {
-    notify({type: 'warning', message: 'Not implemented'})
-    return
-    // await comment({
-    //   postid: sharedPost.id,
-    //   userid: cyfrUser.id,
-    //   content: "Test",
-    // })
+    if (!isLoggedIn()) return
+    const commentModal = document.getElementById('commentPostModal')
+    // @ts-ignore
+    commentModal!.checked = true
   }
 
   const handleShare = async () => {
-    if (!cyfrUser) {
-      notify({
-        type: "warning",
-        message: "You need to login first...",
-      })
-    }
+    if (!isLoggedIn()) return
 
     const shared = await share({ postid: sharedPost.id, userid: cyfrUser!.id })
     if (shared) {

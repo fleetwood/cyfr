@@ -14,7 +14,7 @@ type TabbyProps = {
 }
 
 export const TabButton = ({ btn, onClick, active }: TabButtonProps) => (
-  <button className={`btn ${active ? "btn-secondary rounded-b-none" : "btn-primary -mt-1"}`} onClick={() => onClick(btn)}>
+  <button className={`w-full btn ${active ? "btn-secondary rounded-b-none" : "btn-primary -mt-1"}`} onClick={() => onClick(btn)}>
     {btn}
   </button>
 )
@@ -22,7 +22,7 @@ export const TabButton = ({ btn, onClick, active }: TabButtonProps) => (
 const Tabby = ({defaultIndex, children }: TabbyProps) => {
   const [tabs, setTabs] = useState<string[]>([])
   const [panels, setPanels] = useState<ReactElement[]>([])
-  const [activeBtn, setactiveBtn] = useState("Posts")
+  const [activeBtn, setActiveBtn] = useState(tabs[0])
 
   const addTab = (name: string) => {
     setTabs((t) => [...t, name])
@@ -45,10 +45,10 @@ const Tabby = ({defaultIndex, children }: TabbyProps) => {
 
   return (
     <Tabs defaultIndex={defaultIndex||0}>
-      <TabList className="flex justify-between w-full">
+      <TabList className="flex justify-between w-full space-x-2">
         {tabs.map((t) => (
-          <Tab>
-            <TabButton btn={t} active={activeBtn == t} onClick={setactiveBtn} />
+          <Tab className="w-full">
+            <TabButton btn={t} active={activeBtn == t} onClick={setActiveBtn} />
           </Tab>
         ))}
       </TabList>
