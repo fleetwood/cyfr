@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useEffect, useState } from "react"
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
 import { uuid } from "../../utils/helpers"
 import Toasty from "../ui/toasty"
 
@@ -18,11 +18,12 @@ type ToastyElement = {
 }
 
 export type ToastyNotif = {
-  message: string
+  message: ReactNode|string
   type?: "info" | "success" | "warning"
 }
 
 export const ToastContext = createContext({} as ToastProviderType)
+export const useToast = () => useContext(ToastContext)
 
 const ToastProvider = ({ children }: ToastProviderProps) => {
   const [toasts, setToasts] = useState<Array<ToastyElement>>([])

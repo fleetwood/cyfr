@@ -1,15 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ToastContext } from "../context/ToastContextProvider";
+import { ReactNode, useEffect, useState } from "react";
 import { log } from "../../utils/log";
+import { useToast } from "../context/ToastContextProvider";
 
 type ToastType = {
-  message: string
+  message: ReactNode | string
   type?: "info" | "success" | "warning"
   toastId: string
 }
 
+export const LoggedIn = () => <div>Please <a href="/login" className="text-primary underline">log in</a> first</div>
+
 const Toasty = ({ message, type, toastId }: ToastType) => {
-  const { slice } = useContext(ToastContext)
+  const { slice } = useToast()
   const [markedForDeletion, setMarkedForDeletion] = useState(false)
 
   const markForDelete = async () => {

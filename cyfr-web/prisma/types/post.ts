@@ -11,9 +11,6 @@ export type PostAllProps = {
 
 export type PostCreateProps = {
   authorid: string
-  title: string
-  subtitle?: string
-  headerImage?: string
   content: string
 }
 
