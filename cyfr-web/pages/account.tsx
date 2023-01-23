@@ -2,10 +2,10 @@ import { useEffect, useState } from "react"
 import UserAccountDetail from "../components/containers/User/UserAccountDetail"
 import MainLayout from "../components/layouts/MainLayout"
 import useCyfrUser from "../hooks/useCyfrUser"
-import { UserWithPostsLikes, Users } from "../prisma/users"
 import { GetSessionParams, signOut } from "next-auth/react"
 import { useSession } from "../lib/next-auth-react-query"
-import { useRouter } from "next/router"
+import { UserWithPostsLikes } from "../prisma/types/user"
+import { Users } from "../prisma/users"
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await Users.userInSession(context)

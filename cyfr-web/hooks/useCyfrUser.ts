@@ -1,11 +1,10 @@
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { UserWithPostsLikes } from "../prisma/users";
-import { GetResponseError, ResponseError } from "../types/response";
+import { ResponseError } from "../types/response";
 import { getApi } from "../utils/api";
-import { log, logError } from "../utils/log";
 import { __cyfr_refetch__ } from "../utils/constants";
+import { UserWithPostsLikes } from "../prisma/types/user";
 
 const cyfrUserQuery = 'cyfrUserQuery'
 

@@ -1,69 +1,7 @@
 import { Post, User } from ".prisma/client";
-import { ResponseResult } from "../types/response";
 import { log } from "../utils/log";
 import { prisma } from "./prismaContext";
-
-type PostsResponse = ResponseResult<Post[]>;
-type PostResponse = ResponseResult<Post>;
-
-type PostAllProps = {
-  take?: number | undefined;
-  skip?: number | undefined;
-};
-
-type PostCreateProps = {
-  authorid: string;
-  title: string;
-  subtitle?: string;
-  headerImage?: string;
-  content: string;
-};
-
-type PostEngageProps = {
-  postid: string;
-  userid: string;
-};
-
-export type PostWithAuthor = Post & {
-  author: User;
-  likes: User[];
-};
-export const PostWithAuthorInclude = {
-  author: true,
-  likes: true,
-};
-
-export type ShareWithAuthor = Post & {
-  share: (PostWithAuthor & {
-    post_shares: PostWithAuthor[]
-  }) | null;
-};
-export const ShareWithAuthorInclude = {
-  share: {
-    include: {
-      ...PostWithAuthorInclude,
-      post_shares: {
-        include: PostWithAuthorInclude
-      }
-    },
-  },
-};
-
-export const PostWithAuthorSharesInclude = {
-  ...PostWithAuthorInclude,
-  ...ShareWithAuthorInclude,
-};
-export type PostWithAuthorShares = PostWithAuthor & ShareWithAuthor;
-
-export const PostWithDetailsInclude = {
-  ...PostWithAuthorSharesInclude,
-  post_shares: {
-    include: PostWithAuthorSharesInclude,
-  },
-};
-export type PostWithDetails = PostWithAuthorShares & {
-  post_shares: PostWithAuthorShares[];
-};
+import { PostWithDetails, PostWithDetailsInclude, PostAllProps, PostCreateProps, PostEngageProps } from "./types/post";
 
 const byId = async (id: string): Promise<PostWithDetails | null> => {
   try {

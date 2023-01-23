@@ -1,7 +1,6 @@
 import React from 'react'
-import { UserFollows } from '../../../prisma/users'
 import Avatar from '../../ui/avatar'
-import JsonBlock from '../../ui/jsonBlock'
+import { UserFollows } from '../../../prisma/types/user'
 
 type UserDetailFollowsProps = {
     following?: UserFollows

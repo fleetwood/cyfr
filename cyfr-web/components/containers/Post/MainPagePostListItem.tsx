@@ -1,15 +1,14 @@
-import { timeDifference } from "../../../utils/helpers";
-import { PostWithDetails } from "./../../../prisma/posts";
-import Avatar from "./../../ui/avatar";
-import PostItemFooter from "./PostItemFooter";
-import ReactHtmlParser from "react-html-parser";
-import ShareItemFooter from "./ShareItemFooter";
-import AvatarList from "../../ui/avatarList";
+import { timeDifference } from "../../../utils/helpers"
+import Avatar from "./../../ui/avatar"
+import PostItemFooter from "./PostItemFooter"
+import ReactHtmlParser from "react-html-parser"
+import ShareItemFooter from "./ShareItemFooter"
+import { PostWithDetails } from "../../../prisma/types/post"
 
 type MainPagePostProps = {
-  post: PostWithDetails;
-  key: string | number;
-};
+  post: PostWithDetails
+  key: string | number
+}
 
 const MainPagePostListItem = ({ post }: MainPagePostProps) => (
   <div
@@ -59,6 +58,6 @@ const MainPagePostListItem = ({ post }: MainPagePostProps) => (
       }
     </div>
   </div>
-);
+)
 
-export default MainPagePostListItem;
+export default MainPagePostListItem

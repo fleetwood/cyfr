@@ -1,34 +1,34 @@
-import { stringify } from "querystring";
-import React, { useContext } from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import UserDetailPostItem from "../../components/containers/Post/UserDetailPostItem";
-import UserDetailFan from "../../components/containers/User/UserDetailFan";
-import UserDetailFollow from "../../components/containers/User/UserDetailFollow";
-import MainLayout from "../../components/layouts/MainLayout";
-import Avatar from "../../components/ui/avatar";
-import { FireIcon, HeartIcon } from "../../components/ui/icons";
-import ShrinkableIconButton from "../../components/ui/shrinkableIconButton";
-import useCyfrUser from "../../hooks/useCyfrUser";
-import { UserDetail, Users } from "../../prisma/users";
-import { sendApi } from "../../utils/api";
-import { log, todo } from "../../utils/log";
-import { ToastContext } from "../../components/context/ToastContextProvider";
-import Tabby from "../../components/ui/Tabby";
+import { useContext } from "react"
+import { TabPanel } from "react-tabs"
+import UserDetailPostItem from "../../components/containers/Post/UserDetailPostItem"
+import UserDetailFan from "../../components/containers/User/UserDetailFan"
+import UserDetailFollow from "../../components/containers/User/UserDetailFollow"
+import { ToastContext } from "../../components/context/ToastContextProvider"
+import MainLayout from "../../components/layouts/MainLayout"
+import Tabby from "../../components/ui/Tabby"
+import Avatar from "../../components/ui/avatar"
+import { FireIcon, HeartIcon } from "../../components/ui/icons"
+import ShrinkableIconButton from "../../components/ui/shrinkableIconButton"
+import useCyfrUser from "../../hooks/useCyfrUser"
+import { UserDetail } from "../../prisma/types/user"
+import { Users } from "../../prisma/users"
+import { sendApi } from "../../utils/api"
+import { log, todo } from "../../utils/log"
 
 export async function getServerSideProps(context: any) {
-  const userId = context.params.id;
-  const user = await Users.byId(userId);
+  const userId = context.params.id
+  const user = await Users.byId(userId)
 
   return {
     props: {
       user,
     },
-  };
+  }
 }
 
 type UserDetailProps = {
-  user: UserDetail;
-};
+  user: UserDetail
+}
 
 const UserDetail = ({ user }: UserDetailProps) => {
   const {cyfrUser, invalidateUser }= useCyfrUser()
@@ -189,7 +189,7 @@ const UserDetail = ({ user }: UserDetailProps) => {
         </div>
       )}
     </MainLayout>
-  );
-};
+  )
+}
 
-export default UserDetail;
+export default UserDetail

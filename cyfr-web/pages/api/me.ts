@@ -7,7 +7,8 @@ import {
 } from "../../types/response"
 import { log, logError, todo } from "../../utils/log"
 import { getSession } from "next-auth/react"
-import { UserWithPostsLikes, Users } from "../../prisma/users"
+import { Users } from "../../prisma/users"
+import { UserWithPostsLikes } from "../../prisma/types/user"
 
 export default async function handle(
   req: NextApiRequest,

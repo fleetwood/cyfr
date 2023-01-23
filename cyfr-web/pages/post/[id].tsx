@@ -2,9 +2,10 @@ import React from "react"
 import PostItemFooter from "../../components/containers/Post/PostItemFooter"
 import MainLayout from "../../components/layouts/MainLayout"
 import Avatar from "../../components/ui/avatar"
-import { Posts, PostWithDetails } from "../../prisma/posts"
 import { timeDifference } from "../../utils/helpers"
 import ReactHtmlParser from "react-html-parser"
+import { PostWithDetails } from "../../prisma/types/post"
+import { Posts } from "../../prisma/posts"
 
 type PostDetailPageProps = {
   post: PostWithDetails

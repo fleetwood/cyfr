@@ -1,43 +1,17 @@
-import { Fan, Post, User, Follow } from ".prisma/client"
-import {GetSessionParams, getSession, signOut, useSession} from "next-auth/react"
+import { Fan, Follow } from ".prisma/client"
+import { GetSessionParams, getSession } from "next-auth/react"
 import { stringify } from "superjson"
 
 import {
-  ResponseResult,
-  GetResponseError,
   GenericResponseError,
+  GetResponseError,
   ResponseError,
 } from "../types/response"
 
 import { log } from "../utils/log"
-import { PostWithDetails, PostWithAuthorSharesInclude, PostWithDetailsInclude } from "./posts"
 import { prisma } from "./prismaContext"
-
-export type UsersResponse = ResponseResult<User[]>
-export type UserResponse = ResponseResult<User>
-export type UserWithPostsLikes = User & {
-  posts: Post[]
-  likes: Post[]
-}
-
-export type UserFollows = Follow & {
-  following: User
-  follower: User
-}
-
-export type UserFans = Fan & {
-  fan: User
-  fanOf: User
-}
-
-export type UserDetail = User & {
-  posts: PostWithDetails[]
-  likes: Post[]
-  following: UserFollows[]
-  follower: UserFollows[]
-  fans: UserFans[]
-  fanOf: UserFans[]
-}
+import { PostWithDetails, PostWithDetailsInclude } from "./types/post"
+import { UserDetail, UserWithPostsLikes } from "./types/user"
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {

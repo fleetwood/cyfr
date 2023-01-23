@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { PostWithDetails } from "../prisma/posts";
 import { GetResponseError, ResponseError } from "../types/response";
 import { getApi, sendApi } from "../utils/api";
+import { PostWithDetails } from "../prisma/types/post";
 
 const allPostsQuery = "allPostsQuery";
 const fetchPosts = async () => await getApi(`post`);

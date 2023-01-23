@@ -1,13 +1,13 @@
-import { PostWithDetails } from "../../../prisma/posts";
-import { timeDifference } from "../../../utils/helpers";
-import PostItemFooter from "./PostItemFooter";
-import ReactHtmlParser from "react-html-parser";
-import ShareItemFooter from "./ShareItemFooter";
-import Avatar from "../../ui/avatar";
+import { timeDifference } from "../../../utils/helpers"
+import PostItemFooter from "./PostItemFooter"
+import ReactHtmlParser from "react-html-parser"
+import ShareItemFooter from "./ShareItemFooter"
+import Avatar from "../../ui/avatar"
+import { PostWithDetails } from "../../../prisma/types/post"
 
 type UserPostDetailProps = {
-  post: PostWithDetails;
-};
+  post: PostWithDetails
+}
 
 const UserDetailPostItem = ({ post }: UserPostDetailProps) => (
   <div className="even:bg-base-100 odd:bg-base-200 bg-opacity-50 rounded-lg mb-2 md:mb-4 p-2 md:p-4">
@@ -37,5 +37,5 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) => (
       {post.share && <ShareItemFooter sharedPost={post.share} />}
     </div>
   </div>
-);
-export default UserDetailPostItem;
+)
+export default UserDetailPostItem

@@ -1,14 +1,12 @@
-import { Post } from ".prisma/client";
-import { userAgent } from "next/server";
-import usePostsApi from "../../../hooks/usePostsApi";
-import { PostWithAuthor, PostWithDetails } from "../../../prisma/posts";
-import { useCyfrUserContext } from "../../context/CyfrUserProvider";
-import AvatarList from "../../ui/avatarList";
-import { HeartIcon, ShareIcon, ReplyIcon } from "../../ui/icons";
-import ShrinkableIconButton from "../../ui/shrinkableIconButton";
-import { useContext, useEffect, useState } from "react";
-import { ToastContext } from "../../context/ToastContextProvider";
 import { User } from "@prisma/client";
+import { useContext, useEffect, useState } from "react";
+import usePostsApi from "../../../hooks/usePostsApi";
+import { PostWithDetails } from "../../../prisma/types/post";
+import { useCyfrUserContext } from "../../context/CyfrUserProvider";
+import { ToastContext } from "../../context/ToastContextProvider";
+import AvatarList from "../../ui/avatarList";
+import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons";
+import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 
 type PostItemFooterProps = {
   post: PostWithDetails;
