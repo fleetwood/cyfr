@@ -22,7 +22,7 @@ const MainPagePostListItem = ({ post }: MainPagePostProps) => (
       "
   >
     <div className="w-full relative">
-        <Avatar user={post.author} sz="sm" className="float-right" />
+        <Avatar shadow={true} user={post.author} sz="sm" className="float-right" />
         <span className="absolute bottom-0">
           {post.content ? 'Posted' : post.share ? 'Shared' : ''} {timeDifference(post.createdAt)}
         </span>
@@ -34,12 +34,12 @@ const MainPagePostListItem = ({ post }: MainPagePostProps) => (
       </div>
       }
       {post.share && 
-      <div className="bg-base-300 bg-opacity-50 p-4 mt-4 rounded-lg text-base-content flex space-x-4 relative">
+      <div className="bg-base-300 border border-base-content p-4 mt-4 rounded-lg text-base-content flex space-x-4 relative">
         <div>
           {ReactHtmlParser(post.share.content!)}
         </div>
         <div className="absolute -mt-6 right-0">
-          <Avatar user={post.share.author} sz="sm" />
+          <Avatar shadow={true} user={post.share.author} sz="sm" />
         </div>
       </div>
       }

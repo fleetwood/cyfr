@@ -1,37 +1,38 @@
-import { User } from ".prisma/client";
+import { User } from ".prisma/client"
 
 type AvatarProps = {
-  user: User;
-  sz?: "wee" | "sm" | "md" | "lg";
-  link?: boolean;
-  shadow?: boolean;
-  className?: string;
-};
+  user?: User
+  sz?: "wee" | "sm" | "md" | "lg"
+  link?: boolean
+  shadow?: boolean
+  className?: string
+  placeholder?: string
+}
 
 const Avatar = ({
-  user: { id, image },
-  sz = "md",
+  user,
+  placeholder,
   className,
-  shadow = false,
+  shadow,
+  sz = "md",
   link = true,
 }: AvatarProps) => {
-  const size = sz == "lg" ? 32 : sz == "md" ? 24 : sz === "wee" ? 6 : 12;
-  const dropShadow = !shadow ? '' : size >= 12 ? 'drop-shadow-lg' : 'drop-shadow-md';
+  const size = sz == "lg" ? 32 : sz == "md" ? 24 : sz === "wee" ? 6 : 12
+  const dropShadow = shadow ? (size >= 12 ? 'drop-shadow-lg' : 'drop-shadow-md') : ''
+  const content = user && user.image ? <img src={user.image}/> : placeholder ? placeholder : '?'
   return (
-    <div className={`avatar ${className} ${dropShadow}`}>
-      <div
-        className={`w-${size} h-${size} mask mask-squircle`}
-      >
-        {link ? (
-          <a href={`/user/${id}`}>
-            <img src={image!} className={dropShadow} />
+    <div className={`avatar ${className || ''}`}>
+      <div className={`w-${size} h-${size} ${dropShadow} mask mask-squircle`}>
+        {link && user ? (
+          <a href={`/user/${user.id}`}>
+            {content}
           </a>
         ) : (
-          <img src={image!} className={dropShadow} />
+          content
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Avatar;
+export default Avatar

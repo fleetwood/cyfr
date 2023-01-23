@@ -12,25 +12,21 @@ type AvatarListProps = {
 const AvatarList = ({ users, sz = "sm", limit = 4 }: AvatarListProps) => {
   const total = users.length > limit ? limit : users.length
   const extra = users.length > limit ? users.length-limit:0
-  const space = sz === 'wee' || sz === 'sm' ? "4" : "12"
+  const space = `-space-x-${sz === 'wee' ? '4' : sz === 'sm' ? '8' : '12'}`
   
   return (
-    <div className={`avatar-group -space-x-${space}`}>
+    <div className={`avatar-group ${space}`}>
       {users && users.slice(0,total).map(user => 
         user.image ? <Avatar user={user} sz={sz} key={uuid()} />
         :
-        <div className="avatar">
-            <Link href={`/user/${user.id}`} >
-              <span>{user.name?.split('')[0] || '?'}</span>
-            </Link>
+        <div className="avatar placeholder">
+          <Link href={`/user/${user.id}`} >
+            <span>{user.name?.split('')[0] || '?'}</span>
+          </Link>
         </div>
       )}
       {extra > 0 &&
-        <div className="avatar placeholder">
-          <div className="w-12 bg-neutral-focus text-neutral-content">
-            <span>+{extra}</span>
-          </div>
-        </div>
+        <div className="avatar placeholder p-2 border-2 bg-base-100 text-base-content text-center align-middle text-xs">+{extra.toString()}</div>
       }
 
     </div>
