@@ -10,7 +10,7 @@ import {
 } from "../types/response"
 
 import { log } from "../utils/log"
-import { PostWithDetails } from "./posts"
+import { PostWithDetails, PostWithAuthorSharesInclude, PostWithDetailsInclude } from "./posts"
 import { prisma } from "./prismaContext"
 
 export type UsersResponse = ResponseResult<User[]>
@@ -115,10 +115,7 @@ const byId = async (id: string): Promise<UserDetail> => {
       },
       include: {
         posts: {
-          include: {
-            author: true,
-            likes: true
-          }
+          include: PostWithDetailsInclude
         },
         likes: true,
         following: {
