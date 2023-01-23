@@ -5,6 +5,9 @@ import Navbar from "../containers/Navbar";
 import RightColumn from "../containers/RightColumn";
 import { useToast } from "../context/ToastContextProvider";
 import Section from "../ui/section";
+import usePostsApi from "../../hooks/usePostsApi";
+import CommentPost from "../containers/Post/CommentPost";
+import CreatePost from "../containers/Post/CreatePost";
 
 type MainLayoutProps = {
   sectionTitle: string | ReactNode
@@ -14,6 +17,29 @@ type MainLayoutProps = {
 };
 
 const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
+  const { posts, setCommentId, error, invalidatePosts } = usePostsApi()
+  const { notify } = useToast()
+  const createPostModal = 'createPostModal'
+  const commentPostModal = 'commentPostModal'
+
+  const onCreate = () => {
+    const createModal = document.getElementById(createPostModal)
+    // @ts-ignore
+    createModal!.checked = false
+    invalidatePosts()
+  }
+
+  const onComment = () => {
+    const commentModal = document.getElementById(commentPostModal)
+    // @ts-ignore
+    commentModal!.checked = false
+    notify({
+      type: 'success',
+      message: 'Commented!'
+    })
+    setCommentId(null)
+    invalidatePosts()
+  }
   const [scrollActive, setScrollActive] = useState(false);
   const {toasts} = useToast()
   const mainRef = useRef<HTMLElement>(null)
@@ -58,6 +84,22 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <input type="checkbox" id={createPostModal} className="modal-toggle" />
+      <div className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box bg-opacity-0 shadow-none">
+          <label htmlFor={createPostModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+          <CreatePost onCreate={onCreate} />
+        </div>
+      </div>
+
+      <input type="checkbox" id={commentPostModal} className="modal-toggle" />
+      <div className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box bg-opacity-0 shadow-none">
+          <label htmlFor={commentPostModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+          <CommentPost onComment={onComment} />
         </div>
       </div>
     </div>

@@ -1,69 +1,53 @@
-import { useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { GetResponseError, ResponseError } from "../types/response";
-import { getApi, sendApi } from "../utils/api";
-import { PostWithDetails } from "../prisma/types/post";
+import { useState } from "react"
+import { useQuery, useQueryClient } from "react-query"
+import { GetResponseError, ResponseError } from "../types/response"
+import { getApi, sendApi } from "../utils/api"
+import { PostCommentProps, PostCreateProps, PostEngageProps, PostWithDetails } from "../prisma/types/post"
+import { log } from "../utils/log"
 
-const allPostsQuery = "allPostsQuery";
-const fetchPosts = async () => await getApi(`post`);
+const allPostsQuery = "allPostsQuery"
+const fetchPosts = async () => await getApi(`post`)
 
 const usePostsApi = () => {
-  const qc = useQueryClient();
-  const [posts, setPosts] = useState<PostWithDetails[]>([]);
-  const [error, setError] = useState<ResponseError>();
+  const qc = useQueryClient()
+  const [posts, setPosts] = useState<PostWithDetails[]>([])
+  const [commentId, setCommentId] = useState<string|null>(null)
+  const [error, setError] = useState<ResponseError>()
 
-  const getPosts = () =>
-    fetchPosts()
+  const getPosts = () =>{
+    log(`usePostsApi.getPosts() refetchInterval: 5000`)
+    return fetchPosts()
       .then((data) => {
         if (data.result) {
-          setPosts(data.result);
+          // log(`\tGot posts ${data.result.length}`)
+          setPosts(data.result)
         }
         if (data.error) {
-          throw data.error;
+          log(`\tGot ERROR ${JSON.stringify(data.error)}`)
+          throw data.error
+        }
+        if (!data) {
+          log(`'\tGot nothin`)
         }
       })
       .catch((e) => {
-        setError(GetResponseError(e));
-      });
+        setError(GetResponseError(e))
+      })
+    }
 
-  const create = async (props: {
-      title:string
-      authorid:string
-      content:string
-      subtitle?:string
-      headerImage?:string
-    }) => {
+  const create = async (props: PostCreateProps) => await sendApi("post/create", props)
 
-    return await sendApi("post/create", props)
-  }
+  const share = async (props: PostEngageProps) => await sendApi("post/share", props)
 
-  const share = async (props: {
-    postid: string
-    userid: string
-  }) => {
-    return await sendApi("post/share", props)
-  }
+  const like = async (props: PostEngageProps) => await sendApi("post/like", props)
 
-  const like = async (props: {
-    postid: string
-    userid: string
-  }) => {
-    return await sendApi("post/like", props)
-  }
+  const comment = async (props:PostCommentProps) => await sendApi("post/comment", props)
 
-  const comment = async (props: {
-    postid: string
-    userid: string
-    content: string
-  }) => {
-    return await sendApi("post/comment", props)
-  }
+  useQuery([allPostsQuery], getPosts, { refetchInterval: 5000 })
 
-  useQuery([allPostsQuery], getPosts, { refetchInterval: 15000 });
+  const invalidatePosts = () => qc.invalidateQueries([allPostsQuery])
 
-  const invalidatePosts = () => qc.invalidateQueries([allPostsQuery]);
+  return {posts, comment, commentId, setCommentId, share, like, create, error, invalidatePosts}
+}
 
-  return {posts, comment, share, like, create, error, invalidatePosts}
-};
-
-export default usePostsApi;
+export default usePostsApi

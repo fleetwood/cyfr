@@ -19,6 +19,12 @@ export type PostEngageProps = {
   userid: string
 }
 
+export type PostCommentProps = {
+  content: string
+  commentId: string
+  authorid: string
+}
+
 export type PostWithAuthor = Post & {
   author: User
   likes: User[]

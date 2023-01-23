@@ -1,7 +1,7 @@
-import { Post, User } from ".prisma/client";
+import { Post, User } from "@prisma/client";
 import { log } from "../utils/log";
 import { prisma } from "./prismaContext";
-import { PostWithDetails, PostWithDetailsInclude, PostAllProps, PostCreateProps, PostEngageProps } from "./types/post";
+import { PostWithDetails, PostWithDetailsInclude, PostAllProps, PostCreateProps, PostEngageProps, PostCommentProps } from "./types/post";
 
 const byId = async (id: string): Promise<PostWithDetails | null> => {
   try {
@@ -106,29 +106,18 @@ const share = async (props: PostEngageProps): Promise<Post> => {
   }
 };
 
-const comment = async (props: PostEngageProps): Promise<Post> => {
-  const data = { ...props };
+const comment = async (data: PostCommentProps): Promise<Post> => {
   try {
-    log("Posts.comment", data);
-    // const user = await prisma.user.findUnique({where: {id: data.userid}})
-    // const post = await prisma.post.findUnique({where: {id: data.postid}})
-    // if (user && post) {
-    //   const success = await prisma.post.update({
-    //     where: { id: post.id},
-    //     data: { likes: { connect: {id: user.id}}}
-    //   })
-    //   if (success) {
-    //     return success
-    //   }
-    //   else {
-    //     throw ({
-    //       message: 'Unable to connect like to post'
-    //     })
-    //   }
-    // }
-    throw {
-      message: "Not implemented",
-    };
+    log("Posts.comment", {...data})
+    const success = await prisma.post.create({data})
+    if (success) {
+      return success
+    }
+    else {
+      throw ({
+        message: 'Unable to connect like to post'
+      })
+    }
   } catch (error) {
     log("\tERROR: ", error);
     throw { code: "posts/comment", message: "Post not commented!" };

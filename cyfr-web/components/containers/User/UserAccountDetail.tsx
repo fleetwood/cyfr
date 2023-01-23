@@ -7,7 +7,6 @@ import UserDetailFollow from "./UserDetailFollow"
 import UserDetailFan from "./UserDetailFan"
 import { UserFollows, UserWithPostsLikes } from "../../../prisma/types/user"
 import { PostWithDetails } from "../../../prisma/types/post"
-import { Key } from "react"
 import { User } from "@prisma/client"
 
 type UserAccountDetailProps = {

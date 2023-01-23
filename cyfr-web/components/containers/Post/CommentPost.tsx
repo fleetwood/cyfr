@@ -1,44 +1,48 @@
-import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
-import useCyfrUser from "../../../hooks/useCyfrUser";
-import { sendApi } from "../../../utils/api";
-import { log } from "../../../utils/log";
-import TailwindInput from "../../forms/TailwindInput";
-import TailwindTextarea from "../../forms/TailwindTextarea";
+import Link from "next/link"
+import { FormEvent, useEffect, useState } from "react"
+import useCyfrUser from "../../../hooks/useCyfrUser"
+import { sendApi } from "../../../utils/api"
+import { log, logError } from "../../../utils/log"
+import TailwindInput from "../../forms/TailwindInput"
+import TailwindTextarea from "../../forms/TailwindTextarea"
+import usePostsApi from "../../../hooks/usePostsApi"
 
 type CommentPostProps = {
-  onComment: () => void;
-};
+  onComment: () => void
+}
 
 const CommentPost = ({ onComment }: CommentPostProps): JSX.Element => {
-  const { cyfrUser } = useCyfrUser();
-  const [content, setContent] = useState<string | null>(null);
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const { cyfrUser } = useCyfrUser()
+  const [content, setContent] = useState<string | null>(null)
+  const [isDisabled, setIsDisabled] = useState<boolean>(true)
+  const {commentId } = usePostsApi()
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (isDisabled) {
-      return;
+      return
     }
 
     const post = await sendApi("post/comment", {
       content,
-      headerImage: null,
       authorid: cyfrUser!.id,
-    });
+      commentId
+    })
     if (post) {
-      setContent(null);
-      onComment();
+      setContent(null)
+      onComment()
     } else {
-      log("Error creating post!");
+      log("Error creating post!")
     }
-  };
+  }
 
   useEffect(() => {
-    const disabled =
-      !cyfrUser || !content || content.length < 1;
-    setIsDisabled((current) => disabled);
-  }, [content]);
+    const disabled = !cyfrUser || !content || content.length < 1
+    // if (disabled) {
+    //   log(`CommentPost.useEffect() isDisabled: ${isDisabled}, cyfrUser: ${cyfrUser !== null || cyfrUser !== undefined}, content: ${content}`)
+    // }
+    setIsDisabled((current) => disabled)
+  }, [content])
 
   return (
     <div
@@ -73,4 +77,4 @@ const CommentPost = ({ onComment }: CommentPostProps): JSX.Element => {
       </div>
     </div>
 )}
-export default CommentPost;
+export default CommentPost
