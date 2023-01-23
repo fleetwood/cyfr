@@ -1,9 +1,8 @@
-import { useContext } from "react"
 import { TabPanel } from "react-tabs"
 import UserDetailPostItem from "../../components/containers/Post/UserDetailPostItem"
 import UserDetailFan from "../../components/containers/User/UserDetailFan"
 import UserDetailFollow from "../../components/containers/User/UserDetailFollow"
-import { ToastContext } from "../../components/context/ToastContextProvider"
+import { useToast } from "../../components/context/ToastContextProvider"
 import MainLayout from "../../components/layouts/MainLayout"
 import Tabby from "../../components/ui/Tabby"
 import Avatar from "../../components/ui/avatar"
@@ -13,8 +12,8 @@ import useCyfrUser from "../../hooks/useCyfrUser"
 import { UserDetail } from "../../prisma/types/user"
 import { Users } from "../../prisma/users"
 import { sendApi } from "../../utils/api"
-import { log, todo } from "../../utils/log"
 import { uuid } from "../../utils/helpers"
+import { log, todo } from "../../utils/log"
 
 export async function getServerSideProps(context: any) {
   const userId = context.params.id
@@ -33,7 +32,7 @@ type UserDetailProps = {
 
 const UserDetail = ({ user }: UserDetailProps) => {
   const {cyfrUser, invalidateUser }= useCyfrUser()
-  const {notify} = useContext(ToastContext)
+  const {notify} = useToast()
 
   const followUser = async () => {
     todo('Toast results and Invalidate user')

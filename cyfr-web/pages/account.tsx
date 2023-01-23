@@ -8,6 +8,8 @@ import { UserWithPostsLikes } from "../prisma/types/user"
 import { Users } from "../prisma/users"
 import Tabby from "../components/ui/Tabby"
 import { TabPanel } from "react-tabs"
+import { log } from "../utils/log"
+import { __cyfr_refetch__ } from "../utils/constants"
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await Users.userInSession(context)
@@ -21,9 +23,11 @@ type AccountProps = {
 
 const Account = ({user}:AccountProps) => {
   const [session] = useSession({required: true, redirectTo: '/login'})
-  const {cyfrUser, setCyfrUser, invalidateUser} = useCyfrUser()
+  const {cyfrUser, setCyfrUser, invalidateUser, setRefetchInterval} = useCyfrUser()
 
-  useEffect(() => { invalidateUser() },[cyfrUser])
+  useEffect(() => {
+    setRefetchInterval(!cyfrUser ? session ? 100 : __cyfr_refetch__ : __cyfr_refetch__)
+  },[cyfrUser])
 
   return (
     <MainLayout sectionTitle="Account" subTitle={cyfrUser?.name || ''}>
@@ -32,6 +36,9 @@ const Account = ({user}:AccountProps) => {
           Logout
         </button>
         <Tabby defaultIndex={0}>
+          <TabPanel title="Preferences">
+            <h2 className="subtitle">Preferences</h2>
+          </TabPanel>
           <TabPanel title="Billing">
             <h2 className="subtitle">Billing</h2>
           </TabPanel>

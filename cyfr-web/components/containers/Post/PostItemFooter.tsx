@@ -1,14 +1,13 @@
 import { User } from "@prisma/client";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import usePostsApi from "../../../hooks/usePostsApi";
 import { PostWithDetails } from "../../../prisma/types/post";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
-import { ToastContext } from "../../context/ToastContextProvider";
+import { useToast } from "../../context/ToastContextProvider";
 import AvatarList from "../../ui/avatarList";
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons";
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
-import { useSession } from "../../../lib/next-auth-react-query";
-import Toasty, { LoggedIn } from "../../ui/toasty";
+import { LoggedIn } from "../../ui/toasty";
 
 type PostItemFooterProps = {
   post: PostWithDetails;
@@ -17,7 +16,7 @@ type PostItemFooterProps = {
 const PostItemFooter = ({ post }: PostItemFooterProps) => {
   const { cyfrUser } = useCyfrUserContext();
   const { share, like, comment, invalidatePosts } = usePostsApi();
-  const {notify} = useContext(ToastContext)
+  const {notify} = useToast()
   const [shareAuthors, setShareAuthors] = useState<User[]>([])
   
   const isLoggedIn = () => {

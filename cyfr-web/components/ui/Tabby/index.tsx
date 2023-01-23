@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react"
 import { ReactNode, useEffect, useState } from "react"
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs"
+import { Tab, TabList, Tabs } from "react-tabs"
+import { log } from "../../../utils/log"
 
 type TabButtonProps = {
   btn: String
@@ -19,10 +20,10 @@ export const TabButton = ({ btn, onClick, active }: TabButtonProps) => (
   </button>
 )
 
-const Tabby = ({defaultIndex, children }: TabbyProps) => {
+const Tabby = ({defaultIndex = 0, children }: TabbyProps) => {
   const [tabs, setTabs] = useState<string[]>([])
   const [panels, setPanels] = useState<ReactElement[]>([])
-  const [activeBtn, setActiveBtn] = useState(tabs[0])
+  const [activeBtn, setActiveBtn] = useState('')
 
   const addTab = (name: string) => {
     setTabs((t) => [...t, name])
@@ -41,14 +42,15 @@ const Tabby = ({defaultIndex, children }: TabbyProps) => {
       }
       addPanel(child)
     })
+    setActiveBtn(b => tabs[defaultIndex])
   }, [])
 
   return (
     <Tabs defaultIndex={defaultIndex||0}>
       <TabList className="flex justify-between w-full space-x-2">
-        {tabs.map((t) => (
+        {tabs.map((t,i) => (
           <Tab className="w-full">
-            <TabButton btn={t} active={activeBtn == t} onClick={setActiveBtn} />
+            <TabButton btn={t} active={activeBtn ? activeBtn == t : i=== defaultIndex } onClick={setActiveBtn} />
           </Tab>
         ))}
       </TabList>

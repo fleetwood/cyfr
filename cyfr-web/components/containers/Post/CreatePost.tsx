@@ -1,9 +1,9 @@
-import { FormEvent, useContext, useEffect, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import useCyfrUser from "../../../hooks/useCyfrUser"
 import { sendApi } from "../../../utils/api"
 import { log } from "../../../utils/log"
+import { useToast } from "../../context/ToastContextProvider"
 import TailwindTextarea from "../../forms/TailwindTextarea"
-import { ToastContext } from "../../context/ToastContextProvider"
 import { LoggedIn } from "../../ui/toasty"
 
 type CreatePostProps = {
@@ -12,7 +12,7 @@ type CreatePostProps = {
 
 const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   const { cyfrUser } = useCyfrUser()
-  const { notify } = useContext(ToastContext)
+  const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
 

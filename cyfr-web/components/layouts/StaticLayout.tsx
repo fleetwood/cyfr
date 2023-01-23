@@ -1,9 +1,9 @@
-import { ReactNode, useContext, useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import Footer from "../containers/Footer";
 import LeftColumn from "../containers/LeftColumn";
 import Navbar from "../containers/Navbar";
 import RightColumn from "../containers/RightColumn";
-import { ToastContext } from "../context/ToastContextProvider";
+import { useToast } from "../context/ToastContextProvider";
 import Section from "../ui/section";
 
 type MainLayoutProps = {
@@ -15,7 +15,7 @@ type MainLayoutProps = {
 
 const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
   const [scrollActive, setScrollActive] = useState(false);
-  const { toasts } = useContext(ToastContext);
+  const { toasts } = useToast()
   const mainRef = useRef<HTMLElement>(null);
 
   const handleScroll = (e: any) => {
@@ -40,7 +40,7 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
               >
                 <Navbar
                   className="min-w-full transition-all duration-200 ease-out"
-                  active={scrollActive}
+                  pageScrolled={scrollActive}
                 />
 
                 <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
