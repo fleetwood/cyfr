@@ -1,11 +1,11 @@
 
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { useSession } from "../lib/next-auth-react-query";
 import { UserWithPostsLikes } from "../prisma/users";
 import { GetResponseError, ResponseError } from "../types/response";
 import { getApi } from "../utils/api";
-import { log } from "../utils/log";
+import { log, logError } from "../utils/log";
+import { __cyfr_refetch__ } from "../utils/constants";
 
 const cyfrUserQuery = 'cyfrUserQuery'
 
@@ -15,31 +15,21 @@ export type useCyfrUserHookType = {
     invalidateUser: () => Promise<void>
 }
 
-const fetchUser = async (email:string) =>  await getApi(`user/byEmail/${email}`)
-
-const useCyfrUser = (owner?: string):useCyfrUserHookType => {
+const useCyfrUser = ():useCyfrUserHookType => {
     const qc = useQueryClient()
-    const [session] = useSession({required:false})
     const [cyfrUser, setCyfrUser] = useState<UserWithPostsLikes>();
     const [error, setError] = useState<ResponseError>()
+    const [refetchInterval, setRefetchInterval] = useState(__cyfr_refetch__)
 
-    const getCyfrUser = () => fetchUser(session.user.email)
-        .then(user => {
-            if (user.result) {
-                setCyfrUser(user.result)
-            } else if (user.error) {
-                log('getCyfrUser error', user)
-                setError(user.error)
-            }
-        })
-        .catch(e => setError(GetResponseError(e)))
+    const getCyfrUser = async () => {
+        const me = await getApi('/me')
+        setRefetchInterval((c) => me ? __cyfr_refetch__ : 1000)
+        if (me.result) {
+            setCyfrUser((user) => me.result)
+        }
+    }
     
-    useQuery([cyfrUserQuery],
-        getCyfrUser, 
-        { 
-            enabled: session?.user?.email !== undefined,
-            refetchInterval: 60000
-        })
+    useQuery([cyfrUserQuery],getCyfrUser, { refetchInterval })
 
     const invalidateUser = () => qc.invalidateQueries([cyfrUserQuery])
     

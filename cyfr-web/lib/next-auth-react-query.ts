@@ -1,35 +1,39 @@
-import { useQuery } from "react-query";
-import { useRouter } from "next/router";
+import { useQuery } from "react-query"
+import { useRouter } from "next/router"
+import { log } from "../utils/log"
 
 export async function fetchSession() {
-  const res = await fetch("/api/auth/session");
-  const session = await res.json();
+  const res = await fetch("/api/auth/session")
+  const session = await res.json()
   if (Object.keys(session).length > 0) {
-    return session;
+    return session
   }
-  return null;
+  return null
 }
 
 export type SessionProps = {
-  required: boolean;
-  redirectTo?: string | undefined;
-  queryConfig?: {} | undefined;
-};
+  required: boolean
+  redirectTo?: string | undefined
+  queryConfig?: {} | undefined
+}
 
 export function useSession({
   required,
   redirectTo = "/login",
   queryConfig = {},
 }: SessionProps) {
-  const router = useRouter();
+  const router = useRouter()
   const query = useQuery(["session"], fetchSession, {
     ...queryConfig,
     onSettled(data, error) {
-      // @ts-ignore
-      if (queryConfig.onSettled) queryConfig.onSettled(data, error);
-      if (data || !required) return;
-      router.push(redirectTo);
+      log(`useSession.onSettled() ${JSON.stringify({data, error})}`)
+      if (error) {
+        log(`useSession.onSettled() ERROR ${JSON.stringify({error})}`)
+      }
+      if (data || !required) return
+      
+      router.push(redirectTo || './login')
     },
-  });
-  return [query.data, query.status === "loading"];
+  })
+  return [query.data, query.status === "loading", query.error]
 }

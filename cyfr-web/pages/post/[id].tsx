@@ -24,9 +24,8 @@ export async function getServerSideProps(context: any) {
 const PostDetailPage = ({ post }: PostDetailPageProps) => {
   return (
     <MainLayout
-      pageTitle={`${post.author.name} : ${post.title}`}
-      sectionTitle={post.title}
-      subTitle={post.subtitle}
+      pageTitle={`${post.author.name}`}
+      sectionTitle=''
     >
       <div className="flex flex-row justify-between relative">
         <div className="flex justify-end w-full -mb-4 mr-4 z-10">
@@ -37,9 +36,10 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
         <div className="absolute right-0 pr-4">
           Posted {timeDifference(post.createdAt)}
         </div>
+        {post.content && 
         <div className="text-base-content m-8 font-ibarra">
           {ReactHtmlParser(post.content)}
-        </div>
+        </div>}
         <div className="flex flex-row justify-around">
           <PostItemFooter post={post} />
         </div>

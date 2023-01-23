@@ -66,6 +66,15 @@ const LeftColumn = () => {
             Angry Tools
           </a>
         </li>
+        <li>
+          <a
+            href="https://www.copyright.gov/dmca-directory/"
+            title="TODO: Copyright Stuff"
+            className="text-secondary-content text-opacity-70 hover:text-opacity-100 transition-all ease-linear duration-200"
+          >
+            TODO: Copyright Stuff
+          </a>
+        </li>
       </ul>
     </div>
   );

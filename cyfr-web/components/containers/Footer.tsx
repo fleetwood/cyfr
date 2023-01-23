@@ -6,8 +6,8 @@ const Footer = () => {
       <div className="p-5 mx-auto relative text-neutral-content">
         <div className="flex">
           <div className="flex-grow flex flex-col">
-            <a href="/#home">Boom</a>
-            <a href="/#home">Boom</a>
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/tos">TOS</a>
           </div>
           <div className="flex-grow flex flex-col">
             <a href="/#home">Boom</a>
