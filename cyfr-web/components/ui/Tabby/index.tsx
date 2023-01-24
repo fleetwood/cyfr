@@ -12,6 +12,7 @@ type TabButtonProps = {
 type TabbyProps = {
   defaultIndex?: number
   children: ReactNode
+  invalidate: boolean
 }
 
 export const TabButton = ({ btn, onClick, active }: TabButtonProps) => (
@@ -20,7 +21,7 @@ export const TabButton = ({ btn, onClick, active }: TabButtonProps) => (
   </button>
 )
 
-const Tabby = ({defaultIndex = 0, children }: TabbyProps) => {
+const Tabby = ({defaultIndex = 0, invalidate=false, children }: TabbyProps) => {
   const [tabs, setTabs] = useState<string[]>([])
   const [panels, setPanels] = useState<ReactElement[]>([])
   const [activeBtn, setActiveBtn] = useState('')
@@ -33,7 +34,9 @@ const Tabby = ({defaultIndex = 0, children }: TabbyProps) => {
     setPanels((p) => [...p, panel])
   }
 
-  useEffect(() => {
+  const renderChildren = () => {
+    setTabs(() => [])
+    setPanels(() => [])
     React.Children.map(children, (child) => {
       // @ts-ignore
       if (child.props.title) {
@@ -43,10 +46,21 @@ const Tabby = ({defaultIndex = 0, children }: TabbyProps) => {
       addPanel(child)
     })
     setActiveBtn(b => tabs[defaultIndex])
+  }
+
+  useEffect(() => {
+    renderChildren()
   }, [])
 
+  useEffect(() => {
+    log(`Tabby.useEffect() invalidate: ${invalidate}`)
+    if (invalidate===true) {
+      renderChildren()
+    }
+  }, [invalidate])
+
   return (
-    <Tabs defaultIndex={defaultIndex||0}>
+    <Tabs defaultIndex={defaultIndex||0} >
       <TabList className="flex justify-between w-full space-x-2">
         {tabs.map((t,i) => (
           <Tab className="w-full">

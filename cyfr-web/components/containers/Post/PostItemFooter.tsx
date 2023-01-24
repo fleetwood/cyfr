@@ -1,21 +1,21 @@
-import { User } from "@prisma/client";
-import { useEffect, useState } from "react";
-import usePostsApi from "../../../hooks/usePostsApi";
-import { PostWithDetails } from "../../../prisma/types/post";
-import { useCyfrUserContext } from "../../context/CyfrUserProvider";
-import { useToast } from "../../context/ToastContextProvider";
-import AvatarList from "../../ui/avatarList";
-import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons";
-import ShrinkableIconButton from "../../ui/shrinkableIconButton";
-import { LoggedIn } from "../../ui/toasty";
+import { User } from "@prisma/client"
+import { useEffect, useState } from "react"
+import useCyfrUser from "../../../hooks/useCyfrUser"
+import usePostsQuery from "../../../hooks/usePosts"
+import { PostWithDetails } from "../../../prisma/types/post"
+import { useToast } from "../../context/ToastContextProvider"
+import AvatarList from "../../ui/avatarList"
+import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
+import ShrinkableIconButton from "../../ui/shrinkableIconButton"
+import { LoggedIn } from "../../ui/toasty"
 
 type PostItemFooterProps = {
-  post: PostWithDetails;
-};
+  post: PostWithDetails
+}
 
 const PostItemFooter = ({ post }: PostItemFooterProps) => {
-  const { cyfrUser } = useCyfrUserContext();
-  const { share, like, comment, invalidatePosts } = usePostsApi();
+  const [ cyfrUser ] = useCyfrUser()
+  const { share, like, setCommentId, invalidatePosts } = usePostsQuery()
   const {notify} = useToast()
   const [shareAuthors, setShareAuthors] = useState<User[]>([])
   
@@ -44,6 +44,7 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
 
   const handleComment = async () => {
     if (!isLoggedIn()) return
+    setCommentId(post.id)
     const commentModal = document.getElementById('commentPostModal')
     // @ts-ignore
     commentModal!.checked = true
@@ -105,4 +106,4 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
     </>
 )}
 
-export default PostItemFooter;
+export default PostItemFooter

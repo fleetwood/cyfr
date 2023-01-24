@@ -1,6 +1,7 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider, Hydrate } from "react-query";
+import {ReactQueryDevtools} from 'react-query/devtools'
 import ToastProvider from './../components/context/ToastContextProvider'
 import CyfrUserProvider from "../components/context/CyfrUserProvider";
 
@@ -16,6 +17,8 @@ function MyApp({ Component, pageProps }: AppProps) {
             </CyfrUserProvider>
           </ToastProvider>
       </Hydrate>
+
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

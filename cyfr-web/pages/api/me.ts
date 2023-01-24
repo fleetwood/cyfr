@@ -21,6 +21,7 @@ export default async function handle(
     const email = session?.user?.email
     const result = await Users.byEmail(email!)
     if (result) {
+      log(`${code} results: ${result.id}`)
       res.status(200).json({ result })
     } else {
       log(`${code} No results`)

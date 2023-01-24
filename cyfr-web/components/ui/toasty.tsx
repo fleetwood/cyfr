@@ -15,7 +15,6 @@ const Toasty = ({ message, type, toastId }: ToastType) => {
   const [markedForDeletion, setMarkedForDeletion] = useState(false)
 
   const markForDelete = async () => {
-    log('Deleting toast...')
     setMarkedForDeletion(true)
     setTimeout(() => slice(toastId), 500)
   }

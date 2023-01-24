@@ -5,7 +5,7 @@ type CyfrUserProviderProps = {
   children?: ReactNode
 }
 
-export const CyfrUserContext = createContext({} as useCyfrUserHookType)
+export const CyfrUserContext = createContext({} as any)
 export const useCyfrUserContext = () => useContext(CyfrUserContext)
 
 const CyfrUserProvider = ({ children }: CyfrUserProviderProps) => 

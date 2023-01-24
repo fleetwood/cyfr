@@ -36,17 +36,20 @@ model Session {
 }
 
 model Post {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  visible     Boolean  @default(true)
-  content     String?
-  shareId     String?
-  share       Post?    @relation("post_shares", fields: [shareId], references: [id])
-  post_shares Post[]   @relation("post_shares")
-  authorid    String
-  author      User     @relation("user_posts", fields: [authorid], references: [id])
-  likes       User[]   @relation("user_likes")
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+  visible       Boolean  @default(true)
+  content       String?
+  shareId       String?
+  share         Post?    @relation("post_shares", fields: [shareId], references: [id])
+  post_shares   Post[]   @relation("post_shares")
+  commentId     String?
+  comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
+  post_comments Post[]   @relation("post_comments")
+  authorid      String
+  author        User     @relation("user_posts", fields: [authorid], references: [id])
+  likes         User[]   @relation("user_likes")
 }
 
 model User {
@@ -74,11 +77,11 @@ model Follow {
 }
 
 model Fan {
-  id     String @id @default(cuid())
-  fanId  String
-  starId String
-  fan    User   @relation("user_fans", fields: [fanId], references: [id])
-  fanOf  User   @relation("user_fan_of", fields: [starId], references: [id])
+  id      String @id @default(cuid())
+  fanId   String
+  fanOfId String
+  fan     User   @relation("user_fans", fields: [fanId], references: [id])
+  fanOf   User   @relation("user_fan_of", fields: [fanOfId], references: [id])
 }
 
 model VerificationToken {

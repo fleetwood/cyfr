@@ -9,9 +9,9 @@ export default async function handle(
     res: NextApiResponse<ResponseResult<Post>>
   ) {
     todo('Why is this posting req.body.body????')
-    const { postid, userid } = req.body.body
+    const { commentId, authorid, content } = req.body.body
     try {
-      const result = await Posts.comment({postid, userid})
+      const result = await Posts.comment({commentId, authorid, content})
       if (result) {
         res.status(200).json({ result })
       } else {

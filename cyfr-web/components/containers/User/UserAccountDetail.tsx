@@ -1,5 +1,5 @@
 import { TabPanel } from "react-tabs"
-import useUserDetailApi from "../../../hooks/useUserDetailApi"
+import useUserDetail from "../../../hooks/useUserDetail"
 import Tabby from "../../ui/Tabby"
 import Avatar from "../../ui/avatar"
 import UserDetailPostItem from "../Post/UserDetailPostItem"
@@ -7,20 +7,19 @@ import UserDetailFollow from "./UserDetailFollow"
 import UserDetailFan from "./UserDetailFan"
 import { UserFollows, UserWithPostsLikes } from "../../../prisma/types/user"
 import { PostWithDetails } from "../../../prisma/types/post"
-import { Key } from "react"
 import { User } from "@prisma/client"
 
 type UserAccountDetailProps = {
-  currentUser: UserWithPostsLikes
+  user: UserWithPostsLikes
 }
 
 
-const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
-  const { userDetail, error, invalidate } = useUserDetailApi(currentUser.id)
+const UserAccountDetail = ({ user }: UserAccountDetailProps) => {
+  const { currentUser, invalidateUser } = useUserDetail(user.id)
 
   return (
     <div className="">
-      {userDetail && (
+      {currentUser && (
         <>
           <div
             className="
@@ -34,7 +33,7 @@ const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
             "
           >
             <div className="col-span-2 mt-2 md:-mt-12">
-              <Avatar user={userDetail} sz="lg" />
+              <Avatar user={currentUser} sz="lg" />
             </div>
             <div className="col-span-9">
               <div
@@ -47,39 +46,39 @@ const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
                 "
               >
                 <div>
-                  <strong>Posts:</strong> {userDetail.posts.length}
+                  <strong>Posts:</strong> {currentUser.posts.length}
                 </div>
                 <div>
-                  <strong>Follows:</strong> {userDetail.following.length}
+                  <strong>Follows:</strong> {currentUser.following.length}
                 </div>
                 <div>
-                  <strong>Followers:</strong> {userDetail.follower.length}
+                  <strong>Followers:</strong> {currentUser.follower.length}
                 </div>
                 <div>
-                  <strong>Fans:</strong> {userDetail.fans.length}
+                  <strong>Fans:</strong> {currentUser.fans.length}
                 </div>
                 <div>
-                  <strong>Stans:</strong> {userDetail.fanOf.length}
+                  <strong>Stans:</strong> {currentUser.fanOf.length}
                 </div>
               </div>
             </div>
           </div>
-          <Tabby>
+          <Tabby defaultIndex={0} invalidate={false}>
             <TabPanel title="Posts" className="p-2 md:p-4 min-w-fit">
-                {userDetail.posts.map((post: PostWithDetails) => (
+                {currentUser.posts.map((post: PostWithDetails) => (
                   <UserDetailPostItem post={post} key={post.id} />
                 ))}
             </TabPanel>
             <TabPanel title="Follows" className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Following</h2>
-                  {userDetail.follower.map((follow:UserFollows) => (
+                  {currentUser.follower.map((follow:UserFollows) => (
                     <UserDetailFollow following={follow} key={follow.id} />
                   ))}
                 </div>
                 <div>
                   <h2>Followers</h2>
-                  {userDetail.following.map((follow:UserFollows) => (
+                  {currentUser.following.map((follow:UserFollows) => (
                     <UserDetailFollow follower={follow} key={follow.id} />
                   ))}
                 </div>
@@ -87,13 +86,13 @@ const UserAccountDetail = ({ currentUser }: UserAccountDetailProps) => {
             <TabPanel title="Fans" className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Fans</h2>
-                  {userDetail.fans.map((fan: { fan: User; id: string | undefined }) => (
+                  {currentUser.fans.map((fan: { fan: User; id: string | undefined }) => (
                     <UserDetailFan fan={fan.fan} key={fan.id} />
                   ))}
                 </div>
                 <div>
                   <h2>Stans</h2>
-                  {userDetail.fanOf.map((fan: { fanOf: User; id: string | undefined }) => (
+                  {currentUser.fanOf.map((fan: { fanOf: User; id: string | undefined }) => (
                     <UserDetailFan fan={fan.fanOf} key={fan.id} />
                   ))}
                 </div>
