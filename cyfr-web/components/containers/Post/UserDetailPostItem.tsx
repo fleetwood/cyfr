@@ -4,12 +4,18 @@ import ReactHtmlParser from "react-html-parser"
 import ShareItemFooter from "./ShareItemFooter"
 import Avatar from "../../ui/avatar"
 import { PostWithDetails } from "../../../prisma/types/post"
+import { useEffect } from "react"
+import { log } from "../../../utils/log"
 
 type UserPostDetailProps = {
   post: PostWithDetails
 }
 
-const UserDetailPostItem = ({ post }: UserPostDetailProps) => (
+const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
+  useEffect(() => {
+    log(`USerDetailPost change ${post.id}`)
+  },[post])
+  return (
   <div className="even:bg-base-100 odd:bg-base-200 bg-opacity-50 rounded-lg mb-2 md:mb-4 p-2 md:p-4">
     {post.content && (
       <div className="bg-base-300 bg-opacity-50 p-4 rounded-lg text-base-content">
@@ -37,5 +43,5 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) => (
       {post.share && <ShareItemFooter sharedPost={post.share} />}
     </div>
   </div>
-)
+)}
 export default UserDetailPostItem

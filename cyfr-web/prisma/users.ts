@@ -1,4 +1,3 @@
-import { Fan, Follow } from ".prisma/client"
 import { GetSessionParams, getSession } from "next-auth/react"
 import { stringify } from "superjson"
 
@@ -11,7 +10,8 @@ import {
 import { log } from "../utils/log"
 import { prisma } from "./prismaContext"
 import { PostWithDetails, PostWithDetailsInclude } from "./types/post"
-import { UserDetail, UserWithPostsLikes } from "./types/user"
+import { FanProps, UserDetail, UserWithPostsLikes } from "./types/user"
+import { Follow, Fan } from "@prisma/client"
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {
@@ -45,8 +45,8 @@ const follow = async (follows: string, follower: string): Promise<Follow> => {
   }
 }
 
-const stan = async (stan: string, fan: string): Promise<Fan> => {
-  if (stan === fan) {
+const stan = async (props:FanProps): Promise<Fan> => {
+  if (props.fanOfId === props.fanId) {
     throw {
       code: "user/error",
       message: `We are fans of loving yourself, but cmon now...`,
@@ -54,25 +54,19 @@ const stan = async (stan: string, fan: string): Promise<Fan> => {
   }
   try {
     const exists = await prisma.fan.findFirst({
-      where: {
-        starId: stan,
-        fanId: fan,
-      },
+      where: props,
     })
     if (exists) {
       return exists
     }
 
     const follow = await prisma.fan.create({
-      data: {
-        starId: stan,
-        fanId: fan,
-      },
+      data: props,
     })
     if (!follow) {
       throw {
         code: "users/stab",
-        message: `Unable to stan (stan:${stan}, fan: ${fan})`,
+        message: `Unable to stan (stan:${props.fanOfId}, fan: ${props.fanId})`,
       }
     }
     return follow

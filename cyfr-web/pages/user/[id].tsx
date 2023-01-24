@@ -1,3 +1,5 @@
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
 import { TabPanel } from "react-tabs"
 import UserDetailPostItem from "../../components/containers/Post/UserDetailPostItem"
 import UserDetailFan from "../../components/containers/User/UserDetailFan"
@@ -9,77 +11,75 @@ import Avatar from "../../components/ui/avatar"
 import { FireIcon, HeartIcon } from "../../components/ui/icons"
 import ShrinkableIconButton from "../../components/ui/shrinkableIconButton"
 import useCyfrUser from "../../hooks/useCyfrUser"
-import { UserDetail } from "../../prisma/types/user"
-import { Users } from "../../prisma/users"
-import { sendApi } from "../../utils/api"
+import useUserDetail from "../../hooks/useUserDetail"
 import { uuid } from "../../utils/helpers"
-import { log, todo } from "../../utils/log"
+import { log } from "../../utils/log"
 
 export async function getServerSideProps(context: any) {
   const userId = context.params.id
-  const user = await Users.byId(userId)
-
   return {
     props: {
-      user,
+      userId,
     },
   }
 }
 
 type UserDetailProps = {
-  user: UserDetail
+  userId: string
 }
 
-const UserDetail = ({ user }: UserDetailProps) => {
-  const {cyfrUser, invalidateUser }= useCyfrUser()
+const UserDetailPage = ({ userId }: UserDetailProps) => {
+  const router = useRouter()
+  const [cyfrUser] = useCyfrUser()
+  const {currentUser, follow, stan, invalidateUser} = useUserDetail(userId)
   const {notify} = useToast()
+  const [invalidateTabs, setInvalidateTabs] = useState(false)
 
   const followUser = async () => {
-    todo('Toast results and Invalidate user')
-    todo('Move this functionality to a provider?')
-    if (!cyfrUser) {
-      log('User is not logged in???')
-      return
-    }
-    const follow = await sendApi(`user/follow`, {
-      following: user.id,
-      follower: cyfrUser.id
-    })
+    if (!cyfrUser || !currentUser) return
+
+    const result = await follow({follower: cyfrUser.id,following: currentUser.id})
     
-    if (follow) {
+    if (result) {
       notify({
-        message: `You are now following ${user.name}!`,
+        message: `You are now following ${currentUser.name}!`,
         type: 'success'
       })
-      invalidateUser()
     }
+    invalidateUser()
   }
   
   const stanUser = async () => {
-    todo('Toast results and Invalidate user')
-    todo('Move this functionality to a provider?')
-    if (!cyfrUser) {
-      log('User is not logged in???')
-      return
-    }
-    const stan = await sendApi(`user/stan`, {
-      stan: user.id,
-      fan: cyfrUser.id
+    if (!cyfrUser || !currentUser) return
+
+    const result = await stan({
+      fanOfId: currentUser.id,
+      fanId: cyfrUser.id
     })
 
-    if (stan) {
-      alert(JSON.stringify(stan))
+    if (result) {
+      notify({
+        message: `You are stanning ${currentUser.name}!!! Nice!`,
+        type: 'success'
+      })
     }
+    invalidateUser()
   }
+
+  useEffect(() => {
+    setInvalidateTabs(() => true)
+  }, [currentUser])
+
+  useEffect(() => {
+    setInvalidateTabs(() => false)
+  }, [invalidateTabs])
 
   return (
     <MainLayout
       pageTitle="User Detail"
       sectionTitle=""
-      subTitle={user?.name || ""}
-    >
-      {" "}
-      {user && (
+      subTitle={currentUser?.name || ""}
+    >      {currentUser && (
         <div>
           <div
             className="
@@ -93,7 +93,7 @@ const UserDetail = ({ user }: UserDetailProps) => {
             "
           >
             <div className="col-span-2 mt-2 md:-mt-12">
-              <Avatar user={user} sz="lg" />
+              <Avatar user={currentUser} sz="lg" />
             </div>
             <div className="col-span-7">
               <div className="
@@ -104,19 +104,19 @@ const UserDetail = ({ user }: UserDetailProps) => {
                 h-[50%]
                 ">
                 <div>
-                  <strong>Posts:</strong> {user.posts.length}
+                  <strong>Posts:</strong> {currentUser.posts.length}
                 </div>
                 <div>
-                  <strong>Followers:</strong> {user.following.length}
+                  <strong>Followers:</strong> {currentUser.following.length}
                 </div>
                 <div>
-                  <strong>Follows:</strong> {user.follower.length}
+                  <strong>Follows:</strong> {currentUser.follower.length}
                 </div>
                 <div>
-                  <strong>Fans:</strong> {user.fans.length}
+                  <strong>Fans:</strong> {currentUser.fans.length}
                 </div>
                 <div>
-                  <strong>Stans:</strong> {user.fanOf.length}
+                  <strong>Stans:</strong> {currentUser.fanOf.length}
                 </div>
               </div>
               <div className="
@@ -151,22 +151,28 @@ const UserDetail = ({ user }: UserDetailProps) => {
               </div>
             </div>
           </div>
-          <Tabby defaultIndex={0}>
+          {currentUser.following && currentUser.following.map((follow) => (
+            <UserDetailFollow follower={follow} key={follow.id} />
+          ))}
+          {currentUser.fans && currentUser.fans.map((fan) => (
+            <UserDetailFan fan={fan.fan} key={fan.id} />
+          ))}
+          <Tabby defaultIndex={0} invalidate={invalidateTabs}>
             <TabPanel title="Posts" key={uuid()}>
-                {user.posts.map((post) => (
+                {currentUser.posts && currentUser.posts.map((post) => (
                   <UserDetailPostItem post={post} key={post.id} />
                 ))}
             </TabPanel>
             <TabPanel title="Follows" key={uuid()} className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Followers</h2>
-                  {user.following.map((follow) => (
+                  {currentUser.following && currentUser.following.map((follow) => (
                     <UserDetailFollow follower={follow} key={follow.id} />
                   ))}
                 </div>
                 <div>
                   <h2>Following</h2>
-                  {user.follower.map((follow) => (
+                  {currentUser.follower && currentUser.follower.map((follow) => (
                     <UserDetailFollow following={follow} key={follow.id} />
                   ))}
                 </div>
@@ -174,13 +180,13 @@ const UserDetail = ({ user }: UserDetailProps) => {
             <TabPanel title="fans" key={uuid()} className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Fans</h2>
-                  {user.fans.map((fan) => (
+                  {currentUser.fans && currentUser.fans.map((fan) => (
                     <UserDetailFan fan={fan.fan} key={fan.id} />
                   ))}
                 </div>
                 <div>
                   <h2>Stans</h2>
-                  {user.fanOf.map((fan) => (
+                  {currentUser.fanOf && currentUser.fanOf.map((fan) => (
                     <UserDetailFan fan={fan.fanOf} key={fan.id} />
                   ))}
                 </div>
@@ -192,4 +198,4 @@ const UserDetail = ({ user }: UserDetailProps) => {
   )
 }
 
-export default UserDetail
+export default UserDetailPage

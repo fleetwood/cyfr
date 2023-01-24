@@ -1,8 +1,8 @@
 import { User } from "@prisma/client"
 import { useEffect, useState } from "react"
-import usePostsApi from "../../../hooks/usePostsApi"
+import useCyfrUser from "../../../hooks/useCyfrUser"
+import usePostsQuery from "../../../hooks/usePosts"
 import { PostWithDetails } from "../../../prisma/types/post"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import AvatarList from "../../ui/avatarList"
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
@@ -14,8 +14,8 @@ type PostItemFooterProps = {
 }
 
 const PostItemFooter = ({ post }: PostItemFooterProps) => {
-  const { cyfrUser } = useCyfrUserContext()
-  const { share, like, setCommentId, invalidatePosts } = usePostsApi()
+  const [ cyfrUser ] = useCyfrUser()
+  const { share, like, setCommentId, invalidatePosts } = usePostsQuery()
   const {notify} = useToast()
   const [shareAuthors, setShareAuthors] = useState<User[]>([])
   
@@ -44,7 +44,7 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
 
   const handleComment = async () => {
     if (!isLoggedIn()) return
-    setCommentId(c => post.id)
+    setCommentId(post.id)
     const commentModal = document.getElementById('commentPostModal')
     // @ts-ignore
     commentModal!.checked = true

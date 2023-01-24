@@ -1,8 +1,8 @@
 import { Post, User } from "@prisma/client";
 import { useEffect, useState } from "react";
-import usePostsApi from "../../../hooks/usePostsApi";
+import useCyfrUser from "../../../hooks/useCyfrUser";
+import usePostsQuery, { usePosts } from "../../../hooks/usePosts";
 import { PostWithAuthor } from "../../../prisma/types/post";
-import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import { useToast } from "../../context/ToastContextProvider";
 import AvatarList from "../../ui/avatarList";
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons";
@@ -19,10 +19,10 @@ type ShareItemFooterProps = {
 };
 
 const ShareItemFooter = ({ sharedPost }: ShareItemFooterProps) => {
-  const { cyfrUser } = useCyfrUserContext();
-  const { share, like, comment, invalidatePosts } = usePostsApi();
+  const [ cyfrUser ] = useCyfrUser()
+  const {share, like, comment, invalidatePosts} = usePosts()
   const { notify } = useToast()
-  const [shareAuthors, setShareAuthors] = useState<User[]>([]);
+  const [shareAuthors, setShareAuthors] = useState<User[]>([])
 
   const isLoggedIn = () => {
     if (!cyfrUser) {

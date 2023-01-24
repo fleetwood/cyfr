@@ -23,19 +23,15 @@ type AccountProps = {
 
 const Account = ({user}:AccountProps) => {
   const [session] = useSession({required: true, redirectTo: '/login'})
-  const {cyfrUser, setCyfrUser, invalidateUser, setRefetchInterval} = useCyfrUser()
-
-  useEffect(() => {
-    setRefetchInterval(!cyfrUser ? session ? 100 : __cyfr_refetch__ : __cyfr_refetch__)
-  },[cyfrUser])
+  const [cyfrUser] = useCyfrUser()
 
   return (
-    <MainLayout sectionTitle="Account" subTitle={cyfrUser?.name || ''}>
+    <MainLayout sectionTitle="Account" >
       {cyfrUser &&  <>
         <button className="btn btn-secondary my-12" onClick={() => signOut()}>
           Logout
         </button>
-        <Tabby defaultIndex={0}>
+        <Tabby defaultIndex={0} invalidate={false}>
           <TabPanel title="Preferences">
             <h2 className="subtitle">Preferences</h2>
           </TabPanel>
@@ -44,7 +40,7 @@ const Account = ({user}:AccountProps) => {
           </TabPanel>
           <TabPanel title="User">
             <div className="mt-12">
-              <UserAccountDetail currentUser={cyfrUser} />
+              <UserAccountDetail user={cyfrUser} />
             </div>
           </TabPanel>
         </Tabby>

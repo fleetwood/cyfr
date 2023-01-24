@@ -1,47 +1,63 @@
+import { Dispatch, SetStateAction, useState } from "react"
+import { UseQueryResult, useQuery, useQueryClient } from "react-query"
+import { ResponseError } from "../types/response"
+import { getApi } from "../utils/api"
+import { __cyfr_refetch__ } from "../utils/constants"
+import { UserWithPostsLikes } from "../prisma/types/user"
+import { log } from "../utils/log"
+import { uuid } from "../utils/helpers"
 
-import { Dispatch, SetStateAction, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { ResponseError } from "../types/response";
-import { getApi } from "../utils/api";
-import { __cyfr_refetch__ } from "../utils/constants";
-import { UserWithPostsLikes } from "../prisma/types/user";
-import { log } from "../utils/log";
-import { uuid } from "../utils/helpers";
+const cyfrUserQuery = "cyfrUserQuery"
 
-const cyfrUserQuery = 'cyfrUserQuery'
-const id = uuid().slice(0,4)
-export type useCyfrUserHookType = {
-    cyfrUser?: UserWithPostsLikes,
-    setCyfrUser: Dispatch<SetStateAction<UserWithPostsLikes | undefined>>,
-    invalidateUser: () => Promise<void>
-    setRefetchInterval: Dispatch<SetStateAction<number>>
+export async function getCyfrUser() {
+  log(`useCyfrUser.getCyfrUser()`)
+  const data = await getApi(`/me`)
+  if (data) {
+    log(`useCyfrUser.getCyfrUser result(${JSON.stringify(data)})`)
+    const cyfrUser = data as UserWithPostsLikes
+    return cyfrUser
+  }
+  return null
 }
 
-const useCyfrUser = ():useCyfrUserHookType => {
-    const qc = useQueryClient()
-    const [cyfrUser, setCyfrUser] = useState<UserWithPostsLikes>();
-    const [error, setError] = useState<ResponseError>()
-    const [refetchInterval, setRefetchInterval] = useState(__cyfr_refetch__)
+export type useCyfrUserHookType = {
+  data?: UserWithPostsLikes
+  isLoading: boolean
+  error: unknown
+}[]
 
-    const getCyfrUser = async () => {
-        const me = await getApi('/me')
-        setRefetchInterval((c) => me ? __cyfr_refetch__ : 1000)
-        if (me.result) {
-            log(`${id} getCyfrUser() success, refetch:${refetchInterval}`)
-            setCyfrUser((user) => me.result)
-        } else {
-            log(`${id} getCyfrUser() weirdness ${JSON.stringify(me)}, refetch:${refetchInterval}`)
-        }
-    }
-    
-    useQuery([cyfrUserQuery],getCyfrUser, { refetchInterval })
+const useCyfrUser = ():[UserWithPostsLikes,boolean,unknown] => {
+  const qc = useQueryClient()
+  const [refetchInterval, setRefetchInterval] = useState(__cyfr_refetch__)
 
-    const invalidateUser = () => {
-        log(`${id} useCyfrUser.invalidateUser() refetch:${refetchInterval}`)
-        return qc.invalidateQueries([cyfrUserQuery])
-    }
-    
-    return {cyfrUser, setCyfrUser, invalidateUser, setRefetchInterval}
+  const getCyfrUser = async () => {
+    const me = await getApi("/me")
+    setRefetchInterval((c) => (me ? __cyfr_refetch__ : 1000))
+    return me.result || me.error || null
+  }
+
+  const query = useQuery([cyfrUserQuery], getCyfrUser, {
+    onSettled(data, error) {
+      if (error || data.error) {
+        log(
+          `\tuseCyfrUser.onSettled() ERROR ${JSON.stringify({ error, data })}`
+        )
+      }
+      if (data.result) {
+        log(`useCyfrUser.onSettled() success`)
+        return data.result as UserWithPostsLikes
+      }
+    },
+    refetchInterval
+  })
+
+  return [query.data, query.status === "loading", query.error]
+}
+
+export const useCyfrUserApi = () => {
+  const qc = useQueryClient()
+  const invalidateUser = () => qc.invalidateQueries([cyfrUserQuery])
+  return { invalidateUser }
 }
 
 export default useCyfrUser

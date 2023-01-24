@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react"
-import useCyfrUser from "../../../hooks/useCyfrUser"
+import useCyfrUser, { useCyfrUserHookType } from "../../../hooks/useCyfrUser"
 import { sendApi } from "../../../utils/api"
 import { log } from "../../../utils/log"
 import { useToast } from "../../context/ToastContextProvider"
@@ -11,7 +11,7 @@ type CreatePostProps = {
 }
 
 const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
-  const { cyfrUser } = useCyfrUser()
+  const [cyfrUser] = useCyfrUser()
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
@@ -22,16 +22,17 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
       return
     }
 
-    const post = await sendApi("post/create", {
-      content,
-      authorid: cyfrUser!.id,
-    })
-    if (post) {
-      setContent(null)
-      onCreate()
-    } else {
-      log("Error creating post!")
-    }
+    // const post = await sendApi("post/create", {
+    //   content,
+    //   // @ts-ignore
+    //   authorid: cyfrUser!.id,
+    // })
+    // if (post) {
+    //   setContent(null)
+    // } else {
+    //   log("Error creating post!")
+    // }
+    onCreate()
   }
 
   useEffect(() => {
@@ -73,7 +74,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
         </form>
       </div>
       }
-      {!cyfrUser && <div className="w-full mx-auto p-2 sm:p-6 lg:p-4"><div className="bg-base-200 p-4 rounded-md text-base-content"><LoggedIn /></div></div>}
+      {!cyfrUser && <LoggedIn />}
     </div>
 )}
 export default CreatePost

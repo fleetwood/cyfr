@@ -77,11 +77,11 @@ model Follow {
 }
 
 model Fan {
-  id     String @id @default(cuid())
-  fanId  String
-  starId String
-  fan    User   @relation("user_fans", fields: [fanId], references: [id])
-  fanOf  User   @relation("user_fan_of", fields: [starId], references: [id])
+  id      String @id @default(cuid())
+  fanId   String
+  fanOfId String
+  fan     User   @relation("user_fans", fields: [fanId], references: [id])
+  fanOf   User   @relation("user_fan_of", fields: [fanOfId], references: [id])
 }
 
 model VerificationToken {

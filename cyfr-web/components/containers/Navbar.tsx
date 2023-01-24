@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { useCyfrUserContext } from "../context/CyfrUserProvider";
+import useCyfrUser from "../../hooks/useCyfrUser";
+import { log } from "../../utils/log";
 import Avatar from "../ui/avatar";
 import { CyfrLogo, HouseIcon, UserIcon } from "../ui/icons";
 import ShrinkableIconLink from "../ui/shrinkableIconLink";
 import ShrinkableLink from "../ui/shrinkableLink";
-import { useSession } from "../../lib/next-auth-react-query";
-import { __cyfr_refetch__ } from "../../utils/constants";
 
 type NavbarProps = {
   className?: string;
@@ -18,8 +17,7 @@ const Navbar = ({
   iconClassName,
   pageScrolled: active,
 }: NavbarProps) => {
-  const [session] = useSession({required: false})
-  const { cyfrUser, setRefetchInterval } = useCyfrUserContext();
+  const [cyfrUser] = useCyfrUser();
   const [isPageScrolled, setIsPageScrolled] = useState(false);
 
   useEffect(() => {
@@ -27,8 +25,13 @@ const Navbar = ({
   }, [active]);
 
   useEffect(() => {
-      setRefetchInterval(!cyfrUser ? session ? 100 : __cyfr_refetch__ : __cyfr_refetch__)
-  }, [cyfrUser, session]);
+    if (!cyfrUser) {
+      log(`no cyfrUser in NavBar`)
+    } else {
+      log(`navBar cyfrUser!`)
+    }
+  }, [cyfrUser])
+  
 
   return (
     <>
