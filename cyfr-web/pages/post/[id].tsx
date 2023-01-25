@@ -41,6 +41,11 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
         <div className="text-base-content m-8 font-ibarra">
           {ReactHtmlParser(post.content)}
         </div>}
+        {post.post_comments && post.post_comments.map(c => (
+          <div className="text-base-content m-8 font-ibarra">
+            {ReactHtmlParser(c.content!)}
+          </div>
+          ))}
         <div className="flex flex-row justify-around">
           <PostItemFooter post={post} />
         </div>

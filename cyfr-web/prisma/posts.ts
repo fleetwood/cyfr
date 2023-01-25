@@ -8,7 +8,7 @@ const byId = async (id: string): Promise<PostWithDetails | null> => {
     return await prisma.post.findFirst({
       where: {
         id: id,
-        visible: true,
+        visible: true
       },
       include: PostWithDetailsInclude,
     });
@@ -25,6 +25,7 @@ const all = async (props?: PostAllProps): Promise<PostWithDetails[] | []> => {
       skip,
       where: {
         visible: true,
+        commentId: null
       },
       include: PostWithDetailsInclude,
       orderBy: [
@@ -106,10 +107,18 @@ const share = async (props: PostEngageProps): Promise<Post> => {
   }
 };
 
-const comment = async (data: PostCommentProps): Promise<Post> => {
+const comment = async (props: PostCommentProps): Promise<Post> => {
+  const {commentId, authorid, content} = props
   try {
-    log("Posts.comment", {...data})
-    const success = await prisma.post.create({data})
+    log("Posts.comment", {...props})
+    const success = await prisma.post.update({
+      where: {id: commentId},
+      data: { post_shares: { create: {
+        commentId,
+        authorid,
+        content
+      }}}
+    })
     if (success) {
       return success
     }

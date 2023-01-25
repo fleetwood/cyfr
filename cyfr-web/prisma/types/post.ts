@@ -63,7 +63,11 @@ export const PostWithDetailsInclude = {
   post_shares: {
     include: PostWithAuthorSharesInclude,
   },
+  post_comments: {
+    include: PostWithAuthorInclude
+  }
 }
 export type PostWithDetails = PostWithAuthorShares & {
   post_shares: PostWithAuthorShares[]
+  post_comments: PostWithAuthor[]
 }

@@ -8,6 +8,7 @@ import AvatarList from "../../ui/avatarList";
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons";
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 import { LoggedIn } from "../../ui/toasty";
+import { useCommentContext } from "../../context/CommentContextProvider";
 
 type ShareItemFooterProps = {
   sharedPost: Post & {
@@ -20,9 +21,10 @@ type ShareItemFooterProps = {
 
 const ShareItemFooter = ({ sharedPost }: ShareItemFooterProps) => {
   const [ cyfrUser ] = useCyfrUser()
-  const {share, like, comment, invalidatePosts} = usePosts()
+  const {share, like, invalidatePosts} = usePosts()
   const { notify } = useToast()
   const [shareAuthors, setShareAuthors] = useState<User[]>([])
+  const {setCommentId, showComment, hideComment} = useCommentContext()
 
   const isLoggedIn = () => {
     if (!cyfrUser) {
@@ -48,10 +50,8 @@ const ShareItemFooter = ({ sharedPost }: ShareItemFooterProps) => {
   };
 
   const handleComment = async () => {
-    if (!isLoggedIn()) return;
-    const commentModal = document.getElementById("commentPostModal");
-    // @ts-ignore
-    commentModal!.checked = true;
+    setCommentId(sharedPost.id)
+    showComment()
   };
 
   const handleShare = async () => {
