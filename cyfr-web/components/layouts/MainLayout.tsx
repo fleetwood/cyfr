@@ -2,13 +2,11 @@ import { ReactNode, useRef, useState } from "react";
 import Footer from "../containers/Footer";
 import LeftColumn from "../containers/LeftColumn";
 import Navbar from "../containers/Navbar";
+import CreatePost from "../containers/Post/CreatePost";
 import RightColumn from "../containers/RightColumn";
 import { useToast } from "../context/ToastContextProvider";
 import Section from "../ui/section";
-import usePostsQuery, { usePosts } from "../../hooks/usePosts";
-import CommentPost from "../containers/Post/CommentPost";
-import CreatePost from "../containers/Post/CreatePost";
-import { log } from "../../utils/log";
+import CommentProvider from "../context/CommentContextProvider";
 
 type MainLayoutProps = {
   sectionTitle: string | ReactNode
@@ -25,12 +23,6 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
     const createModal = document.getElementById(createPostModal)
     // @ts-ignore
     createModal!.checked = false
-  }
-
-  const onComment = () => {
-    const commentModal = document.getElementById(commentPostModal)
-    // @ts-ignore
-    commentModal!.checked = false
   }
 
   const [scrollActive, setScrollActive] = useState(false);
@@ -62,7 +54,6 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
                 <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
                   {toasts.map((toast) => toast.toast)}
                 </div>
-                
                 <Section
                   className="box-border snap-y min-h-full"
                   sectionTitle={sectionTitle}
@@ -87,8 +78,6 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
           <CreatePost onCreate={onCreate} />
         </div>
       </div>
-
-      <CommentPost onComment={onComment} />
     </div>
   );
 };

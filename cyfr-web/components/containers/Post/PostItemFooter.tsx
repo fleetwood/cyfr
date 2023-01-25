@@ -1,5 +1,3 @@
-import { User } from "@prisma/client"
-import { useEffect, useState } from "react"
 import useCyfrUser from "../../../hooks/useCyfrUser"
 import usePostsQuery from "../../../hooks/usePosts"
 import { PostWithDetails } from "../../../prisma/types/post"
@@ -8,6 +6,8 @@ import AvatarList from "../../ui/avatarList"
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
 import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import { LoggedIn } from "../../ui/toasty"
+import { log } from "../../../utils/log"
+import { useCommentContext } from "../../context/CommentContextProvider"
 
 type PostItemFooterProps = {
   post: PostWithDetails
@@ -15,9 +15,9 @@ type PostItemFooterProps = {
 
 const PostItemFooter = ({ post }: PostItemFooterProps) => {
   const [ cyfrUser ] = useCyfrUser()
-  const { share, like, setCommentId, invalidatePosts } = usePostsQuery()
+  const { share, like, invalidatePosts } = usePostsQuery()
   const {notify} = useToast()
-  const [shareAuthors, setShareAuthors] = useState<User[]>([])
+  const {setCommentId, showComment, hideComment} = useCommentContext()
   
   const isLoggedIn = () => {
     if (!cyfrUser) {
@@ -43,11 +43,8 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
   }
 
   const handleComment = async () => {
-    if (!isLoggedIn()) return
     setCommentId(post.id)
-    const commentModal = document.getElementById('commentPostModal')
-    // @ts-ignore
-    commentModal!.checked = true
+    showComment()
   }
 
   const handleShare = async () => {
@@ -61,13 +58,6 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
     }
     notify({ type: "warning", message: "Well that didn't work..." })
   }
-
-  useEffect(() => {
-    post.post_shares?.forEach(p => {
-      const {id, name, image} = p.author
-      setShareAuthors(s => [...s,p.author])
-    })
-  },[])
 
   return  (
     <>
@@ -91,7 +81,7 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         label={`Shares (${post.post_shares.length})`}
         onClick={() => handleShare()}
         />
-        <AvatarList users={shareAuthors} sz="wee" />
+        <AvatarList users={post.post_shares.map(a => a.author)} sz="wee" />
     </div>
     <div className="font-semibold uppercase">
         <ShrinkableIconButton
@@ -99,9 +89,10 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         className="bg-opacity-0 hover:shadow-none"
         iconClassName="text-primary"
         labelClassName="text-primary"
-        label={`Comments (*)`}
+        label={`Comments (${post.post_comments.length})`}
         onClick={() => handleComment()}
         />
+        <AvatarList users={post.post_comments.map(a => a.author)} sz="wee" />
     </div>
     </>
 )}
