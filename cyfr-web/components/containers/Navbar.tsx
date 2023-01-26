@@ -24,15 +24,6 @@ const Navbar = ({
     setIsPageScrolled(active);
   }, [active]);
 
-  useEffect(() => {
-    if (!cyfrUser) {
-      log(`no cyfrUser in NavBar`)
-    } else {
-      log(`navBar cyfrUser!`)
-    }
-  }, [cyfrUser])
-  
-
   return (
     <>
       <nav

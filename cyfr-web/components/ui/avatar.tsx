@@ -17,7 +17,7 @@ const Avatar = ({
   sz = "md",
   link = true,
 }: AvatarProps) => {
-  const size = sz == "lg" ? 32 : sz == "md" ? 24 : sz === "wee" ? 6 : 12
+  const size = sz == "lg" ? 48 : sz == "md" ? 24 : sz === "wee" ? 6 : 10
   const dropShadow = shadow ? (size >= 12 ? 'drop-shadow-lg' : 'drop-shadow-md') : ''
   const content = user && user.image ? <img src={user.image}/> : placeholder ? placeholder : '?'
   return (

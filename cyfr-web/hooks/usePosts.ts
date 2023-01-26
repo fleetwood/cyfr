@@ -31,7 +31,6 @@ export const usePosts = () => {
           )
         }
         if (data) {
-          log(`\tusePostsApi.onSettled() success`)
           setPosts(() => data as PostWithDetails[])
         }
       }

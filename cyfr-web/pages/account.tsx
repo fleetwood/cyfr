@@ -10,6 +10,7 @@ import Tabby from "../components/ui/Tabby"
 import { TabPanel } from "react-tabs"
 import { log } from "../utils/log"
 import { __cyfr_refetch__ } from "../utils/constants"
+import Dropzone from "../components/forms/Dropzone"
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await Users.userInSession(context)
@@ -33,7 +34,10 @@ const Account = ({user}:AccountProps) => {
         </button>
         <Tabby defaultIndex={0} invalidate={false}>
           <TabPanel title="Preferences">
-            <h2 className="subtitle">Preferences</h2>
+            <div className="bg-base-300 rounded-md p-4 mt-4">
+              <h2 className="h-title">Avatar</h2>
+              <Dropzone allowed='img'/>
+            </div>
           </TabPanel>
           <TabPanel title="Billing">
             <h2 className="subtitle">Billing</h2>

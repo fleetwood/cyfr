@@ -68,13 +68,6 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
 
   useEffect(() => {
     const disabled = !cyfrUser || !commentId || !content || content.length < 1
-    if (disabled) {
-      log(`CommentPost.useEffect() isDisabled: ${isDisabled}, 
-        cyfrUser: ${cyfrUser !== null || cyfrUser !== undefined}, 
-        content: ${content},
-        commentId: ${commentId}
-      `)
-    }
     setIsDisabled(() => disabled)
   }, [content])
 

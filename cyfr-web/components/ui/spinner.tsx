@@ -13,10 +13,11 @@ type SpinnerProps = {
   fgColor?: string;
   height?: number;
   size?: SpinnerSize;
+  center?: boolean
 };
 
 const Spinner = (props: SpinnerProps) => {
-  let { bgColor, fgColor, height, size } = props;
+  let { bgColor, fgColor, height, size, center } = props;
 
   bgColor = bgColor || "text-gray-500";
   fgColor = fgColor || "fill-teal-400";
@@ -25,8 +26,8 @@ const Spinner = (props: SpinnerProps) => {
   }
 
   return (
-    <div role="status">
-      <div style={{ height: height || 20 + "px", width: height || 20 + "px" }}>
+    <div role="status" className="relative">
+      <div style={{ height: height || 20 + "px", width: height || 20 + "px" }} className={center?'t-[50%] l-[50%] -x-translate-1/2 -y-translate-1/2':''}>
         <svg
           aria-hidden="true"
           className={`animate-spin ${bgColor} ${fgColor} max-w-fit max-h-fit`}
