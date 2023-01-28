@@ -1,52 +1,17 @@
 import { useEffect, useState } from "react"
-import { cloudinary } from "../../../utils/constants"
 import { log, logError } from "../../../utils/log"
 import { FileError } from "react-dropzone"
 import { uuid } from "../../../utils/helpers"
 import FilePreview from "./FilePreview"
+import { CompleteFile } from "."
+import { cloudinary } from "../../../utils/cloudinary"
 
 type FileUploadingProps = {
     file: File
+    onFileComplete: Function
 }
 
-type UploadingProps = {
-    file: File
-    onProgress: Function
-}
-
-function uploadFile({file, onProgress}:UploadingProps) {
-    const url = cloudinary.demo_url
-    const upload_preset = 'docs_upload_example_us_preset'
-
-    return new Promise((res,rej) => {
-        const xhr = new XMLHttpRequest()
-        xhr.open('POST', url)
-
-        xhr.onload = () => {
-            const resp = xhr.responseText
-            res(resp)
-        }
-
-        xhr.onerror = (e) => {
-            log(`FileUploading.onError: ${JSON.stringify(e)}`)
-            rej(e)
-        }
-
-        xhr.upload.onprogress = (e) => {
-            if (e.lengthComputable) {
-                onProgress(Math.round((e.loaded/e.total)*100))
-            }
-        }
-
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('upload_preset', upload_preset)
-
-        xhr.send(formData)
-    })
-}
-
-const FileUploading = ({file}:FileUploadingProps) => {
+const FileUploading = ({file, onFileComplete}:FileUploadingProps) => {
     const [fileProgress, setFileProgress] = useState<number>(0)
     const [fileErrors, setFileErrors] = useState<FileError[]>([])
     const [preview, setPreview] = useState<string|null>(null)
@@ -54,11 +19,12 @@ const FileUploading = ({file}:FileUploadingProps) => {
     const onProgress = (p:number) => setFileProgress(() => p)
 
     useEffect(() => {
-        const uploadedFile = uploadFile({file, onProgress})
+        const uploadedFile = cloudinary.upload({file, onProgress})
             .then((res) => {
                 const file = JSON.parse(res as unknown as string)
                 if (file.secure_url) {
                     setPreview(file.secure_url)
+                    onFileComplete(file as unknown as CompleteFile)
                 }
                 else if (file.error) {
                     setFileErrors(c => [...c,file.error])

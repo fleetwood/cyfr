@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react"
 
-export type classnameProps = {
-  className?: String
+export type classNameProps = {
+  className?: string
 }
 
 export type KeyVal = {

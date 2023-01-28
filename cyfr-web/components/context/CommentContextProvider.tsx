@@ -75,7 +75,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
 
   return (
     <CommentContext.Provider value={value}>
-        <input type="checkbox" ref={modal} id={commentPostModal} className="modal-toggle" checked={checked} />
+        <input type="checkbox" ref={modal} id={commentPostModal} className="modal-toggle" checked={checked} onChange={()=>{}} />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box bg-opacity-0 shadow-none">
             

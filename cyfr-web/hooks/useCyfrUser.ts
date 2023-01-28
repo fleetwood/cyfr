@@ -1,11 +1,13 @@
 import { Dispatch, SetStateAction, useState } from "react"
 import { UseQueryResult, useQuery, useQueryClient } from "react-query"
 import { ResponseError } from "../types/response"
-import { getApi } from "../utils/api"
+import { getApi, sendApi } from "../utils/api"
 import { __cyfr_refetch__ } from "../utils/constants"
-import { UserWithPostsLikes } from "../prisma/types/user"
-import { log } from "../utils/log"
+import { UserDetail, UserWithPostsLikes } from "../prisma/types/user"
+import { jsonify, log } from "../utils/log"
 import { uuid } from "../utils/helpers"
+import { User } from "@prisma/client"
+import useUserDetail from "./useUserDetail"
 
 const cyfrUserQuery = "cyfrUserQuery"
 
@@ -20,7 +22,7 @@ export async function getCyfrUser() {
   return null
 }
 
-export type useCyfrUserHookType = {
+export type useCyfrUserProps = {
   data?: UserWithPostsLikes
   isLoading: boolean
   error: unknown
@@ -57,7 +59,26 @@ const useCyfrUser = ():[UserWithPostsLikes,boolean,unknown] => {
 export const useCyfrUserApi = () => {
   const qc = useQueryClient()
   const invalidateUser = () => qc.invalidateQueries([cyfrUserQuery])
-  return { invalidateUser }
+
+  type updateUserType = {
+    newUser: User | UserWithPostsLikes | UserDetail
+  }
+  const updateUser = async ({newUser}:updateUserType) => {
+    try {
+      const {id, name, image} = newUser
+      const update = await sendApi('/user/preferences', {id,name,image})
+      if (update) {
+        invalidateUser()
+      }
+      else {
+        throw ({code: 'useCyfrUserApi/updateUser', message: 'That dint work'})
+      }
+    } catch (error) {
+      log(`useCyfrUser.updateUser ERROR ${JSON.stringify(error, null, 2)}`)
+    }
+  }
+
+  return { invalidateUser, updateUser }
 }
 
 export default useCyfrUser
