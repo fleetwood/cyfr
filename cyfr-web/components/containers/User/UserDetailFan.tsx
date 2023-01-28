@@ -10,7 +10,7 @@ type UserDetailFansProps = {
 const UserDetailFan = ({fan, ...props}:UserDetailFansProps) => {
     return (
     <div key={uuid(props.key)}>
-        <Avatar user={fan} />
+        <Avatar user={fan} sz='md' />
     </div>
 )}
 

@@ -59,7 +59,7 @@ const Navbar = ({
               href={"/account"}
               // @ts-ignore
               label={cyfrUser.name}
-              icon={<Avatar user={cyfrUser} sz="wee" link={false} />}
+              icon={<Avatar user={cyfrUser} sz="xs" link={false} />}
               className={iconClassName}
               dir="left"
             />

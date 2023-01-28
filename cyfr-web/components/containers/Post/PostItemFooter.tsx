@@ -70,7 +70,7 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         label={`Likes (${post.likes.length})`}
         onClick={() => handleLike()}
         />
-        <AvatarList users={post.likes} sz="wee" />
+        <AvatarList users={post.likes} sz="xs" />
       </div>
     <div className="font-semibold uppercase">
         <ShrinkableIconButton
@@ -81,7 +81,7 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         label={`Shares (${post.post_shares.length})`}
         onClick={() => handleShare()}
         />
-        <AvatarList users={post.post_shares.map(a => a.author)} sz="wee" />
+        <AvatarList users={post.post_shares.map(a => a.author)} sz="xs" />
     </div>
     <div className="font-semibold uppercase">
         <ShrinkableIconButton
@@ -92,7 +92,7 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         label={`Comments (${post.post_comments.length})`}
         onClick={() => handleComment()}
         />
-        <AvatarList users={post.post_comments.map(a => a.author)} sz="wee" />
+        <AvatarList users={post.post_comments.map(a => a.author)} sz="xs" />
     </div>
     </>
 )}

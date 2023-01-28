@@ -84,7 +84,7 @@ const ShareItemFooter = ({ sharedPost }: ShareItemFooterProps) => {
           label={`Likes (${sharedPost.likes.length})`}
           onClick={() => handleLike()}
         />
-        <AvatarList users={sharedPost.likes} sz="wee" />
+        <AvatarList users={sharedPost.likes} sz="xs" />
       </div>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
@@ -95,7 +95,7 @@ const ShareItemFooter = ({ sharedPost }: ShareItemFooterProps) => {
           label={`Shares (${sharedPost.post_shares.length})`}
           onClick={() => handleShare()}
         />
-        <AvatarList users={shareAuthors} sz="wee" />
+        <AvatarList users={shareAuthors} sz="xs" />
       </div>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton

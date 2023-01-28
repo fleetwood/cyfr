@@ -84,6 +84,7 @@ const Account = ({user}:AccountProps) => {
   return (
     <MainLayout sectionTitle="Account" >
       {cyfrUser &&  <>
+        <img className="w-[20px]" width="20" src="https://images.unsplash.com/flagged/photo-1556151994-b611e5ab3675?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=880&amp;q=80"></img>
         <button className="btn btn-secondary my-12" onClick={() => signOut()}>
           Logout
         </button>
