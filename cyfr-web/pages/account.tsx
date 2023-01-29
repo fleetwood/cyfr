@@ -14,6 +14,8 @@ import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
 import Avatar from "../components/ui/avatar"
 import { SaveIcon, UserIcon } from "../components/ui/icons"
 import TailwindInput from "../components/forms/TailwindInput"
+import Image from "next/image"
+import { cloudinary } from "../utils/cloudinary"
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await Users.userInSession(context)
@@ -84,7 +86,6 @@ const Account = ({user}:AccountProps) => {
   return (
     <MainLayout sectionTitle="Account" >
       {cyfrUser &&  <>
-        <img className="w-[20px]" width="20" src="https://images.unsplash.com/flagged/photo-1556151994-b611e5ab3675?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=880&amp;q=80"></img>
         <button className="btn btn-secondary my-12" onClick={() => signOut()}>
           Logout
         </button>
@@ -101,7 +102,7 @@ const Account = ({user}:AccountProps) => {
             <button className="btn btn-primary btn-sm" onClick={onNameChange}>{SaveIcon}</button>
             <h3 className="h-title">Avatar</h3>
             <Dropzone types='img' onFileCompleted={onFileComplete} limit={1} show={showZone}>
-              <Avatar user={cyfrUser} sz="md" />
+              <img src={cloudinary.resize({url: user!.image!, width: 200})} alt="User avatar" />
             </Dropzone>
           </div>
         }

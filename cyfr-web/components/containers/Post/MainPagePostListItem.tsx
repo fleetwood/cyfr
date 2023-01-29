@@ -30,12 +30,12 @@ const MainPagePostListItem = ({ post }: MainPagePostProps) => (
         sz="sm"
         className="float-right"
       />
-      <span className="absolute bottom-0">
+      <div className="absolute bottom-0">
         <Link href={`/post/${post.id}`} className="text-primary underline">
           {post.content ? "Posted" : post.share ? "Shared" : ""}{" "}
           {timeDifference(post.createdAt)}
         </Link>
-      </span>
+      </div>
     </div>
     <div>
       {post.content && (
@@ -75,12 +75,7 @@ const MainPagePostListItem = ({ post }: MainPagePostProps) => (
         </div>
       )}
     </div>
-    <div
-      className="
-        flex flex-row 
-        justify-around 
-        py-4"
-    >
+    <div className="flex flex-row justify-around py-4">
       {post.content && <PostItemFooter post={post} />}
       {post.share && <ShareItemFooter sharedPost={post.share!} />}
     </div>
