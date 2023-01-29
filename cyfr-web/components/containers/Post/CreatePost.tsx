@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react"
-import useCyfrUser, { useCyfrUserHookType } from "../../../hooks/useCyfrUser"
+import useCyfrUser, { useCyfrUserProps } from "../../../hooks/useCyfrUser"
 import { sendApi } from "../../../utils/api"
 import { log } from "../../../utils/log"
 import { useToast } from "../../context/ToastContextProvider"

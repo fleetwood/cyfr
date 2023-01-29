@@ -1,12 +1,20 @@
 import { User } from ".prisma/client"
+import { AvatarSizeProps, cloudinary } from "../../utils/cloudinary"
 
-type AvatarProps = {
+type AvatarProps = AvatarSizeProps & {
   user?: User
-  sz?: "wee" | "sm" | "md" | "lg"
   link?: boolean
   shadow?: boolean
   className?: string
   placeholder?: string
+}
+
+const sizes = {
+  xs: 20,
+  sm: 40,
+  md: 80,
+  lg: 120,
+  xl: 160
 }
 
 const Avatar = ({
@@ -14,15 +22,16 @@ const Avatar = ({
   placeholder,
   className,
   shadow,
-  sz = "md",
+  sz,
   link = true,
 }: AvatarProps) => {
-  const size = sz == "lg" ? 32 : sz == "md" ? 24 : sz === "wee" ? 6 : 12
-  const dropShadow = shadow ? (size >= 12 ? 'drop-shadow-lg' : 'drop-shadow-md') : ''
-  const content = user && user.image ? <img src={user.image}/> : placeholder ? placeholder : '?'
+  const size = `w-[${sizes[sz]}px]`
+  const content = user && user.image 
+    ? <img className={size} width={sizes[sz]} src={cloudinary.avatar(user.image, sz as unknown as AvatarSizeProps)}/> 
+    : placeholder ? placeholder : '?'
   return (
-    <div className={`avatar ${className || ''}`}>
-      <div className={`w-${size} h-${size} ${dropShadow} mask mask-squircle`}>
+    <div className={`avatar`}>
+      <div className={`mask mask-squircle`}>
         {link && user ? (
           <a href={`/user/${user.id}`}>
             {content}

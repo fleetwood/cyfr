@@ -53,7 +53,6 @@ const Tabby = ({defaultIndex = 0, invalidate=false, children }: TabbyProps) => {
   }, [])
 
   useEffect(() => {
-    log(`Tabby.useEffect() invalidate: ${invalidate}`)
     if (invalidate===true) {
       renderChildren()
     }

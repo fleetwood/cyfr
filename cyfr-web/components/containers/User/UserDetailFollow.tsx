@@ -8,8 +8,8 @@ type UserDetailFollowsProps = {
 
 const UserDetailFollow = ({following, follower}:UserDetailFollowsProps) => (
     <div>
-        {following && <Avatar user={following.following} />}
-        {follower && <Avatar user={follower.follower} />}
+        {following && <Avatar user={following.following} sz='md' />}
+        {follower && <Avatar user={follower.follower} sz='md' />}
     </div>
 )
 

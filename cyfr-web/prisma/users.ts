@@ -9,9 +9,9 @@ import {
 
 import { log } from "../utils/log"
 import { prisma } from "./prismaContext"
-import { PostWithDetails, PostWithDetailsInclude } from "./types/post"
+import { PostWithDetailsInclude } from "./types/post"
 import { FanProps, UserDetail, UserWithPostsLikes } from "./types/user"
-import { Follow, Fan } from "@prisma/client"
+import { Follow, Fan, User } from "@prisma/client"
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {
@@ -196,4 +196,24 @@ const userInSession = async (context: GetSessionParams | undefined) => {
     }
 }
 
-export const Users = { userInSession, byEmail, byId, follow, stan }
+type updatePreferencesProps = {
+  id:string
+  name:string
+  image:string
+}
+const updatePreferences = async ({id, name, image}:updatePreferencesProps):Promise<User> => {
+  try {
+    const user = await prisma.user.update({ 
+      where:{id},
+      data: { name, image }
+    })
+    if (user) {
+      return user
+    }
+    throw({code: 'Users.updatePreferences', message: 'Error updating record'})
+  } catch (error) {
+    throw error
+  }
+}
+
+export const Users = { userInSession, byEmail, byId, follow, stan, updatePreferences }

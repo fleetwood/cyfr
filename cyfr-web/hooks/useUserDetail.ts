@@ -5,7 +5,7 @@ import { getApi, sendApi } from "../utils/api"
 import { FanProps, FollowProps, UserDetail } from "../prisma/types/user"
 import { log } from "../utils/log"
 
-const userDetailQuery = "userDetailQuery"
+export const userDetailQuery = "userDetailQuery"
 
 async function getUser(userid:string) {
   const data = await getApi(`user/byId/${userid}`)

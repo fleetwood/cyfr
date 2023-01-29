@@ -26,10 +26,6 @@ export function useSession({
   const query = useQuery(["session"], fetchSession, {
     ...queryConfig,
     onSettled(data, error) {
-      log(`useSession.onSettled() ${JSON.stringify({data, error})}`)
-      if (error) {
-        log(`useSession.onSettled() ERROR ${JSON.stringify({error})}`)
-      }
       if (data || !required) return
       
       router.push(redirectTo || './login')

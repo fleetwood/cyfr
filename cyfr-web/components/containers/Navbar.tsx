@@ -24,15 +24,6 @@ const Navbar = ({
     setIsPageScrolled(active);
   }, [active]);
 
-  useEffect(() => {
-    if (!cyfrUser) {
-      log(`no cyfrUser in NavBar`)
-    } else {
-      log(`navBar cyfrUser!`)
-    }
-  }, [cyfrUser])
-  
-
   return (
     <>
       <nav
@@ -68,7 +59,7 @@ const Navbar = ({
               href={"/account"}
               // @ts-ignore
               label={cyfrUser.name}
-              icon={<Avatar user={cyfrUser} sz="wee" link={false} />}
+              icon={<Avatar user={cyfrUser} sz="xs" link={false} />}
               className={iconClassName}
               dir="left"
             />

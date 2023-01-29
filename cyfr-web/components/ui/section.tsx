@@ -1,16 +1,16 @@
 import { ReactNode } from "react"
 import SectionTitle from "./sectionTitle"
+import { classNameProps } from "../../types/props"
 
-type SectionProps = {
+type SectionProps = classNameProps  & {
   sectionTitle?: string | ReactNode
   subTitle?: string | null
-  className?: string | null
   children: ReactNode
 }
 
 const Section = ({ children, ...props }: SectionProps) => {
   return (
-    <section className={props.className || ""}>
+    <section className={props.className || ''}>
       <div className="col-span-3 mx-auto max-w-5xl py-8 md:py-16">
         <SectionTitle
           title={props.sectionTitle}

@@ -68,13 +68,6 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
 
   useEffect(() => {
     const disabled = !cyfrUser || !commentId || !content || content.length < 1
-    if (disabled) {
-      log(`CommentPost.useEffect() isDisabled: ${isDisabled}, 
-        cyfrUser: ${cyfrUser !== null || cyfrUser !== undefined}, 
-        content: ${content},
-        commentId: ${commentId}
-      `)
-    }
     setIsDisabled(() => disabled)
   }, [content])
 
@@ -82,7 +75,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
 
   return (
     <CommentContext.Provider value={value}>
-        <input type="checkbox" ref={modal} id={commentPostModal} className="modal-toggle" checked={checked} />
+        <input type="checkbox" ref={modal} id={commentPostModal} className="modal-toggle" checked={checked} onChange={()=>{}} />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box bg-opacity-0 shadow-none">
             
