@@ -8,6 +8,7 @@ import { jsonify, log } from "../utils/log"
 import { uuid } from "../utils/helpers"
 import { User } from "@prisma/client"
 import useUserDetail from "./useUserDetail"
+import { cloudinary } from "../utils/cloudinary"
 
 const cyfrUserQuery = "cyfrUserQuery"
 
@@ -38,20 +39,21 @@ const useCyfrUser = ():[UserWithPostsLikes,boolean,unknown] => {
     return me.result || me.error || null
   }
 
-  const query = useQuery([cyfrUserQuery], getCyfrUser, {
-    onSettled(data, error) {
-      if (error || data.error) {
-        log(
-          `\tuseCyfrUser.onSettled() ERROR ${JSON.stringify({ error, data })}`
-        )
-      }
-      if (data.result) {
-        log(`useCyfrUser.onSettled() success`)
-        return data.result as UserWithPostsLikes
-      }
-    },
-    refetchInterval
-  })
+  // @ts-ignore
+  const onSettled = (data, error) => {
+    // log(`useCyfrUser.onSettled()`)
+    if (error || data.error) {
+      log(
+        `\tuseCyfrUser.onSettled() ERROR ${JSON.stringify({ error, data })}`
+      )
+    }
+    if (data) {
+      // log(`\tSUCCESS`)
+      return data as UserWithPostsLikes
+    }
+  }
+
+  const query = useQuery([cyfrUserQuery], getCyfrUser, {onSettled,refetchInterval})
 
   return [query.data, query.status === "loading", query.error]
 }
