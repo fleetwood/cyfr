@@ -2,10 +2,11 @@ import { timeDifference } from "../../../utils/helpers";
 import Avatar from "./../../ui/avatar";
 import PostItemFooter from "./PostItemFooter";
 import ReactHtmlParser from "react-html-parser";
-import ShareItemFooter from "./ShareItemFooter";
-import { PostWithDetails } from "../../../prisma/types/post";
+import SharedPostFooter from "./SharePostFooter";
+import { PostWithDetails } from "../../../prisma/types/post.def";
 import JsonBlock from "../../ui/jsonBlock";
 import Link from "next/link";
+import ShareItem from "../Share/ShareItem";
 
 type MainPagePostProps = {
   post: PostWithDetails;
@@ -66,18 +67,16 @@ const MainPagePostListItem = ({ post }: MainPagePostProps) => (
           <div className="collapse-title collapse-arrow">{""}</div>
         </div>
       )}
-      {post.share && (
+      {post.shares && (
         <div className="bg-base-300 border border-base-content p-4 mt-4 rounded-lg text-base-content flex space-x-4 relative">
-          <div>{ReactHtmlParser(post.share.content!)}</div>
-          <div className="absolute -mt-6 right-0">
-            <Avatar shadow={true} user={post.share.author} sz="sm" />
-          </div>
+          {post.shares.map(share => <ShareItem share={share} key={post.id+share.shareId} />)}
+          
         </div>
       )}
     </div>
     <div className="flex flex-row justify-around py-4">
       {post.content && <PostItemFooter post={post} />}
-      {post.share && <ShareItemFooter sharedPost={post.share!} />}
+      {post.share && <SharedPostFooter share={post.share!} />}
     </div>
   </div>
 );

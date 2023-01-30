@@ -1,6 +1,6 @@
-import { Fan, Follow, Post, User } from "@prisma/client"
+import { Fan, Follow, Like, Post, User } from "@prisma/client"
 import { ResponseResult } from "../../types/response"
-import { PostWithDetails } from "./post"
+import { PostWithDetails } from "./post.def"
 
 export type FollowProps = {
   following: string
@@ -16,7 +16,12 @@ export type UsersResponse = ResponseResult<User[]>
 export type UserResponse = ResponseResult<User>
 export type UserWithPostsLikes = User & {
   posts: Post[]
-  likes: Post[]
+  likes: Like[]
+}
+
+export const UserWithPostsLikesInclude = {
+  posts: true,
+  likes: true
 }
 
 export type UserFollows = Follow & {
@@ -31,7 +36,7 @@ export type UserFans = Fan & {
 
 export type UserDetail = User & {
   posts: PostWithDetails[]
-  likes: Post[]
+  likes: Like[]
   following: UserFollows[]
   follower: UserFollows[]
   fans: UserFans[]

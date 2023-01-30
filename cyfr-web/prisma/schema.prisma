@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("REACT_APP_DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("HEROKU_DATABASE_URL_PROD")
+  shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
 }
 
 model Post {
@@ -15,11 +16,11 @@ model Post {
   content       String?
   shareId       String?
   commentId     String?
+  authorId      String
+  likes         Like[]   @relation("post_likes")
+  author        User     @relation("user_posts", fields: [authorId], references: [id])
   comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
   post_comments Post[]   @relation("post_comments")
-  authorId      String
-  author        User     @relation("user_posts", fields: [authorId], references: [id])
-  likes         Like[]   @relation("post_likes")
   shares        Share[]  @relation("post_shares")
 }
 
@@ -34,17 +35,17 @@ model User {
   fans          Fan[]     @relation("user_fan_of")
   follower      Follow[]  @relation("user_followed_by")
   following     Follow[]  @relation("user_following")
+  likes         Like[]    @relation("user_likes")
   posts         Post[]    @relation("user_posts")
   sessions      Session[]
-  likes         Like[]    @relation("user_likes")
   shares        Share[]   @relation("user_shares")
 }
 
 model Like {
   id       String  @id @default(cuid())
   authorId String
-  author   User    @relation("user_likes", fields: [authorId], references: [id])
   postId   String?
+  author   User    @relation("user_likes", fields: [authorId], references: [id])
   post     Post?   @relation("post_likes", fields: [postId], references: [id])
 }
 
@@ -54,8 +55,8 @@ model Share {
   updatedAt DateTime @default(now())
   visible   Boolean  @default(true)
   authorId  String
-  author    User     @relation("user_shares", fields: [authorId], references: [id])
   postId    String?
+  author    User     @relation("user_shares", fields: [authorId], references: [id])
   post      Post?    @relation("post_shares", fields: [postId], references: [id])
 }
 

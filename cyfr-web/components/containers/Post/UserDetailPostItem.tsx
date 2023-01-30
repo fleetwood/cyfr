@@ -1,9 +1,9 @@
 import { timeDifference } from "../../../utils/helpers"
 import PostItemFooter from "./PostItemFooter"
 import ReactHtmlParser from "react-html-parser"
-import ShareItemFooter from "./ShareItemFooter"
+import SharedPostFooter from "./SharePostFooter"
 import Avatar from "../../ui/avatar"
-import { PostWithDetails } from "../../../prisma/types/post"
+import { PostWithDetails } from "../../../prisma/types/post.def"
 import { useEffect } from "react"
 import { log } from "../../../utils/log"
 
@@ -40,7 +40,7 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
         py-4"
     >
       {post.content && <PostItemFooter post={post} />}
-      {post.share && <ShareItemFooter sharedPost={post.share} />}
+      {post.share && <SharedPostFooter sharedPost={post.share} />}
     </div>
   </div>
 )}

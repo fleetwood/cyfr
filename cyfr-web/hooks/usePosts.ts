@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { PostCommentProps, PostCreateProps, PostEngageProps, PostWithDetails } from "../prisma/types/post"
+import { PostCommentProps, PostCreateProps, PostEngageProps, PostWithDetails } from "../prisma/types/post.def"
 import { getApi, sendApi } from "../utils/api"
 import { log } from "../utils/log"
 

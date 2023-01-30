@@ -1,6 +1,6 @@
 import useCyfrUser from "../../../hooks/useCyfrUser"
 import usePostsQuery from "../../../hooks/usePosts"
-import { PostWithDetails } from "../../../prisma/types/post"
+import { PostWithDetails } from "../../../prisma/types/post.def"
 import { useToast } from "../../context/ToastContextProvider"
 import AvatarList from "../../ui/avatarList"
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"

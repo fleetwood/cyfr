@@ -2,7 +2,7 @@ import MainPagePostListItem from "../components/containers/Post/MainPagePostList
 import MainLayout from "../components/layouts/MainLayout"
 import { CyfrLogo } from "../components/ui/icons"
 import { usePosts } from "../hooks/usePosts"
-import { PostWithDetails } from "../prisma/types/post"
+import { PostWithDetails } from "../prisma/types/post.def"
 
 const Home = () => {
   const {posts} = usePosts()

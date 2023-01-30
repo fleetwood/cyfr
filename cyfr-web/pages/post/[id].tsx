@@ -4,7 +4,7 @@ import MainLayout from "../../components/layouts/MainLayout"
 import Avatar from "../../components/ui/avatar"
 import { timeDifference } from "../../utils/helpers"
 import ReactHtmlParser from "react-html-parser"
-import { PostWithDetails } from "../../prisma/types/post"
+import { PostWithDetails } from "../../prisma/types/post.def"
 import { Posts } from "../../prisma/posts"
 
 type PostDetailPageProps = {

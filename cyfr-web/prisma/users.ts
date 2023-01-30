@@ -9,8 +9,8 @@ import {
 
 import { log } from "../utils/log"
 import { prisma } from "./prismaContext"
-import { PostWithDetailsInclude } from "./types/post"
-import { FanProps, UserDetail, UserWithPostsLikes } from "./types/user"
+import { PostWithDetailsInclude } from "./types/post.def"
+import { FanProps, UserDetail, UserWithPostsLikes } from "./types/user.def"
 import { Follow, Fan, User } from "@prisma/client"
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {

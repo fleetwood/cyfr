@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 
 import { ResponseResult } from "../../../../types/response"
 import { logError, jsonify } from "../../../../utils/log"
-import { UserDetail } from "../../../../prisma/types/user"
+import { UserDetail } from "../../../../prisma/types/user.def"
 import { Users } from "../../../../prisma/users"
 
 export default async function handle(

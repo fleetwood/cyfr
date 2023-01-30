@@ -1,4 +1,4 @@
-import { UserFollows } from '../../../prisma/types/user'
+import { UserFollows } from '../../../prisma/types/user.def'
 import Avatar from '../../ui/avatar'
 
 type UserDetailFollowsProps = {

@@ -1,5 +1,5 @@
 import useCyfrUser, { useCyfrUserApi } from "../hooks/useCyfrUser";
-import { UserWithPostsLikes } from "../prisma/types/user";
+import { UserWithPostsLikes } from "../prisma/types/user.def";
 import { sendApi } from "./api";
 import { log } from "./log";
 
