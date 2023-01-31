@@ -1,8 +1,8 @@
 import { Post } from "@prisma/client"
 import { NextApiRequest, NextApiResponse } from "next"
-import { Posts } from "../../../prisma/entities/post.entity"
 import { ResponseResult } from "../../../types/response"
 import { jsonify, logError } from "../../../utils/log"
+import { Posts } from "../../../prisma/entities/post.entity"
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse<ResponseResult<Post[]>>) {
   const skip = parseInt(req.query.c ? req.query.c.toString() : "0")

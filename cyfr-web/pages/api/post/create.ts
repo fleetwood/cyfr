@@ -1,12 +1,12 @@
 import { Post } from "@prisma/client"
 import { NextApiRequest, NextApiResponse } from "next"
-import { Posts } from "../../../prisma/entities/post.entity"
 import {
   GetResponseError,
   ResponseError,
   ResponseResult
 } from "../../../types/response"
 import { logError, todo } from "../../../utils/log"
+import { Posts } from "../../../prisma/entities/post.entity"
 
 export default async function handle(
   req: NextApiRequest,
@@ -15,7 +15,7 @@ export default async function handle(
   todo('Why is this posting req.body.body????')
   const { content, authorId } = req.body.body
   try {
-    const result = await Posts.create({content, authorId})
+    const result = await Posts.createPost({content, authorId})
     if (result) {
       res.status(200).json({ result })
     } else {

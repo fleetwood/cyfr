@@ -13,7 +13,7 @@ import { CyfrUser } from "../../prisma/types/user.def"
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<CyfrUser>>
+  res: NextApiResponse
 ) {
   const session = await getSession({ req })
   const code = `api/me`
