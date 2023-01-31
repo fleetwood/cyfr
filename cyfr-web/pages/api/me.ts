@@ -7,12 +7,13 @@ import {
 } from "../../types/response"
 import { log, logError, todo } from "../../utils/log"
 import { getSession } from "next-auth/react"
-import { Users } from "../../prisma/users"
-import { UserWithPostsLikes } from "../../prisma/types/user"
+import { Users } from "../../prisma/entities/user.entity"
+import { User } from "@prisma/client"
+import { CyfrUser } from "../../prisma/types/user.def"
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<UserWithPostsLikes>>
+  res: NextApiResponse<ResponseResult<CyfrUser>>
 ) {
   const session = await getSession({ req })
   const code = `api/me`

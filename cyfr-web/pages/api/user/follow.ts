@@ -1,6 +1,6 @@
 import { Fan, Follow } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Users } from "../../../prisma/users";
+import { Users } from "../../../prisma/entities/user.entity";
 
 import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response";
 import { logError, jsonify, todo } from "../../../utils/log";

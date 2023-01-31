@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Posts } from "../../../prisma/posts";
+import { Posts } from "../../../prisma/entities/post.entity";
 import { jsonify, logError } from "../../../utils/log";
 
 const handle = async (req: NextApiRequest, res: NextApiResponse) => {

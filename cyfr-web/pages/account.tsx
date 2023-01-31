@@ -1,21 +1,16 @@
+import { GetSessionParams, signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 import UserAccountDetail from "../components/containers/User/UserAccountDetail"
-import MainLayout from "../components/layouts/MainLayout"
-import useCyfrUser, { useCyfrUserApi } from "../hooks/useCyfrUser"
-import { GetSessionParams, signOut } from "next-auth/react"
-import { useSession } from "../lib/next-auth-react-query"
-import { UserWithPostsLikes } from "../prisma/types/user"
-import { Users } from "../prisma/users"
-import Tabby from "../components/ui/Tabby"
-import { TabPanel } from "react-tabs"
-import { log } from "../utils/log"
-import { __cyfr_refetch__ } from "../utils/constants"
 import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
-import Avatar from "../components/ui/avatar"
-import { SaveIcon, UserIcon } from "../components/ui/icons"
 import TailwindInput from "../components/forms/TailwindInput"
-import Image from "next/image"
+import MainLayout from "../components/layouts/MainLayout"
+import { SaveIcon } from "../components/ui/icons"
+import useCyfrUser, { useCyfrUserApi } from "../hooks/useCyfrUser"
+import { useSession } from "../lib/next-auth-react-query"
+import { Users } from "../prisma/entities/user.entity"
+import { CyfrUser } from "../prisma/types/user.def"
 import { cloudinary } from "../utils/cloudinary"
+import { log } from "../utils/log"
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await Users.userInSession(context)
@@ -24,7 +19,7 @@ export async function getServerSideProps(context: GetSessionParams | undefined) 
 }
 
 type AccountProps = {
-  user?: UserWithPostsLikes | undefined
+  user?: CyfrUser | undefined
 }
 
 const Account = ({user}:AccountProps) => {
@@ -42,7 +37,7 @@ const Account = ({user}:AccountProps) => {
     const newCyfrUser = {
       ...cyfrUser,
       name: cyfrName
-    } as unknown as UserWithPostsLikes
+    } as unknown as CyfrUser
     updateUser({newUser:newCyfrUser})
       .then(r => {
         log(`\tonNameChange complete`)
@@ -59,7 +54,7 @@ const Account = ({user}:AccountProps) => {
       const newCyfrUser = {
         ...cyfrUser,
         image: file.secure_url
-      } as unknown as UserWithPostsLikes
+      } as unknown as CyfrUser
       updateUser({newUser:newCyfrUser})
         .then(r => {
           // setShowZone('none')

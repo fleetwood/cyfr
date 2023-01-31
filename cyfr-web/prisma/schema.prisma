@@ -4,9 +4,14 @@ generator client {
 
 datasource db {
   provider          = "postgresql"
-  url               = env("HEROKU_DATABASE_URL_PROD")
-  shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
+  url               = env("PRISMA_HEROKU_PROXY")
 }
+
+// datasource db {
+//   provider          = "postgresql"
+//   url               = env("HEROKU_DATABASE_URL_PROD")
+//   shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
+// }
 
 model Post {
   id            String   @id @default(cuid())

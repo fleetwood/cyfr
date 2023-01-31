@@ -25,7 +25,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
     }
     const post = create({
       content: content!,
-      authorid: cyfrUser.id
+      authorId: cyfrUser.id
     })
 
     if (!post) {

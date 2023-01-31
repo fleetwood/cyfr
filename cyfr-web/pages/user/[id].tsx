@@ -1,8 +1,5 @@
-import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { TabPanel } from "react-tabs"
-import UserDetailPostItem from "../../components/containers/Post/UserDetailPostItem"
-import UserDetailFan from "../../components/containers/User/UserDetailFan"
 import UserDetailFollow from "../../components/containers/User/UserDetailFollow"
 import { useToast } from "../../components/context/ToastContextProvider"
 import MainLayout from "../../components/layouts/MainLayout"
@@ -13,7 +10,6 @@ import ShrinkableIconButton from "../../components/ui/shrinkableIconButton"
 import useCyfrUser from "../../hooks/useCyfrUser"
 import useUserDetail from "../../hooks/useUserDetail"
 import { uuid } from "../../utils/helpers"
-import { log } from "../../utils/log"
 
 export async function getServerSideProps(context: any) {
   const userId = context.params.id
@@ -29,7 +25,6 @@ type UserDetailProps = {
 }
 
 const UserDetailPage = ({ userId }: UserDetailProps) => {
-  const router = useRouter()
   const [cyfrUser] = useCyfrUser()
   const {currentUser, follow, stan, invalidateUser} = useUserDetail(userId)
   const {notify} = useToast()
@@ -155,12 +150,14 @@ const UserDetailPage = ({ userId }: UserDetailProps) => {
             <UserDetailFollow follower={follow} key={follow.id} />
           ))}
           {currentUser.fans && currentUser.fans.map((fan) => (
-            <UserDetailFan fan={fan.fan} key={fan.id} />
+            // <UserDetailFan fan={fan.fan} key={fan.id} />
+            <>{fan.fanId}</>
           ))}
           <Tabby defaultIndex={0} invalidate={invalidateTabs}>
             <TabPanel title="Posts" key={uuid()}>
                 {currentUser.posts && currentUser.posts.map((post) => (
-                  <UserDetailPostItem post={post} key={post.id} />
+                  // <UserDetailPostItem post={post} key={post.id} />
+                  <></>
                 ))}
             </TabPanel>
             <TabPanel title="Follows" key={uuid()} className="flex flex-col sm:flex-row justify-evenly">
@@ -181,13 +178,15 @@ const UserDetailPage = ({ userId }: UserDetailProps) => {
                 <div>
                   <h2>Fans</h2>
                   {currentUser.fans && currentUser.fans.map((fan) => (
-                    <UserDetailFan fan={fan.fan} key={fan.id} />
+                    // <UserDetailFan fan={fan.fan} key={fan.id} />
+                    <>{fan.fanId}</>
                   ))}
                 </div>
                 <div>
                   <h2>Stans</h2>
                   {currentUser.fanOf && currentUser.fanOf.map((fan) => (
-                    <UserDetailFan fan={fan.fanOf} key={fan.id} />
+                    // <UserDetailFan fan={fan.fanOf} key={fan.id} />
+                    <>{fan.fanId}</>
                   ))}
                 </div>
             </TabPanel>
