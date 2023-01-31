@@ -3,10 +3,10 @@ import PostItemFooter from "./PostItemFooter"
 import ReactHtmlParser from "react-html-parser"
 import { useEffect } from "react"
 import { log } from "../../../utils/log"
-import { PostDetail } from "../../../prisma/types/post.def"
+import { PostDetail, PostFeed } from "../../../prisma/types/post.def"
 
 type UserPostDetailProps = {
-  post: PostDetail
+  post: PostFeed
 }
 
 const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
@@ -28,7 +28,7 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
         flex flex-row 
         justify-around 
         py-4"
-    >
+      >
       {post.content && <PostItemFooter post={post} />}
     </div>
   </div>

@@ -8,8 +8,8 @@ import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import { LoggedIn } from "../../ui/toasty"
 import { log } from "../../../utils/log"
 import { useCommentContext } from "../../context/CommentContextProvider"
-import { Post } from "@prisma/client"
-import { PostFeed } from "../../../prisma/types/post.def"
+
+import { PostFeed } from "../../../prisma/prismaContext"
 
 type PostItemFooterProps = {
   post: PostFeed
@@ -73,7 +73,7 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         onClick={() => handleLike()}
         />
         {/* <AvatarList users={post.likes.map(p => p.authorId)} sz="xs" /> */}
-        {post.likes.map(p => <>{p.authorId}</>)}
+        {post.likes.map(p => <>{p.author.name}</>)}
       </div>
     <div className="font-semibold uppercase">
         <ShrinkableIconButton
@@ -85,7 +85,7 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         onClick={() => handleShare()}
         />
         {/* <AvatarList users={post.post_shares.map(a => a.author)} sz="xs" /> */}
-        {post.shares.map(p => <>{p.authorId}</>)}
+        {post.shares.map(p => <>{p.author.name}</>)}
     </div>
     <div className="font-semibold uppercase">
         <ShrinkableIconButton
@@ -97,7 +97,7 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         onClick={() => handleComment()}
         />
         {/* <AvatarList users={post.post_comments.map(a => a.author)} sz="xs" /> */}
-        {post.post_comments.map(a => <>{a.authorId}</>)}
+        {post.post_comments.map(a => <>{a.author.name}</>)}
     </div>
     </>
 )}

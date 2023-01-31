@@ -1,4 +1,4 @@
-import { Fan, Follow, Like, Post, User } from "@prisma/client"
+import { Fan, Follow, Like, Post, User } from "./../prismaContext"
 
 export type UserFeed = User & {
   posts: Post[]

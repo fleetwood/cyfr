@@ -1,4 +1,4 @@
-import { Post, User } from "@prisma/client"
+import { Post, PostFeed, User } from "./../../../prisma/prismaContext"
 import { useEffect, useState } from "react"
 import useCyfrUser from "../../../hooks/useCyfrUser"
 import { usePosts } from "../../../hooks/usePosts"
@@ -8,7 +8,6 @@ import AvatarList from "../../ui/avatarList"
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
 import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import { LoggedIn } from "../../ui/toasty"
-import { PostFeed } from "../../../prisma/types/post.def"
 
 type ShareItemFooterProps = {
   sharedPost: PostFeed
@@ -80,7 +79,7 @@ const SharedPostFooter = ({ sharedPost }: ShareItemFooterProps) => {
           onClick={() => handleLike()}
         />
         {/* <AvatarList users={sharedPost.likes.map(l => l.authorId)} sz="xs" /> */}
-        {sharedPost.likes.map(l => <>{l.id}</>)}
+        {sharedPost.likes.map(l => <>{l.author.name}</>)}
       </div>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton

@@ -1,4 +1,4 @@
-import { Post, Share, User } from "@prisma/client"
+import { Post, Share, User } from "./../prismaContext"
 
 export type ShareItem = Share & {
   author: User

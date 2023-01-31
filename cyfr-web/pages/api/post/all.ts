@@ -1,8 +1,7 @@
-import { Post } from "@prisma/client"
+import { Post, Posts } from "../../../prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from "next"
 import { ResponseResult } from "../../../types/response"
 import { jsonify, logError } from "../../../utils/log"
-import { Posts } from "../../../prisma/entities/post.entity"
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse<ResponseResult<Post[]>>) {
   const skip = parseInt(req.query.c ? req.query.c.toString() : "0")
@@ -11,7 +10,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse<R
     if (result) {
       res.status(200).json({result})
     } else {
-      throw { code: 'api/post', message: `No results from Posts.all()` }
+      throw { code: 'api/post/all', message: `No results from Posts.all()` }
     }
   } catch (e) {
     logError("\tFAIL", e)

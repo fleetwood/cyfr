@@ -1,5 +1,4 @@
-import { Post, User } from "@prisma/client";
-import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed } from "../types/post.def";
+import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, User } from "./../prismaContext";
 import { log } from "../../utils/log";
 
 const byId = async (id: string): Promise<PostDetail | null> => {
@@ -21,6 +20,11 @@ const byId = async (id: string): Promise<PostDetail | null> => {
   }
 };
 
+/**
+ * @satisfies visible:true
+ * @satisfies commentId:null //don't include Shares
+ * @returns PostFeed[]
+ */
 const all = async (): Promise<PostFeed[] | []> => {
   try {
     return await prisma.post.findMany({
@@ -30,16 +34,30 @@ const all = async (): Promise<PostFeed[] | []> => {
       },
       include: {
         author: true,
-        shares: true,
-        likes: true,
-        post_comments: true
+        shares: { include: {
+            author: true,
+        }},
+        likes: { include: {
+          author: true,
+        }},
+        post_comments: {
+          include: {
+            author: true,
+            shares: { include: {
+              author: true,
+            }},
+            likes: { include: {
+              author: true,
+            }}
+          }
+        }
       },
       orderBy: [
         {
           updatedAt: "desc",
         },
       ],
-    });
+    }) as unknown as PostFeed[]
   } catch (error) {
     throw { code: "posts/all", message: "No posts were returned!" };
   }
@@ -117,13 +135,12 @@ const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
   const {commentId, authorId, content} = props
   try {
     log("Posts.comment", {...props})
-    const success = await prisma.post.update({
-      where: {id: commentId},
-      data: { comment: { create: {
+    const success = await prisma.post.create({
+      data: {
         authorId,
         commentId,
         content
-      }}}
+      }
     })
     if (success) {
       return success

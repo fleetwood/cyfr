@@ -1,8 +1,7 @@
-import { Post } from "@prisma/client"
 import { NextApiRequest, NextApiResponse } from "next"
 import { ResponseResult, ResponseError, GetResponseError } from "../../../types/response"
 import { todo, logError } from "../../../utils/log"
-import { Posts } from "../../../prisma/entities/post.entity"
+import { Post, Posts } from "../../../prisma/prismaContext"
 
 export default async function handle(
     req: NextApiRequest,

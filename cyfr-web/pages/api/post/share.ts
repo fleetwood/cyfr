@@ -1,6 +1,5 @@
-import { Post } from "@prisma/client"
 import { NextApiRequest, NextApiResponse } from "next"
-import { Posts } from "../../../prisma/entities/post.entity"
+import { Post, Posts } from "../../../prisma/prismaContext"
 import { ResponseResult, ResponseError, GetResponseError } from "../../../types/response"
 import { todo, logError } from "../../../utils/log"
 

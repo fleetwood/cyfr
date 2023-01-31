@@ -2,12 +2,12 @@ import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { getApi, sendApi } from "../utils/api"
 import { log } from "../utils/log"
-import { PostCommentProps, PostCreateProps, PostEngageProps, PostFeed } from "../prisma/types/post.def"
+import { PostCommentProps, PostCreateProps, PostEngageProps, PostFeed } from "../prisma/prismaContext"
 
 const allPostsQuery = "allPostsQuery"
 
 export async function getPosts() {
-  const data = await getApi(`post`)
+  const data = await getApi(`post/all`)
   if (data.result) {
     const posts = data.result
     return posts

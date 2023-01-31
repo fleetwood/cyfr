@@ -5,10 +5,10 @@ import Avatar from "../../components/ui/avatar"
 import { timeDifference } from "../../utils/helpers"
 import ReactHtmlParser from "react-html-parser"
 import { Posts } from "../../prisma/entities/post.entity"
-import { PostDetail } from "../../prisma/types/post.def"
+import { PostDetail, PostFeed } from "../../prisma/types/post.def"
 
 type PostDetailPageProps = {
-  post: PostDetail
+  post: PostFeed
 }
 
 export async function getServerSideProps(context: any) {
@@ -44,6 +44,11 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
         {post.post_comments && post.post_comments.map(c => (
           <div className="text-base-content m-8 font-ibarra">
             {ReactHtmlParser(c.content!)}
+          </div>
+          ))}
+        {post.likes && post.post_comments.map(c => (
+          <div className="text-base-content m-8 font-ibarra">
+            {post.post_comments.map((p) => ReactHtmlParser(p.content!))}
           </div>
           ))}
         <div className="flex flex-row justify-around">

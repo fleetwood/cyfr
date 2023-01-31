@@ -1,6 +1,5 @@
-import { User } from "@prisma/client"
 import { NextApiRequest, NextApiResponse } from "next"
-import { Users } from "../../../../prisma/entities/user.entity"
+import { User, Users } from "../../../../prisma/prismaContext"
 
 import { ResponseResult } from "../../../../types/response"
 import { logError, jsonify, log } from "../../../../utils/log"

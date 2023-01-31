@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "react-query"
 import { getApi, sendApi } from "../utils/api"
 import { log } from "../utils/log"
 import { FollowProps, FanProps } from "../prisma/types/follow.def"
-import { UserDetail } from "../prisma/types/user.def"
+import { UserDetail } from "../prisma/prismaContext"
 
 export const userDetailQuery = "userDetailQuery"
 

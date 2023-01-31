@@ -1,9 +1,8 @@
-import { Fan, Follow } from "@prisma/client";
-import { NextApiRequest, NextApiResponse } from "next";
-import { Users } from "../../../prisma/entities/user.entity";
+import { Fan, Follow,Users } from "../../../prisma/prismaContext"
+import { NextApiRequest, NextApiResponse } from "next"
 
-import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response";
-import { logError, jsonify, todo } from "../../../utils/log";
+import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response"
+import { logError, jsonify, todo } from "../../../utils/log"
 
 export default async function handle(
   req: NextApiRequest,
@@ -12,11 +11,11 @@ export default async function handle(
   todo('Why is this posting req.body.body????')
   const { following, follower } = req.body.body
   try {
-    const result = await Users.follow(following, follower);
+    const result = await Users.follow(following, follower)
     if (result) {
-      res.status(200).json({ result });
+      res.status(200).json({ result })
     } else {
-      throw { code: "api/user/follow", message: `No results from Follow` };
+      throw { code: "api/user/follow", message: `No results from Follow` }
     }
     if (result) {
       res.status(200).json({ result })

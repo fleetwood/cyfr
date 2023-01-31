@@ -18,7 +18,7 @@ const Home = () => {
         <CyfrLogo className="animate-pulse text-info-content w-[1.25rem]" />
         <span className="text-info-content">New Post</span>
       </label>
-      {posts && posts.map((post:PostDetail) => <MainPagePostListItem post={post} key={post.id} />)}
+      {posts && posts.map((post) => <MainPagePostListItem post={post} key={post.id} />)}
     </MainLayout>
   )
 }
