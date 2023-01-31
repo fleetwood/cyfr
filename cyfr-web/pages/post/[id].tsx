@@ -4,11 +4,11 @@ import MainLayout from "../../components/layouts/MainLayout"
 import Avatar from "../../components/ui/avatar"
 import { timeDifference } from "../../utils/helpers"
 import ReactHtmlParser from "react-html-parser"
-import { PostWithDetails } from "../../prisma/types/post.def"
-import { Posts } from "../../prisma/posts"
+import { Posts } from "../../prisma/entities/post.entity"
+import { PostDetail } from "../../prisma/types/post.def"
 
 type PostDetailPageProps = {
-  post: PostWithDetails
+  post: PostDetail
 }
 
 export async function getServerSideProps(context: any) {

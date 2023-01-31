@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { PostCommentProps, PostCreateProps, PostEngageProps, PostWithDetails } from "../prisma/types/post.def"
 import { getApi, sendApi } from "../utils/api"
 import { log } from "../utils/log"
+import { PostCommentProps, PostCreateProps, PostEngageProps, PostFeed } from "../prisma/types/post.def"
 
 const allPostsQuery = "allPostsQuery"
 
@@ -17,7 +17,7 @@ export async function getPosts() {
 
 export const usePosts = () => {
   const qc = useQueryClient()
-  const [posts, setPosts] = useState<PostWithDetails[]>()
+  const [posts, setPosts] = useState<PostFeed[]>()
   const [commentId, setCommentId] = useState<string|null>(null)
 
   const query = useQuery(
@@ -31,7 +31,7 @@ export const usePosts = () => {
           )
         }
         if (data) {
-          setPosts(() => data as PostWithDetails[])
+          setPosts(() => data as PostFeed[])
         }
       }
     }
@@ -52,6 +52,11 @@ export const usePosts = () => {
 
   const like = async (props: PostEngageProps) => await send("post/like", props)
 
+  /**
+   * 
+   * @param props commentId, authorId, content
+   * @returns 
+   */
   const comment = async (props:PostCommentProps) => await send("post/comment", props)
 
   const invalidatePosts = () => qc.invalidateQueries([allPostsQuery])

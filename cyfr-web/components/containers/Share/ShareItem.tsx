@@ -1,11 +1,9 @@
-import { Share } from "@prisma/client"
-import { PostWithShare } from "../../../prisma/types/post.def"
 import ReactHtmlParser from 'react-html-parser'
 import Avatar from "../../ui/avatar"
-import { ShareWithAuthorPost } from "../../../prisma/types/share.def"
+import { ShareItem } from '../../../prisma/types/share.def'
 
 type ShareItemProps = {
-    share: ShareWithAuthorPost
+    share: ShareItem
 }
 const ShareItem = ({share}:ShareItemProps) => {
   return (

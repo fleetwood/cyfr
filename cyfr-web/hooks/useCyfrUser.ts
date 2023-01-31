@@ -1,14 +1,10 @@
-import { Dispatch, SetStateAction, useState } from "react"
-import { UseQueryResult, useQuery, useQueryClient } from "react-query"
-import { ResponseError } from "../types/response"
+import { User } from "@prisma/client"
+import { useState } from "react"
+import { useQuery, useQueryClient } from "react-query"
+import { CyfrUser, UserDetail } from "../prisma/types/user.def"
 import { getApi, sendApi } from "../utils/api"
 import { __cyfr_refetch__ } from "../utils/constants"
-import { UserDetail, UserWithPostsLikes } from "../prisma/types/user.def"
-import { jsonify, log } from "../utils/log"
-import { uuid } from "../utils/helpers"
-import { User } from "@prisma/client"
-import useUserDetail from "./useUserDetail"
-import { cloudinary } from "../utils/cloudinary"
+import { log } from "../utils/log"
 
 const cyfrUserQuery = "cyfrUserQuery"
 
@@ -17,19 +13,19 @@ export async function getCyfrUser() {
   const data = await getApi(`/me`)
   if (data) {
     log(`useCyfrUser.getCyfrUser result(${JSON.stringify(data)})`)
-    const cyfrUser = data as UserWithPostsLikes
+    const cyfrUser = data as CyfrUser
     return cyfrUser
   }
   return null
 }
 
 export type useCyfrUserProps = {
-  data?: UserWithPostsLikes
+  data?: CyfrUser
   isLoading: boolean
   error: unknown
 }[]
 
-const useCyfrUser = ():[UserWithPostsLikes,boolean,unknown] => {
+const useCyfrUser = ():[CyfrUser,boolean,unknown] => {
   const qc = useQueryClient()
   const [refetchInterval, setRefetchInterval] = useState(__cyfr_refetch__)
 
@@ -49,7 +45,7 @@ const useCyfrUser = ():[UserWithPostsLikes,boolean,unknown] => {
     }
     if (data) {
       // log(`\tSUCCESS`)
-      return data as UserWithPostsLikes
+      return data as CyfrUser
     }
   }
 
@@ -63,7 +59,7 @@ export const useCyfrUserApi = () => {
   const invalidateUser = () => qc.invalidateQueries([cyfrUserQuery])
 
   type updateUserType = {
-    newUser: User | UserWithPostsLikes | UserDetail
+    newUser: User | CyfrUser | UserDetail
   }
   const updateUser = async ({newUser}:updateUserType) => {
     try {

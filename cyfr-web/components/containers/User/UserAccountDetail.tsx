@@ -5,14 +5,12 @@ import Avatar from "../../ui/avatar"
 import UserDetailPostItem from "../Post/UserDetailPostItem"
 import UserDetailFollow from "./UserDetailFollow"
 import UserDetailFan from "./UserDetailFan"
-import { UserFollows, UserWithPostsLikes } from "../../../prisma/types/user.def"
-import { PostWithDetails } from "../../../prisma/types/post.def"
 import { User } from "@prisma/client"
+import { UserDetail, UserFeed } from "../../../prisma/types/user.def"
 
 type UserAccountDetailProps = {
-  user: UserWithPostsLikes
+  user: UserDetail
 }
-
 
 const UserAccountDetail = ({ user }: UserAccountDetailProps) => {
   const { currentUser, invalidateUser } = useUserDetail(user.id)
@@ -65,36 +63,36 @@ const UserAccountDetail = ({ user }: UserAccountDetailProps) => {
           </div>
           <Tabby defaultIndex={0} invalidate={false}>
             <TabPanel title="Posts" className="p-2 md:p-4 min-w-fit">
-                {currentUser.posts.map((post: PostWithDetails) => (
+                {/* {currentUser.posts.map((post: PostWithDetails) => (
                   <UserDetailPostItem post={post} key={post.id} />
-                ))}
+                ))} */}
             </TabPanel>
             <TabPanel title="Follows" className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Following</h2>
-                  {currentUser.follower.map((follow:UserFollows) => (
+                  {/* {currentUser.follower.map((follow:UserFollows) => (
                     <UserDetailFollow following={follow} key={follow.id} />
-                  ))}
+                  ))} */}
                 </div>
                 <div>
                   <h2>Followers</h2>
-                  {currentUser.following.map((follow:UserFollows) => (
+                  {/* {currentUser.following.map((follow:UserFollows) => (
                     <UserDetailFollow follower={follow} key={follow.id} />
-                  ))}
+                  ))} */}
                 </div>
             </TabPanel>
             <TabPanel title="Fans" className="flex flex-col sm:flex-row justify-evenly">
                 <div>
                   <h2>Fans</h2>
-                  {currentUser.fans.map((fan: { fan: User; id: string | undefined }) => (
+                  {/* {currentUser.fans.map((fan: { fan: User; id: string | undefined }) => (
                     <UserDetailFan fan={fan.fan} key={fan.id} />
-                  ))}
+                  ))} */}
                 </div>
                 <div>
                   <h2>Stans</h2>
-                  {currentUser.fanOf.map((fan: { fanOf: User; id: string | undefined }) => (
+                  {/* {currentUser.fanOf.map((fan: { fanOf: User; id: string | undefined }) => (
                     <UserDetailFan fan={fan.fanOf} key={fan.id} />
-                  ))}
+                  ))} */}
                 </div>
             </TabPanel>
           </Tabby>

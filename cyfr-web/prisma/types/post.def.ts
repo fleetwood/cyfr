@@ -1,81 +1,99 @@
-import { Like, Post, Share, User } from "@prisma/client"
-import { ResponseResult } from "../../types/response";
-import { ShareWithAuthorPost, ShareWithAuthorPostInclude } from "./share.def";
-
-export type PostsResponse = ResponseResult<Post[]>;
-export type PostResponse = ResponseResult<Post>;
-
-export type PostAllProps = {
-  take?: number | undefined
-  skip?: number | undefined
-}
+import { Like, Post, Share, User } from "@prisma/client";
 
 export type PostCreateProps = {
-  authorId: string
   content: string
+  authorId: string
 }
 
 export type PostEngageProps = {
-  postid: string
-  userid: string
+  authorId: string
+  postId: string
 }
 
 export type PostCommentProps = {
-  content: string
   commentId: string
   authorId: string
+  content: string
 }
 
-export type PostWithAuthorLikes = Post & {
+export type PostBase = Post & {
   author: User
+  comment?: Post
+  post_comments: Post[]
   likes: Like[]
+  shares: Share[]
 }
-export const PostWithAuthorLikesInclude = {
+
+export const PostBaseInclude = {
   author: true,
+  comment: true,
+  post_comments: true,
   likes: true,
+  shares: true
 }
 
-/**
- * @property id: string;
- * @property createdAt: Date;
- * @property updatedAt: Date;
- * @property visible: boolean;
- * @property content: string | null;
- * @property shareId: string | null;
- * @property commentId: string | null;
- * @property authorId: string;
- * @property share: User & PostWithAuthorLikes
- */
-export type PostWithShare = Post & {
-  share: ShareWithAuthorPost
+export type PostFeed = Post & {
+  author: User
+  comment?: Post
+  post_comments: Post[]
+  likes: Like[]
+  shares: Share[]
 }
 
-export const PostWithAuthorLikesSharesInclude = {
-  ...PostWithAuthorLikesInclude,
-  shares: {
-    include: ShareWithAuthorPostInclude
-  }
+export const PostFeedInclude = {
+  author: {
+    // counts only
+    include: { _count: { select: { 
+      posts: true,
+      fans: true,
+      fanOf: true,
+      follower: true,
+      following: true 
+    }}}
+  },
+  comment: {
+    where: {
+      visible: true
+    },
+    include: {
+      author: true
+    }
+  },
+  post_comments: true,
+  likes: true,
+  shares: true
 }
-export type PostWithAuthorShares = PostWithAuthorLikes & PostWithShare
 
-/**
- * Post & {
-    author: User;
-    likes: Like[];
-} & {
-    share: ShareWithAuthorPost[];
-} & {
-    shares: ShareWithAuthorPost[];
-    post_comments: PostWithAuthorLikes[];
+
+
+export type PostDetail = Post & {
+  author: User
+  comment?: Post
+  post_comments: Post[]
+  likes: Like[]
+  shares: Share[]
 }
- */
-export const PostWithDetailsInclude = {
-  ...PostWithAuthorLikesSharesInclude,
-  post_comments: {
-    include: PostWithAuthorLikesInclude
-  }
-}
-export type PostWithDetails = PostWithAuthorShares & {
-  shares: ShareWithAuthorPost[]
-  post_comments: PostWithAuthorLikes[]
+
+export const PostDetailInclude = {
+  author: {
+    // counts only
+    include: { _count: { select: { 
+      posts: true,
+      fans: true,
+      fanOf: true,
+      follower: true,
+      following: true 
+    }}}
+  },
+  comment: {
+    where: {
+      visible: true
+    },
+    include: {
+      author: true
+    }
+  },
+  post_comments: true,
+  likes: true,
+  shares: true
 }

@@ -1,19 +1,18 @@
-import { Post, User } from "@prisma/client";
-import { useEffect, useState } from "react";
-import useCyfrUser from "../../../hooks/useCyfrUser";
-import { usePosts } from "../../../hooks/usePosts";
-import { PostWithAuthorLikes } from "../../../prisma/types/post.def";
-import { useCommentContext } from "../../context/CommentContextProvider";
-import { useToast } from "../../context/ToastContextProvider";
-import AvatarList from "../../ui/avatarList";
-import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons";
-import ShrinkableIconButton from "../../ui/shrinkableIconButton";
-import { LoggedIn } from "../../ui/toasty";
-import { ShareWithAuthorPost } from "../../../prisma/types/share.def";
+import { Post, User } from "@prisma/client"
+import { useEffect, useState } from "react"
+import useCyfrUser from "../../../hooks/useCyfrUser"
+import { usePosts } from "../../../hooks/usePosts"
+import { useCommentContext } from "../../context/CommentContextProvider"
+import { useToast } from "../../context/ToastContextProvider"
+import AvatarList from "../../ui/avatarList"
+import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
+import ShrinkableIconButton from "../../ui/shrinkableIconButton"
+import { LoggedIn } from "../../ui/toasty"
+import { PostFeed } from "../../../prisma/types/post.def"
 
 type ShareItemFooterProps = {
-  sharedPost: ShareWithAuthorPost
-};
+  sharedPost: PostFeed
+}
 
 const SharedPostFooter = ({ sharedPost }: ShareItemFooterProps) => {
   const [ cyfrUser ] = useCyfrUser()
@@ -27,47 +26,47 @@ const SharedPostFooter = ({ sharedPost }: ShareItemFooterProps) => {
       notify({
         type: "warning",
         message: <LoggedIn />,
-      });
-      return false;
+      })
+      return false
     }
-    return true;
-  };
+    return true
+  }
 
   const handleLike = async () => {
-    if (!isLoggedIn()) return;
+    if (!isLoggedIn()) return
 
-    const liked = await like({ postid: sharedPost.id, userid: cyfrUser!.id });
+    const liked = await like({ postId: sharedPost.id, authorId: cyfrUser!.id })
     if (liked) {
-      notify({ type: "success", message: "You liked this post" });
-      invalidatePosts();
-      return;
+      notify({ type: "success", message: "You liked this post" })
+      invalidatePosts()
+      return
     }
-    notify({ type: "warning", message: "Well that didn't work..." });
-  };
+    notify({ type: "warning", message: "Well that didn't work..." })
+  }
 
   const handleComment = async () => {
     setCommentId(sharedPost.id)
     showComment()
-  };
+  }
 
   const handleShare = async () => {
-    if (!isLoggedIn()) return;
+    if (!isLoggedIn()) return
 
-    const shared = await share({ postid: sharedPost.id, userid: cyfrUser!.id });
+    const shared = await share({ postId: sharedPost.id, authorId: cyfrUser!.id })
     if (shared) {
-      notify({ type: "success", message: "You shared this post" });
-      invalidatePosts();
-      return;
+      notify({ type: "success", message: "You shared this post" })
+      invalidatePosts()
+      return
     }
-    notify({ type: "warning", message: "Well that didn't work..." });
-  };
+    notify({ type: "warning", message: "Well that didn't work..." })
+  }
 
   useEffect(() => {
-    sharedPost.post.shares?.forEach((p) => {
-      const { id, name, image } = p.author;
-      setShareAuthors((s) => [...s, p.author]);
-    });
-  }, []);
+    // sharedPost.post.shares?.forEach((p) => {
+    //   const { id, name, image } = p.author
+    //   setShareAuthors((s) => [...s, p.author])
+    // })
+  }, [])
 
   return (
     <>
@@ -77,10 +76,11 @@ const SharedPostFooter = ({ sharedPost }: ShareItemFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Likes (${sharedPost.post?.likes.length})`}
+          label={`Likes (${sharedPost.likes.length})`}
           onClick={() => handleLike()}
         />
-        <AvatarList users={sharedPost.post?.likes.map(l => l.authorId)} sz="xs" />
+        {/* <AvatarList users={sharedPost.likes.map(l => l.authorId)} sz="xs" /> */}
+        {sharedPost.likes.map(l => <>{l.id}</>)}
       </div>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
@@ -88,7 +88,7 @@ const SharedPostFooter = ({ sharedPost }: ShareItemFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Shares (${sharedPost.post_shares.length})`}
+          label={`Shares (${sharedPost.shares.length})`}
           onClick={() => handleShare()}
         />
         <AvatarList users={shareAuthors} sz="xs" />
@@ -104,7 +104,7 @@ const SharedPostFooter = ({ sharedPost }: ShareItemFooterProps) => {
         />
       </div>
     </>
-  );
-};
+  )
+}
 
-export default SharedPostFooter;
+export default SharedPostFooter

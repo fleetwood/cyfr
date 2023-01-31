@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { GetResponseError, ResponseError } from "../types/response"
 import { getApi, sendApi } from "../utils/api"
-import { FanProps, FollowProps, UserDetail } from "../prisma/types/user.def"
 import { log } from "../utils/log"
+import { FollowProps, FanProps } from "../prisma/types/follow.def"
+import { UserDetail } from "../prisma/types/user.def"
 
 export const userDetailQuery = "userDetailQuery"
 

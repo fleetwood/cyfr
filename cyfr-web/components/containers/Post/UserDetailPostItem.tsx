@@ -1,14 +1,12 @@
 import { timeDifference } from "../../../utils/helpers"
 import PostItemFooter from "./PostItemFooter"
 import ReactHtmlParser from "react-html-parser"
-import SharedPostFooter from "./SharePostFooter"
-import Avatar from "../../ui/avatar"
-import { PostWithDetails } from "../../../prisma/types/post.def"
 import { useEffect } from "react"
 import { log } from "../../../utils/log"
+import { PostDetail } from "../../../prisma/types/post.def"
 
 type UserPostDetailProps = {
-  post: PostWithDetails
+  post: PostDetail
 }
 
 const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
@@ -22,14 +20,6 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
         {ReactHtmlParser(post.content)}
       </div>
     )}
-    {post.share && (
-      <div className="bg-base-300 bg-opacity-50 p-4 rounded-lg text-base-content">
-        <div className="w-full flex relative">
-          <Avatar user={post.share.author} sz="sm" shadow={true} className="absolute right-0 -mt-8" />
-        </div>
-        {ReactHtmlParser(post.share.content!)}
-      </div>
-    )}
     <div className="mb-2 md:mb-4">
       <div>{timeDifference(post.createdAt)}</div>
     </div>
@@ -40,7 +30,6 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
         py-4"
     >
       {post.content && <PostItemFooter post={post} />}
-      {post.share && <SharedPostFooter sharedPost={post.share} />}
     </div>
   </div>
 )}

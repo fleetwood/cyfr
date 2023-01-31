@@ -7,7 +7,7 @@ import WordpressProvider from "next-auth/providers/wordpress";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import { log } from "../../../utils/log";
-import { Users } from "../../../prisma/users";
+import { Users } from "../../../prisma/entities/user.entity";
 
 const prisma = new PrismaClient();
 

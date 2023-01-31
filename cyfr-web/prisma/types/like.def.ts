@@ -1,12 +1,10 @@
-import { Like } from "@prisma/client"
-import { PostWithAuthorLikes, PostWithAuthorLikesInclude } from "./post.def"
-import { UserWithPostsLikes, UserWithPostsLikesInclude } from "./user.def"
+import { Like, Post, User } from "@prisma/client"
 
 export type ShareWithAuthorPost = Like & {
-  author: UserWithPostsLikes
-  post?: PostWithAuthorLikes
+  author: User
+  post?: Post
 }
 export const ShareWithAuthorPostInclude = {
-  author: UserWithPostsLikesInclude,
-  post: PostWithAuthorLikesInclude,
+  author: true,
+  post: true
 }

@@ -1,6 +1,6 @@
 import { Fan } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Users } from "../../../prisma/users";
+import { Users } from "../../../prisma/entities/user.entity";
 
 import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response";
 import { logError, todo } from "../../../utils/log";
@@ -12,7 +12,7 @@ export default async function handle(
   todo('Why is this posting req.body.body????')
   const { fanId, fanOfId } = req.body.body
   try {
-    const result = await Users.stan({fanId, fanOfId});
+    const result = await Users.stan(fanId, fanOfId);
     if (result) {
       res.status(200).json({ result });
     } else {
