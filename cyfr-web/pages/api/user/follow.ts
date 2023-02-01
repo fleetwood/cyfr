@@ -1,4 +1,4 @@
-import { Fan, Follow,Users } from "../../../prisma/prismaContext"
+import { Fan, Follow,PrismaUser } from "../../../prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from "next"
 
 import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response"
@@ -11,7 +11,7 @@ export default async function handle(
   todo('Why is this posting req.body.body????')
   const { following, follower } = req.body.body
   try {
-    const result = await Users.follow(following, follower)
+    const result = await PrismaUser.follow(following, follower)
     if (result) {
       res.status(200).json({ result })
     } else {

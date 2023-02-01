@@ -1,5 +1,5 @@
-import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, User } from "./../prismaContext";
-import { log } from "../../utils/log";
+import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, User, PostDeleteProps } from "../prismaContext"
+import { log } from "../../utils/log"
 
 const byId = async (id: string): Promise<PostDetail | null> => {
   try {
@@ -14,11 +14,11 @@ const byId = async (id: string): Promise<PostDetail | null> => {
        likes: true,
        post_comments: true
       },
-    });
+    })
   } catch (error) {
-    throw { code: "posts/byId", message: "No posts were returned!" };
+    throw { code: "posts/byId", message: "No posts were returned!" }
   }
-};
+}
 
 /**
  * @satisfies visible:true
@@ -59,61 +59,78 @@ const all = async (): Promise<PostFeed[] | []> => {
       ],
     }) as unknown as PostFeed[]
   } catch (error) {
-    throw { code: "posts/all", message: "No posts were returned!" };
+    throw { code: "posts/all", message: "No posts were returned!" }
   }
-};
+}
 
 const createPost = async (props: PostCreateProps): Promise<Post> => {
-  const data = { ...props };
+  const data = { ...props }
   try {
-    log("Posts.create", data);
-    return await prisma.post.create({ data });
+    log("Posts.create", data)
+    return await prisma.post.create({ data })
   } catch (error) {
-    log("\tERROR: ", error);
-    throw { code: "posts/create", message: "Post was not created!" };
+    log("\tERROR: ", error)
+    throw { code: "posts/create", message: "Post was not created!" }
   }
-};
+}
+
+const deletePost = async ({postId, authorId}: PostDeleteProps): Promise<Post> => {
+  try {
+    log("PostEntity.deletePost", {postId, authorId})
+    return await prisma.post.update({ 
+      where: {
+        id: postId,
+      },
+      data: {
+        visible: false
+      }
+    })
+  } catch (error) {
+    log("\tERROR: ", error)
+    throw { code: "posts/create", message: "Post was not created!" }
+  }
+}
 
 const likePost = async (props: PostEngageProps): Promise<Post> => {
-  const data = { ...props };
+  const data = { ...props }
   try {
-    log("Posts.like", data);
-    const user = await prisma.user.findUnique({ where: { id: data.authorId } });
-    const post = await prisma.post.findUnique({ where: { id: data.postId } });
+    log("Posts.like", data)
+    const user = await prisma.user.findUnique({ where: { id: data.authorId } })
+    const post = await prisma.post.findUnique({ where: { id: data.postId } })
     if (user && post) {
       const success = await prisma.post.update({
         where: { id: post.id },
         data: { likes: { connect: { id: user.id } } },
-      });
+      })
       if (success) {
-        return success;
+        return success
       } else {
         throw {
           message: "Unable to connect like to post",
-        };
+        }
       }
     }
     throw {
       message: "Unable to find user and post to like",
-    };
+    }
   } catch (error) {
-    log("\tERROR: ", error);
-    throw { code: "posts/like", message: "Post not liked!" };
+    log("\tERROR: ", error)
+    throw { code: "posts/like", message: "Post not liked!" }
   }
-};
+}
 
 const sharePost = async (props: PostEngageProps): Promise<Post> => {
-  const { authorId, postId } = props;
+  const { authorId, postId } = props
   try {
-    log("Posts.share", props);
-    const post = await prisma.post.findUnique({ where: { id: postId } });
+    log("Posts.share", props)
+    const post = await prisma.post.findUnique({ where: { id: postId } })
 
     const newShare = await prisma.share.create({
       data: {
         authorId,
         postId
       },
-    });
+    })
     const updatePost = await prisma.post.update({
       where: { id: postId },
       data: {
@@ -123,13 +140,13 @@ const sharePost = async (props: PostEngageProps): Promise<Post> => {
           },
         },
       },
-    });
-    return updatePost;
+    })
+    return updatePost
   } catch (error) {
-    log("\tERROR: ", error);
-    throw { code: "posts/share", message: "Post not shared!" };
+    log("\tERROR: ", error)
+    throw { code: "posts/share", message: "Post not shared!" }
   }
-};
+}
 
 const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
   const {commentId, authorId, content} = props
@@ -151,9 +168,9 @@ const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
       })
     }
   } catch (error) {
-    log("\tERROR: ", error);
-    throw { code: "posts/comment", message: "Post not commented!" };
+    log("\tERROR: ", error)
+    throw { code: "posts/comment", message: "Post not commented!" }
   }
-};
+}
 
-export const Posts = { all, byId, createPost, likePost, sharePost, commentOnPost };
+export const PrismaPost = { all, byId, createPost, deletePost, likePost, sharePost, commentOnPost }

@@ -1,7 +1,7 @@
 import { GetSessionParams, getSession } from "next-auth/react"
 import { stringify } from "superjson"
 import { Follow, Fan, User, Post, Like } from ".prisma/client"
-import {prisma} from './../prismaContext'
+import {prisma} from '../prismaContext'
 import { GenericResponseError, ResponseError, GetResponseError } from "../../types/response"
 import { log } from "../../utils/log"
 import { FanProps } from "../types/follow.def"
@@ -199,4 +199,4 @@ const updatePreferences = async ({id, name, image}:updatePreferencesProps):Promi
   }
 }
 
-export const Users = { userInSession, byEmail, byId, follow, stan, updatePreferences }
+export const PrismaUser = { userInSession, byEmail, byId, follow, stan, updatePreferences }

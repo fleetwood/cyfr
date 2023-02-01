@@ -4,7 +4,7 @@ import MainLayout from "../../components/layouts/MainLayout"
 import Avatar from "../../components/ui/avatar"
 import { timeDifference } from "../../utils/helpers"
 import ReactHtmlParser from "react-html-parser"
-import { Posts } from "../../prisma/entities/post.entity"
+import { PrismaPost } from "../../prisma/entities/prismaPost"
 import { PostDetail, PostFeed } from "../../prisma/types/post.def"
 
 type PostDetailPageProps = {
@@ -13,7 +13,7 @@ type PostDetailPageProps = {
 
 export async function getServerSideProps(context: any) {
   const postid = context.params.id
-  const post = await Posts.byId(postid)
+  const post = await PrismaPost.byId(postid)
 
   return {
     props: {

@@ -5,6 +5,11 @@ export type PostCreateProps = {
   authorId: string
 }
 
+export type PostDeleteProps = {
+  postId: string
+  authorId: string
+}
+
 export type PostEngageProps = {
   authorId: string
   postId: string
@@ -67,8 +72,6 @@ export const PostFeedInclude = {
   likes: true,
   shares: true
 }
-
-
 
 export type PostDetail = Post & {
   author: User

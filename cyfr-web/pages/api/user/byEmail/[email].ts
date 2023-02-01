@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { User, Users } from "../../../../prisma/prismaContext"
+import { User, PrismaUser } from "../../../../prisma/prismaContext"
 
 import { ResponseResult } from "../../../../types/response"
 import { logError, jsonify, log } from "../../../../utils/log"
@@ -10,7 +10,7 @@ export default async function handle(
 ) {
   const email = req.query.email?.toString() || ""
   try {
-    const result = await Users.byEmail(email)
+    const result = await PrismaUser.byEmail(email)
     if (result) {
       log(`api/user/byEmail(
         ${email},

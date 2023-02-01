@@ -7,13 +7,13 @@ import MainLayout from "../components/layouts/MainLayout"
 import { SaveIcon } from "../components/ui/icons"
 import useCyfrUser, { useCyfrUserApi } from "../hooks/useCyfrUser"
 import { useSession } from "../lib/next-auth-react-query"
-import { Users } from "../prisma/entities/user.entity"
+import { PrismaUser } from "../prisma/entities/prismaUser"
 import { CyfrUser } from "../prisma/types/user.def"
 import { cloudinary } from "../utils/cloudinary"
 import { log } from "../utils/log"
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
-  const user = await Users.userInSession(context)
+  const user = await PrismaUser.userInSession(context)
   
   return { props: { user } }
 }

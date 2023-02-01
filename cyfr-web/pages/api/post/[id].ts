@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Posts } from "../../../prisma/entities/post.entity";
+import { PrismaPost } from "../../../prisma/entities/prismaPost";
 import { jsonify, logError } from "../../../utils/log";
 
 const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
   try {
-    const result = await Posts.byId(id?.toString() || "");
+    const result = await PrismaPost.byId(id?.toString() || "");
     if (result) {
       res.status(200).json({ result });
     } else {

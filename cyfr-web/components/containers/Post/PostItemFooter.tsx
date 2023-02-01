@@ -10,11 +10,11 @@ import { log } from "../../../utils/log"
 import { useCommentContext } from "../../context/CommentContextProvider"
 
 import { PostFeed } from "../../../prisma/prismaContext"
+import JsonBlock from "../../ui/jsonBlock"
 
 type PostItemFooterProps = {
   post: PostFeed
 }
-
 const PostItemFooter = ({ post }: PostItemFooterProps) => {
   const [ cyfrUser ] = useCyfrUser()
   const { share, like, invalidatePosts } = usePostsQuery()
@@ -69,23 +69,22 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         className="bg-opacity-0 hover:shadow-none"
         iconClassName="text-primary"
         labelClassName="text-primary"
-        label={`Likes (${post.likes.length})`}
+        label={`Like (${post.likes.length})`}
         onClick={() => handleLike()}
         />
-        {/* <AvatarList users={post.likes.map(p => p.authorId)} sz="xs" /> */}
-        {post.likes.map(p => <>{p.author.name}</>)}
+        <AvatarList users={post.likes.map(p => p.author)} sz="xs" />
       </div>
+      
     <div className="font-semibold uppercase">
         <ShrinkableIconButton
         icon={ShareIcon}
         className="bg-opacity-0 hover:shadow-none"
         iconClassName="text-primary"
         labelClassName="text-primary"
-        label={`Shares (${post.shares.length})`}
+        label={`Share (${post.shares.length})`}
         onClick={() => handleShare()}
         />
-        {/* <AvatarList users={post.post_shares.map(a => a.author)} sz="xs" /> */}
-        {post.shares.map(p => <>{p.author.name}</>)}
+        <AvatarList users={post.shares.map(a => a.author)} sz="xs" />
     </div>
     <div className="font-semibold uppercase">
         <ShrinkableIconButton
@@ -93,11 +92,10 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
         className="bg-opacity-0 hover:shadow-none"
         iconClassName="text-primary"
         labelClassName="text-primary"
-        label={`Comments (${post.post_comments.length})`}
+        label={`Comment (${(post.post_comments||[]).length})`}
         onClick={() => handleComment()}
         />
-        {/* <AvatarList users={post.post_comments.map(a => a.author)} sz="xs" /> */}
-        {post.post_comments.map(a => <>{a.author.name}</>)}
+        <AvatarList users={(post.post_comments||[]).map(a => a.author)} sz="xs" />
     </div>
     </>
 )}
