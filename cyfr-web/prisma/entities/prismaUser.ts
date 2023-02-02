@@ -95,9 +95,6 @@ const byId = async (id: string): Promise<UserDetail> => {
 
 const byEmail = async (email: string):Promise<CyfrUser> => {
   try {
-    log(`user.entity.byEmail(
-      ${email}
-    )`)
     const user = await prisma.user.findUnique({
       where: {
         email,
@@ -117,7 +114,7 @@ const byEmail = async (email: string):Promise<CyfrUser> => {
         message: `Did not find user for ${email}`,
       }
     }
-    log(`user.entity.byEmail found ${user.name}`)
+    // log(`user.entity.byEmail found ${user.name}`)
     return user as CyfrUser
   } catch (error) {
     log(`user.entity.byEmail FAIL

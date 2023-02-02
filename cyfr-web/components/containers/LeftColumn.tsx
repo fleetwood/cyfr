@@ -1,18 +1,21 @@
 import ShrinkableIconLink from "../ui/shrinkableIconLink";
 import { ClipbardIcon, QuestionMarkIcon } from "../ui/icons";
+import { __prod__ } from "../../utils/constants";
 
 const LeftColumn = () => {
   return (
     <div className="sticky top-0 p-4 rounded-xl w-full h-full">
       <ul className="flex sm:flex-col overflow-hidden content-center justify-center">
-        <li>
+        {!__prod__ && 
+          <li>
           <ShrinkableIconLink
-            href={"/about"}
+            href={"/dev"}
             target="_self"
-            label="About Us"
+            label="Dev"
             icon={QuestionMarkIcon}
           />
         </li>
+        }
         <li>
           <ShrinkableIconLink
             href="https://hypercolor.dev/generator"
