@@ -3,26 +3,21 @@ import { NextApiRequest, NextApiResponse } from "next"
 import {
   GetResponseError,
   ResponseError,
-  ResponseResult,
 } from "../../types/response"
-import { log, logError, todo } from "../../utils/log"
+import { log, logError } from "../../utils/log"
 import { getSession } from "next-auth/react"
-import { Users } from "../../prisma/entities/user.entity"
-import { User } from "@prisma/client"
-import { CyfrUser } from "../../prisma/types/user.def"
+import { PrismaUser } from "../../prisma/prismaContext"
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<CyfrUser>>
+  res: NextApiResponse
 ) {
-  const session = await getSession({ req })
   const code = `api/me`
-  log(`${code} email: ${session?.user?.email}`)
   try {
+    const session = await getSession({ req })
     const email = session?.user?.email
-    const result = await Users.byEmail(email!)
+    const result = await PrismaUser.byEmail(email!)
     if (result) {
-      log(`${code} results: ${result.id}`)
       res.status(200).json({ result })
     } else {
       log(`${code} No results`)

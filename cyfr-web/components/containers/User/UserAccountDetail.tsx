@@ -5,8 +5,7 @@ import Avatar from "../../ui/avatar"
 import UserDetailPostItem from "../Post/UserDetailPostItem"
 import UserDetailFollow from "./UserDetailFollow"
 import UserDetailFan from "./UserDetailFan"
-import { User } from "@prisma/client"
-import { UserDetail, UserFeed } from "../../../prisma/types/user.def"
+import { User, UserDetail, UserFeed } from "../../../prisma/prismaContext"
 
 type UserAccountDetailProps = {
   user: UserDetail

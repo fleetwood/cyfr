@@ -1,10 +1,12 @@
-import { Post, Share, User } from "@prisma/client"
+import { Post, PostFeed, Share, User } from "./../prismaContext"
+import { PostFeedInclude } from "./post.def"
 
-export type ShareItem = Share & {
-  author: User
-  post?: Post
+export type ShareDeleteProps = {
+  id: string
+  authorId: string
 }
-export const ShareItemInclude = {
-  author: true,
-  post: true,
+
+export type ShareFeed = Share & {
+  author: User
+  post?: PostFeed | null
 }

@@ -1,6 +1,5 @@
-import { Post } from "@prisma/client"
 import { NextApiRequest, NextApiResponse } from "next"
-import { Posts } from "../../../prisma/entities/post.entity"
+import { Post, PrismaPost } from "../../../prisma/prismaContext"
 import { ResponseResult, ResponseError, GetResponseError } from "../../../types/response"
 import { todo, logError } from "../../../utils/log"
 
@@ -15,7 +14,7 @@ export default async function handle(
     todo('Why is this posting req.body.body????')
     const { postId, authorId,  } = req.body.body
     try {
-      const result = await Posts.sharePost({postId, authorId})
+      const result = await PrismaPost.sharePost({postId, authorId})
       if (result) {
         res.status(200).json({ result })
       } else {

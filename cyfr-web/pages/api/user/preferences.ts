@@ -1,6 +1,5 @@
-import { User } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Users } from "../../../prisma/entities/user.entity";
+import { User, PrismaUser } from "../../../prisma/prismaContext";
 
 import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response";
 import { log, logError, todo } from "../../../utils/log";
@@ -13,7 +12,7 @@ export default async function handle(
   log("\tapi/user/preferences", JSON.stringify(req.body.body))
   try {
     const { id, name, image } = req.body.body
-    const result = await Users.updatePreferences({id, name, image});
+    const result = await PrismaUser.updatePreferences({id, name, image});
     if (result) {
       log("\tapi/user/preferences result!!")
       res.status(200).json({ result });

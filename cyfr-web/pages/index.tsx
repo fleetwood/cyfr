@@ -1,11 +1,11 @@
-import MainPagePostListItem from "../components/containers/Post/MainPagePostListItem"
+import MainFeedItem from "../components/containers/Post/MainFeedItem"
 import MainLayout from "../components/layouts/MainLayout"
 import { CyfrLogo } from "../components/ui/icons"
-import { usePosts } from "../hooks/usePosts"
-import { PostDetail } from "../prisma/types/post.def"
+import useMainFeed from "../hooks/useMainFeed"
+import { uuid } from "../utils/helpers"
 
 const Home = () => {
-  const {posts} = usePosts()
+  const {feed} = useMainFeed()
 
   const CyfrHome = 
     <div className="flex">
@@ -18,7 +18,7 @@ const Home = () => {
         <CyfrLogo className="animate-pulse text-info-content w-[1.25rem]" />
         <span className="text-info-content">New Post</span>
       </label>
-      {posts && posts.map((post:PostDetail) => <MainPagePostListItem post={post} key={post.id} />)}
+      {feed && feed.map((item) => <MainFeedItem item={item} key={uuid()} />)}
     </MainLayout>
   )
 }

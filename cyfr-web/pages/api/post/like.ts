@@ -1,9 +1,7 @@
-import { Post } from "@prisma/client"
 import { NextApiRequest, NextApiResponse } from "next"
-import { Posts } from "../../../prisma/entities/post.entity"
+import { Post, PrismaPost, PostEngageProps } from "../../../prisma/prismaContext"
 import { ResponseResult, ResponseError, GetResponseError } from "../../../types/response"
 import { todo, logError } from "../../../utils/log"
-import { PostEngageProps } from "../../../prisma/types/post.def"
 
 /**
  * 
@@ -17,7 +15,7 @@ export default async function handle(
     todo('Why is this posting req.body.body????')
     const { postId, authorId } = req.body.body as PostEngageProps
     try {
-      const result = await Posts.likePost({postId, authorId})
+      const result = await PrismaPost.likePost({postId, authorId})
       if (result) {
         res.status(200).json({ result })
       } else {

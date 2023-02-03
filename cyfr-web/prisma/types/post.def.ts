@@ -1,7 +1,12 @@
-import { Like, Post, Share, User } from "@prisma/client";
+import { Like, Post, Share, User } from "./../prismaContext";
 
 export type PostCreateProps = {
   content: string
+  authorId: string
+}
+
+export type PostDeleteProps = {
+  postId: string
   authorId: string
 }
 
@@ -32,12 +37,16 @@ export const PostBaseInclude = {
   shares: true
 }
 
+type PostComments = Post & {
+  author: User,
+}
+
 export type PostFeed = Post & {
   author: User
   comment?: Post
-  post_comments: Post[]
-  likes: Like[]
-  shares: Share[]
+  post_comments: PostComments[]
+  likes: Like & {author: User}[]
+  shares: Share & {author: User}[]
 }
 
 export const PostFeedInclude = {
@@ -63,8 +72,6 @@ export const PostFeedInclude = {
   likes: true,
   shares: true
 }
-
-
 
 export type PostDetail = Post & {
   author: User

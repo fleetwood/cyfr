@@ -1,9 +1,9 @@
 import ReactHtmlParser from 'react-html-parser'
 import Avatar from "../../ui/avatar"
-import { ShareItem } from '../../../prisma/types/share.def'
+import { ShareFeed } from '../../../prisma/types/share.def'
 
 type ShareItemProps = {
-    share: ShareItem
+    share: ShareFeed
 }
 const ShareItem = ({share}:ShareItemProps) => {
   return (
@@ -19,4 +19,4 @@ const ShareItem = ({share}:ShareItemProps) => {
     </>
   )
 }
-export default ShareItem
+export default ShareFeed

@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import { ResponseResult } from "../../../../types/response"
 import { logError, jsonify } from "../../../../utils/log"
 import { UserDetail } from "../../../../prisma/types/user.def"
-import { Users } from "../../../../prisma/entities/user.entity"
+import { PrismaUser } from "../../../../prisma/entities/prismaUser"
 
 export default async function handle(
   req: NextApiRequest,
@@ -11,7 +11,7 @@ export default async function handle(
 ) {
   const id = req.query.id?.toString() || ""
   try {
-    const result = await Users.byId(id)
+    const result = await PrismaUser.byId(id)
     if (result) {
       res.status(200).json({ result })
     } else {
