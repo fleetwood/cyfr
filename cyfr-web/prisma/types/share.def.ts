@@ -10,9 +10,3 @@ export type ShareFeed = Share & {
   author: User
   post?: PostFeed | null
 }
-export const ShareItemInclude = {
-  author: true,
-  post: {
-    include: PostFeedInclude
-  },
-}

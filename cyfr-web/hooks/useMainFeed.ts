@@ -4,8 +4,9 @@ import { getApi, sendApi } from "../utils/api"
 import { log } from "../utils/log"
 import { PostCommentProps, PostCreateProps, PostEngageProps, PostFeed } from "../prisma/prismaContext"
 import { MainFeed } from "../prisma/types"
+import { allPostsQuery } from "./usePosts"
 
-const mainFeedQuery = "mainFeedQuery"
+export const mainFeedQuery = "mainFeedQuery"
 
 export async function getMainFeed() {
   const data = await getApi(`feed/main`)
@@ -60,7 +61,7 @@ export const useMainFeed = () => {
    */
   const commentOnPost = async (props:PostCommentProps) => await send("post/comment", props)
 
-  const invalidateMainFeed = () => qc.invalidateQueries([mainFeedQuery])
+  const invalidateMainFeed = () => qc.invalidateQueries([allPostsQuery, mainFeedQuery])
   
   return {feed, createPost, sharePost, likePost, commentOnPost, commentId, setCommentId, invalidateMainFeed}
 }

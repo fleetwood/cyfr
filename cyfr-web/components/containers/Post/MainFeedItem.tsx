@@ -4,7 +4,6 @@ import PostItemFooter from "./PostItemFooter"
 import ReactHtmlParser from "react-html-parser"
 import { MainFeed } from "../../../prisma/types"
 import Link from "next/link"
-import { ReactNode } from "react"
 
 type MainFeedItemProps = {
   item: MainFeed
@@ -14,9 +13,6 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
   const {post} = item.share || item
   const comments = post?.post_comments || []
   const isShare = item.type === "ShareFeed"
-  const contentClassName = isShare 
-    ? "bg-gray-500 bg-opacity-50 p-4 rounded-lg text-base-content border-2 border-dashed border-base-content"
-    : "bg-base-300 p-4 rounded-lg text-base-content"
 
   return post ? (
     <div className={`
@@ -26,26 +22,38 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
       flex flex-col
       bg-neutral-content 
       ${isShare 
-          ? `bg-opacity-60 accent-glow-sm` 
-          : `even:bg-opacity-80 odd:bg-opacity-100`
+          ? `bg-opacity-80 accent-glow-sm` 
+          : ``
       }`}>
-        <div className="w-full relative">
+      {isShare && (
+        <div className="w-full mb-2 pb-2 border-b border-dashed border-base-content relative flex">
+        <Avatar
+          shadow={true}
+          user={item.share!.author}
+          sz="sm"
+        />
+        <div>
+            {timeDifference(item.share!.createdAt)}
+        </div>
+      </div>
+      )}
+        <div className="w-full relative flex">
         <Avatar
           shadow={true}
           user={post.author}
           sz="sm"
-          className="float-right"
         />
-        <div className="absolute bottom-0">
+        <div className="">
           <Link href={`/post/${post.id}`} className="text-primary underline">
-            {isShare ? "Shared" : "Posted"} {timeDifference(post.createdAt)}
+            {timeDifference(post.createdAt)}
           </Link>
         </div>
       </div>
-      <div>
+      <div className="p-4 mt-4">
         {post.content && 
           ReactHtmlParser(post.content)
         }
+        {comments && <div className="mt-4 text-sm font-semibold">⤵ Replies</div>}
         {comments && comments.slice(0, 5).map((comment) => (
           <div className="even:bg-base-300 odd:bg-base-200 bg-opacity-50 p-4 rounded-lg text-base-content mt-2 flex space-x-4">
             <Avatar user={comment.author} sz="xs" />
@@ -70,7 +78,7 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
         )}
       </div>
       <div className="flex flex-row justify-around py-4">
-        {post.content && <PostItemFooter post={post} />}
+        {post.content && <PostItemFooter post={post} feed="main" />}
       </div>
     </div>
   ) : <></>

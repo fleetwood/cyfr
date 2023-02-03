@@ -57,6 +57,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
     hideComment()
 
     if (post) {
+      log(`CommentContextProvider.handleSubmit success`)
       invalidatePosts()
     } else {
       notify({

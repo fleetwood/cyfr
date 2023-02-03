@@ -14,7 +14,7 @@ const byId = async (id: string): Promise<Share | null> => {
       },
     })
   } catch (error) {
-    throw { code: "posts/byId", message: "No posts were returned!" }
+    throw { code: "prismaShare.byId()", message: "No share was returned!" }
   }
 }
 
@@ -34,6 +34,11 @@ const all = async (): Promise<ShareFeed[] | []> => {
         post: {
           include: {
             author: true,
+            post_comments: {
+              include: {
+                author: true
+              }
+            },
             shares: true,
             likes: true
           }
@@ -46,7 +51,7 @@ const all = async (): Promise<ShareFeed[] | []> => {
       ],
     }) as unknown as ShareFeed[]
   } catch (error) {
-    throw { code: "posts/all", message: "No posts were returned!" }
+    throw { code: "prismaShare.all", message: "No shares were returned!" }
   }
 }
 

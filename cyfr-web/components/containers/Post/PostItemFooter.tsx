@@ -11,15 +11,19 @@ import { useCommentContext } from "../../context/CommentContextProvider"
 
 import { PostFeed } from "../../../prisma/prismaContext"
 import JsonBlock from "../../ui/jsonBlock"
+import useMainFeed from "../../../hooks/useMainFeed"
 
 type PostItemFooterProps = {
   post: PostFeed
+  feed: "main" | "user" | "default"
 }
-const PostItemFooter = ({ post }: PostItemFooterProps) => {
+const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   const [ cyfrUser ] = useCyfrUser()
   const { share, like, invalidatePosts } = usePostsQuery()
+  // const { sharePost, likePost, invalidateMainFeed } = useMainFeed()
   const {notify} = useToast()
   const {setCommentId, showComment, hideComment} = useCommentContext()
+  const isMain = feed === "main"
   
   const isLoggedIn = () => {
     if (!cyfrUser) {
@@ -32,9 +36,16 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
     return true
   }
 
+  const handleComment = async () => {
+    log(`PostItemFooter.handleComment`)
+    setCommentId(post.id)
+    showComment()
+  }
+
   const handleLike = async () => {
     if (!isLoggedIn()) return
 
+    log(`PostItemFooter.handleLike`)
     const liked = await like({ postId: post.id, authorId: cyfrUser!.id })
     if (liked) {
       notify({ type: "success", message: 'You liked this post' })
@@ -44,14 +55,10 @@ const PostItemFooter = ({ post }: PostItemFooterProps) => {
     notify({ type: "warning", message: "Well that didn't work..." })
   }
 
-  const handleComment = async () => {
-    setCommentId(post.id)
-    showComment()
-  }
-
   const handleShare = async () => {
     if (!isLoggedIn()) return
 
+    log(`PostItemFooter.handleShare`)
     const shared = await share({ postId: post.id, authorId: cyfrUser!.id })
     if (shared) {
       notify({ type: "success", message: 'You shared this post' })
