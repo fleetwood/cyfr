@@ -52,7 +52,7 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
           </div>
           ))}
         <div className="flex flex-row justify-around">
-          <PostItemFooter post={post} />
+          <PostItemFooter post={post} feed="post" />
         </div>
       </div>
     </MainLayout>

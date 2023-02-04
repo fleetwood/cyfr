@@ -29,7 +29,7 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
         justify-around 
         py-4"
       >
-      {post.content && <PostItemFooter post={post} />}
+      {post.content && <PostItemFooter post={post} feed={"default"} />}
     </div>
   </div>
 )}

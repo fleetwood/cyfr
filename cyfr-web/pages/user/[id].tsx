@@ -10,6 +10,7 @@ import ShrinkableIconButton from "../../components/ui/shrinkableIconButton"
 import useCyfrUser from "../../hooks/useCyfrUser"
 import useUserDetail from "../../hooks/useUserDetail"
 import { uuid } from "../../utils/helpers"
+import JsonBlock from "../../components/ui/jsonBlock"
 
 export async function getServerSideProps(context: any) {
   const userId = context.params.id
@@ -153,7 +154,7 @@ const UserDetailPage = ({ userId }: UserDetailProps) => {
             // <UserDetailFan fan={fan.fan} key={fan.id} />
             <>{fan.fanId}</>
           ))}
-          <Tabby defaultIndex={0} invalidate={invalidateTabs}>
+          {/* <Tabby defaultIndex={0} invalidate={invalidateTabs}>
             <TabPanel title="Posts" key={uuid()}>
                 {currentUser.posts && currentUser.posts.map((post) => (
                   // <UserDetailPostItem post={post} key={post.id} />
@@ -190,7 +191,8 @@ const UserDetailPage = ({ userId }: UserDetailProps) => {
                   ))}
                 </div>
             </TabPanel>
-          </Tabby>
+          </Tabby> */}
+          <JsonBlock data={currentUser.posts} />
         </div>
       )}
     </MainLayout>

@@ -18,6 +18,49 @@ export type UserDetail = User & {
   fanOf: Fan[]
 }
 
+export const UserDetailInclude = {
+    posts: {
+      include: {
+        post_comments: {
+          include: {
+            author: true,
+          }
+        },
+        shares: {
+          include: {
+            author: true
+          }
+        },
+        likes: {
+          include: {
+            author: true
+          }
+        }
+      },
+    },
+    likes: true,
+    following: {
+      include: {
+        following: true
+      }
+    },
+    follower: { 
+      include: {
+        follower: true
+      }
+    },
+    fanOf: {
+      include: {
+        fanOf: true
+      }
+    },
+    fans:  {
+      include: {
+        fanOf: true
+      }
+    }
+}
+
 export type CyfrUser = User & {
   posts: Post[]
   likes: Like[]
