@@ -5,7 +5,7 @@ import {prisma} from '../prismaContext'
 import { GenericResponseError, ResponseError, GetResponseError } from "../../types/response"
 import { log } from "../../utils/log"
 import { FanProps } from "../types/follow.def"
-import { CyfrUser, UserDetail } from "../types/user.def"
+import { CyfrUser, UserDetail, UserDetailInclude } from "../types/user.def"
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {
@@ -75,14 +75,7 @@ const byId = async (id: string): Promise<UserDetail> => {
       where: {
         id: id?.toString(),
       },
-      include: {
-        posts: true,
-        likes: true,
-        following: true,
-        follower: true,
-        fanOf: true,
-        fans: true,
-      },
+      include: UserDetailInclude
     })
     if (!user) {
       throw { code: "users/byId", message: `Did not find user for ${id}` }

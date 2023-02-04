@@ -21,7 +21,7 @@ datasource db {
 model Post {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   visible       Boolean  @default(true)
   content       String?
   shareId       String?
@@ -53,6 +53,8 @@ model User {
 
 model Like {
   id       String  @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   authorId String
   postId   String?
   author   User    @relation("user_likes", fields: [authorId], references: [id])
@@ -62,7 +64,7 @@ model Like {
 model Share {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   visible   Boolean  @default(true)
   authorId  String
   postId    String?
@@ -72,6 +74,8 @@ model Share {
 
 model Follow {
   id          String @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   followerId  String
   followingId String
   follower    User   @relation("user_followed_by", fields: [followerId], references: [id])
@@ -80,6 +84,8 @@ model Follow {
 
 model Fan {
   id      String @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   fanId   String
   fanOfId String
   fan     User   @relation("user_fans", fields: [fanId], references: [id])

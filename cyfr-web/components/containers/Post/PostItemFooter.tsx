@@ -1,26 +1,23 @@
 import useCyfrUser from "../../../hooks/useCyfrUser"
-import usePostsQuery from "../../../hooks/usePosts"
-// import { PostWithDetails } from "../../../prisma/types/post.def"
+import { log } from "../../../utils/log"
+import { useCommentContext } from "../../context/CommentContextProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import AvatarList from "../../ui/avatarList"
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
 import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import { LoggedIn } from "../../ui/toasty"
-import { log } from "../../../utils/log"
-import { useCommentContext } from "../../context/CommentContextProvider"
 
 import { PostFeed } from "../../../prisma/prismaContext"
-import JsonBlock from "../../ui/jsonBlock"
-import useMainFeed from "../../../hooks/useMainFeed"
+import usePosts from "../../../hooks/usePosts"
 
 type PostItemFooterProps = {
   post: PostFeed
-  feed: "main" | "user" | "default"
+  feed: "main" | "user" | "post" | "share" | "default"
 }
 const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   const [ cyfrUser ] = useCyfrUser()
-  const { share, like, invalidatePosts } = usePostsQuery()
   // const { sharePost, likePost, invalidateMainFeed } = useMainFeed()
+  const {share, like, invalidatePosts: invalidate} = usePosts()
   const {notify} = useToast()
   const {setCommentId, showComment, hideComment} = useCommentContext()
   const isMain = feed === "main"
@@ -37,6 +34,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   }
 
   const handleComment = async () => {
+    if (!isLoggedIn()) return
     log(`PostItemFooter.handleComment`)
     setCommentId(post.id)
     showComment()
@@ -49,7 +47,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
     const liked = await like({ postId: post.id, authorId: cyfrUser!.id })
     if (liked) {
       notify({ type: "success", message: 'You liked this post' })
-      invalidatePosts()
+      invalidate()
       return
     }
     notify({ type: "warning", message: "Well that didn't work..." })
@@ -62,7 +60,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
     const shared = await share({ postId: post.id, authorId: cyfrUser!.id })
     if (shared) {
       notify({ type: "success", message: 'You shared this post' })
-      invalidatePosts()
+      invalidate()
       return
     }
     notify({ type: "warning", message: "Well that didn't work..." })

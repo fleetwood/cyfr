@@ -1,6 +1,10 @@
 import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, User, PostDeleteProps } from "../prismaContext"
 import { log } from "../../utils/log"
 
+const fileName = 'prismaPost'
+const fileMethod = (method:string) => `${fileName}.${method}`
+const trace = (method:string, t?:any) => log(fileMethod(method)+t?' '+JSON.stringify(t,null,2) :'')
+
 const byId = async (id: string): Promise<PostDetail | null> => {
   try {
     return await prisma.post.findFirst({
@@ -26,6 +30,7 @@ const byId = async (id: string): Promise<PostDetail | null> => {
  * @returns PostFeed[]
  */
 const all = async (): Promise<PostFeed[] | []> => {
+  trace('all')
   try {
     return await prisma.post.findMany({
       where: {
@@ -66,17 +71,17 @@ const all = async (): Promise<PostFeed[] | []> => {
 const createPost = async (props: PostCreateProps): Promise<Post> => {
   const data = { ...props }
   try {
-    log("Posts.create", data)
+    trace('createPost', data)
     return await prisma.post.create({ data })
   } catch (error) {
-    log("\tERROR: ", error)
+    trace("\tcreatePost ERROR: ", error)
     throw { code: "posts/create", message: "Post was not created!" }
   }
 }
 
 const deletePost = async ({postId, authorId}: PostDeleteProps): Promise<Post> => {
   try {
-    log("PostEntity.deletePost", {postId, authorId})
+    trace("deletePost", {postId, authorId})
     return await prisma.post.update({ 
       where: {
         id: postId,
@@ -86,7 +91,7 @@ const deletePost = async ({postId, authorId}: PostDeleteProps): Promise<Post> =>
       }
     })
   } catch (error) {
-    log("\tERROR: ", error)
+    trace("deletePost ERROR: ", error)
     throw { code: "posts/create", message: "Post was not created!" }
   }
 }
@@ -94,28 +99,34 @@ const deletePost = async ({postId, authorId}: PostDeleteProps): Promise<Post> =>
 const likePost = async (props: PostEngageProps): Promise<Post> => {
   const data = { ...props }
   try {
-    log("Posts.like", data)
+    trace("likePost", data)
     const user = await prisma.user.findUnique({ where: { id: data.authorId } })
     const post = await prisma.post.findUnique({ where: { id: data.postId } })
     if (user && post) {
+      log(`Found ${JSON.stringify({
+        userId: user.id,
+        postId: post.id
+      })}`)
       const success = await prisma.post.update({
         where: { id: post.id },
-        data: { likes: { connect: { id: user.id } } },
+        data: { 
+          likes: { 
+            create: {
+              authorId: user.id,
+            }
+          } 
+        },
       })
       if (success) {
         return success
       } else {
-        throw {
-          message: "Unable to connect like to post",
-        }
+        throw new Error("Unable to connect like to post")
       }
     }
-    throw {
-      message: "Unable to find user and post to like",
-    }
+    throw new Error("Unable to find user and post to like")
   } catch (error) {
     log("\tERROR: ", error)
-    throw { code: "posts/like", message: "Post not liked!" }
+    throw { code: fileMethod('createPost'), ...{error} }
   }
 }
 
