@@ -7,7 +7,6 @@ import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
 import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import { LoggedIn } from "../../ui/toasty"
 
-import useMainFeed from "../../../hooks/useMainFeed"
 import { PostFeed } from "../../../prisma/prismaContext"
 import usePosts from "../../../hooks/usePosts"
 
@@ -35,6 +34,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   }
 
   const handleComment = async () => {
+    if (!isLoggedIn()) return
     log(`PostItemFooter.handleComment`)
     setCommentId(post.id)
     showComment()

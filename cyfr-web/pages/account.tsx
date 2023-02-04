@@ -11,6 +11,7 @@ import { PrismaUser } from "../prisma/entities/prismaUser"
 import { CyfrUser } from "../prisma/types/user.def"
 import { cloudinary } from "../utils/cloudinary"
 import { log } from "../utils/log"
+import UserDetailPage from "./user/[id]"
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await PrismaUser.userInSession(context)
@@ -108,7 +109,7 @@ const Account = ({user}:AccountProps) => {
               
         {activeTab==="User" &&
           <div className="mt-12">
-            <UserAccountDetail user={cyfrUser} />
+            <UserDetailPage userId={cyfrUser.id} layout="none" />
           </div>
         }
 

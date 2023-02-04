@@ -1,4 +1,4 @@
-import { Fan, Follow, Like, Post, User } from "./../prismaContext"
+import { Fan, Follow, Like, Post, PostFeed, Share, User } from "./../prismaContext"
 
 export type UserFeed = User & {
   posts: Post[]
@@ -10,53 +10,70 @@ export type UserFeed = User & {
 }
 
 export type UserDetail = User & {
-  posts: Post[]
+  _count: {
+    likes: number
+    shares: number
+  }
+  posts: PostFeed[]
   likes: Like[]
-  following: Follow[]
-  follower: Follow[]
-  fans: Fan[]
-  fanOf: Fan[]
+  following: { follower: User }[]
+  follower: { following: User }[]
+  fans: { fan: User }[]
+  fanOf: { fanOf: User }[]
 }
 
 export const UserDetailInclude = {
-    posts: {
-      include: {
-        post_comments: {
-          include: {
-            author: true,
-          }
-        },
-        shares: {
-          include: {
-            author: true
-          }
-        },
-        likes: {
-          include: {
-            author: true
-          }
-        }
-      },
-    },
-    likes: true,
-    following: {
-      include: {
-        following: true
+    _count: {
+      select: {
+        likes: true,
+        shares: true
       }
     },
-    follower: { 
+    posts: {
+      where: {
+        visible: true,
+        shareId: null,
+        commentId: null
+      },
       include: {
+        author: {
+          // counts only
+          include: { _count: { select: { 
+            posts: true,
+            fans: true,
+            fanOf: true,
+            follower: true,
+            following: true 
+          }}}
+        },
+        comment: {
+          include: {
+            author: true
+          }
+        },
+        post_comments: true,
+        likes: true,
+        shares: true
+      },
+    },
+    following: {
+      select: {
         follower: true
       }
     },
+    follower: { 
+      select: {
+        following: true
+      }
+    },
     fanOf: {
-      include: {
+      select: {
         fanOf: true
       }
     },
     fans:  {
-      include: {
-        fanOf: true
+      select: {
+        fan: true
       }
     }
 }
