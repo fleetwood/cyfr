@@ -43,10 +43,10 @@ type PostComments = Post & {
 
 export type PostFeed = Post & {
   author: User
-  comment?: Post
-  post_comments: PostComments[]
-  likes: Like & {author: User}[]
-  shares: Share & {author: User}[]
+  comment?: Post | null
+  post_comments: (Post & {author: User})[]
+  likes: (Like & {author: User})[]
+  shares: (Share & {author: User})[]
 }
 
 export const PostFeedInclude = {
@@ -60,17 +60,10 @@ export const PostFeedInclude = {
       following: true 
     }}}
   },
-  comment: {
-    where: {
-      visible: true
-    },
-    include: {
-      author: true
-    }
-  },
-  post_comments: true,
-  likes: true,
-  shares: true
+  comment: true,
+  post_comments: {include: {author: true}},
+  likes: {include: {author: true}},
+  shares: {include: {author: true}}
 }
 
 export type PostDetail = Post & {
@@ -92,14 +85,7 @@ export const PostDetailInclude = {
       following: true 
     }}}
   },
-  comment: {
-    where: {
-      visible: true
-    },
-    include: {
-      author: true
-    }
-  },
+  comment: true,
   post_comments: true,
   likes: true,
   shares: true

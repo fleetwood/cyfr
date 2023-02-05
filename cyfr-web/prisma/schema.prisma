@@ -8,8 +8,8 @@ generator client {
 // }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("PRISMA_HEROKU_PROXY")
+  provider = "postgresql"
+  url      = env("PRISMA_HEROKU_PROXY")
 }
 
 // datasource db {
@@ -52,13 +52,13 @@ model User {
 }
 
 model Like {
-  id       String  @id @default(cuid())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  authorId String
-  postId   String?
-  author   User    @relation("user_likes", fields: [authorId], references: [id])
-  post     Post?   @relation("post_likes", fields: [postId], references: [id])
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authorId  String
+  postId    String?
+  author    User     @relation("user_likes", fields: [authorId], references: [id])
+  post      Post?    @relation("post_likes", fields: [postId], references: [id])
 }
 
 model Share {
@@ -73,23 +73,23 @@ model Share {
 }
 
 model Follow {
-  id          String @id @default(cuid())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   followerId  String
   followingId String
-  follower    User   @relation("user_followed_by", fields: [followerId], references: [id])
-  following   User   @relation("user_following", fields: [followingId], references: [id])
+  follower    User     @relation("user_followed_by", fields: [followerId], references: [id])
+  following   User     @relation("user_following", fields: [followingId], references: [id])
 }
 
 model Fan {
-  id      String @id @default(cuid())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  fanId   String
-  fanOfId String
-  fan     User   @relation("user_fans", fields: [fanId], references: [id])
-  fanOf   User   @relation("user_fan_of", fields: [fanOfId], references: [id])
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  fanId     String
+  fanOfId   String
+  fan       User     @relation("user_fans", fields: [fanId], references: [id])
+  fanOf     User     @relation("user_fan_of", fields: [fanOfId], references: [id])
 }
 
 model VerificationToken {
