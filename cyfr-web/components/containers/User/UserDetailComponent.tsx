@@ -7,6 +7,7 @@ import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 import UserDetailPostItem from "../Post/UserDetailPostItem";
 import useCyfrUser from "../../../hooks/useCyfrUser";
 import GalleryItemView from "../Gallery/GalleryItemView";
+import GalleryCreateView from "../Gallery/GalleryCreateView";
 
 type UserDetailComponentProps = {
   userId: String;
@@ -166,6 +167,9 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
       {/* GALLERIES */}
       {activeTab === "Galleries" && (
         <div className="columns-2 md:columns-3 lg:columns-4">
+          {currentUser?.id === cyfrUser.id &&
+            <GalleryCreateView />
+          }
           {currentUser?.galleries.map(gallery => (
             <GalleryItemView gallery={gallery} />
           ))}

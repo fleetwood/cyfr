@@ -10,9 +10,9 @@ import {
 
 export type GalleryCreateProps = {
   authorId: string
-  title?: string
-  description?: string
-  images: string[]
+  title?: string|null
+  description?: string|null
+  images?: string[]|null
 }
 
 export type GalleryEngageProps = {
@@ -27,15 +27,9 @@ export type GalleryFeed = Gallery & {
 }
 
 export const GalleryFeedInclude = {
-  images: {
-    include: true
-  },
-  likes: {
-    include: true
-  },
-  shares: {
-    include: true
-  },
+  images: true,
+  likes: true,
+  shares: true,
 }
 
 export type GalleryDetail = Gallery & {

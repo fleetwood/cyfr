@@ -1,6 +1,6 @@
 import { log } from "../../utils/log"
-import { GalleryDetail } from "../types"
-import { GalleryDetailInclude } from "../types/gallery.def"
+import { Gallery, GalleryDetail, Like } from "../types"
+import { GalleryDetailInclude, GalleryEngageProps, GalleryFeed, GalleryFeedInclude } from "../types/gallery.def"
 
 const fileName = "prismaGallery"
 const fileMethod = (method: string) => `${fileName}.${method}`
@@ -28,6 +28,34 @@ const getDetail = async (galleryId:string):Promise<GalleryDetail> => {
   } catch (error) {
     trace(`getDetail ERROR`, error)
     throw(error)
+  }
+}
+
+const like = async ({galleryId, authorId}:GalleryEngageProps):Promise<Like> => {
+  trace(`like`, {galleryId, authorId})
+  throw {code: fileMethod, message: 'Feature not implemented'}
+}
+
+const share = async ({galleryId, authorId}:GalleryEngageProps):Promise<Like> => {
+  trace(`share`, {galleryId, authorId})
+  throw {code: fileMethod, message: 'Feature not implemented'}
+}
+
+const all = async ():Promise<GalleryFeed[]> => {
+  try {
+    const g = await prisma.gallery.findMany({
+      where: {
+        visible: true
+      },
+      include: GalleryFeedInclude,
+      orderBy: {
+        updatedAt: 'desc'
+      }
+    })
+    if (g) return g
+    throw({code: fileMethod, message: 'Unable to obtain all galleries!!!'})
+  } catch (error) {
+    throw error
   }
 }
 
@@ -69,4 +97,4 @@ const createGallery = async ({authorId,title,description}: CreateGalleryProps) =
     trace(`\tcreateGallery ERROR`, error)
   }
 }
-export const PrismaGallery = { addImages, createGallery, getDetail }
+export const PrismaGallery = { addImages, createGallery, getDetail, like, share, all }

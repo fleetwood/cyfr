@@ -18,7 +18,7 @@ const GalleryItemView = ({gallery}:GalleryItemViewProps) => {
         </div>
         <div className="columns-2 md:columns-3 lg:columns-4">
             {gallery.images.map((image) => 
-                <img className='mb-4' src={image.url} />
+                <img className='mb-4' src={image.url} key={gallery.id+':'+image.id} />
             )}
         </div>
         </>

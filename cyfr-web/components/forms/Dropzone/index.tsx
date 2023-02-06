@@ -1,12 +1,10 @@
-import { Children, ReactNode, useCallback, useEffect, useState } from "react";
-import { Accept, FileError, FileRejection, useDropzone } from 'react-dropzone';
-import { uuid } from "../../../utils/helpers";
-import FileUploadError from "./FileUploadError";
-import FileUploading from "./FileUploading";
-import { log } from "../../../utils/log";
-import { isNullOrUndefined } from "util";
+import { ReactNode, useCallback, useEffect, useState } from "react"
+import { Accept, FileError, FileRejection, useDropzone } from 'react-dropzone'
+import { uuid } from "../../../utils/helpers"
+import { log, todo } from "../../../utils/log"
+import SingleFileUploadWithProgress from "./SingleFileUploadWithProgress"
 
-const fileTypes = ["JPG", "PNG", "GIF"];
+const fileTypes = ["JPG", "PNG", "GIF"]
 
 export interface UploadedFile {
   file: File
@@ -41,94 +39,86 @@ export type CompleteFile = {
 
 export type DropzoneProps = {
   limit?: number
-  cols?: number
-  types?: 'img'|'vid'|'any'
-  onFileCompleted: Function
-  show?: 'zone'|'results'|'all'|'none'|null
+  onFileCompleted?: Function
   children?: ReactNode
 }
 
-const getAllowed = (a:string) => {
-  switch (a) {
-    case 'img':
-      return { 'image/*': ['.png', '.gif', '.jpeg', '.jpg', '.tiff', '.webp']}
-      
-    case 'vid':
-      return { 'video/*': ['.mov', '.mp4', '.webm', '.mpeg'  ] }
-
-      default: 
-      return  ''
-  }
+export interface UploadableFile {
+  file: File
+  id: string
+  accepted: boolean
+  errors: FileError[]
 }
 
-function Dropzone({limit=-1, show = 'all', cols, types, onFileCompleted, children}:DropzoneProps) {
-  const [files, setFiles] = useState<UploadedFile[]>([])
-  const [onDragClass, setOnDragClass] = useState<string>('border-primary-focus')
-  const [showResults, setShowResults] = useState<boolean>(true)
-  const [showZone, setShowZone] = useState<boolean>(true)
-
-  const accept:Accept = 
-      types && types === 'img' ?
-        { 'image/*': ['.png', '.gif', '.jpeg', '.jpg', '.tiff', '.webp']}
-    : types && types === 'vid' ?
-        { 'video/*': ['.mov', '.mp4', '.webm', '.mpeg'  ] } 
-    : 
-      { 
-        'image/*': ['.png', '.gif', '.jpeg', '.jpg', '.tiff', '.webp'],
-        'video/*': ['.mov', '.mp4', '.webm', '.mpeg'  ] 
-      }
+function Dropzone({limit=-1, onFileCompleted, children}:DropzoneProps) {
+  const [files, setFiles] = useState<UploadableFile[]>([])
+  const [rejected, setRejected] = useState<UploadableFile[]>([])
+  const [completedFiles, setCompletedFiles] = useState<CompleteFile[]>([])
   
+  const getLimit = (a:any[]) => limit>0?limit:a.length
+
   const onDrop = useCallback((acceptedFiles:File[], rejectedFiles:FileRejection[]) => {
-    const mappedAcceptedFiles = acceptedFiles.map( file => ({file, errors: []}))
-    setFiles((curr) => [...curr, ...mappedAcceptedFiles, ...rejectedFiles])
-    setOnDragClass(() => 'border-primary-focus')
-    setShowZone(false)
+    log(`version2.onDrop(
+      ${JSON.stringify({acceptedFiles, rejectedFiles}, null, 2)}
+      )`)
+      const mapAccepted = acceptedFiles.slice(0, getLimit(acceptedFiles)).map(file => ({file, accepted: true, errors: [], id: uuid()}))
+      const mapRejected = [
+        ...acceptedFiles.slice(getLimit(acceptedFiles)).map(file => ({file, accepted: true, errors: [{code: 'limit', message: `Exceed allowed limit (${limit})`}], id: uuid()})),
+        ...rejectedFiles.map(file => ({...file, accepted: false, id: uuid()}))
+      ]
+      setFiles((f) => [...f, ...mapAccepted])
+      setRejected((f) => [...f, ...mapRejected])
   }, [])
 
-  const {getRootProps, getInputProps} = useDropzone({
-    onDrop, accept, 
-    onDragOver: () => {setOnDragClass(() => 'border-secondary-focus bg-secondary bg-opacity-25')}, 
-    onDragLeave: () => {setOnDragClass(() => 'border-primary-focus')}
-  })
-
-  const reset = () => {
-    setFiles([])
-    setShowResults((s) => show === 'all' || show === 'results')
-    setShowZone((s) => show === 'all' || show === 'zone')
-  }
+  const onFileComplete = useCallback((e:any) => {
+    log(`version2.onFileComplete ${JSON.stringify(e.original_filename+'.'+e.format)}`)
+    setCompletedFiles((current) => [...current, e])
+  }, [])
 
   useEffect(() => {
-    log(`Dropzone show prop changed ${show}`)
-    setShowResults((s) => show === 'all' || show === 'results')
-    setShowZone((s) => show === 'all' || show === 'zone')
-  },[show])
+    const filePaths = files.map(f => f.accepted === true)
+    if (filePaths.length > 0 && completedFiles.length===filePaths.length) {
+      if (onFileCompleted) onFileCompleted(completedFiles)
+    }
+  }, [completedFiles])
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({onDrop})
 
   return (
-    <div className="">
-      {showZone && 
-        <div {...getRootProps( )} className={`w-full min-h-12 cursor-pointer text-center p-4 border-2 border-dashed hover:border-secondary-focus ${onDragClass}`} >
-          <input {...getInputProps()}/>
-          {children || <p>Drag file{limit !== 1 ? 's' :''} or click here</p> }
-        </div>
-      }
-      {showResults &&
-        <div className={`w-full inline-grid ${cols ? `grid-${cols}` : 'grid-cols-2 md:grid-cols-4 lg:grid-cols-8'} justify-between space-x-2`}>
-        {/* <p>ShowResults: {show}|{showResults.toString()}|{(show === 'all' || show === 'results').toString()}</p> */}
-          {files.slice(0,limit>0?limit:files.length).map(fileWrapper => 
-            !fileWrapper.errors.length ? 
-            <FileUploading file={fileWrapper.file} onFileComplete={onFileCompleted} key={uuid()} /> : 
-            <FileUploadError file={fileWrapper.file} errors={fileWrapper.errors} />
+    <>
+      <div {...getRootProps()} className={`p-4 rounded-md border-2 border-dashed ${isDragActive ? `bg-accent text-accent-content border-accent-focus` : `bg-secondary text-secondary-content border-secondary-focus`}`}>
+        <input {...getInputProps()} />
+        {
+          children || 
+          isDragActive ? 
+            <p>Drop n Go!!</p> :
+            <p>Drag and drop file{limit !== 1 ? 's' :''} here, or click to select...</p> 
+        }
+      </div>
+      <div className='min-w-full p-4 space-x-2'>
+        <div className="columns-2 md:columns-3 lg:columns-4">
+          {rejected.map(r => 
+            <div className="relative md-2" key={r.id}>
+              <div className="bg-success text-success-content overflow-hidden text-xs opacity-80 absolute bottom-6 mx-2 px-2 rounded-md">{r.file.name}</div>
+              <progress
+                className={`progress h-2 px-2 absolute bottom-2 z-2 opacity-80 drop-shadow-md progress-error`}
+                value={100}
+                max="100"
+              />
+              {r.errors.map((e) => (
+                <div className="text-xs">{e.message}</div>
+              ))}
+            </div>
           )}
-          {files.slice(limit>0?limit:files.length).map(fileWrapper =>
-            <FileUploadError file={fileWrapper.file} errors={[{code: 'exceded limit', message:'Exceeded allowed limit'}]} />
-          )}
+        {files.map(fileWrapper => (
+          <SingleFileUploadWithProgress file={fileWrapper.file} onComplete={onFileComplete} key={fileWrapper.id} />
+        ))}
         </div>
-      }
-      <button className="btn btn-primary" onClick={()=>reset()}>RESET</button>
-    </div>
-  );
+      </div>
+    </>
+  )
 }
 
 export default Dropzone
-export { FileUploading, FileUploadError };
+// export { FileUploading, FileUploadError }
 

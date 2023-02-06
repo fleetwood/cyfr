@@ -1,4 +1,5 @@
 import { GalleryDetail } from './../../../prisma/prismaContext'
+import GalleryCreateView from './GalleryCreateView'
 import GalleryFooter from './GalleryFooter'
 
 type GalleryDetailViewProps = {
@@ -7,8 +8,8 @@ type GalleryDetailViewProps = {
 
 const GalleryItemView = ({gallery}:GalleryDetailViewProps) => {
     return (
-        <div className='rounded-lg bg-base-300 text-base-content'>
-            <div className='min-w-full p-4 space-x-2 flex'>
+        <div className='rounded-lg bg-base-300 text-base-content my-4'>
+            <div className='min-w-full p-4 space-x-2 flex justify-around border-b-2 border-primary border-opacity-50'>
                 <div>Likes ({gallery.likes.length})</div>
                 <div>Shares ({gallery.shares.length})</div>
                 <div>Images ({gallery.images.length})</div>

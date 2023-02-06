@@ -3,6 +3,7 @@ import { log } from "./log";
 type UploadingProps = {
     file: File
     onProgress: Function
+    onComplete?: Function
 }
 
 export const config:{
@@ -57,6 +58,7 @@ type cloudImageProps = {
 type getImagePropsType = cloudImageProps & {
     base: string
 }
+
 const getImageProps = (base:string, {...props}) => {
     let mod:Array<string> = [base]
     if (props.face) mod.push('g_auto')
@@ -103,15 +105,19 @@ const avatar = (url:string, size: AvatarSizeProps) => cloudUrl(url, `t_avatar_${
  * Upload a file to cloudinary
  * @param file string
  * @param onProgress Function 
+ * @param onComplete Function 
  * @returns Promise<result, reject>
  */
-const upload = ({file, onProgress}:UploadingProps) => new Promise((res,rej) => {
+const upload = ({file, onProgress, onComplete}:UploadingProps) => new Promise((res,rej) => {
     const xhr = new XMLHttpRequest()
     xhr.open('POST', config.api!)
 
     xhr.onload = () => {
-        const resp = xhr.responseText
-        res(resp)
+        if (xhr.DONE) {
+            const resp = xhr.responseText
+            if(onComplete) onComplete(JSON.parse(resp))
+            res(resp)
+        }
     }
 
     xhr.onerror = (e) => {
