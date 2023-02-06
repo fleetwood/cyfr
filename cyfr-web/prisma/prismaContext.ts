@@ -2,28 +2,11 @@ import { __prod__ } from "../utils/constants"
 import { log } from "../utils/log"
 import { PrismaSession } from "./entities/prismaSession"
 import { PrismaShare } from "./entities/prismaShare"
-import {
-  PrismaClient,
-  Post,
-  User,
-  Share,
-  Like,
-  Follow,
-  Fan,
-} from "@prisma/client/edge"
-import { ShareDeleteProps, ShareFeed } from "./types/share.def"
-import { UserFeed, UserDetail, CyfrUser } from "./types/user.def"
-import {
-  PostCreateProps,
-  PostDeleteProps,
-  PostEngageProps,
-  PostCommentProps,
-  PostBase,
-  PostFeed,
-  PostDetail,
-} from "./types/post.def"
+
 import { PrismaPost } from "./entities/prismaPost"
 import { PrismaUser } from "./entities/prismaUser"
+import { Fan, Follow, Like, Post, Share, User, ShareFeed, UserFeed, UserDetail, CyfrUser, PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostBase, PostFeed, PostDetail, ShareDeleteProps, MainFeed } from "./types"
+import { PrismaClient } from "@prisma/client/edge"
 
 declare global {
   var prisma: PrismaClient
@@ -51,15 +34,10 @@ if (__prod__) {
 /*******************************/
 
 export { prisma, PrismaPost, PrismaUser, PrismaSession, PrismaShare }
-export type { Post, User, Follow, Fan, Share, Like }
-export type { ShareFeed, UserFeed, UserDetail, CyfrUser }
-export type {
-  PostCreateProps,
-  PostDeleteProps,
-  PostEngageProps,
-  PostCommentProps,
-  PostBase,
-  PostFeed,
-  PostDetail,
-  ShareDeleteProps
+export type { 
+  Post, User, Follow, Fan, Share, Like,
+  ShareDeleteProps,ShareFeed, 
+  UserFeed, UserDetail, CyfrUser,
+  MainFeed,
+  PostCreateProps,PostDeleteProps,PostEngageProps,PostCommentProps,PostBase,PostFeed,PostDetail,
 }

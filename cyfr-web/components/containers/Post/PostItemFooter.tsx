@@ -8,7 +8,7 @@ import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import { LoggedIn } from "../../ui/toasty"
 
 import { PostFeed } from "../../../prisma/prismaContext"
-import usePosts from "../../../hooks/usePosts"
+import useFeed from "../../../hooks/useFeed"
 
 type PostItemFooterProps = {
   post: PostFeed
@@ -17,7 +17,7 @@ type PostItemFooterProps = {
 const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   const [ cyfrUser ] = useCyfrUser()
   // const { sharePost, likePost, invalidateMainFeed } = useMainFeed()
-  const {share, like, invalidatePosts: invalidate} = usePosts()
+  const {sharePost, likePost, invalidateFeed} = useFeed('post')
   const {notify} = useToast()
   const {setCommentId, showComment, hideComment} = useCommentContext()
   const isMain = feed === "main"
@@ -44,10 +44,10 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
     if (!isLoggedIn()) return
 
     log(`PostItemFooter.handleLike`)
-    const liked = await like({ postId: post.id, authorId: cyfrUser!.id })
+    const liked = await likePost({ postId: post.id, authorId: cyfrUser!.id })
     if (liked) {
-      notify({ type: "success", message: 'You liked this post' })
-      invalidate()
+      notify({ type: "success", message: 'You liked this post!!!!!!!!!!!' })
+      invalidateFeed()
       return
     }
     notify({ type: "warning", message: "Well that didn't work..." })
@@ -57,10 +57,10 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
     if (!isLoggedIn()) return
 
     log(`PostItemFooter.handleShare`)
-    const shared = await share({ postId: post.id, authorId: cyfrUser!.id })
+    const shared = await sharePost({ postId: post.id, authorId: cyfrUser!.id })
     if (shared) {
       notify({ type: "success", message: 'You shared this post' })
-      invalidate()
+      invalidateFeed()
       return
     }
     notify({ type: "warning", message: "Well that didn't work..." })

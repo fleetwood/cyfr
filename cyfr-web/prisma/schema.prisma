@@ -7,21 +7,21 @@ generator client {
 //   url      = env("LOCAL_DATABASE_URL")
 // }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("PRISMA_HEROKU_PROXY")
-}
-
 // datasource db {
-//   provider          = "postgresql"
-//   url               = env("HEROKU_DATABASE_URL_PROD")
-//   shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
+//   provider = "postgresql"
+//   url      = env("PRISMA_HEROKU_PROXY")
 // }
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("HEROKU_DATABASE_URL_PROD")
+  shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
+}
 
 model Post {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  updatedAt     DateTime @default(now())
   visible       Boolean  @default(true)
   content       String?
   shareId       String?
@@ -54,7 +54,7 @@ model User {
 model Like {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
   authorId  String
   postId    String?
   author    User     @relation("user_likes", fields: [authorId], references: [id])
@@ -64,7 +64,7 @@ model Like {
 model Share {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
   visible   Boolean  @default(true)
   authorId  String
   postId    String?
@@ -75,7 +75,7 @@ model Share {
 model Follow {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now())
   followerId  String
   followingId String
   follower    User     @relation("user_followed_by", fields: [followerId], references: [id])
@@ -85,7 +85,7 @@ model Follow {
 model Fan {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
   fanId     String
   fanOfId   String
   fan       User     @relation("user_fans", fields: [fanId], references: [id])

@@ -2,8 +2,8 @@ import React, { createContext, FormEvent, ReactNode, useContext, useEffect, useR
 import useCyfrUser from "../../hooks/useCyfrUser"
 import TailwindTextarea from "../forms/TailwindTextarea"
 import { log } from "../../utils/log"
-import usePosts from "../../hooks/usePosts"
 import { useToast } from "./ToastContextProvider"
+import useFeed from "../../hooks/useFeed"
 
 type CommentProviderProps = {
   children?: ReactNode
@@ -21,7 +21,7 @@ export const useCommentContext = () => useContext(CommentContext)
 
 const CommentProvider = ({ children }: CommentProviderProps) => {
   const [cyfrUser] = useCyfrUser()
-  const {comment, invalidatePosts} = usePosts()
+  const {commentOnPost, invalidateFeed} = useFeed('post')
   const {notify} = useToast()
   
   const commentPostModal = 'commentPostModal'
@@ -48,7 +48,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
       return
     }
 
-    const post = await comment({
+    const post = await commentOnPost({
       content: content!,
       authorId: cyfrUser.id,
       commentId: commentId!,
@@ -58,7 +58,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
 
     if (post) {
       log(`CommentContextProvider.handleSubmit success`)
-      invalidatePosts()
+      invalidateFeed()
     } else {
       notify({
         type: 'warning',

@@ -1,4 +1,23 @@
-import { Post, PostFeed, ShareFeed } from '../prismaContext'
+import {
+    Post,
+    User,
+    Share,
+    Like,
+    Follow,
+    Fan,
+  } from "@prisma/client/edge"
+  import { ShareDeleteProps, ShareFeed } from "./share.def"
+  import { UserFeed, UserDetail, CyfrUser } from "./user.def"
+  import {
+    PostCreateProps,
+    PostDeleteProps,
+    PostEngageProps,
+    PostCommentProps,
+    PostBase,
+    PostFeed,
+    PostDetail,
+  } from "./post.def"
+
 import {ShareWithAuthorPost, ShareWithAuthorPostInclude} from './like.def'
 
 type MainFeed = {
@@ -55,6 +74,16 @@ export const includes = {
 }
 
 export type {
+    // from prisma client
+    Post,User,Share,Like,Follow,Fan,
+    // from user defs
+    UserFeed, UserDetail, CyfrUser,
+    // from share defs
+    ShareDeleteProps, ShareFeed,
+    // from Posts defs
+    PostCreateProps,PostDeleteProps,PostEngageProps,PostCommentProps,PostBase,PostFeed,PostDetail,
+    // from like defs
+    ShareWithAuthorPost,
+    // from here (types)
     MainFeed,
-    ShareWithAuthorPost
 }
