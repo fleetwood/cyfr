@@ -24,13 +24,13 @@ model Post {
   updatedAt     DateTime @default(now())
   visible       Boolean  @default(true)
   content       String?
-  shareId       String?
   commentId     String?
   authorId      String
-  likes         Like[]   @relation("post_likes")
   author        User     @relation("user_posts", fields: [authorId], references: [id])
   comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
   post_comments Post[]   @relation("post_comments")
+  likes         Like[]   @relation("post_likes")
+  shareId       String?
   shares        Share[]  @relation("post_shares")
 }
 
@@ -49,6 +49,38 @@ model User {
   posts         Post[]    @relation("user_posts")
   sessions      Session[]
   shares        Share[]   @relation("user_shares")
+  images        Image[]   @relation("user_images")
+  galleries     Gallery[] @relation("user_galleries")
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  visible   Boolean  @default(true)
+  title     String?
+  authorId  String
+  author    User     @relation("user_images", fields: [authorId], references: [id])
+  galleryId String?
+  gallery   Gallery? @relation("gallery_images", fields: [galleryId], references: [id])
+  likes     Like[]   @relation("image_likes")
+  shareId   String?
+  shares    Share[]  @relation("image_shares")
+}
+
+model Gallery {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  visible     Boolean  @default(true)
+  title       String?
+  description String?
+  authorId    String
+  author      User     @relation("user_galleries", fields: [authorId], references: [id])
+  images      Image[]  @relation("gallery_images")
+  likes       Like[]   @relation("gallery_likes")
+  shareId     String?
+  shares      Share[]  @relation("gallery_shares")
 }
 
 model Like {
@@ -57,8 +89,12 @@ model Like {
   updatedAt DateTime @default(now())
   authorId  String
   postId    String?
+  imageId   String?
+  galleryId String?
   author    User     @relation("user_likes", fields: [authorId], references: [id])
   post      Post?    @relation("post_likes", fields: [postId], references: [id])
+  image     Image?   @relation("image_likes", fields: [imageId], references: [id])
+  gallery   Gallery? @relation("gallery_likes", fields: [galleryId], references: [id])
 }
 
 model Share {
@@ -67,9 +103,13 @@ model Share {
   updatedAt DateTime @default(now())
   visible   Boolean  @default(true)
   authorId  String
-  postId    String?
   author    User     @relation("user_shares", fields: [authorId], references: [id])
+  postId    String?
   post      Post?    @relation("post_shares", fields: [postId], references: [id])
+  imageId   String?
+  image     Image?   @relation("image_shares", fields: [imageId], references: [id])
+  galleryId String?
+  gallery   Gallery? @relation("gallery_shares", fields: [galleryId], references: [id])
 }
 
 model Follow {
