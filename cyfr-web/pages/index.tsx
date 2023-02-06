@@ -5,7 +5,7 @@ import useFeed from "../hooks/useFeed"
 import { uuid } from "../utils/helpers"
 
 const Home = () => {
-  const {feed} = useFeed('main')
+  const {feed} = useFeed({type: 'main'})
 
   const CyfrHome = 
     <div className="flex">

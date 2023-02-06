@@ -2,25 +2,27 @@ import useCyfrUser from "../../../hooks/useCyfrUser";
 import { log } from "../../../utils/log";
 import { useCommentContext } from "../../context/CommentContextProvider";
 import { useToast } from "../../context/ToastContextProvider";
-import AvatarList from "../../ui/avatarList";
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons";
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 import { LoggedIn } from "../../ui/toasty";
 
-import { PostFeed } from "../../../prisma/prismaContext";
-import useFeed from "../../../hooks/useFeed";
+import { GalleryDetail, GalleryFeed } from "../../../prisma/prismaContext";
+import useFeed, { FeedTypes } from "../../../hooks/useFeed";
 
-type PostItemFooterProps = {
-  post: PostFeed;
-  feed: "main" | "user" | "post" | "share" | "default";
+type GalleryFooterProps = {
+  gallery: GalleryDetail | GalleryFeed;
+  feed: FeedTypes;
 };
-const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
+
+const GalleryFooter = ({
+  gallery,
+  feed: { type = "gallery" },
+}: GalleryFooterProps) => {
   const [cyfrUser] = useCyfrUser();
-  // const { sharePost, likePost, invalidateMainFeed } = useMainFeed()
-  const { sharePost, likePost, invalidateFeed } = useFeed({type: 'post'});
+  const { shareGallery, likeGallery, invalidateFeed } = useFeed({ type });
   const { notify } = useToast();
   const { setCommentId, showComment, hideComment } = useCommentContext();
-  const isMain = feed === "main";
+  const isMain = type === "main";
 
   const isLoggedIn = () => {
     if (!cyfrUser) {
@@ -35,18 +37,21 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
 
   const handleComment = async () => {
     if (!isLoggedIn()) return;
-    log(`PostItemFooter.handleComment`);
-    setCommentId(post.id);
+    log(`GalleryFooter.handleComment`);
+    setCommentId(gallery.id);
     showComment();
   };
 
   const handleLike = async () => {
     if (!isLoggedIn()) return;
 
-    log(`PostItemFooter.handleLike`);
-    const liked = await likePost({ postId: post.id, authorId: cyfrUser!.id });
+    log(`GalleryFooter.handleLike`);
+    const liked = await likeGallery({
+      galleryId: gallery.id,
+      authorId: cyfrUser!.id,
+    });
     if (liked) {
-      notify({ type: "success", message: "You liked this post!!!!!!!!!!!" });
+      notify({ type: "success", message: "You liked this gallery!" });
       invalidateFeed();
       return;
     }
@@ -56,8 +61,11 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   const handleShare = async () => {
     if (!isLoggedIn()) return;
 
-    log(`PostItemFooter.handleShare`);
-    const shared = await sharePost({ postId: post.id, authorId: cyfrUser!.id });
+    log(`GalleryFooter.handleShare`);
+    const shared = await shareGallery({
+      galleryId: gallery.id,
+      authorId: cyfrUser!.id,
+    });
     if (shared) {
       notify({ type: "success", message: "You shared this post" });
       invalidateFeed();
@@ -67,17 +75,17 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   };
 
   return (
-    <>
+    <div className="min-w-full p-4 flex">
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={HeartIcon}
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Like (${post.likes.length})`}
+          label={`Like (${gallery.likes.length})`}
           onClick={() => handleLike()}
         />
-        <AvatarList users={post.likes.map((p) => p.author)} sz="xs" />
+        {/* <AvatarList users={gallery.likes.map((p) => p.author)} sz="xs" /> */}
       </div>
 
       <div className="font-semibold uppercase">
@@ -86,28 +94,29 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Share (${post.shares.length})`}
+          label={`Share (${gallery.shares.length})`}
           onClick={() => handleShare()}
         />
-        <AvatarList users={post.shares.map((a) => a.author)} sz="xs" />
+        {/* <AvatarList users={gallery.shares.map((a) => a.author)} sz="xs" /> */}
       </div>
-      
+
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={ReplyIcon}
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Comment (${(post.post_comments || []).length})`}
-          onClick={() => handleComment()}
+          // label={`Comment (${(gallery.comments || []).length})`}
+          label={`Comment (*)`}
+          // onClick={() => handleComment()}
         />
-        <AvatarList
-          users={(post.post_comments || []).map((a) => a.author)}
+        {/* <AvatarList
+          users={(gallery.comments || []).map((a) => a.author)}
           sz="xs"
-        />
+        /> */}
       </div>
-    </>
+    </div>
   );
 };
 
-export default PostItemFooter;
+export default GalleryFooter;

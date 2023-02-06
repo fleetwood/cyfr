@@ -16,7 +16,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
-  const {createPost, invalidateFeed} = useFeed('post')
+  const {createPost, invalidateFeed} = useFeed({type: 'post'})
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()

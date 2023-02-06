@@ -8,12 +8,34 @@ import {
   User,
 } from "../prismaContext"
 
-export type GalleryItem = Gallery & {
+export type GalleryCreateProps = {
+  authorId: string
+  title?: string
+  description?: string
+  images: string[]
+}
+
+export type GalleryEngageProps = {
+  authorId: string
+  galleryId: string
+}
+
+export type GalleryFeed = Gallery & {
   images: Image[]
-  _count: {
-    likes: number
-    shares: number
-  }
+  likes: Like[]
+  shares: Share[]
+}
+
+export const GalleryFeedInclude = {
+  images: {
+    include: true
+  },
+  likes: {
+    include: true
+  },
+  shares: {
+    include: true
+  },
 }
 
 export type GalleryDetail = Gallery & {

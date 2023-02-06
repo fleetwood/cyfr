@@ -24,9 +24,7 @@ const GalleryDetailPage = ({gallery}:GalleryDetailPageProps) => {
             sectionTitle={gallery.title||'Gallery'}
             subTitle={gallery.author.name}
             >
-            <div className="columns-2 md:columns-3 lg:columns-4">
-                <GalleryDetailView gallery={gallery} />
-            </div>
+            <GalleryDetailView gallery={gallery} />
         </MainLayout>
     )
 }

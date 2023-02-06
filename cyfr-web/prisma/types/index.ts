@@ -9,7 +9,7 @@ import {
     Gallery
   } from "@prisma/client/edge"
   import { ShareDeleteProps, ShareFeed } from "./share.def"
-  import { GalleryItem, GalleryDetail, GalleryDetailInclude } from "./gallery.def"
+  import { GalleryFeed, GalleryDetail, GalleryDetailInclude, GalleryEngageProps, GalleryCreateProps } from "./gallery.def"
   import { UserFeed, UserDetail, CyfrUser } from "./user.def"
   import {
     PostCreateProps,
@@ -81,7 +81,7 @@ export type {
     // from prisma client
     Post,User,Share,Like,Follow,Fan,Image,Gallery,
     // from Gallery defs
-    GalleryItem, GalleryDetail,
+    GalleryFeed, GalleryDetail, GalleryCreateProps, GalleryEngageProps,
     // from user defs
     UserFeed, UserDetail, CyfrUser,
     // from share defs

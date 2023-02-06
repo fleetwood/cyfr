@@ -1,4 +1,5 @@
-import { GalleryDetail, Gallery, GalleryItem} from './../../../prisma/prismaContext'
+import { GalleryDetail } from './../../../prisma/prismaContext'
+import GalleryFooter from './GalleryFooter'
 
 type GalleryDetailViewProps = {
     gallery:GalleryDetail
@@ -6,21 +7,24 @@ type GalleryDetailViewProps = {
 
 const GalleryItemView = ({gallery}:GalleryDetailViewProps) => {
     return (
-        <>
-        <div>
-            <div>
-                <div>Id ({gallery.id})</div>
+        <div className='rounded-lg bg-base-300 text-base-content'>
+            <div className='min-w-full p-4 space-x-2 flex'>
                 <div>Likes ({gallery.likes.length})</div>
                 <div>Shares ({gallery.shares.length})</div>
                 <div>Images ({gallery.images.length})</div>
             </div>
-        </div>
-        <div className="columns-2 md:columns-3 lg:columns-4">
-            {gallery.images.map((image) => 
-                <img className='mb-4' src={image.url} />
+            {gallery.description && (
+                <div className='min-w-full p-4 bg-base-100'>{gallery.description}</div>
             )}
+            <div className='min-w-full p-4 space-x-2'>
+                <div className="columns-2 md:columns-3 lg:columns-4">
+                    {gallery.images.map((image) => <img className='mb-4' src={image.url} />)}
+                </div>
+            </div>
+            <div className='min-w-full'>
+                <GalleryFooter gallery={gallery} feed={{type:'gallery'}} />
+            </div>
         </div>
-        </>
     )
 }
 

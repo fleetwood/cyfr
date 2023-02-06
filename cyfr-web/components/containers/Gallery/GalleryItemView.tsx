@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import {Gallery, GalleryItem} from './../../../prisma/prismaContext'
+import {GalleryFeed} from './../../../prisma/prismaContext'
 
 type GalleryItemViewProps = {
-    gallery:GalleryItem
+    gallery:GalleryFeed
 }
 
 const GalleryItemView = ({gallery}:GalleryItemViewProps) => {
@@ -11,8 +11,8 @@ const GalleryItemView = ({gallery}:GalleryItemViewProps) => {
         <div>
             <Link href={`/gallery/${gallery.id}`}><h2 className="h-subtitle">{gallery.title}</h2></Link>
             <div>
-                <div>Likes ({gallery._count.likes})</div>
-                <div>Shares ({gallery._count.shares})</div>
+                <div>Likes ({gallery.likes.length})</div>
+                <div>Shares ({gallery.shares.length})</div>
                 <div>Images ({gallery.images.length})</div>
             </div>
         </div>
