@@ -5,7 +5,7 @@ import { log } from "../../../utils/log"
 import { useToast } from "../../context/ToastContextProvider"
 import TailwindTextarea from "../../forms/TailwindTextarea"
 import { LoggedIn } from "../../ui/toasty"
-import usePosts from "../../../hooks/usePosts"
+import useFeed from "../../../hooks/useFeed"
 
 type CreatePostProps = {
   onCreate: () => void
@@ -16,14 +16,14 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
-  const {create} = usePosts()
+  const {createPost, invalidateFeed} = useFeed('post')
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (isDisabled) {
       return
     }
-    const post = create({
+    const post = createPost({
       content: content!,
       authorId: cyfrUser.id
     })
@@ -34,6 +34,8 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
         message: `Uh. Ya that didn't work. Weird.`
       })
       setContent(null)
+    } else {
+      invalidateFeed()
     }
 
     onCreate()

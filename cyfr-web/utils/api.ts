@@ -18,7 +18,10 @@ const postData = (body: any) => {
 const fetcher = async (url: any) =>
   fetch(url).then((results) => results.json());
 
-export const getApi = async (url: string): Promise<any> => {
+export const parseResponse = (response: any) => 
+  JSON.parse(JSON.stringify(response))
+
+export const getApi = async <T> (url: string): Promise<T|any> => {
   return parseResponse((await axios.get(apiUrl(url))).data);
 };
 
@@ -26,8 +29,4 @@ export const sendApi = async (url: string, body: any) => {
   const sendTo = apiUrl(url);
   const post = postData(body)
   return axios.post(sendTo, post);
-};
-
-export const parseResponse = (response: any) => {
-  return JSON.parse(JSON.stringify(response));
 };

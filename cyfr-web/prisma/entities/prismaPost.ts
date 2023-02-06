@@ -1,5 +1,6 @@
-import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, User, PostDeleteProps } from "../prismaContext"
+import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, User, PostDeleteProps, Like } from "../prismaContext"
 import { log } from "../../utils/log"
+import { now } from "../../utils/helpers"
 
 const fileName = 'prismaPost'
 const fileMethod = (method:string) => `${fileName}.${method}`
@@ -96,37 +97,22 @@ const deletePost = async ({postId, authorId}: PostDeleteProps): Promise<Post> =>
   }
 }
 
-const likePost = async (props: PostEngageProps): Promise<Post> => {
+const likePost = async (props: PostEngageProps): Promise<Like> => {
   const data = { ...props }
   try {
     trace("likePost", data)
-    const user = await prisma.user.findUnique({ where: { id: data.authorId } })
-    const post = await prisma.post.findUnique({ where: { id: data.postId } })
-    if (user && post) {
-      log(`Found ${JSON.stringify({
-        userId: user.id,
-        postId: post.id
-      })}`)
-      const success = await prisma.post.update({
-        where: { id: post.id },
-        data: { 
-          likes: { 
-            create: {
-              authorId: user.id,
-            }
-          } 
-        },
-      })
-      if (success) {
-        return success
-      } else {
-        throw new Error("Unable to connect like to post")
-      }
+    const success = await prisma.like.create({
+      data: {...props}
+    })
+    if (success) {
+      return success
+    } else {
+      throw new Error("Unable to connect like to post")
     }
     throw new Error("Unable to find user and post to like")
   } catch (error) {
     log("\tERROR: ", error)
-    throw { code: fileMethod('createPost'), ...{error} }
+    throw { code: fileMethod('likePost'), ...{error} }
   }
 }
 

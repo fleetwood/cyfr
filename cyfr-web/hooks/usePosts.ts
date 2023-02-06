@@ -5,7 +5,7 @@ import { log } from "../utils/log"
 import { PostCommentProps, PostCreateProps, PostEngageProps, PostFeed } from "../prisma/prismaContext"
 import { mainFeedQuery } from "./useMainFeed"
 
-export const allPostsQuery = "allPostsQuery"
+export const allPostsQuery = ['feed', {type: 'posts'}]
 
 export async function getPosts() {
   const data = await getApi(`post/all`)
@@ -22,7 +22,7 @@ export const usePosts = () => {
   const [commentId, setCommentId] = useState<string|null>(null)
 
   const query = useQuery(
-    [allPostsQuery],
+    allPostsQuery,
     getPosts,
     {
       onSettled(data,error) {
@@ -62,7 +62,7 @@ export const usePosts = () => {
 
   const invalidatePosts = () => {
     log(`usePosts Hook invalidatePosts()`)
-    return qc.invalidateQueries([allPostsQuery, mainFeedQuery])}
+    return qc.invalidateQueries([allPostsQuery])}
   
   return {posts, create, share, like, comment, commentId, setCommentId, invalidatePosts}
 }

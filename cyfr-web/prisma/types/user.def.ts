@@ -1,4 +1,5 @@
 import { Fan, Follow, Like, Post, PostFeed, Share, User } from "./../prismaContext"
+import { PostFeedInclude } from "./post.def"
 
 export type UserFeed = User & {
   posts: Post[]
@@ -15,11 +16,10 @@ export type UserDetail = User & {
     shares: number
   }
   posts: PostFeed[]
-  likes: Like[]
   following: { follower: User }[]
   follower: { following: User }[]
-  fans: { fan: User }[]
   fanOf: { fanOf: User }[]
+  fans: { fan: User }[]
 }
 
 export const UserDetailInclude = {
@@ -30,31 +30,7 @@ export const UserDetailInclude = {
       }
     },
     posts: {
-      where: {
-        visible: true,
-        shareId: null,
-        commentId: null
-      },
-      include: {
-        author: {
-          // counts only
-          include: { _count: { select: { 
-            posts: true,
-            fans: true,
-            fanOf: true,
-            follower: true,
-            following: true 
-          }}}
-        },
-        comment: {
-          include: {
-            author: true
-          }
-        },
-        post_comments: true,
-        likes: true,
-        shares: true
-      },
+      include: PostFeedInclude
     },
     following: {
       select: {

@@ -1,12 +1,13 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { MainFeed, PostCommentProps, PostCreateProps, PostEngageProps } from "../prisma/prismaContext"
+import { MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostFeed } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import { log } from "../utils/log"
 
-export const mainFeedQuery = ['feed', { type: 'mainPage'}]
+export const mainFeedQuery = ['feed', { type: 'main'}]
+export const postFeedQuery = ['feed', { type: 'post'}]
 
-export async function getMainFeed() {
+export async function getMainFeed():Promise<MainFeed[]|null> {
   const data = await getApi(`feed/main`)
   if (data.result) {
     const posts = data.result
@@ -15,14 +16,28 @@ export async function getMainFeed() {
   return null
 }
 
-export const useMainFeed = () => {
+export async function getPosts():Promise<PostFeed[]|null> {
+  const data = await getApi<PostFeed[]|null>(`post/all`)
+  if (data.result) {
+    const posts = data.result
+    return posts
+  }
+  return null
+}
+
+export const useFeed = (type: 'main'|'post') => {
   const qc = useQueryClient()
-  const [feed, setFeed] = useState<MainFeed[]>()
+  const [feed, setFeed] = useState<any[]>([])
+
   const [commentId, setCommentId] = useState<string|null>(null)
 
   const query = useQuery(
-    mainFeedQuery,
-    getMainFeed,
+    type === 'main' ? mainFeedQuery :
+    type === 'post' ? postFeedQuery :
+    ['feed'],
+    type === 'main' ? getMainFeed :
+    type ==='post' ? getPosts :
+    () => {},
     {
       onSettled(data,error) {
         if (error || data === null) {
@@ -31,7 +46,7 @@ export const useMainFeed = () => {
           )
         }
         if (data) {
-          setFeed(() => data as MainFeed[])
+            setFeed(data)
         }
       }
     }
@@ -40,7 +55,6 @@ export const useMainFeed = () => {
   const send = async (url:string, props:unknown) => {
     const res = await sendApi(url, props)
     if (res) {
-      invalidateMainFeed()
       return res
     }
     return null
@@ -59,9 +73,13 @@ export const useMainFeed = () => {
    */
   const commentOnPost = async (props:PostCommentProps) => await send("post/comment", props)
 
-  const invalidateMainFeed = () => qc.invalidateQueries([mainFeedQuery])
+  const invalidateFeed = (t?:'main'|'post') => {
+    const q = t ? ['feed', {type: t}] : ['feed']
+    log(`invalidating ${JSON.stringify(q)}`)
+    qc.invalidateQueries(q)
+  }
   
-  return {feed, createPost, sharePost, likePost, commentOnPost, commentId, setCommentId, invalidateMainFeed}
+  return {feed, createPost, sharePost, likePost, commentOnPost, commentId, setCommentId, invalidateFeed}
 }
 
-export default useMainFeed
+export default useFeed

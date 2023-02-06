@@ -1,11 +1,11 @@
 import MainFeedItem from "../components/containers/Post/MainFeedItem"
 import MainLayout from "../components/layouts/MainLayout"
 import { CyfrLogo } from "../components/ui/icons"
-import useMainFeed from "../hooks/useMainFeed"
+import useFeed from "../hooks/useFeed"
 import { uuid } from "../utils/helpers"
 
 const Home = () => {
-  const {feed} = useMainFeed()
+  const {feed} = useFeed('main')
 
   const CyfrHome = 
     <div className="flex">
