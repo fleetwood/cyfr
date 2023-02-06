@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import ReactHtmlParser from "react-html-parser";
-import { timeDifference } from "../../../utils/helpers";
+import { timeDifference, uniqueKey } from '../../../utils/helpers';
 import { log } from "../../../utils/log";
 import Avatar from "../../ui/avatar";
 import { PostFeed } from "../../../prisma/prismaContext";
@@ -28,7 +28,9 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
           <div className="mt-4 text-sm font-semibold">⤵ Replies</div>
         )}
         {post.post_comments.slice(0, 5).map((comment) => (
-          <div className="even:bg-base-300 odd:bg-base-200 bg-opacity-50 p-4 rounded-lg text-base-content mt-2 flex space-x-4">
+          <div 
+            className="even:bg-base-300 odd:bg-base-200 bg-opacity-50 p-4 rounded-lg text-base-content mt-2 flex space-x-4"
+            key={uniqueKey('post-comment',post, comment)}>
             <Avatar user={comment.author} sz="xs" />
             <>{ReactHtmlParser(comment.content!)}</>
           </div>

@@ -126,25 +126,27 @@ const createGallery = async ({
 }: CreateGalleryProps) => {
   try {
     trace(`createGallery`, { authorId, title, description, images });
-    const result = await prisma.gallery.create({
-      data: {
+    const data = images ?
+      {
         authorId,
         title,
         description,
-      },
-    });
-    if (result && images) {
-      const added = await addImages({
-        id: result.id,
-        images: images.map((url) => {
-          return { authorId, url };
-        }),
-      });
-
-      if (added) {
-        return result;
+        images: {
+          createMany: {
+            data: images?.map(url => {return {authorId,url}})
+          }
+        }
       }
-    } else if (result) {
+      :
+      {
+        authorId,
+        title,
+        description,
+      }
+    trace(`createGallery`, data)
+    const result = await prisma.gallery.create({data})
+
+    if (result) {
       return result;
     }
     throw { code: fileMethod, message: "Unable to create gallery" };

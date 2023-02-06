@@ -1,28 +1,22 @@
-import Link from 'next/link'
-import {GalleryFeed} from './../../../prisma/prismaContext'
+import Link from "next/link";
+import { GalleryFeed } from "./../../../prisma/prismaContext";
 
 type GalleryItemViewProps = {
-    gallery:GalleryFeed
-}
+  gallery: GalleryFeed;
+};
 
-const GalleryItemView = ({gallery}:GalleryItemViewProps) => {
-    return (
-        <>
-        <div>
-            <Link href={`/gallery/${gallery.id}`}><h2 className="h-subtitle">{gallery.title}</h2></Link>
-            <div>
-                <div>Likes ({gallery.likes.length})</div>
-                <div>Shares ({gallery.shares.length})</div>
-                <div>Images ({gallery.images.length})</div>
-            </div>
-        </div>
-        <div className="columns-2 md:columns-3 lg:columns-4">
-            {gallery.images.map((image) => 
-                <img className='mb-4' src={image.url} key={gallery.id+':'+image.id} />
-            )}
-        </div>
-        </>
-    )
-}
+const GalleryItemView = ({ gallery }: GalleryItemViewProps) => (
+  <Link href={`/gallery/${gallery.id}`}>
+    <div className="bg-base-300 text-base-content rounded-lg p-4 m-4">
+      <h2 className="h-subtitle">{gallery.title}</h2>
 
-export default GalleryItemView
+      <div className="columns-2 md:columns-4 lg:columns-6">
+        {gallery.images.map((image) => (
+          <img className="mb-4" src={image.url} key={gallery.id + ":" + image.id} />
+        ))}
+      </div>
+    </div>
+  </Link>
+);
+
+export default GalleryItemView;

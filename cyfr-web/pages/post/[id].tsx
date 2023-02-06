@@ -2,7 +2,7 @@ import React from "react"
 import PostItemFooter from "../../components/containers/Post/PostItemFooter"
 import MainLayout from "../../components/layouts/MainLayout"
 import Avatar from "../../components/ui/avatar"
-import { timeDifference } from "../../utils/helpers"
+import { timeDifference, uuid, uniqueKey } from '../../utils/helpers';
 import ReactHtmlParser from "react-html-parser"
 import { PrismaPost } from "../../prisma/entities/prismaPost"
 import { PostDetail, PostFeed } from "../../prisma/types/post.def"
@@ -42,13 +42,8 @@ const PostDetailPage = ({ post }: PostDetailPageProps) => {
           {ReactHtmlParser(post.content)}
         </div>}
         {post.post_comments && post.post_comments.map(c => (
-          <div className="text-base-content m-8 font-ibarra">
+          <div className="text-base-content m-8 font-ibarra" key={uniqueKey('post-comment',post,c)}>
             {ReactHtmlParser(c.content!)}
-          </div>
-          ))}
-        {post.likes && post.post_comments.map(c => (
-          <div className="text-base-content m-8 font-ibarra">
-            {post.post_comments.map((p) => ReactHtmlParser(p.content!))}
           </div>
           ))}
         <div className="flex flex-row justify-around">

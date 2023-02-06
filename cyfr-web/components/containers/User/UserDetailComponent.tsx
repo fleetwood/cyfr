@@ -8,6 +8,8 @@ import UserDetailPostItem from "../Post/UserDetailPostItem";
 import useCyfrUser from "../../../hooks/useCyfrUser";
 import GalleryItemView from "../Gallery/GalleryItemView";
 import GalleryCreateView from "../Gallery/GalleryCreateView";
+import GalleryDetailView from "../Gallery/GalleryDetailView";
+import { uuid, uniqueKey } from '../../../utils/helpers';
 
 type UserDetailComponentProps = {
   userId: String;
@@ -166,13 +168,15 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
 
       {/* GALLERIES */}
       {activeTab === "Galleries" && (
-        <div className="columns-2 md:columns-3 lg:columns-4">
+        <div className="flex flex-col space-y-4">
           {currentUser?.id === cyfrUser.id &&
             <GalleryCreateView />
           }
-          {currentUser?.galleries.map(gallery => (
-            <GalleryItemView gallery={gallery} />
-          ))}
+          {currentUser?.galleries.map(gallery => 
+            <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
+                <GalleryItemView gallery={gallery}/>
+            </div>
+        )}
         </div>
       )}
       {/* POSTS */}
@@ -181,7 +185,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           <h2 className="subtitle">Posts</h2>
           {currentUser?.posts &&
             currentUser?.posts.map((post) => (
-              <UserDetailPostItem post={post} key={currentUser?.id + post.id} />
+              <UserDetailPostItem post={post} key={uniqueKey('user-post',currentUser, post)} />
             ))}
         </>
       )}
@@ -194,8 +198,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
               <Avatar
                 user={f.following}
                 sz="md"
-                key={currentUser?.id + f.following.id}
-              />
+                key={uniqueKey('user-following',currentUser,f.following)}/>
             ))}
           <h2 className="subtitle">Followers</h2>
           {currentUser?.following &&
@@ -203,8 +206,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
               <Avatar
                 user={f.follower}
                 sz="md"
-                key={currentUser?.id + f.follower.id}
-              />
+                key={uniqueKey('user-follower',currentUser,f.follower)}/>
             ))}
         </div>
       )}
@@ -214,7 +216,8 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           <h2 className="subtitle">Fans</h2>
           {currentUser?.fans &&
             currentUser?.fans.map((f) => (
-              <Avatar user={f.fan} sz="md" key={currentUser?.id + f.fan.id} />
+              <Avatar user={f.fan} sz="md" 
+              key={uniqueKey('user-fan',currentUser,f.fan)}/>
             ))}
           <h2 className="subtitle">Stan</h2>
           {currentUser?.fanOf &&
@@ -222,8 +225,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
               <Avatar
                 user={f.fanOf}
                 sz="md"
-                key={currentUser?.id + f.fanOf.id}
-              />
+                key={uniqueKey('user-stan',currentUser,f.fanOf)}/>
             ))}
         </div>
       )}

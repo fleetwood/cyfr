@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react"
+import { FormEvent, useEffect, useRef, useState } from "react"
 import { log } from "../../../utils/log"
 import { useToast } from "../../context/ToastContextProvider"
 import useCyfrUser from "../../../hooks/useCyfrUser"
@@ -9,17 +9,22 @@ import Dropzone, { CompleteFile } from "../../forms/Dropzone"
 
 const GalleryCreateView = ({limit=-1}) => {
   const createGalleryModal = "createGalleryModal"
+  const modal = useRef<HTMLInputElement>(null)
+  const [checked, setChecked] = useState(false)
+
   const [cyfrUser] = useCyfrUser()
   const { notify } = useToast()
+  
   const [title, setTitle] = useState<string | null>(null)
   const [description, setDescription] = useState<string | null>(null)
   const [images, setImages] = useState<string[]>([])
-  const { createGallery, invalidateFeed } = useFeed({ type: "gallery" })
   const [createEnabled, setCreateEnabled] = useState(false)
+  
+  const { createGallery, invalidateFeed } = useFeed({ type: "gallery" })
 
   const onFilesComplete = async (files: CompleteFile[]) => {
     const setFiles = files.flatMap(f => f.secure_url)
-    log(`\tonFileComplete ${JSON.stringify(setFiles, null, 2)}`)
+    log(`\tGalleryCreateView.onFilesComplete ${JSON.stringify(setFiles, null, 2)}`)
     setImages((current) => [...current, ...setFiles])
   }
 
@@ -28,14 +33,15 @@ const GalleryCreateView = ({limit=-1}) => {
     if (!cyfrUser) {
       return
     }
-
-    const gallery = await createGallery({
+    const data = {
       authorId: cyfrUser.id,
       title,
       description,
       images
-    })
+    }
+    log(`GalleryCreateView.handleSubmit`, data)
 
+    const gallery = await createGallery(data)
     if (!gallery) {
       notify({
         type: "warning",
@@ -43,6 +49,11 @@ const GalleryCreateView = ({limit=-1}) => {
       })
     } else {
       invalidateFeed()
+      setTitle(null)
+      setDescription(null)
+      setImages([])
+      setChecked(false)
+      createGalleryModal
     }
   }
 
@@ -52,11 +63,11 @@ const GalleryCreateView = ({limit=-1}) => {
 
   return (
     <>
-      <input type="checkbox" id={createGalleryModal} className="modal-toggle" />
+    <input type="checkbox" ref={modal} id={createGalleryModal} className="modal-toggle" checked={checked} onChange={()=>{}} />
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-opacity-0 shadow-none">
           <label
-            htmlFor={createGalleryModal}
+            onClick={() => setChecked(() => !checked)} 
             className="btn btn-sm btn-circle absolute right-2 top-2"
           >
             ✕
@@ -85,15 +96,7 @@ const GalleryCreateView = ({limit=-1}) => {
                     setValue={setDescription}
                     inputClassName="text-base-content"
                   />
-                  <div className="flex text-base-content space-x-2">
-                    {images.length > 0 && images.map(image => 
-                        <>{image}</>
-                    )}
-                  </div>
-                  <Dropzone
-                    limit={limit>0?limit:10}
-                    onUploadComplete={onFilesComplete}
-                  ></Dropzone>
+                  <Dropzone limit={limit>0?limit:10} onUploadComplete={onFilesComplete} />
                 </form>
                 <div className="w-full grid place-items-end mt-2">
                   <button
@@ -109,7 +112,7 @@ const GalleryCreateView = ({limit=-1}) => {
           </div>
         </div>
       </div>
-      <label htmlFor={createGalleryModal} className="btn btn-info space-x-2">
+      <label onClick={() => setChecked(() => !checked)} className="btn btn-info space-x-2">
         <CyfrLogo className="animate-pulse text-info-content w-[1.25rem]" />
         <span className="text-info-content">Create a Gallery!</span>
       </label>

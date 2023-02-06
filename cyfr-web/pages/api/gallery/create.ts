@@ -5,16 +5,22 @@ import {
   ResponseError,
   ResponseResult
 } from "../../../types/response"
-import { logError, todo } from "../../../utils/log"
+import { log, logError, todo } from "../../../utils/log"
+
+const fileName = "api/gallery/";
+const fileMethod = (method: string) => `${fileName}.${method}`;
+const trace = (method: string, t?: any) =>
+  log(fileMethod(method) + t ? " " + JSON.stringify(t, null, 2) : "");
+
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<Gallery>>
 ) {
-  todo('Why is this posting req.body.body????')
   const { authorId, title, description, images } = req.body.body
+  trace(`handle`,{ authorId, title, description, images })
   try {
-    const gallery = await PrismaGallery.createGallery({authorId, description, title})
+    const gallery = await PrismaGallery.createGallery({authorId, description, title, images})
     if (gallery) {
       res.status(200).json({ result: gallery })
     } else {

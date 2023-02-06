@@ -32,7 +32,6 @@ export type CompleteFile = {
 export interface UploadableFile {
   file: File
   id: string
-  accepted: boolean
   errors: FileError[]
 }
 
@@ -43,6 +42,6 @@ export type DropzoneProps = {
 }
 
 export interface UploadFileViewProps {
-  file: File
+  file: UploadableFile
   onComplete?: Function
 }

@@ -4,6 +4,7 @@ import { FileError } from "react-dropzone";
 import { log, logError } from "../../../utils/log";
 import Spinner, { SpinnerSize } from "../../ui/spinner";
 import { CompleteFile, UploadFileViewProps } from "./types.defs";
+import { uuid } from "../../../utils/helpers";
 
 const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
   const [fileProgress, setFileProgress] = useState<number>(0);
@@ -23,7 +24,7 @@ const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
 
   useEffect(() => {
     async function upload() {
-      const url = await cloudinary.upload({ file, onProgress, onComplete: onFileComplete });
+      const url = await cloudinary.upload({file: file.file, onProgress, onComplete: onFileComplete });
       if (url) {
         // @ts-ignore
         const file = JSON.parse(url) as unknown as CompleteFile;
@@ -34,7 +35,7 @@ const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
   }, []);
 
   return (
-    <div className="relative md-2">
+    <div className="relative mb-2" key={file.id}>
       {preview && 
         <div>
             <img src={preview.secure_url} className="mask mask-squircle" />

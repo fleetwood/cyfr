@@ -9,6 +9,12 @@ export const postFeedQuery = ['feed', { type: 'post'}]
 export const galleryFeedQuery = ['feed', { type: 'gallery'}]
 export const imageFeedQuery = ['feed', { type: 'image'}]
 
+const fileName = "useFeed";
+const fileMethod = (method: string) => `${fileName}.${method}`;
+const trace = (method: string, t?: any) =>
+  log(fileMethod(method) + t ? " " + JSON.stringify(t, null, 2) : "");
+
+
 export async function getMainFeed():Promise<MainFeed[]|null> {
   const data = await getApi(`feed/main`)
   if (data.result) {
@@ -83,7 +89,10 @@ export const useFeed = ({type}:FeedTypes) => {
 
   const likePost = async (props: PostEngageProps) => await send("post/like", props)
 
-  const createGallery = async (props: GalleryCreateProps) => await send("gallery/create", props)
+  const createGallery = async (props: GalleryCreateProps) => {
+    trace('createGallery', props)
+    return await send("gallery/create", props)
+  }
 
   const shareGallery = async (props: GalleryEngageProps) => await send("gallery/share", props)
 
