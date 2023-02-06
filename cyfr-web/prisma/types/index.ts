@@ -9,6 +9,7 @@ import {
     Gallery
   } from "@prisma/client/edge"
   import { ShareDeleteProps, ShareFeed } from "./share.def"
+  import { GalleryItem } from "./gallery.def"
   import { UserFeed, UserDetail, CyfrUser } from "./user.def"
   import {
     PostCreateProps,
@@ -78,6 +79,8 @@ export const includes = {
 export type {
     // from prisma client
     Post,User,Share,Like,Follow,Fan,Image,Gallery,
+    // from Gallery defs
+    GalleryItem,
     // from user defs
     UserFeed, UserDetail, CyfrUser,
     // from share defs

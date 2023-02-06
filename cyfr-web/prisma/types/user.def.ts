@@ -1,4 +1,5 @@
 import { Fan, Follow, Like, Post, PostFeed, Share, User, Image, Gallery } from "./../prismaContext"
+import { GalleryItem } from "./gallery.def"
 import { PostFeedInclude } from "./post.def"
 
 export type UserFeed = User & {
@@ -21,7 +22,7 @@ export type UserDetail = User & {
   fanOf: { fanOf: User }[]
   fans: { fan: User }[]
   images: (Image & { _count: { likes: number, shares: number}})[]
-  galleries: (Gallery & { images: Image[], _count: { likes: number, shares: number}})[]
+  galleries: (GalleryItem)[]
 }
 
 export const UserDetailInclude = {

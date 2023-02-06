@@ -6,6 +6,7 @@ import { HeartIcon, FireIcon } from "../../ui/icons";
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 import UserDetailPostItem from "../Post/UserDetailPostItem";
 import useCyfrUser from "../../../hooks/useCyfrUser";
+import GalleryItemView from "../Gallery/GalleryItemView";
 
 type UserDetailComponentProps = {
   userId: String;
@@ -164,28 +165,11 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
 
       {/* TABS */}
       {activeTab === "Galleries" && (
-        <>
-        <h2 className="subtitle">Galleries</h2>
         <div className="columns-2 md:columns-3 lg:columns-4">
-        <img className="mb-4" src="https://source.unsplash.com/random/1" />
-        <img className="mb-4" src="https://source.unsplash.com/random/2" />
-        <img className="mb-4" src="https://source.unsplash.com/random/3" />
-        <img className="mb-4" src="https://source.unsplash.com/random/4" />
-        <img className="mb-4" src="https://source.unsplash.com/random/2" />
-        <img className="mb-4" src="https://source.unsplash.com/random/3" />
-        <img className="mb-4" src="https://source.unsplash.com/random/4" />
-        <img className="mb-4" src="https://source.unsplash.com/random/5" />
-        <img className="mb-4" src="https://source.unsplash.com/random/3" />
-        <img className="mb-4" src="https://source.unsplash.com/random/4" />
-        <img className="mb-4" src="https://source.unsplash.com/random/5" />
-        <img className="mb-4" src="https://source.unsplash.com/random/4" />
-        <img className="mb-4" src="https://source.unsplash.com/random/5" />
-        <img className="mb-4" src="https://source.unsplash.com/random/4" />
-        <img className="mb-4" src="https://source.unsplash.com/random/5" />
-        <img className="mb-4" src="https://source.unsplash.com/random/6" />
-        <img className="mb-4" src="https://source.unsplash.com/random/7" />
+          {currentUser?.galleries.map(gallery => (
+            <GalleryItemView gallery={gallery} />
+          ))}
         </div>
-        </>
       )}
       {activeTab === "Posts" && (
         <>
