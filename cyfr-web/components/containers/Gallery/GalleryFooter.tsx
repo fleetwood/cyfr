@@ -75,7 +75,7 @@ const GalleryFooter = ({
   };
 
   return (
-    <div className="min-w-full p-4 flex justify-around space-x-4 border-t-2 border-primary border-opacity-50">
+    <div className="min-w-full p-4 flex justify-around space-x-4">
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={HeartIcon}

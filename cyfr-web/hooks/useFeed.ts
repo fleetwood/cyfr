@@ -96,8 +96,8 @@ export const useFeed = ({type}:FeedTypes) => {
    */
   const commentOnPost = async (props:PostCommentProps) => await send("post/comment", props)
 
-  const invalidateFeed = (t?:'main'|'post') => {
-    const q = t ? ['feed', {type: t}] : ['feed']
+  const invalidateFeed = (t?:FeedTypes) => {
+    const q = t ? ['feed', {type: t.type}] : ['feed']
     log(`invalidating ${JSON.stringify(q)}`)
     qc.invalidateQueries(q)
   }

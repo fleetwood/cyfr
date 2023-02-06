@@ -7,9 +7,7 @@ import { CyfrLogo } from "../../ui/icons"
 import TailwindInput from "../../forms/TailwindInput"
 import Dropzone, { CompleteFile } from "../../forms/Dropzone"
 
-type GalleryCreateViewProps = {}
-
-const GalleryCreateView = () => {
+const GalleryCreateView = ({limit=-1}) => {
   const createGalleryModal = "createGalleryModal"
   const [cyfrUser] = useCyfrUser()
   const { notify } = useToast()
@@ -17,12 +15,12 @@ const GalleryCreateView = () => {
   const [description, setDescription] = useState<string | null>(null)
   const [images, setImages] = useState<string[]>([])
   const { createGallery, invalidateFeed } = useFeed({ type: "gallery" })
+  const [createEnabled, setCreateEnabled] = useState(false)
 
-  const onFilesComplete = async (file: CompleteFile) => {
-    if (file.secure_url) {
-      log(`\tonFileComplete ${JSON.stringify(file, null, 2)}`)
-      setImages((current) => [...current.filter(c => c!==file.secure_url), file.secure_url])
-    }
+  const onFilesComplete = async (files: CompleteFile[]) => {
+    const setFiles = files.flatMap(f => f.secure_url)
+    log(`\tonFileComplete ${JSON.stringify(setFiles, null, 2)}`)
+    setImages((current) => [...current, ...setFiles])
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -35,6 +33,7 @@ const GalleryCreateView = () => {
       authorId: cyfrUser.id,
       title,
       description,
+      images
     })
 
     if (!gallery) {
@@ -46,6 +45,10 @@ const GalleryCreateView = () => {
       invalidateFeed()
     }
   }
+
+  useEffect(() => {
+    setCreateEnabled(() => images.length>0)
+  },[title, description, images])
 
   return (
     <>
@@ -88,14 +91,15 @@ const GalleryCreateView = () => {
                     )}
                   </div>
                   <Dropzone
-                    limit={1}
-                    onFileCompleted={onFilesComplete}
+                    limit={limit>0?limit:10}
+                    onUploadComplete={onFilesComplete}
                   ></Dropzone>
                 </form>
                 <div className="w-full grid place-items-end mt-2">
                   <button
                     className="btn lg:btn-sm p-2 bg-secondary text-primary-content disabled:bg-opacity-40 disabled:text-primary"
                     onClick={handleSubmit}
+                    disabled={!createEnabled}
                   >
                     Create!
                   </button>

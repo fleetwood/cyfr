@@ -1,19 +1,18 @@
-import { ReactNode, useRef, useState } from "react";
-import Footer from "../containers/Footer";
-import LeftColumn from "../containers/LeftColumn";
-import Navbar from "../containers/Navbar";
-import CreatePost from "../containers/Post/CreatePost";
-import RightColumn from "../containers/RightColumn";
-import { useToast } from "../context/ToastContextProvider";
-import Section from "../ui/section";
-import CommentProvider from "../context/CommentContextProvider";
+import { ReactNode, useRef, useState } from "react"
+import Footer from "../containers/Footer"
+import LeftColumn from "../containers/LeftColumn"
+import Navbar from "../containers/Navbar"
+import CreatePost from "../containers/Post/CreatePost"
+import RightColumn from "../containers/RightColumn"
+import { useToast } from "../context/ToastContextProvider"
+import Section from "../ui/section"
 
 type MainLayoutProps = {
   sectionTitle: string | ReactNode
   pageTitle?: string | null
   subTitle?: string | null
   children?: ReactNode
-};
+}
 
 const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
   const createPostModal = 'createPostModal'
@@ -25,7 +24,7 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
     createModal!.checked = false
   }
 
-  const [scrollActive, setScrollActive] = useState(false);
+  const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
   const mainRef = useRef<HTMLElement>(null)
 
@@ -79,6 +78,6 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
         </div>
       </div>
     </div>
-  );
-};
-export default MainLayout;
+  )
+}
+export default MainLayout

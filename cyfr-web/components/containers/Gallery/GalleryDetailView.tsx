@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { GalleryDetail } from './../../../prisma/prismaContext'
 import GalleryCreateView from './GalleryCreateView'
 import GalleryFooter from './GalleryFooter'
@@ -9,11 +10,11 @@ type GalleryDetailViewProps = {
 const GalleryItemView = ({gallery}:GalleryDetailViewProps) => {
     return (
         <div className='rounded-lg bg-base-300 text-base-content my-4'>
-            <div className='min-w-full p-4 space-x-2 flex justify-around border-b-2 border-primary border-opacity-50'>
-                <div>Likes ({gallery.likes.length})</div>
-                <div>Shares ({gallery.shares.length})</div>
-                <div>Images ({gallery.images.length})</div>
-            </div>
+            {gallery.title && 
+                <Link href={`/gallery/${gallery.id}`}>
+                    <h2 className='h-subtitle p-4'>{gallery.title}</h2>
+                </Link>
+            }
             {gallery.description && (
                 <div className='min-w-full p-4 bg-base-100'>{gallery.description}</div>
             )}

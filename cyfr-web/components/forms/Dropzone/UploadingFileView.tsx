@@ -1,41 +1,11 @@
 import { useEffect, useState } from "react";
-import { cloudinary, config } from "../../../utils/cloudinary";
+import { cloudinary } from "../../../utils/cloudinary";
 import { FileError } from "react-dropzone";
 import { log, logError } from "../../../utils/log";
 import Spinner, { SpinnerSize } from "../../ui/spinner";
+import { CompleteFile, UploadFileViewProps } from "./types.defs";
 
-export interface SingleFileUploadWithProgressProps {
-  file: File
-  onComplete?: Function
-}
-
-export type CompleteFile = {
-  asset_id: string;
-  public_id: string;
-  version: number;
-  version_id: string;
-  signature: string;
-  width: number;
-  height: number;
-  format: string;
-  resource_type: string;
-  created_at: string; // "2023-01-26T19:49:28Z"
-  tags: [string];
-  pages: number;
-  bytes: number;
-  type: string;
-  etag: string;
-  placeholder: boolean;
-  url: string; //http
-  secure_url: string; //https
-  folder: string;
-  access_mode: string;
-  metadata: any;
-  existing: boolean;
-  original_filename: string;
-};
-
-const SingleFileUploadWithProgress = ({file, onComplete}: SingleFileUploadWithProgressProps) => {
+const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
   const [fileProgress, setFileProgress] = useState<number>(0);
   const [fileErrors, setFileErrors] = useState<FileError[]>([]);
   const [preview, setPreview] = useState<CompleteFile | null>(null);
@@ -86,4 +56,4 @@ const SingleFileUploadWithProgress = ({file, onComplete}: SingleFileUploadWithPr
   );
 };
 
-export default SingleFileUploadWithProgress;
+export default UploadFileView;

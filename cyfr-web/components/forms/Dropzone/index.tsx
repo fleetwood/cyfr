@@ -1,56 +1,11 @@
-import { ReactNode, useCallback, useEffect, useState } from "react"
-import { Accept, FileError, FileRejection, useDropzone } from 'react-dropzone'
+import { useCallback, useEffect, useState } from "react"
+import { FileRejection, useDropzone } from 'react-dropzone'
 import { uuid } from "../../../utils/helpers"
 import { log, todo } from "../../../utils/log"
-import SingleFileUploadWithProgress from "./SingleFileUploadWithProgress"
+import UploadFileView from "./UploadingFileView"
+import { UploadableFile, CompleteFile, DropzoneProps } from "./types.defs"
 
-const fileTypes = ["JPG", "PNG", "GIF"]
-
-export interface UploadedFile {
-  file: File
-  errors: FileError[]
-}
-
-export type CompleteFile = {
-  asset_id: string
-  public_id:string
-  version:number
-  version_id:string
-  signature:string
-  width:number
-  height:number
-  format:string
-  resource_type:string
-  created_at:string // "2023-01-26T19:49:28Z"
-  tags: [string]
-  pages:number,
-  bytes:number,
-  type:string,
-  etag:string,
-  placeholder:boolean,
-  url:string, //http
-  secure_url:string, //https
-  folder:string,
-  access_mode:string,
-  metadata:any,
-  existing:boolean,
-  original_filename:string
-}
-
-export type DropzoneProps = {
-  limit?: number
-  onFileCompleted?: Function
-  children?: ReactNode
-}
-
-export interface UploadableFile {
-  file: File
-  id: string
-  accepted: boolean
-  errors: FileError[]
-}
-
-function Dropzone({limit=-1, onFileCompleted, children}:DropzoneProps) {
+function Dropzone({limit=-1, onUploadComplete, children}:DropzoneProps) {
   const [files, setFiles] = useState<UploadableFile[]>([])
   const [rejected, setRejected] = useState<UploadableFile[]>([])
   const [completedFiles, setCompletedFiles] = useState<CompleteFile[]>([])
@@ -58,7 +13,7 @@ function Dropzone({limit=-1, onFileCompleted, children}:DropzoneProps) {
   const getLimit = (a:any[]) => limit>0?limit:a.length
 
   const onDrop = useCallback((acceptedFiles:File[], rejectedFiles:FileRejection[]) => {
-    log(`version2.onDrop(
+    log(`Dropzone.onDrop(
       ${JSON.stringify({acceptedFiles, rejectedFiles}, null, 2)}
       )`)
       const mapAccepted = acceptedFiles.slice(0, getLimit(acceptedFiles)).map(file => ({file, accepted: true, errors: [], id: uuid()}))
@@ -71,14 +26,16 @@ function Dropzone({limit=-1, onFileCompleted, children}:DropzoneProps) {
   }, [])
 
   const onFileComplete = useCallback((e:any) => {
-    log(`version2.onFileComplete ${JSON.stringify(e.original_filename+'.'+e.format)}`)
     setCompletedFiles((current) => [...current, e])
   }, [])
 
   useEffect(() => {
     const filePaths = files.map(f => f.accepted === true)
     if (filePaths.length > 0 && completedFiles.length===filePaths.length) {
-      if (onFileCompleted) onFileCompleted(completedFiles)
+      if (onUploadComplete) {
+        log(`Dropzone.useEffect [completedFiles ${completedFiles.length}/${filePaths.length}]`)
+        onUploadComplete(completedFiles)
+      }
     }
   }, [completedFiles])
 
@@ -88,11 +45,12 @@ function Dropzone({limit=-1, onFileCompleted, children}:DropzoneProps) {
     <>
       <div {...getRootProps()} className={`p-4 rounded-md border-2 border-dashed ${isDragActive ? `bg-accent text-accent-content border-accent-focus` : `bg-secondary text-secondary-content border-secondary-focus`}`}>
         <input {...getInputProps()} />
-        {
-          children || 
+        {children? children :
           isDragActive ? 
             <p>Drop n Go!!</p> :
-            <p>Drag and drop file{limit !== 1 ? 's' :''} here, or click to select...</p> 
+            limit === 1 
+              ? <p>Drop your file here</p> 
+              : <p>Drop up to <strong>{limit}</strong> files here, or click to select...</p>
         }
       </div>
       <div className='min-w-full p-4 space-x-2'>
@@ -111,7 +69,7 @@ function Dropzone({limit=-1, onFileCompleted, children}:DropzoneProps) {
             </div>
           )}
         {files.map(fileWrapper => (
-          <SingleFileUploadWithProgress file={fileWrapper.file} onComplete={onFileComplete} key={fileWrapper.id} />
+          <UploadFileView file={fileWrapper.file} onComplete={onFileComplete} key={fileWrapper.id} />
         ))}
         </div>
       </div>
@@ -120,5 +78,5 @@ function Dropzone({limit=-1, onFileCompleted, children}:DropzoneProps) {
 }
 
 export default Dropzone
-// export { FileUploading, FileUploadError }
 
+export type {UploadableFile, CompleteFile, DropzoneProps}
