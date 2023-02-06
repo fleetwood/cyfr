@@ -5,6 +5,8 @@ import {
     Like,
     Follow,
     Fan,
+    Image,
+    Gallery
   } from "@prisma/client/edge"
   import { ShareDeleteProps, ShareFeed } from "./share.def"
   import { UserFeed, UserDetail, CyfrUser } from "./user.def"
@@ -75,7 +77,7 @@ export const includes = {
 
 export type {
     // from prisma client
-    Post,User,Share,Like,Follow,Fan,
+    Post,User,Share,Like,Follow,Fan,Image,Gallery,
     // from user defs
     UserFeed, UserDetail, CyfrUser,
     // from share defs

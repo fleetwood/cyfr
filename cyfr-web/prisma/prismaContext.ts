@@ -5,8 +5,8 @@ import { PrismaShare } from "./entities/prismaShare"
 
 import { PrismaPost } from "./entities/prismaPost"
 import { PrismaUser } from "./entities/prismaUser"
-import { Fan, Follow, Like, Post, Share, User, ShareFeed, UserFeed, UserDetail, CyfrUser, PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostBase, PostFeed, PostDetail, ShareDeleteProps, MainFeed } from "./types"
-import { PrismaClient } from "@prisma/client/edge"
+import { Fan, Follow, Like, Post, Share, User, ShareFeed, UserFeed, UserDetail, CyfrUser, PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostBase, PostFeed, PostDetail, ShareDeleteProps, MainFeed, Image, Gallery } from "./types"
+import { PrismaClient } from "@prisma/client"
 
 declare global {
   var prisma: PrismaClient
@@ -35,7 +35,7 @@ if (__prod__) {
 
 export { prisma, PrismaPost, PrismaUser, PrismaSession, PrismaShare }
 export type { 
-  Post, User, Follow, Fan, Share, Like,
+  Post, User, Follow, Fan, Share, Like, Image, Gallery,
   ShareDeleteProps,ShareFeed, 
   UserFeed, UserDetail, CyfrUser,
   MainFeed,

@@ -1,18 +1,10 @@
 import { TabPanel } from "react-tabs"
-import useUserDetail from "../../../hooks/useUserDetail"
+import useUserDetail, { UserDetailHookProps } from "../../../hooks/useUserDetail"
 import Tabby from "../../ui/Tabby"
 import Avatar from "../../ui/avatar"
-import UserDetailPostItem from "../Post/UserDetailPostItem"
-import UserDetailFollow from "./UserDetailFollow"
-import UserDetailFan from "./UserDetailFan"
-import { User, UserDetail, UserFeed } from "../../../prisma/prismaContext"
 
-type UserAccountDetailProps = {
-  user: UserDetail
-}
-
-const UserAccountDetail = ({ user }: UserAccountDetailProps) => {
-  const { currentUser, invalidateUser } = useUserDetail(user.id)
+const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
+  const { currentUser, invalidateUser } = useUserDetail({user, id})
 
   return (
     <div className="">

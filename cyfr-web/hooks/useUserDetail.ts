@@ -16,7 +16,7 @@ async function getUser(userid:String) {
   return null
 }
 
-type UserDetailHookProps = {
+export type UserDetailHookProps = {
   user?:  UserDetail
   id?: String
 }
