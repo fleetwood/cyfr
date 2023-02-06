@@ -3,10 +3,31 @@ import { log } from "../utils/log"
 import { PrismaSession } from "./entities/prismaSession"
 import { PrismaShare } from "./entities/prismaShare"
 
+import { PrismaClient } from "@prisma/client"
 import { PrismaPost } from "./entities/prismaPost"
 import { PrismaUser } from "./entities/prismaUser"
-import { Fan, Follow, Like, Post, Share, User, ShareFeed, UserFeed, UserDetail, CyfrUser, PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostBase, PostFeed, PostDetail, ShareDeleteProps, MainFeed, Image, Gallery, GalleryItem } from "./types"
-import { PrismaClient } from "@prisma/client"
+import {
+  CyfrUser,
+  Fan,
+  Follow,
+  Gallery, GalleryItem, GalleryDetail,
+  Image,
+  Like,
+  MainFeed,
+  Post,
+  PostBase,
+  PostCommentProps,
+  PostCreateProps, PostDeleteProps,
+  PostDetail,
+  PostEngageProps,
+  PostFeed,
+  Share,
+  ShareDeleteProps,
+  ShareFeed,
+  User,
+  UserDetail,
+  UserFeed
+} from "./types"
 
 declare global {
   var prisma: PrismaClient
@@ -34,11 +55,12 @@ if (__prod__) {
 /*******************************/
 
 export { prisma, PrismaPost, PrismaUser, PrismaSession, PrismaShare }
-export type { 
+export type {
   Post, User, Follow, Fan, Share, Like, Image, Gallery,
-  ShareDeleteProps,ShareFeed, 
-  GalleryItem,
+  ShareDeleteProps, ShareFeed,
+  GalleryItem, GalleryDetail,
   UserFeed, UserDetail, CyfrUser,
   MainFeed,
-  PostCreateProps,PostDeleteProps,PostEngageProps,PostCommentProps,PostBase,PostFeed,PostDetail,
+  PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostBase, PostFeed, PostDetail,
 }
+

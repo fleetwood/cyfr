@@ -1,4 +1,6 @@
 import { log } from "../../utils/log"
+import { GalleryDetail } from "../types"
+import { GalleryDetailInclude } from "../types/gallery.def"
 
 const fileName = "prismaGallery"
 const fileMethod = (method: string) => `${fileName}.${method}`
@@ -11,6 +13,22 @@ export type GalleryAddImageProps = {
     url: string
     authorId: string
     }]
+}
+
+const getDetail = async (galleryId:string):Promise<GalleryDetail> => {
+  trace('getDetail', {galleryId})
+  try {
+    const result= await prisma.gallery.findUnique({
+      where: {id: galleryId},
+      include: GalleryDetailInclude
+    })
+    if (result)
+      return result as unknown as GalleryDetail
+    throw {code: fileMethod, message: 'Unable to find a gallery by that key'}
+  } catch (error) {
+    trace(`getDetail ERROR`, error)
+    throw(error)
+  }
 }
 
 const addImages = async ({id, ...props}:GalleryAddImageProps) => {
@@ -51,4 +69,4 @@ const createGallery = async ({authorId,title,description}: CreateGalleryProps) =
     trace(`\tcreateGallery ERROR`, error)
   }
 }
-export { addImages, createGallery }
+export const PrismaGallery = { addImages, createGallery, getDetail }

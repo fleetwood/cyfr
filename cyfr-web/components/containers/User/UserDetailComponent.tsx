@@ -163,7 +163,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
         </button>
       </div>
 
-      {/* TABS */}
+      {/* GALLERIES */}
       {activeTab === "Galleries" && (
         <div className="columns-2 md:columns-3 lg:columns-4">
           {currentUser?.galleries.map(gallery => (
@@ -171,6 +171,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           ))}
         </div>
       )}
+      {/* POSTS */}
       {activeTab === "Posts" && (
         <>
           <h2 className="subtitle">Posts</h2>
@@ -180,7 +181,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
             ))}
         </>
       )}
-
+      {/* FOLLOWERS */}
       {activeTab === "Follow" && (
         <div>
           <h2 className="subtitle">Follows</h2>
@@ -203,7 +204,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
             ))}
         </div>
       )}
-
+      {/* FANS */}
       {activeTab === "Fan" && (
         <div>
           <h2 className="subtitle">Fans</h2>

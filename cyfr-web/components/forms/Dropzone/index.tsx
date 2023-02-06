@@ -61,7 +61,6 @@ const getAllowed = (a:string) => {
   }
 }
 
-
 function Dropzone({limit=-1, show = 'all', cols, types, onFileCompleted, children}:DropzoneProps) {
   const [files, setFiles] = useState<UploadedFile[]>([])
   const [onDragClass, setOnDragClass] = useState<string>('border-primary-focus')

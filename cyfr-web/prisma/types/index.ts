@@ -9,7 +9,7 @@ import {
     Gallery
   } from "@prisma/client/edge"
   import { ShareDeleteProps, ShareFeed } from "./share.def"
-  import { GalleryItem } from "./gallery.def"
+  import { GalleryItem, GalleryDetail, GalleryDetailInclude } from "./gallery.def"
   import { UserFeed, UserDetail, CyfrUser } from "./user.def"
   import {
     PostCreateProps,
@@ -73,14 +73,15 @@ export const MapToMainFeed = ({shares, posts}:MainFeedMapping):MainFeed[] => {
 }
 
 export const includes = {
-    ShareWithAuthorPostInclude
+    ShareWithAuthorPostInclude,
+    GalleryDetailInclude
 }
 
 export type {
     // from prisma client
     Post,User,Share,Like,Follow,Fan,Image,Gallery,
     // from Gallery defs
-    GalleryItem,
+    GalleryItem, GalleryDetail,
     // from user defs
     UserFeed, UserDetail, CyfrUser,
     // from share defs
