@@ -5,8 +5,23 @@ import { PrismaShare } from "./entities/prismaShare"
 
 import { PrismaPost } from "./entities/prismaPost"
 import { PrismaUser } from "./entities/prismaUser"
-import { Fan, Follow, Like, Post, Share, User, ShareFeed, UserFeed, UserDetail, CyfrUser, PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostBase, PostFeed, PostDetail, ShareDeleteProps, MainFeed } from "./types"
-import { PrismaClient } from "@prisma/client/edge"
+import { PrismaGallery } from "./entities/prismaGallery"
+import { PrismaImage } from "./entities/prismaImage"
+import {
+  CyfrUser,
+  Fan,
+  Follow,
+  Image,
+  Like,
+  MainFeed,
+  Gallery, GalleryFeed, GalleryDetail, GalleryEngageProps, GalleryCreateProps,
+  Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed,
+  Share, ShareDeleteProps, ShareFeed,
+  User, UserDetail, UserFeed,
+} from "./types"
+import { PrismaClient } from "@prisma/client"
+import { ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps } from './types/image.def';
+import {includes} from './types'
 
 declare global {
   var prisma: PrismaClient
@@ -33,11 +48,13 @@ if (__prod__) {
 /*******************************/
 /*******************************/
 
-export { prisma, PrismaPost, PrismaUser, PrismaSession, PrismaShare }
-export type { 
-  Post, User, Follow, Fan, Share, Like,
-  ShareDeleteProps,ShareFeed, 
+export { prisma, PrismaPost, PrismaUser, PrismaSession, PrismaShare, PrismaGallery, PrismaImage, includes }
+export type {
+  Post, User, Follow, Fan, Share, Like, Image, Gallery,
+  ShareDeleteProps, ShareFeed,
+  GalleryFeed, GalleryDetail, GalleryEngageProps, GalleryCreateProps,
+  ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
   UserFeed, UserDetail, CyfrUser,
   MainFeed,
-  PostCreateProps,PostDeleteProps,PostEngageProps,PostCommentProps,PostBase,PostFeed,PostDetail,
+  PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostFeed, PostDetail,
 }

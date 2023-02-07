@@ -1,7 +1,6 @@
 import { GetSessionParams, signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
-import UserAccountDetail from "../components/containers/User/UserAccountDetail"
-import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
+
 import TailwindInput from "../components/forms/TailwindInput"
 import MainLayout from "../components/layouts/MainLayout"
 import { SaveIcon } from "../components/ui/icons"
@@ -12,6 +11,7 @@ import { CyfrUser } from "../prisma/types/user.def"
 import { cloudinary } from "../utils/cloudinary"
 import { log } from "../utils/log"
 import UserDetailPage from "./user/[id]"
+import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await PrismaUser.userInSession(context)
@@ -27,7 +27,6 @@ const Account = ({user}:AccountProps) => {
   const [session] = useSession({required: true, redirectTo: '/login'})
   const [cyfrUser] = useCyfrUser()
   const {updateUser, invalidateUser}=useCyfrUserApi()
-  const [showZone, setShowZone] = useState<"all" | "results" | "none" | "zone" | null>('all')
   const [activeTab, setActiveTab] = useState('Preferences')
   const [cyfrName, setCyfrName] = useState<string|null>(null)
 
@@ -49,7 +48,8 @@ const Account = ({user}:AccountProps) => {
       })
   }
 
-  const onFileComplete = async (file:CompleteFile) => {
+  const onFileComplete = async (files:CompleteFile[]) => {
+    const file = files[0]
     if (file.secure_url) {
       // setShowZone(null)
       const newCyfrUser = {
@@ -62,7 +62,6 @@ const Account = ({user}:AccountProps) => {
           invalidateUser()
         })
         .catch(e => {
-          setShowZone('all')
           log(`\tonFileComplete error ${JSON.stringify(e,null,2)}`)
         })
     }
@@ -97,8 +96,8 @@ const Account = ({user}:AccountProps) => {
             <TailwindInput label="Display Name" type="text" inputClassName="input input-bordered focus:border-primary" value={cyfrName} setValue={setCyfrName} />
             <button className="btn btn-primary btn-sm" onClick={onNameChange}>{SaveIcon}</button>
             <h3 className="h-title">Avatar</h3>
-            <Dropzone types='img' onFileCompleted={onFileComplete} limit={1} show={showZone}>
-              <img src={cloudinary.resize({url: user!.image!, width: 200})} alt="User avatar" />
+            <Dropzone onUploadComplete={onFileComplete} limit={1} >
+              <img src={cloudinary.resize({url: cyfrUser.image!, width: 200})} />
             </Dropzone>
           </div>
         }

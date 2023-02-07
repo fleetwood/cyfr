@@ -1,5 +1,5 @@
 import ShrinkableIconLink from "../ui/shrinkableIconLink";
-import { ClipbardIcon, QuestionMarkIcon } from "../ui/icons";
+import { ClipbardIcon, PhotoIcon, QuestionMarkIcon } from "../ui/icons";
 import { __prod__ } from "../../utils/constants";
 
 const LeftColumn = () => {
@@ -15,6 +15,16 @@ const LeftColumn = () => {
             icon={QuestionMarkIcon}
           />
         </li>
+        }
+        {!__prod__ &&   
+          <li>
+            <ShrinkableIconLink
+              href={"/gallery/create"}
+              target="_self"
+              label="Create Gallery"
+              icon={PhotoIcon}
+            />
+          </li>
         }
         <li>
           <ShrinkableIconLink

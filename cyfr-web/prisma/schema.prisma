@@ -2,20 +2,29 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("LOCAL_DATABASE_URL")
-// }
-
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("PRISMA_HEROKU_PROXY")
-// }
-
 datasource db {
   provider          = "postgresql"
   url               = env("HEROKU_DATABASE_URL_PROD")
   shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  fanOf         Fan[]     @relation("user_fans")
+  fans          Fan[]     @relation("user_fan_of")
+  follower      Follow[]  @relation("user_followed_by")
+  following     Follow[]  @relation("user_following")
+  galleries     Gallery[] @relation("user_galleries")
+  images        Image[]   @relation("user_images")
+  likes         Like[]    @relation("user_likes")
+  posts         Post[]    @relation("user_posts")
+  sessions      Session[]
+  shares        Share[]   @relation("user_shares")
 }
 
 model Post {
@@ -32,32 +41,53 @@ model Post {
   comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
   post_comments Post[]   @relation("post_comments")
   shares        Share[]  @relation("post_shares")
+  images        Image[]  @relation("post_images")
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  fanOf         Fan[]     @relation("user_fans")
-  fans          Fan[]     @relation("user_fan_of")
-  follower      Follow[]  @relation("user_followed_by")
-  following     Follow[]  @relation("user_following")
-  likes         Like[]    @relation("user_likes")
-  posts         Post[]    @relation("user_posts")
-  sessions      Session[]
-  shares        Share[]   @relation("user_shares")
+model Gallery {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  visible     Boolean  @default(true)
+  title       String?
+  description String?
+  authorId    String
+  shareId     String?
+  author      User     @relation("user_galleries", fields: [authorId], references: [id])
+  images      Image[]  @relation("gallery_images")
+  likes       Like[]   @relation("gallery_likes")
+  shares      Share[]  @relation("gallery_shares")
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  visible   Boolean  @default(true)
+  url       String
+  title     String?
+  authorId  String
+  galleryId String?
+  postId    String?
+  shareId   String?
+  author    User     @relation("user_images", fields: [authorId], references: [id])
+  gallery   Gallery? @relation("gallery_images", fields: [galleryId], references: [id])
+  post      Post?    @relation("post_images", fields: [postId], references: [id])
+  likes     Like[]   @relation("image_likes")
+  shares    Share[]  @relation("image_shares")
 }
 
 model Like {
   id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
   authorId  String
   postId    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  galleryId String?
+  imageId   String?
   author    User     @relation("user_likes", fields: [authorId], references: [id])
+  gallery   Gallery? @relation("gallery_likes", fields: [galleryId], references: [id])
+  image     Image?   @relation("image_likes", fields: [imageId], references: [id])
   post      Post?    @relation("post_likes", fields: [postId], references: [id])
 }
 
@@ -68,26 +98,30 @@ model Share {
   visible   Boolean  @default(true)
   authorId  String
   postId    String?
+  galleryId String?
+  imageId   String?
   author    User     @relation("user_shares", fields: [authorId], references: [id])
+  gallery   Gallery? @relation("gallery_shares", fields: [galleryId], references: [id])
+  image     Image?   @relation("image_shares", fields: [imageId], references: [id])
   post      Post?    @relation("post_shares", fields: [postId], references: [id])
 }
 
 model Follow {
   id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
   followerId  String
   followingId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
   follower    User     @relation("user_followed_by", fields: [followerId], references: [id])
   following   User     @relation("user_following", fields: [followingId], references: [id])
 }
 
 model Fan {
   id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
   fanId     String
   fanOfId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
   fan       User     @relation("user_fans", fields: [fanId], references: [id])
   fanOf     User     @relation("user_fan_of", fields: [fanOfId], references: [id])
 }

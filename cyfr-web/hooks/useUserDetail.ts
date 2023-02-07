@@ -7,7 +7,7 @@ import { UserDetail } from "../prisma/prismaContext"
 
 export const userDetailQuery = "userDetailQuery"
 
-async function getUser(userid:string) {
+async function getUser(userid:String) {
   const data = await getApi(`user/byId/${userid}`)
   if (data.result) {
     const user = data.result
@@ -16,15 +16,21 @@ async function getUser(userid:string) {
   return null
 }
 
-const useUserDetail = (id:string) => {
+export type UserDetailHookProps = {
+  user?:  UserDetail
+  id?: String
+}
+
+const useUserDetail = ({user, id}:UserDetailHookProps) => {
   const [currentUser, setCurrentUser] = useState<UserDetail>()
   const qc = useQueryClient()
-
-  const queryTag = `userQuery.${id}`
+  
+  const userId = user?.id||id
+  const queryTag = `userQuery.${userId}`
 
   const query = useQuery(
     [queryTag],
-    () => getUser(id),
+    () => getUser(userId!),
     {
       onSettled(data,error) {
         if (error || data === null) {

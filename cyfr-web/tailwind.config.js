@@ -18,7 +18,7 @@ module.exports = {
     base: true,
     utils: true,
     prefix: "",
-    darkTheme: "emerald",
+    darkTheme: "luxury",
     themes: [
       "light",
       "dark",
