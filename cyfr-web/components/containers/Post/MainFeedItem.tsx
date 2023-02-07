@@ -1,4 +1,4 @@
-import { timeDifference, uuid } from "../../../utils/helpers"
+import { timeDifference, uniqueKey, uuid } from "../../../utils/helpers"
 import Avatar from "../../ui/avatar"
 import PostItemFooter from "./PostItemFooter"
 import ReactHtmlParser from "react-html-parser"
@@ -12,6 +12,7 @@ type MainFeedItemProps = {
 const MainFeedItem = ({item}:MainFeedItemProps) => {
   const {post} = item.share || item
   const comments = post?.post_comments || []
+  const images = post?.images || []
   const isShare = item.type === "ShareFeed"
 
   return post ? (
@@ -53,7 +54,14 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
         {post.content && 
           ReactHtmlParser(post.content)
         }
-        {comments && <div className="mt-4 text-sm font-semibold">⤵ Replies</div>}
+        {images.length > 0 && 
+          <div className="columns-2 md:columns-4 lg:columns-6">
+            {images.map((image) => (
+              <img className="mb-4" src={image.url} key={uniqueKey('post-images',post,image)} />
+            ))}
+          </div>
+        }
+        {comments && comments.length > 0 && <div className="mt-4 text-sm font-semibold">⤵ Replies</div>}
         {comments && comments.slice(0, 5).map((comment) => (
           <div className="even:bg-base-300 odd:bg-base-200 bg-opacity-50 p-4 rounded-lg text-base-content mt-2 flex space-x-4" key={`item:${item.post?.id||item.share?.id||uuid()}-comment:${comment.id}`}>
             <Avatar user={comment.author} sz="xs" />

@@ -12,9 +12,9 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<Post>>
 ) {
   todo('Why is this posting req.body.body????')
-  const { content, authorId } = req.body.body
+  const { content, authorId, images } = req.body.body
   try {
-    const result = await PrismaPost.createPost({content, authorId})
+    const result = await PrismaPost.createPost({content, authorId, images})
     if (result) {
       res.status(200).json({ result })
     } else {

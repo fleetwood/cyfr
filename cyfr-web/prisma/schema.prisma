@@ -41,7 +41,7 @@ model Post {
   comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
   post_comments Post[]   @relation("post_comments")
   shares        Share[]  @relation("post_shares")
-  images      Image[]  @relation("post_images")
+  images        Image[]  @relation("post_images")
 }
 
 model Gallery {
@@ -58,6 +58,7 @@ model Gallery {
   likes       Like[]   @relation("gallery_likes")
   shares      Share[]  @relation("gallery_shares")
 }
+
 model Image {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -71,7 +72,7 @@ model Image {
   shareId   String?
   author    User     @relation("user_images", fields: [authorId], references: [id])
   gallery   Gallery? @relation("gallery_images", fields: [galleryId], references: [id])
-  post   Post? @relation("post_images", fields: [postId], references: [id])
+  post      Post?    @relation("post_images", fields: [postId], references: [id])
   likes     Like[]   @relation("image_likes")
   shares    Share[]  @relation("image_shares")
 }

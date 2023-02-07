@@ -40,7 +40,8 @@ const all = async (): Promise<ShareFeed[] | []> => {
               }
             },
             shares: true,
-            likes: true
+            likes: true,
+            images: true
           }
         }
       },

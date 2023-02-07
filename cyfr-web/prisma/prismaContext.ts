@@ -15,7 +15,7 @@ import {
   Like,
   MainFeed,
   Gallery, GalleryFeed, GalleryDetail, GalleryEngageProps, GalleryCreateProps,
-  Post, PostBase, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed,
+  Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed,
   Share, ShareDeleteProps, ShareFeed,
   User, UserDetail, UserFeed,
 } from "./types"
@@ -56,5 +56,5 @@ export type {
   ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
   UserFeed, UserDetail, CyfrUser,
   MainFeed,
-  PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostBase, PostFeed, PostDetail,
+  PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostFeed, PostDetail,
 }

@@ -11,6 +11,15 @@ export type UserFeed = User & {
   fanOf: Fan[]
 }
 
+export const UserFeedInclude = {
+  posts: true,
+  likes: true,
+  following: true,
+  follower: true,
+  fans: true,
+  fanOf: true,
+}
+
 export type UserDetail = User & {
   _count: {
     likes: number
@@ -33,7 +42,14 @@ export const UserDetailInclude = {
       }
     },
     posts: {
-      include: PostFeedInclude
+      include: {
+        author: true,
+        comment: true,
+        images: true,
+        post_comments: { include: { author: true } },
+        likes: { include: { author: true } },
+        shares: { include: { author: true } },
+      }
     },
     images: {
       include: {
@@ -45,7 +61,19 @@ export const UserDetailInclude = {
         }
     }},
     galleries: {
-      include: GalleryFeedInclude
+      include: {
+        images: {
+          include: {
+            _count: {
+              select: {
+              likes: true,
+              shares: true
+            }}
+          }
+        },
+        likes: true,
+        shares: true,
+      }
     },
     following: {
       select: {

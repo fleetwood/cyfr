@@ -1,7 +1,5 @@
-import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, User, PostDeleteProps, Like } from "../prismaContext"
+import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, PostDeleteProps, Like, includes } from "../prismaContext"
 import { log } from "../../utils/log"
-import { now } from "../../utils/helpers"
-import { PrismaGallery } from './prismaGallery';
 
 const fileName = 'prismaPost'
 const fileMethod = (method:string) => `${fileName}.${method}`
@@ -9,18 +7,43 @@ const trace = (method:string, t?:any) => log(fileMethod(method)+t?' '+JSON.strin
 
 const byId = async (id: string): Promise<PostDetail | null> => {
   try {
-    return await prisma.post.findFirst({
+    const result = await prisma.post.findFirst({
       where: {
         id: id,
         visible: true
       },
       include: {
-       author: true,
-       shares: true,
-       likes: true,
-       post_comments: true
+        author: { include: {
+          posts: true,
+          likes: true,
+          following: true,
+          follower: true,
+          fans: true,
+          fanOf: true,
+        }},
+        post_comments: { include: {
+          author: true,
+          comment: true,
+          images: true,
+          post_comments: { include: { author: true } },
+          likes: { include: { author: true } },
+          shares: { include: { author: true } },
+        } },
+        likes: { include: { author: true } },
+        shares: { include: { author: true } },
+        images: { include: {
+          author: true,
+          likes: true,
+          shares: true,
+          gallery: true,
+          post: true
+        } },
       },
     })
+    if (result) {
+      return result as unknown as PostDetail
+    }
+    throw {code: fileMethod('prismaPost.byId'), message: 'Failed fetching post'}
   } catch (error) {
     throw { code: "posts/byId", message: "No posts were returned!" }
   }
@@ -39,26 +62,7 @@ const all = async (): Promise<PostFeed[] | []> => {
         visible: true,
         commentId: null
       },
-      include: {
-        author: true,
-        shares: { include: {
-            author: true,
-        }},
-        likes: { include: {
-          author: true,
-        }},
-        post_comments: {
-          include: {
-            author: true,
-            shares: { include: {
-              author: true,
-            }},
-            likes: { include: {
-              author: true,
-            }}
-          }
-        }
-      },
+      include: includes.PostFeedInclude,
       orderBy: [
         {
           updatedAt: "desc",
@@ -71,10 +75,24 @@ const all = async (): Promise<PostFeed[] | []> => {
 }
 
 const createPost = async (props: PostCreateProps): Promise<Post> => {
-  const {content, authorId} = { ...props }
-  const gallery = (props.gallery) ? await PrismaGallery.createGallery(props.gallery) : null
+  const {content, authorId, images} = { ...props }
+  const imageData = images && images.length>0 ? {
+      createMany: { data: [
+        images.forEach(url => {return {authorId, url}})
+      ]}
+  }:null
   
-  const data = {content, authorId }
+  const data = {
+    authorId, 
+    content, 
+    images: {
+      createMany: {data: 
+        images===undefined
+          ?[]
+          :images.map(url => {return {authorId, url}})
+    }}
+  }
+
   try {
     trace('createPost', data)
     return await prisma.post.create({ data })

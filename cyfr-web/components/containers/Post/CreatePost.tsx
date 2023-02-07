@@ -24,10 +24,9 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
 
   const onFilesComplete = async (files: CompleteFile[]) => {
     const setFiles = files.flatMap(f => f.secure_url)
-    log(`\tGalleryCreateView.onFilesComplete ${JSON.stringify(setFiles, null, 2)}`)
+    log(`\tCreatePost.onFilesComplete ${JSON.stringify(setFiles, null, 2)}`)
     setImages((current) => [...current, ...setFiles])
   }
-
   
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -35,9 +34,11 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
       return
     }
 
-    const postData= {content: content!,
+    const postData= {
+      content: content!,
       authorId: cyfrUser.id,
-      gallery: {authorId: cyfrUser.id, images}}
+      images: images.flatMap(url => url)
+    }
 
     log(`CreatePost.tsx handleSubmit postData`, postData)
     const post = createPost(postData)
@@ -49,7 +50,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
       })
     } else {
       setContent(null)
-      setImages([])
+      setImages(() => [])
       invalidateFeed()
     }
 

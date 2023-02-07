@@ -9,20 +9,20 @@ import {
     Gallery
   } from "@prisma/client/edge"
   import { ShareDeleteProps, ShareFeed } from "./share.def"
-  import { GalleryFeed, GalleryDetail, GalleryDetailInclude, GalleryEngageProps, GalleryCreateProps } from "./gallery.def"
-  import { UserFeed, UserDetail, CyfrUser } from "./user.def"
+  import { GalleryFeed, GalleryDetail, GalleryDetailInclude, GalleryEngageProps, GalleryCreateProps, GalleryFeedInclude } from './gallery.def';
+  import { UserFeed, UserDetail, CyfrUser, UserDetailInclude, UserFeedInclude } from './user.def';
   import {
     PostCreateProps,
     PostDeleteProps,
     PostEngageProps,
     PostCommentProps,
-    PostBase,
     PostFeed,
     PostDetail,
   } from "./post.def"
 
 import {ShareWithAuthorPost, ShareWithAuthorPostInclude} from './like.def'
-import { ImageFeed, ImageFeedInclude, ImageDetailInclude } from './image.def';
+import { ImageFeed, ImageFeedInclude, ImageDetailInclude, ImageDetail } from './image.def';
+import { PostFeedInclude, PostDetailInclude } from './post.def';
 
 type MainFeed = {
     type: 'PostFeed' | 'ShareFeed'
@@ -75,24 +75,27 @@ export const MapToMainFeed = ({shares, posts}:MainFeedMapping):MainFeed[] => {
 
 export const includes = {
     ShareWithAuthorPostInclude,
-    GalleryDetailInclude,
-    ImageFeedInclude,
-    ImageDetailInclude
+    GalleryFeedInclude, GalleryDetailInclude,
+    ImageFeedInclude, ImageDetailInclude,
+    PostFeedInclude, PostDetailInclude,
+    UserFeedInclude, UserDetailInclude
 }
 
 export type {
     // from prisma client
     Post,User,Share,Like,Follow,Fan,Image,Gallery,
     // from Gallery defs
-    GalleryFeed, GalleryDetail, GalleryCreateProps, GalleryEngageProps,
+    GalleryFeed, GalleryDetail, 
+    GalleryCreateProps, GalleryEngageProps,
     // from image defs
-    ImageFeed,
+    ImageFeed, ImageDetail,
     // from user defs
     UserFeed, UserDetail, CyfrUser,
     // from share defs
     ShareDeleteProps, ShareFeed,
     // from Posts defs
-    PostCreateProps,PostDeleteProps,PostEngageProps,PostCommentProps,PostBase,PostFeed,PostDetail,
+    PostFeed,PostDetail,
+    PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps,
     // from like defs
     ShareWithAuthorPost,
     // from here (types)
