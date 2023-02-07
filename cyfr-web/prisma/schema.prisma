@@ -8,23 +8,6 @@ datasource db {
   shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
 }
 
-model Post {
-  id            String   @id @default(cuid())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
-  visible       Boolean  @default(true)
-  content       String?
-  shareId       String?
-  commentId     String?
-  authorId      String
-  likes         Like[]   @relation("post_likes")
-  author        User     @relation("user_posts", fields: [authorId], references: [id])
-  comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
-  post_comments Post[]   @relation("post_comments")
-  shares        Share[]  @relation("post_shares")
-  gallery       Gallery?
-}
-
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -44,6 +27,41 @@ model User {
   shares        Share[]   @relation("user_shares")
 }
 
+model Post {
+  id            String   @id @unique @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+  visible       Boolean  @default(true)
+  content       String?
+  shareId       String?
+  commentId     String?
+  authorId      String
+  likes         Like[]   @relation("post_likes")
+  author        User     @relation("user_posts", fields: [authorId], references: [id])
+  comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
+  post_comments Post[]   @relation("post_comments")
+  shares        Share[]  @relation("post_shares")
+
+  gallery       Gallery?
+}
+
+model Gallery {
+  postId    String? @unique
+  post        Post?    @relation(fields: [postId], references: [id])
+
+  id          String   @id @unique @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  visible     Boolean  @default(true)
+  title       String?
+  description String?
+  authorId    String
+  shareId     String?
+  author      User     @relation("user_galleries", fields: [authorId], references: [id])
+  images      Image[]  @relation("gallery_images")
+  likes       Like[]   @relation("gallery_likes")
+  shares      Share[]  @relation("gallery_shares")
+}
 model Image {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -58,21 +76,6 @@ model Image {
   gallery   Gallery? @relation("gallery_images", fields: [galleryId], references: [id])
   likes     Like[]   @relation("image_likes")
   shares    Share[]  @relation("image_shares")
-}
-
-model Gallery {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  visible     Boolean  @default(true)
-  title       String?
-  description String?
-  authorId    String
-  post        Post?    @relation(fields: [id], references: [id])
-  author      User     @relation("user_galleries", fields: [authorId], references: [id])
-  images      Image[]  @relation("gallery_images")
-  likes       Like[]   @relation("gallery_likes")
-  shares      Share[]  @relation("gallery_shares")
 }
 
 model Like {
