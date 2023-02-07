@@ -6,6 +6,9 @@ import { useToast } from "../../context/ToastContextProvider"
 import TailwindTextarea from "../../forms/TailwindTextarea"
 import { LoggedIn } from "../../ui/toasty"
 import useFeed from "../../../hooks/useFeed"
+import GalleryCreatePage from "../../../pages/gallery/create"
+import GalleryCreateView from '../Gallery/GalleryCreateView';
+import Dropzone, { CompleteFile } from "../../forms/Dropzone"
 
 type CreatePostProps = {
   onCreate: () => void
@@ -17,24 +20,36 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   const [content, setContent] = useState<string | null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
   const {createPost, invalidateFeed} = useFeed({type: 'post'})
+  const [images, setImages] = useState<string[]>([])
 
+  const onFilesComplete = async (files: CompleteFile[]) => {
+    const setFiles = files.flatMap(f => f.secure_url)
+    log(`\tGalleryCreateView.onFilesComplete ${JSON.stringify(setFiles, null, 2)}`)
+    setImages((current) => [...current, ...setFiles])
+  }
+
+  
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (isDisabled) {
       return
     }
-    const post = createPost({
-      content: content!,
-      authorId: cyfrUser.id
-    })
+
+    const postData= {content: content!,
+      authorId: cyfrUser.id,
+      gallery: {authorId: cyfrUser.id, images}}
+
+    log(`CreatePost.tsx handleSubmit postData`, postData)
+    const post = createPost(postData)
 
     if (!post) {
       notify({
         type: 'warning',
         message: `Uh. Ya that didn't work. Weird.`
       })
-      setContent(null)
     } else {
+      setContent(null)
+      setImages([])
       invalidateFeed()
     }
 
@@ -63,6 +78,8 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
             setValue={setContent}
             inputClassName="text-base-content"
           />
+
+          <Dropzone limit={5} onUploadComplete={onFilesComplete} />
 
           <div className="w-full grid place-items-end mt-2">
             <button

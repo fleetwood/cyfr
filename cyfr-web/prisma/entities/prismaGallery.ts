@@ -1,5 +1,6 @@
 import { log } from "../../utils/log";
 import { Gallery, GalleryDetail, Like } from "../types";
+import { GalleryCreateProps } from '../types/gallery.def';
 import {
   GalleryDetailInclude,
   GalleryEngageProps,
@@ -111,19 +112,12 @@ const addImages = async ({ id, ...props }: GalleryAddImageProps) => {
   }
 };
 
-type CreateGalleryProps = {
-  authorId: string;
-  title?: string;
-  description?: string;
-  images?: string[];
-};
-
 const createGallery = async ({
   authorId,
   title,
   description,
   images,
-}: CreateGalleryProps) => {
+}: GalleryCreateProps) => {
   try {
     trace(`createGallery`, { authorId, title, description, images });
     const data = images ?

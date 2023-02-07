@@ -22,6 +22,7 @@ model Post {
   comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
   post_comments Post[]   @relation("post_comments")
   shares        Share[]  @relation("post_shares")
+  gallery       Gallery?
 }
 
 model User {
@@ -67,7 +68,7 @@ model Gallery {
   title       String?
   description String?
   authorId    String
-  shareId     String?
+  post        Post?    @relation(fields: [id], references: [id])
   author      User     @relation("user_galleries", fields: [authorId], references: [id])
   images      Image[]  @relation("gallery_images")
   likes       Like[]   @relation("gallery_likes")

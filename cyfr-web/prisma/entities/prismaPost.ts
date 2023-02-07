@@ -1,6 +1,7 @@
 import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, User, PostDeleteProps, Like } from "../prismaContext"
 import { log } from "../../utils/log"
 import { now } from "../../utils/helpers"
+import { PrismaGallery } from './prismaGallery';
 
 const fileName = 'prismaPost'
 const fileMethod = (method:string) => `${fileName}.${method}`
@@ -70,7 +71,10 @@ const all = async (): Promise<PostFeed[] | []> => {
 }
 
 const createPost = async (props: PostCreateProps): Promise<Post> => {
-  const data = { ...props }
+  const {content, authorId} = { ...props }
+  const gallery = (props.gallery) ? await PrismaGallery.createGallery(props.gallery) : null
+  
+  const data = {content, authorId }
   try {
     trace('createPost', data)
     return await prisma.post.create({ data })

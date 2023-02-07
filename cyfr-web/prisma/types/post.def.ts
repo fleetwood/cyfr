@@ -1,8 +1,10 @@
 import { Like, Post, Share, User } from "./../prismaContext";
+import { GalleryCreateProps } from './gallery.def';
 
 export type PostCreateProps = {
   content: string
   authorId: string
+  gallery?: GalleryCreateProps|null
 }
 
 export type PostDeleteProps = {
