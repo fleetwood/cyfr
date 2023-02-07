@@ -12,20 +12,14 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const code = `api/me`
   try {
     const session = await getSession({ req })
     const email = session?.user?.email
     const result = await PrismaUser.byEmail(email!)
-    if (result) {
-      res.status(200).json({ result })
-    } else {
-      log(`${code} No results`)
-      throw { code, message: `No results from me` }
-    }
+    res.status(200).json({ result })
   } catch (e: Error | ResponseError | any) {
-    logError(`	me FAIL`, e)
+    logError(`me FAIL`, e)
     const error = GetResponseError(e)
-    res.status(500).json({ error })
+    res.status(200).json({ })
   }
 }

@@ -1,21 +1,15 @@
-import Link from "next/link";
-import { useEffect } from "react";
-import ReactHtmlParser from "react-html-parser";
-import { timeDifference, uniqueKey } from '../../../utils/helpers';
-import { log } from "../../../utils/log";
-import Avatar from "../../ui/avatar";
-import { PostFeed } from "../../../prisma/prismaContext";
-import PostItemFooter from "./PostItemFooter";
+import Link from 'next/link'
+import ReactHtmlParser from 'react-html-parser'
+import { PostFeed } from '../../../prisma/prismaContext'
+import { timeDifference, uniqueKey } from '../../../utils/helpers'
+import Avatar from '../../ui/avatar'
+import PostItemFooter from './PostItemFooter'
 
 type UserPostDetailProps = {
   post: PostFeed
-};
+}
 
-const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
-  useEffect(() => {
-    log(`USerDetailPost change ${post.id}`);
-  }, [post]);
-  return (
+const UserDetailPostItem = ({ post }: UserPostDetailProps) => 
     <div className="mt-4 p-4 rounded-2xl snap-always snap-start flex flex-col bg-neutral-content">
       <div className="">
         <Link href={`/post/${post.id}`} className="text-primary underline">
@@ -40,6 +34,5 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) => {
         {post.content && <PostItemFooter post={post} feed="user" />}
       </div>
     </div>
-  );
-};
-export default UserDetailPostItem;
+
+export default UserDetailPostItem
