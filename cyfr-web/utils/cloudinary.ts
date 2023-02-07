@@ -48,6 +48,12 @@ const cloudUrl = (url:string, mod:string) => {
     return res
 }
 
+/**
+ * @param url string
+ * @param width number 
+ * @param height (optional) number Will maintain aspect ration at given width if no height is set
+ * @param face (optional) boolean 
+ */
 type cloudImageProps = {
     url: string,
     width: number

@@ -1,3 +1,4 @@
+import { ImageFeed, ImageFeedInclude } from './image.def';
 import {
   Fan,
   Follow,
@@ -21,13 +22,26 @@ export type GalleryEngageProps = {
 }
 
 export type GalleryFeed = Gallery & {
-  images: Image[]
+  images: (Image & {
+    _count: {
+      likes: number,
+      shares: number
+    }
+  })[]
   likes: Like[]
   shares: Share[]
 }
 
 export const GalleryFeedInclude = {
-  images: true,
+  images: {
+    include: {
+      _count: {
+        select: {
+        likes: true,
+        shares: true
+      }}
+    }
+  },
   likes: true,
   shares: true,
 }
@@ -53,14 +67,7 @@ export type GalleryDetail = Gallery & {
   likes: (Like & {
     author: User
   })[]
-  images: (Image & {
-    shares: Share & {
-      author: User
-    }
-    likes: Like & {
-      author: User
-    }
-  })[]
+  images: ImageFeed[]
 }
 
 export const GalleryDetailInclude = {
@@ -83,9 +90,6 @@ export const GalleryDetailInclude = {
   shares: { include: { author: true } },
   likes: { include: { author: true } },
   images: {
-    include: {
-      shares: { include: { author: true } },
-      likes: { include: { author: true } },
-    },
+    include: ImageFeedInclude,
   },
 }

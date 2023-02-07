@@ -22,6 +22,7 @@ import {
   } from "./post.def"
 
 import {ShareWithAuthorPost, ShareWithAuthorPostInclude} from './like.def'
+import { ImageFeed, ImageFeedInclude, ImageDetailInclude } from './image.def';
 
 type MainFeed = {
     type: 'PostFeed' | 'ShareFeed'
@@ -74,7 +75,9 @@ export const MapToMainFeed = ({shares, posts}:MainFeedMapping):MainFeed[] => {
 
 export const includes = {
     ShareWithAuthorPostInclude,
-    GalleryDetailInclude
+    GalleryDetailInclude,
+    ImageFeedInclude,
+    ImageDetailInclude
 }
 
 export type {
@@ -82,6 +85,8 @@ export type {
     Post,User,Share,Like,Follow,Fan,Image,Gallery,
     // from Gallery defs
     GalleryFeed, GalleryDetail, GalleryCreateProps, GalleryEngageProps,
+    // from image defs
+    ImageFeed,
     // from user defs
     UserFeed, UserDetail, CyfrUser,
     // from share defs

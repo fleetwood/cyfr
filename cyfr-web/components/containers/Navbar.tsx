@@ -5,6 +5,7 @@ import { CyfrLogo, HouseIcon, UserIcon } from '../ui/icons';
 import ShrinkableIconLink from '../ui/shrinkableIconLink';
 import ShrinkableLink from '../ui/shrinkableLink';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 type NavbarProps = {
   className?: string;
@@ -66,6 +67,7 @@ const Navbar = ({
               <li><Link href={`/gallery/user/${cyfrUser.id}`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Galleries</Link></li>
               <li><Link href={`/user/${cyfrUser.id}`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Profile</Link></li>
               <li><Link href={`/account`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Acccount</Link></li>
+              <li><Link href={`#`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md' onClick={() => signOut()} >Log Out</Link></li>
             </ul>
           </div>
           ) : (

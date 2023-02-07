@@ -10,6 +10,7 @@ import GalleryItemView from "../Gallery/GalleryItemView";
 import GalleryCreateView from "../Gallery/GalleryCreateView";
 import GalleryDetailView from "../Gallery/GalleryDetailView";
 import { uuid, uniqueKey } from '../../../utils/helpers';
+import { cloudinary } from '../../../utils/cloudinary';
 
 type UserDetailComponentProps = {
   userId: String;
@@ -64,6 +65,9 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
 
   return (
     <div>
+      {currentUser &&
+        <img src={currentUser.image||''} className="-mt-2 mb-2 rounded-lg min-w-full" />
+      }
       <div
         className="
         grid grid-cols-9
@@ -75,9 +79,6 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
         text-neutral-content
         "
       >
-        <div className="col-span-2 mt-2 md:-mt-12">
-          <Avatar user={currentUser} sz="lg" />
-        </div>
         <div className="col-span-7">
           <div
             className="

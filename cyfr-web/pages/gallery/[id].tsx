@@ -21,8 +21,8 @@ type GalleryDetailPageProps= {
 const GalleryDetailPage = ({gallery}:GalleryDetailPageProps) => {
     return (
         <MainLayout 
-            sectionTitle={gallery.title||'Gallery'}
-            subTitle={gallery.author.name}
+            subTitle={gallery.title||'Gallery'}
+            sectionTitle={gallery.author.name}
             >
             <GalleryDetailView gallery={gallery} />
         </MainLayout>

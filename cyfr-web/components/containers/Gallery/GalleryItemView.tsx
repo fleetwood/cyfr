@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GalleryFeed } from "./../../../prisma/prismaContext";
+import { uniqueKey } from '../../../utils/helpers';
 
 type GalleryItemViewProps = {
   gallery: GalleryFeed;
@@ -12,7 +13,7 @@ const GalleryItemView = ({ gallery }: GalleryItemViewProps) => (
 
       <div className="columns-2 md:columns-4 lg:columns-6">
         {gallery.images.map((image) => (
-          <img className="mb-4" src={image.url} key={gallery.id + ":" + image.id} />
+          <img className="mb-4" src={image.url} key={uniqueKey('galleryItemView',gallery,image)} />
         ))}
       </div>
     </div>
