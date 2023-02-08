@@ -10,12 +10,13 @@ const cyfrUserQuery = "cyfrUserQuery"
 export async function getCyfrUser() {
   log(`useCyfrUser.getCyfrUser()`)
   const data = await getApi(`/me`)
-  if (data) {
+  try {
     log(`useCyfrUser.getCyfrUser result(${JSON.stringify(data)})`)
     const cyfrUser = data as CyfrUser
     return cyfrUser
+  } catch (error) {
+    return null
   }
-  return null
 }
 
 export type useCyfrUserProps = {
@@ -37,10 +38,11 @@ const useCyfrUser = ():[CyfrUser,boolean,unknown] => {
   // @ts-ignore
   const onSettled = (data, error) => {
     // log(`useCyfrUser.onSettled()`)
-    if (error || data.error) {
+    if (error || data?.error || null) {
       log(
         `\tuseCyfrUser.onSettled() ERROR ${JSON.stringify({ error, data })}`
       )
+      return null
     }
     if (data) {
       // log(`\tSUCCESS`)

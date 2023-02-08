@@ -1,28 +1,23 @@
-import { useState, useRef } from "react";
-import Footer from "../components/containers/Footer";
-import LeftColumn from "../components/containers/LeftColumn";
-import Navbar from "../components/containers/Navbar";
-import RightColumn from "../components/containers/RightColumn";
-import { useToast } from "../components/context/ToastContextProvider";
-import { CyfrLogo } from "../components/ui/icons"
-import Section from "../components/ui/section";
-import sectionTitle from "../components/ui/sectionTitle";
-import SectionTitle from "../components/ui/sectionTitle";
-import Link from "next/link";
-import { getApi, sendApi } from "../utils/api";
-import JsonBlock from "../components/ui/jsonBlock";
+import { useRef, useState } from 'react'
 
-const Dev = () => {
-  const [scrollActive, setScrollActive] = useState(false);
+import Footer from '../components/containers/Footer'
+import LeftColumn from '../components/containers/LeftColumn'
+import Navbar from '../components/containers/Navbar'
+import { useToast } from '../components/context/ToastContextProvider'
+import { CyfrLogo } from '../components/ui/icons'
+import { getApi, sendApi } from '../utils/api'
+
+const DevPage = () => {
+  const [scrollActive, setScrollActive] = useState(false)
   const { toasts } = useToast()
-  const mainRef = useRef<HTMLElement>(null);
+  const mainRef = useRef<HTMLElement>(null)
   const [data, setdata] = useState<any>({})
   const [current, setcurrent] = useState<string>()
 
   const handleScroll = (e: any) => {
-    const position = mainRef?.current?.scrollTop;
-    setScrollActive((current) => (position && position > 120) || false);
-  };
+    const position = mainRef?.current?.scrollTop
+    setScrollActive((current) => (position && position > 120) || false)
+  }
 
   const get = async (url:string) => {
     setcurrent(() => url)
@@ -136,4 +131,4 @@ const SendLink = ({url, label, body}:{url:string, label: string, body:any}) => (
   )
 }
 
-export default Dev
+export default DevPage
