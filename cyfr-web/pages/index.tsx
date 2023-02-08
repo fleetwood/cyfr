@@ -4,7 +4,7 @@ import { CyfrLogo } from "../components/ui/icons"
 import useFeed from "../hooks/useFeed"
 import { uuid } from "../utils/helpers"
 
-const Home = () => {
+const HomePage = () => {
   const {feed} = useFeed({type: 'main'})
 
   const CyfrHome = 
@@ -23,4 +23,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default HomePage

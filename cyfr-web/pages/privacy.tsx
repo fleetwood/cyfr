@@ -1,6 +1,6 @@
-import StaticLayout from "../components/layouts/StaticLayout";
+import StaticLayout from "../components/layouts/StaticLayout"
 
-const Home = () => {
+const PrivacyPage = () => {
   return (
     <StaticLayout sectionTitle="Privacy Policy" subTitle="We think privacy is important">
       
@@ -275,7 +275,7 @@ const Home = () => {
         <p>Address</p>
       </div>
     </StaticLayout>
-  );
-};
+  )
+}
 
-export default Home;
+export default PrivacyPage

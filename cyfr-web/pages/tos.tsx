@@ -1,6 +1,6 @@
 import StaticLayout from "../components/layouts/StaticLayout";
 
-const tos = () => {
+const TosPage = () => {
   return (
     <StaticLayout pageTitle="Terms of Service" sectionTitle="Terms of Service" subTitle="Egregious but Necessary Legal Jargon. Meh.">
       <>
@@ -42,4 +42,4 @@ const tos = () => {
   );
 };
 
-export default tos
+export default TosPage
