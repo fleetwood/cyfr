@@ -72,7 +72,7 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
 
       <input type="checkbox" id={createPostModal} className="modal-toggle" />
       <div className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box bg-opacity-0 shadow-none">
+        <div className="modal-box bg-opacity-0 shadow-none overflow-visible scrollbar-hide">
           <label htmlFor={createPostModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
           <CreatePost onCreate={onCreate} />
         </div>

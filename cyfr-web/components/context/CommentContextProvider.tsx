@@ -79,7 +79,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
     <CommentContext.Provider value={value}>
         <input type="checkbox" ref={modal} id={commentPostModal} className="modal-toggle" checked={checked} onChange={()=>{}} />
         <div className="modal modal-bottom sm:modal-middle">
-          <div className="modal-box bg-opacity-0 shadow-none">
+          <div className="modal-box bg-opacity-0 overflow-visible scrollbar-hide">
             
             <label onClick={hideComment} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 
