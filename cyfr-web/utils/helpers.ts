@@ -144,6 +144,12 @@ export const uniqueKey = (...items:any) => {
   return key
 }
 
+export const uniqueArray = (a:string[]) => {
+  var seen = {};
+  // @ts-ignore
+  return a.filter((item) => seen.hasOwnProperty(item) ? false : (seen[item] = true));
+}
+
 export const valToLabel = (val: number) => {
   let result = val.toString()
   const tolerances: Array<{ x: number, l: string, d: number, p: number }> = [

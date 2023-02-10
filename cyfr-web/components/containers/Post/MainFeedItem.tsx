@@ -50,7 +50,7 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
           </Link>
         </div>
       </div>
-      <div className="p-4 mt-4">
+      <div className="p-4 mt-4 font-feed">
         {post.content && 
           ReactHtmlParser(post.content)
         }
@@ -63,7 +63,7 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
         }
         {comments && comments.length > 0 && <div className="mt-4 text-sm font-semibold">⤵ Replies</div>}
         {comments && comments.slice(0, 5).map((comment) => (
-          <div className="even:bg-base-300 odd:bg-base-200 bg-opacity-50 p-4 rounded-lg text-base-content mt-2 flex space-x-4" key={`item:${item.post?.id||item.share?.id||uuid()}-comment:${comment.id}`}>
+          <div className="font-feed even:bg-base-300 odd:bg-base-200 bg-opacity-50 p-4 rounded-lg text-base-content mt-2 flex space-x-4" key={`item:${item.post?.id||item.share?.id||uuid()}-comment:${comment.id}`}>
             <Avatar user={comment.author} sz="xs" />
             <>{ReactHtmlParser(comment.content!)}</>
           </div>

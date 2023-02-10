@@ -10,7 +10,7 @@ export type KeyVal = {
 }
 
 export type TailwindFormProps = {
-  label: string
+  label?: string
   placeholder?: string
   value: string | null
   setValue: Dispatch<SetStateAction<string | null>>

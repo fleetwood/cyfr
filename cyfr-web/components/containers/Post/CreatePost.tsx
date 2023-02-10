@@ -18,7 +18,7 @@ type CreatePostProps = {
 const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   const [cyfrUser] = useCyfrUser()
   const { notify } = useToast()
-  const [content, setContent] = useState<string|null|undefined>(null)
+  const [content, setContent] = useState<string|null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
   const {createPost, invalidateFeed} = useFeed({type: 'post'})
   const [images, setImages] = useState<string[]>([])
@@ -74,6 +74,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
       {cyfrUser &&
       <div className="w-full mx-auto p-2 sm:p-6 lg:p-4">
           <form className=" flex flex-col" onSubmit={handleSubmit}>
+            <i className="tw twa-black-cat" />
           <SimpleQuill content={content} setContent={setContent} />
 
           <Dropzone limit={5} onUploadComplete={onFilesComplete} />

@@ -8,7 +8,9 @@ type twInputProps = TailwindFormProps & {
 const TailwindInput = ({label, type, value, setValue, cardClassName, labelClassName, inputClassName, placeholder=''}:twInputProps) => {
   return (
     <label className={`block ${cardClassName}`}>
-      <span className={labelClassName}>{label}</span>
+      {label &&
+        <span className={labelClassName}>{label}</span>
+      }
       <input
         type={type}
         className={`
