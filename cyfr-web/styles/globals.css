@@ -32,6 +32,11 @@
     src: url('./../assets/fonts/IbarraRealNova-Italic-VariableFont_wght.ttf');
 }
 
+@font-face {
+    font-family: 'NotoEmoji';
+    src: url('./../assets/fonts/NotoColorEmoji-Regular.ttf');
+}
+
 @media (min-width: 640px) {
     .w-fixed {
         flex: 0 1 230px;
@@ -84,18 +89,6 @@
 
     .text-shadow {
         text-shadow: 2px 2px rgba(0,0,0,0.25);
-    }
-
-    .hover-trigger .hover-target {
-        display: none;
-    }
-
-    .hover-trigger:hover .hover-target {
-        display: inline-block;
-    }
-
-    .hover-trigger:hover .hover-toggle {
-        display: none;
     }
 
     .grad-1 {
@@ -232,6 +225,7 @@
     .image-footer {
         @apply absolute w-full -bottom-20 transition-all duration-200 ease-linear p-4 bg-primary bg-opacity-50 flex justify-around space-x-4
     }
+    
 }
 
 @layer utilities {
@@ -240,5 +234,11 @@
     }
     .font-ibarra-talic {
         font-family: 'IbarraItalic', serif
+    }
+    .emoji {
+        font-family: 'NotoEmoji'
+    }
+    .font-feed {
+        font-family: 'Ibarra', 'NotoEmoji', serif
     }
 }
