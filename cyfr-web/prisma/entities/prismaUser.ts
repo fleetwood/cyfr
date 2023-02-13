@@ -10,6 +10,7 @@ import {
 import { log } from "../../utils/log";
 import { FanProps } from "../types/follow.def";
 import { CyfrUser, UserDetail, UserDetailInclude } from "../types/user.def";
+import { dedupe } from "../../utils/helpers";
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {
@@ -121,25 +122,44 @@ const byEmail = async (email: string): Promise<CyfrUser> => {
   }
 };
 
-const canMention = async (id: string) => {
+const canMention = async (id: string, search?:string) => {
   try {
+    log(`prismaUser.canMention`, {id, search})
     const followers = await prisma.follow.findMany({
       where: {
-        followingId: "clduqlb6g0002jpbih8eoiy1u",
+        followingId: id,
+        follower: {
+          name: {
+            contains: search,
+            mode: 'insensitive'
+          }
+        }
       },
       select: {
         follower: true,
       },
-    });
+      take: 10
+    })
     const fans = await prisma.fan.findMany({
       where: {
-        fanOfId: "clduqlb6g0002jpbih8eoiy1u",
+        fanOfId: id,
+        fan: {
+          name: {
+            contains: search,
+            mode: 'insensitive'
+          }
+        }
       },
       select: {
         fan: true,
       },
-    });
-    return [...followers.map(f => f.follower), ...fans.map(f => f.fan)] as unknown as User[];
+      take: 10
+    })
+    return dedupe([
+        ...followers.map(f => f.follower), 
+        ...fans.map(f => f.fan)
+      ], 'id')
+      .slice(0,10) as unknown as User[]
   } catch (error) {
     log(`prismaUser.canMention broke ${JSON.stringify(error, null, 2)}`);
     throw error;

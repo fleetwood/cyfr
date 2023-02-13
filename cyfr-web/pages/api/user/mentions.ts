@@ -12,9 +12,10 @@ export default async function handle(
   todo('Why is this posting req.body.body????')
   try {
     const session = await getSession({ req })
+    const search:string|undefined = req.query.search as string
     const email = session?.user?.email
     const user = await PrismaUser.byEmail(email!)
-    const result = await PrismaUser.canMention(user.id)
+    const result = await PrismaUser.canMention(user.id, search)
 
     if (result) {
       res.status(200).json({ result })

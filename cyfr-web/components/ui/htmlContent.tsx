@@ -1,4 +1,4 @@
-import parse from "html-react-parser"
+import DOMPurify from 'dompurify'
 import ReactHtmlParser from 'react-html-parser'
 import Mention from "./mention"
 
@@ -13,6 +13,6 @@ export const HtmlContent = ({ content }: HtmlContentProps) => {
         return <Mention {...{userId, userName}}>{node.attribs.username}</Mention>
     }
   }
-  return <div>{content && ReactHtmlParser(content, {transform})}</div>
+  return <div>{content && ReactHtmlParser(DOMPurify.sanitize(content), {transform})}</div>
 }
 export default HtmlContent

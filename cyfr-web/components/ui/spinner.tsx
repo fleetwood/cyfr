@@ -1,4 +1,4 @@
-import { CSSProperties, HTMLAttributes } from "react";
+import { CSSProperties, HTMLAttributes } from "react"
 
 export enum SpinnerSize {
   xs = 10,
@@ -9,20 +9,37 @@ export enum SpinnerSize {
 }
 
 type SpinnerProps = {
-  bgColor?: string;
-  fgColor?: string;
-  height?: number;
-  size?: SpinnerSize;
+  bgColor?: string
+  fgColor?: string
+  height?: number
+  size?: "xs" | "sm" | "md" | "lg" | "xl"
   center?: boolean
-};
+}
 
 const Spinner = (props: SpinnerProps) => {
-  let { bgColor, fgColor, height, size, center } = props;
+  let { bgColor, fgColor, height, size, center } = props
 
-  bgColor = bgColor || "text-gray-500";
-  fgColor = fgColor || "fill-teal-400";
+  bgColor = bgColor || "text-gray-500"
+  fgColor = fgColor || "fill-teal-400"
   if (size) {
-    height = size;
+    switch (size) {
+      case "xs":
+        height = SpinnerSize.xs
+        break
+      case "sm":
+        height = SpinnerSize.sm
+        break
+      case "lg":
+        height = SpinnerSize.lg
+        break
+      case "xl":
+        height = SpinnerSize.xl
+        break
+      case "md":
+      default :
+        height = SpinnerSize.md
+        break
+    }
   }
 
   return (
@@ -47,7 +64,7 @@ const Spinner = (props: SpinnerProps) => {
       </div>
       <span className="sr-only">Loading...</span>
     </div>
-  );
-};
+  )
+}
 
-export default Spinner;
+export default Spinner
