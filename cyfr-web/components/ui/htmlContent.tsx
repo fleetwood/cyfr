@@ -1,4 +1,3 @@
-import DOMPurify from 'dompurify'
 import ReactHtmlParser from 'react-html-parser'
 import Mention from "./mention"
 
@@ -10,9 +9,9 @@ export const HtmlContent = ({ content }: HtmlContentProps) => {
   const transform = (node:any) => {
     if (node.type === 'tag' && node.name === 'span' && node.attribs.class && node.attribs.class === 'mention-link') {
         const {userid: userId, username: userName} = node.attribs
-        return <Mention {...{userId, userName}}>{node.attribs.username}</Mention>
+        return <Mention userId={userId} userName={userName}>{userName}</Mention>
     }
   }
-  return <div>{content && ReactHtmlParser(DOMPurify.sanitize(content), {transform})}</div>
+  return <div>{content && ReactHtmlParser(content, {transform})}</div>
 }
 export default HtmlContent

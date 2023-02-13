@@ -21,12 +21,6 @@ type SimpleQuillProps = {
 }
 
 const SimpleQuill = ({content, setContent, limit = 256}:SimpleQuillProps) => {
-  const findMentionables = async (searchTerm:string) => {
-    const users:User[] = await getApi('user/mentions')
-    log(`findMentionables ${JSON.stringify({searchTerm,users}, null, 2)}`)
-    
-    return users.filter(person => person.name?.includes(searchTerm))
-  }
 
   const modules = {toolbar: null,}
   const formats = ['header','bold', 'italic', 'strike', 'blockquote','list', 'bullet', 'indent','link']
@@ -62,8 +56,10 @@ const SimpleQuill = ({content, setContent, limit = 256}:SimpleQuillProps) => {
   const addMention = (mention:string) => {
     const c= content || ''
     const at = content ? content.indexOf(`<br></p>`)===content.length-8 ? content.length-8 : content.length -4 : 0
+    const update = `${c.substring(0,at)}${mention}${c.substring(at)}`
+    log(`addMention ${update}`)
     // <span class="mention-link" userName="J Fleetwood" userId="clduqlb6g0002jpbih8eoiy1u">@J Fleetwood</span>
-    setContent(() => `${c.substring(0,at)}${mention}${c.substring(at)}`)
+    setContent(() => update)
   }
 
   const handleSelection = (selection: ReactQuill.Range, source: Sources, editor: UnprivilegedEditor) => {
