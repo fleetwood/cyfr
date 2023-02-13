@@ -3,8 +3,12 @@ import { DeltaStatic, Sources } from "quill"
 import { Dispatch, SetStateAction, useState } from 'react'
 import ReactQuill, { UnprivilegedEditor } from "react-quill"
 import 'react-quill/dist/quill.snow.css'
+import useCyfrUser, { getCyfrUser } from "../../hooks/useCyfrUser"
+import { User } from "../../prisma/prismaContext"
 import { EmojiChar } from "../../prisma/types/emoji.def"
+import { getApi } from "../../utils/api"
 import { log } from "../../utils/log"
+import Mention from './mention'
 import EmojiMenu from "./EmojiMenu"
 
 const SQuill = dynamic(import('react-quill'), { ssr: false })
@@ -16,7 +20,14 @@ type SimpleQuillProps = {
 }
 
 const SimpleQuill = ({content, setContent, limit = 256}:SimpleQuillProps) => {
-  const modules = {toolbar: null}
+  const findMentionables = async (searchTerm:string) => {
+    const users:User[] = await getApi('user/mentions')
+    log(`findMentionables ${JSON.stringify({searchTerm,users}, null, 2)}`)
+    
+    return users.filter(person => person.name?.includes(searchTerm))
+  }
+
+  const modules = {toolbar: null,}
   const formats = ['header','bold', 'italic', 'strike', 'blockquote','list', 'bullet', 'indent','link']
   const [remainder, setRemainder] = useState<number>(limit)
   const [charCount, setCharCount] = useState<number>(0)
@@ -53,6 +64,8 @@ const SimpleQuill = ({content, setContent, limit = 256}:SimpleQuillProps) => {
     // log('onChangeSelection', selection)
   }
 
+  const [cyfrUser] = useCyfrUser()
+
   return <div>
     <SQuill 
       className="bg-base-300 text-base-content" theme="snow" 
@@ -67,6 +80,10 @@ const SimpleQuill = ({content, setContent, limit = 256}:SimpleQuillProps) => {
         </div>
       }
       <EmojiMenu onSelect={addEmoji} />
+      {cyfrUser &&
+      <p>So my question is that when I add <Mention userId="clduqlb6g0002jpbih8eoiy1u" userName="J Fleetwood" /> into a paragraph, will it break text flow</p>
+      }
+      
   </div>
 }
 export default SimpleQuill

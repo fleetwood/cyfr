@@ -4,6 +4,8 @@ import PostItemFooter from "./PostItemFooter"
 import ReactHtmlParser from "react-html-parser"
 import { MainFeed } from "../../../prisma/types"
 import Link from "next/link"
+import { log } from "../../../utils/log"
+import HtmlContent from "../../ui/htmlContent"
 
 type MainFeedItemProps = {
   item: MainFeed
@@ -51,9 +53,9 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
         </div>
       </div>
       <div className="p-4 mt-4 font-feed">
-        {post.content && 
-          ReactHtmlParser(post.content)
-        }
+        
+        {post.content && <HtmlContent content={post.content}/>}
+
         {images.length > 0 && 
           <div className="columns-2 md:columns-4 lg:columns-6">
             {images.map((image) => (
