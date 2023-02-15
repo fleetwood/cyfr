@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { cloudinary } from "../../../utils/cloudinary";
 import { FileError } from "react-dropzone";
 import { log, logError } from "../../../utils/log";
-import Spinner, { SpinnerSize } from "../../ui/spinner";
+import Spinner from "../../ui/spinner";
 import { CompleteFile, UploadFileViewProps } from "./types.defs";
 import { uuid } from "../../../utils/helpers";
 
@@ -41,7 +41,7 @@ const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
             <img src={preview.secure_url} className="mask mask-squircle" />
             <div className="bg-success text-success-content overflow-hidden text-xs opacity-80 absolute bottom-6 mx-2 px-2 rounded-md">{preview.original_filename+'.'+preview.format}</div>
         </div>}
-      {!preview && fileErrors.length < 1 && <Spinner size={SpinnerSize.md} />}
+      {!preview && fileErrors.length < 1 && <Spinner />}
       <progress
         className={`progress h-2 px-2 absolute bottom-2 z-2 opacity-80 drop-shadow-md ${progressStyle(
           fileErrors.length > 0,

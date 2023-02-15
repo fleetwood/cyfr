@@ -1,13 +1,3 @@
-import { CSSProperties, HTMLAttributes } from "react"
-
-export enum SpinnerSize {
-  xs = 10,
-  sm = 20,
-  md = 40,
-  lg = 80,
-  xl = 160,
-}
-
 type SpinnerProps = {
   bgColor?: string
   fgColor?: string
@@ -24,20 +14,20 @@ const Spinner = (props: SpinnerProps) => {
   if (size) {
     switch (size) {
       case "xs":
-        height = SpinnerSize.xs
+        height = 10
         break
       case "sm":
-        height = SpinnerSize.sm
+        height = 20
         break
       case "lg":
-        height = SpinnerSize.lg
+        height = 80
         break
       case "xl":
-        height = SpinnerSize.xl
+        height = 160
         break
       case "md":
       default :
-        height = SpinnerSize.md
+        height = 40
         break
     }
   }
