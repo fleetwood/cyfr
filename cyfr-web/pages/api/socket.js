@@ -1,8 +1,8 @@
 import { Server } from "socket.io";
+import {SocketListeners} from './../../utils/api'
 
 export default function SocketHandler(req, res) {
   if (res.socket.server.io) {
-    console.log("Already set up");
     res.end();
     return;
   }
@@ -10,12 +10,11 @@ export default function SocketHandler(req, res) {
   const io = new Server(res.socket.server);
   res.socket.server.io = io;
 
-  io.on("connection", (socket) => {
-    socket.on("send-message", (obj) => {
-      io.emit("receive-message", obj);
+  io.on(SocketListeners.connection, (socket) => {
+    socket.on(SocketListeners.notification.send, (obj) => {
+      io.emit(SocketListeners.notification.listen, obj);
     });
   });
 
-  console.log("Setting up socket");
   res.end();
 }

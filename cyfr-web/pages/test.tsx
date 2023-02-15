@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 import TailwindInput from "../components/forms/TailwindInput";
 import TailwindTextarea from "../components/forms/TailwindTextarea";
-import { getApi } from "../utils/api";
+import { getApi, SocketListeners } from "../utils/api";
 import StaticLayout from './../components/layouts/StaticLayout'
 
 let socket;
@@ -26,7 +26,7 @@ const Test = () => {
 
     socket = io();
 
-    socket.on("receive-message", (data) => {
+    socket.on(SocketListeners.notification.listen, (data) => {
       setAllMessages((pre) => [...pre, data]);
     });
   }
@@ -36,7 +36,7 @@ const Test = () => {
 
     console.log("emitted");
 
-    socket.emit("send-message", {
+    socket.emit(SocketListeners.notification.send, {
       username,
       message
     });

@@ -29,6 +29,12 @@ export const sendApi = async (url: string, body: any) => {
 
 export const SocketListeners = {
   connection: 'connection',
-  localChange: 'localChange',
-  remoteChange: 'remoteChange',
+  notification: {
+    send: 'notification.send',
+    listen: 'notification.listen',
+  },
+  channel: {
+    send: (channel:string) => {return `send.channel.${channel}`},
+    listen: (channel:string) => {return `listen.channel.${channel}`}
+  }
 }

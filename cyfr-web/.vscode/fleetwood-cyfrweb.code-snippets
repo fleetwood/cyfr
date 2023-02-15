@@ -15,4 +15,10 @@
 	// 	],
 	// 	"description": "Log output to console"
 	// }
+	"ts ignore" : {
+		"scope": "typescript, typescriptreact",
+		"prefix": "@tsi",
+		"body": ["// @ts-ignore"],
+		"description": "Ignore the following line in TS linting"
+	}
 }
