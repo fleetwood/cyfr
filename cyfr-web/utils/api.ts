@@ -36,5 +36,10 @@ export const SocketListeners = {
   channel: {
     send: (channel:string) => {return `send.channel.${channel}`},
     listen: (channel:string) => {return `listen.channel.${channel}`}
+  },
+  chat: {
+    room: (users:string[]) => {return `chatroom::${users.sort((a,b) => a<b ? -1 : 1).join(':')}`},
+    announce: (users:string[]) => {return `announce::${SocketListeners.chat.room(users)}`},
+    subscribe: (users:string[]) => {return `subscribe::${SocketListeners.chat.room(users)}`},
   }
 }

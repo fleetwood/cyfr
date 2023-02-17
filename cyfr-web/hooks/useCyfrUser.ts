@@ -62,6 +62,7 @@ export const useCyfrUserApi = () => {
   type updateUserType = {
     newUser: User | CyfrUser | UserDetail
   }
+  
   const updateUser = async ({newUser}:updateUserType) => {
     try {
       const {id, name, image} = newUser

@@ -55,5 +55,6 @@ module.exports = {
     require("daisyui"),
     require('@tailwindcss/forms'),
     require('tailwind-scrollbar-hide'),
+    require('tailwind-scrollbar'),
   ],
 }

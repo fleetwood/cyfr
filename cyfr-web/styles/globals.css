@@ -241,6 +241,10 @@
     .mention > .mention-link {
         @apply left-0
     }
+
+    .scrollbar-only {
+        @apply scrollbar-track-transparent scrollbar-thumb-primary
+    }
     
 }
 

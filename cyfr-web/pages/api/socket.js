@@ -2,6 +2,8 @@ import { Server } from "socket.io";
 import {SocketListeners} from './../../utils/api'
 
 export default function SocketHandler(req, res) {
+  const { users } = req.body.body
+
   if (res.socket.server.io) {
     res.end();
     return;
@@ -12,9 +14,14 @@ export default function SocketHandler(req, res) {
 
   io.on(SocketListeners.connection, (socket) => {
     socket.on(SocketListeners.notification.send, (obj) => {
-      io.emit(SocketListeners.notification.listen, obj);
-    });
-  });
+      io.emit(SocketListeners.notification.listen, obj)
+    })
+    if (users) {
+      socket.on(SocketListeners.chat.announce(users), (message) => {
+        io.emit(SocketListeners.chat.subscribe(users), message)
+      })
+    }
+  })
 
   res.end();
 }
