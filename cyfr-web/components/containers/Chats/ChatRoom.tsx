@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import io from "socket.io-client"
 import { User } from "../../../prisma/prismaContext"
-import { getApi, SocketListeners } from "../../../utils/api"
+import { getApi, sendApi, SocketListeners } from "../../../utils/api"
 import { now, timeDifference, uniqueKey } from "../../../utils/helpers"
 import { log } from "../../../utils/log"
 import TailwindInput from "../../forms/TailwindInput"
@@ -27,6 +27,10 @@ const ChatRoom = ({firstPerson, secondPerson, lastUpdated=now()}:ChatRoomProps) 
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
     const [message, setMessage] = useState<string|null>(null)
     const users = [firstPerson.id, secondPerson.id]
+    
+    const room = SocketListeners.chat.room(users),
+          announce = SocketListeners.chat.announce(users),
+          subscribe = SocketListeners.chat.subscribe(users)
 
     useEffect(() => {
       socketInitializer()
@@ -38,21 +42,21 @@ const ChatRoom = ({firstPerson, secondPerson, lastUpdated=now()}:ChatRoomProps) 
     }, [])
   
     async function socketInitializer() {
-      await getApi("socket")
+      await sendApi("socket/chat", {users})
   
       socket = io()
   
-      socket.on(SocketListeners.notification.listen, (data) => {
+      socket.on(subscribe, (data) => {
         // @ts-ignore
         log(`ChatRoom.tsx ${socket.id}: ${JSON.stringify(data)}`)
         setChatMessages((pre) => [...pre, data])
       })
     }
   
-    function send() {
+    function sendMessage() {
       console.log("sending message")
       // @ts-ignore
-      socket.emit(SocketListeners.notification.send, {
+      socket.emit(announce, {
         userid: firstPerson.id,
         message,
         timestamp: now()
@@ -81,7 +85,7 @@ const ChatRoom = ({firstPerson, secondPerson, lastUpdated=now()}:ChatRoomProps) 
                 <div className="chat-bubble text-sm chat-bubble-primary">{message.message}</div>
             </div>
             : 
-            <div className="chat chat-end">
+            <div className="chat chat-end" key={`chatmessage-${uniqueKey(firstPerson, secondPerson)}-${message.timestamp}`}>
                 <div className="chat-header">
                     <time className="text-xs opacity-50">{timeDifference(message.timestamp)}</time>
                 </div>
@@ -95,7 +99,7 @@ const ChatRoom = ({firstPerson, secondPerson, lastUpdated=now()}:ChatRoomProps) 
                 inputClassName="bg-base-200 text-base-content text-xs"
                 type="text" placeholder="Message..." 
                 value={message} setValue={setMessage} />
-            <button className="my-1 btn btn-sm btn-primary" onClick={send}>{ChatSendIcon}</button>
+            <button className="my-1 btn btn-sm btn-primary" onClick={sendMessage}>{ChatSendIcon}</button>
         </div>
     </div>
   )

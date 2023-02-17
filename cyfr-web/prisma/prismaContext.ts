@@ -1,12 +1,14 @@
 import { __prod__ } from "../utils/constants"
 import { log } from "../utils/log"
-import { PrismaSession } from "./entities/prismaSession"
-import { PrismaShare } from "./entities/prismaShare"
 
+import { PrismaClient } from "@prisma/client"
+import { PrismaShare } from "./entities/prismaShare"
 import { PrismaPost } from "./entities/prismaPost"
 import { PrismaUser } from "./entities/prismaUser"
 import { PrismaGallery } from "./entities/prismaGallery"
 import { PrismaImage } from "./entities/prismaImage"
+import { PrismaSession } from "./entities/prismaSession"
+
 import {
   CyfrUser,
   Fan,
@@ -16,11 +18,12 @@ import {
   MainFeed,
   Gallery, GalleryFeed, GalleryDetail, GalleryEngageProps, GalleryCreateProps,
   Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed,
+  ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
   Share, ShareDeleteProps, ShareFeed,
   User, UserDetail, UserFeed,
+  ChatMessage,ChatRoom, ChatDetail,
 } from "./types"
-import { PrismaClient } from "@prisma/client"
-import { ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps } from './types/image.def';
+
 import {includes} from './types'
 
 declare global {
@@ -50,11 +53,12 @@ if (__prod__) {
 
 export { prisma, PrismaPost, PrismaUser, PrismaSession, PrismaShare, PrismaGallery, PrismaImage, includes }
 export type {
-  Post, User, Follow, Fan, Share, Like, Image, Gallery,
+  Post, User, Follow, Fan, Share, Like, Image, Gallery, ChatRoom, ChatMessage,
   ShareDeleteProps, ShareFeed,
   GalleryFeed, GalleryDetail, GalleryEngageProps, GalleryCreateProps,
   ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
   UserFeed, UserDetail, CyfrUser,
+  ChatDetail,
   MainFeed,
   PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostFeed, PostDetail,
 }

@@ -16,13 +16,22 @@ export default function SocketHandler(
   const io = new Server(res.socket.server);
   res.socket.server.io = io;
 
-  io.on(SocketListeners.connection, (socket) => {
-    log(`io connection on ${socket.id}`)
-    socket.on(SocketListeners.notification.send, (obj) => {
-      log(`io emitting on ${socket.id}`)
-      io.emit(SocketListeners.notification.listen, obj)
-    })
-  })
 
+  if (req.body?.body?.users) {
+    const users = req.body.body.users
+
+    const room = SocketListeners.chat.room(users),
+          announce = SocketListeners.chat.announce(users),
+          subscribe = SocketListeners.chat.subscribe(users)
+
+    io.on(SocketListeners.connection, (socket) => {
+        socket.join(room)
+        log(`io connection on ${JSON.stringify({socket: socket.id, room})}`)
+        socket.to(room).on(announce, (obj) => {
+            log(`io emitting on ${JSON.stringify({socket: socket.id, room})}`)
+            io.to(room).emit(subscribe, obj)
+        })
+    })
+  }
   res.end();
 }
