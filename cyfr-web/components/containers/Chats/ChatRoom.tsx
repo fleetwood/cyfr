@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import io from "socket.io-client"
-import { User } from "../../../prisma/prismaContext"
+import { ChatDetail, ChatMessage, User } from "../../../prisma/prismaContext"
 import { getApi, sendApi, SocketListeners } from "../../../utils/api"
 import { now, timeDifference, uniqueKey } from "../../../utils/helpers"
 import { log } from "../../../utils/log"
@@ -14,55 +14,64 @@ export type ChatRoomProps = {
     lastUpdated?: Date
 }
 
-type ChatMessage = {
-    userid:string
-    message:string
-    timestamp: string
-}
-
 // @ts-ignore
 let socket
 
 const ChatRoom = ({firstPerson, secondPerson, lastUpdated=now()}:ChatRoomProps) => {
+    const users = [firstPerson.id, secondPerson.id]
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
     const [message, setMessage] = useState<string|null>(null)
-    const users = [firstPerson.id, secondPerson.id]
     
-    const room = SocketListeners.chat.room(users),
-          announce = SocketListeners.chat.announce(users),
-          subscribe = SocketListeners.chat.subscribe(users)
+    const getRoom = async () => {
+        log(`getRoom`)
+        const room = await sendApi(`chat/connect`, {users})
+
+        if (room) {
+            log(`getRoom: \n${JSON.stringify(room)}`)
+            const chat = room.data
+            setChatMessages(() => chat.result.messages)
+        }
+    }
 
     useEffect(() => {
-      socketInitializer()
+        getRoom()
+    }, [firstPerson, secondPerson])
+
+    // const room = SocketListeners.chat.room(users),
+    //       announce = SocketListeners.chat.announce(users),
+    //       subscribe = SocketListeners.chat.subscribe(users)
+
+    // useEffect(() => {
+    //   socketInitializer()
   
-      return () => {
-        // @ts-ignore
-        if (socket) socket.disconnect()
-      }
-    }, [])
+    //   return () => {
+    //     // @ts-ignore
+    //     if (socket) socket.disconnect()
+    //   }
+    // }, [])
   
-    async function socketInitializer() {
-      await sendApi("socket/chat", {users})
+    // async function socketInitializer() {
+    //   await sendApi("socket/chat", {users})
   
-      socket = io()
+    //   socket = io()
   
-      socket.on(subscribe, (data) => {
-        // @ts-ignore
-        log(`ChatRoom.tsx ${socket.id}: ${JSON.stringify(data)}`)
-        setChatMessages((pre) => [...pre, data])
-      })
-    }
+    //   socket.on(subscribe, (data) => {
+    //     // @ts-ignore
+    //     log(`ChatRoom.tsx ${socket.id}: ${JSON.stringify(data)}`)
+    //     setChatMessages((pre) => [...pre, data])
+    //   })
+    // }
   
-    function sendMessage() {
-      console.log("sending message")
-      // @ts-ignore
-      socket.emit(announce, {
-        userid: firstPerson.id,
-        message,
-        timestamp: now()
-      })
-      setMessage(() => null)
-    }
+    // function sendMessage() {
+    //   console.log("sending message")
+    //   // @ts-ignore
+    //   socket.emit(announce, {
+    //     userid: firstPerson.id,
+    //     message,
+    //     timestamp: now()
+    //   })
+    //   setMessage(() => null)
+    // }
 
     const isFirstPerson = (user:string) => user === firstPerson.id
 
@@ -76,20 +85,20 @@ const ChatRoom = ({firstPerson, secondPerson, lastUpdated=now()}:ChatRoomProps) 
             <span className="my-auto">{secondPerson.name}</span>
         </div>
         <div className="h-[240px] overflow-y-scroll scrollbar-thin space-y-2 my-2">
-        {chatMessages.map((message:ChatMessage) => isFirstPerson(message.userid) 
+        {chatMessages.map((message:ChatMessage) => isFirstPerson(message.authorId) 
             ?
-            <div className="chat chat-start" key={`chatmessage-${uniqueKey(firstPerson, secondPerson)}-${message.timestamp}`}>
+            <div className="chat chat-start" key={`chatmessage-${uniqueKey(firstPerson, secondPerson)}-${message.updatedAt}`}>
                 <div className="chat-header">
-                    <time className="text-xs opacity-50">{timeDifference(message.timestamp)}</time>
+                    <time className="text-xs opacity-50">{timeDifference(message.updatedAt)}</time>
                 </div>
-                <div className="chat-bubble text-sm chat-bubble-primary">{message.message}</div>
+                <div className="chat-bubble text-sm chat-bubble-primary">{message.content}</div>
             </div>
             : 
-            <div className="chat chat-end" key={`chatmessage-${uniqueKey(firstPerson, secondPerson)}-${message.timestamp}`}>
+            <div className="chat chat-end" key={`chatmessage-${uniqueKey(firstPerson, secondPerson)}-${message.updatedAt}`}>
                 <div className="chat-header">
-                    <time className="text-xs opacity-50">{timeDifference(message.timestamp)}</time>
+                    <time className="text-xs opacity-50">{timeDifference(message.updatedAt)}</time>
                 </div>
-                <div className="chat-bubble text-sm chat-bubble-secondary">{message.message}</div>
+                <div className="chat-bubble text-sm chat-bubble-secondary">{message.content}</div>
             </div>
         )}
         </div>
@@ -99,7 +108,7 @@ const ChatRoom = ({firstPerson, secondPerson, lastUpdated=now()}:ChatRoomProps) 
                 inputClassName="bg-base-200 text-base-content text-xs"
                 type="text" placeholder="Message..." 
                 value={message} setValue={setMessage} />
-            <button className="my-1 btn btn-sm btn-primary" onClick={sendMessage}>{ChatSendIcon}</button>
+            <button className="my-1 btn btn-sm btn-primary" >{ChatSendIcon}</button>
         </div>
     </div>
   )

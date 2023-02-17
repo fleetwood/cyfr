@@ -36,12 +36,21 @@ type ChatCreateProps = {
 }
 
 const connectToChat = async (props: ChatCreateProps): Promise<ChatDetail> => {
-  const {users} = { ...props }
-
   try {
-    trace('connectToChat', props)
-    const chatRoom = prisma.chatRoom.findFirst()
+    const {users} = props
+    const party = users.sort((a,b) => a < b ? -1: 1).join('-')
+    const connect = users.map((u) => {return {id: u}})
     
+    const chatRoom = await prisma.chatRoom.upsert({
+      where: { party },
+      create: { party },
+      update: { users: { connect } },
+      include: {
+        users: true,
+        messages: true
+      }
+    })
+        
     return chatRoom as unknown as ChatDetail
   } catch (error) {
     trace("\tconnectToChat ERROR: ", error)
@@ -49,4 +58,4 @@ const connectToChat = async (props: ChatCreateProps): Promise<ChatDetail> => {
   }
 }
 
-export const PrismaPost = { byId, connectToChat}
+export const PrismaChat = { byId, connectToChat}
