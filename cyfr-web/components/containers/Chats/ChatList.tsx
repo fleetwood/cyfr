@@ -50,8 +50,8 @@ const ChatList = () => {
             <Avatar user={u} sz="sm" link={false} className="float-left" />
             <span className="ml-2">{u.name}</span>
         </div>)}
-        <div className={`flex w-[50%] absolute bottom-28 right-56 justify-end space-x-4 pl-12 border border-primary ${show ? `scale-x-100` : `scale-x-0`}`}>
-            <div className="h-[20px] border border-primary">
+        <div className={`flex w-[50%] absolute bottom-28 right-56 justify-end space-x-4 pl-12 ${show ? `scale-x-100` : `scale-x-0`}`}>
+            <div className="h-[20px]">
                 <label className="z-10 absolute btn btn-sm right-0 -top-12" onClick={() => setShow(() => false)}>CLOSE ALL ►</label>
             </div>
             {chatRooms.slice(0,3).map(room => 

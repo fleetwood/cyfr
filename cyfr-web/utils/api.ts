@@ -38,8 +38,23 @@ export const SocketListeners = {
     listen: (channel:string) => {return `listen.channel.${channel}`}
   },
   chat: {
+    /**
+     * creates a chatroom on socket io with the name 'chatroom::12345:23456'
+     * @param users string[]
+     * @returns chatroom::12345:23456
+     */
     room: (users:string[]) => {return `chatroom::${users.sort((a,b) => a<b ? -1 : 1).join(':')}`},
+    /**
+     * announces to a chatroom on socket io, using the sorted users' id
+     * @param users string[]
+     * @returns announce::chatroom::12345:23456
+     */
     announce: (users:string[]) => {return `announce::${SocketListeners.chat.room(users)}`},
+    /**
+     * subscribes to a chatroom on socket io, using the sorted users' id
+     * @param users string[]
+     * @returns subscribe::chatroom::12345:23456
+     */
     subscribe: (users:string[]) => {return `subscribe::${SocketListeners.chat.room(users)}`},
   }
 }

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react"
+import io from "socket.io-client"
 import { User } from "../../../prisma/prismaContext"
-import { now, timeDifference } from "../../../utils/helpers"
+import { getApi, SocketListeners } from "../../../utils/api"
+import { now, timeDifference, uniqueKey } from "../../../utils/helpers"
+import { log } from "../../../utils/log"
 import TailwindInput from "../../forms/TailwindInput"
 import Avatar from "../../ui/avatar"
 import { ChatSendIcon } from "../../ui/icons"
@@ -12,63 +15,87 @@ export type ChatRoomProps = {
 }
 
 type ChatMessage = {
-    user:User
+    userid:string
     message:string
     timestamp: string
 }
 
+// @ts-ignore
+let socket
+
 const ChatRoom = ({firstPerson, secondPerson, lastUpdated=now()}:ChatRoomProps) => {
-    const [messages, setMessages] = useState<ChatMessage[]>([])
+    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
     const [message, setMessage] = useState<string|null>(null)
-
-    const fid = firstPerson.id
-    const sid = secondPerson.id
-
-    const isFirstPerson = ({id}:User) => id && id === fid
-    const isSecondPerson = ({id}:User) => id && id === sid
+    const users = [firstPerson.id, secondPerson.id]
 
     useEffect(() => {
-        setMessages(() => [
-            {user: secondPerson, message: `this is second person`, timestamp: now()+(60*2*1000).toString() },
-            {user: secondPerson, message: `this is another test`, timestamp: now()+(60*2.5*1000).toString() },
-            {user: firstPerson, message: "this is first person reply", timestamp: now()+(60*24*1000).toString() },
-            {user: secondPerson, message: "this is second person reply", timestamp: now()+(60*35.15*1000).toString() },
-        ])
+      socketInitializer()
+  
+      return () => {
+        // @ts-ignore
+        if (socket) socket.disconnect()
+      }
     }, [])
+  
+    async function socketInitializer() {
+      await getApi("socket")
+  
+      socket = io()
+  
+      socket.on(SocketListeners.notification.listen, (data) => {
+        // @ts-ignore
+        log(`ChatRoom.tsx ${socket.id}: ${JSON.stringify(data)}`)
+        setChatMessages((pre) => [...pre, data])
+      })
+    }
+  
+    function send() {
+      console.log("sending message")
+      // @ts-ignore
+      socket.emit(SocketListeners.notification.send, {
+        userid: firstPerson.id,
+        message,
+        timestamp: now()
+      })
+      setMessage(() => null)
+    }
+
+    const isFirstPerson = (user:string) => user === firstPerson.id
 
   return (
-    <div className="min-w-[300px] border border-secondary bg-base-100 rounded-lg p-2 relative">
+    <div className="min-w-[300px] border border-secondary bg-base-100 rounded-lg p-2 relative shadow-lg shadow-black">
         <div className="h-[0px]">
-            <label className="z-10 absolute opacity-70 hover:opacity-100 btn btn-sm btn-circle btn-primary text-xs -right-3 -top-3" onClick={() => {}}>X</label>
+            <label className="z-10 absolute btn btn-xs btn-circle -right-1 -top-1" onClick={() => {}}>X</label>
         </div>
-        <div className="flex justify-between">
-            <Avatar user={firstPerson} link={false} sz="sm" />
+        <div className="flex bg-base-200 space-x-2 font-semibold">
             <Avatar user={secondPerson} link={false} sz="sm" />
+            <span className="my-auto">{secondPerson.name}</span>
         </div>
-        <div className="h-[240px] overflow-y-scroll scrollbar-only space-y-2 my-2">
-        {messages.map(message => isFirstPerson(message.user) 
+        <div className="h-[240px] overflow-y-scroll scrollbar-thin space-y-2 my-2">
+        {chatMessages.map((message:ChatMessage) => isFirstPerson(message.userid) 
             ?
-            <div className="chat chat-start">
+            <div className="chat chat-start" key={`chatmessage-${uniqueKey(firstPerson, secondPerson)}-${message.timestamp}`}>
                 <div className="chat-header">
                     <time className="text-xs opacity-50">{timeDifference(message.timestamp)}</time>
                 </div>
-                <div className="chat-bubble chat-bubble-primary">{message.message}</div>
+                <div className="chat-bubble text-sm chat-bubble-primary">{message.message}</div>
             </div>
             : 
             <div className="chat chat-end">
                 <div className="chat-header">
                     <time className="text-xs opacity-50">{timeDifference(message.timestamp)}</time>
                 </div>
-                <div className="chat-bubble chat-bubble-secondary">{message.message}</div>
+                <div className="chat-bubble text-sm chat-bubble-secondary">{message.message}</div>
             </div>
         )}
         </div>
-        <div className="flex flex-row space-x-2">
+        <div className="grid grid-flow-col justify-items-end">
             <TailwindInput 
+                cardClassName="w-full"
                 inputClassName="bg-base-200 text-base-content text-xs"
                 type="text" placeholder="Message..." 
                 value={message} setValue={setMessage} />
-            <button className="btn p-2 bottom-0 btn-primary text-primary-content">{ChatSendIcon}</button>
+            <button className="my-1 btn btn-sm btn-primary" onClick={send}>{ChatSendIcon}</button>
         </div>
     </div>
   )
