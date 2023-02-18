@@ -17,7 +17,7 @@ import { UserFeed, UserDetail, CyfrUser, UserDetailInclude, UserFeedInclude } fr
 import { ShareWithAuthorPost, ShareWithAuthorPostInclude} from './like.def'
 import { ImageFeed, ImageFeedInclude, ImageDetailInclude, ImageDetail, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps } from './image.def';
 import { PostFeedInclude, PostDetailInclude } from './post.def';
-import { ChatDetail, ChatDetailInclude } from "./chat.def";
+import { ChatDetail, ChatDetailInclude, ChatCreateProps, SendMessageProps } from "./chat.def";
 
 type MainFeed = {
     type: 'PostFeed' | 'ShareFeed'
@@ -94,7 +94,8 @@ export type {
     PostFeed,PostDetail,
     PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps,
     // from ChatRoom defs
-    ChatDetail as ChatDetail,
+    ChatDetail,
+    ChatCreateProps, SendMessageProps,
     // from like defs
     ShareWithAuthorPost,
     // from here (types)

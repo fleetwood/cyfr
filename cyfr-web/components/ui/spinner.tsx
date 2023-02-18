@@ -33,8 +33,8 @@ const Spinner = (props: SpinnerProps) => {
   }
 
   return (
-    <div role="status" className="relative">
-      <div style={{ height: height || 20 + "px", width: height || 20 + "px" }} className={center?'t-[50%] l-[50%] -x-translate-1/2 -y-translate-1/2':''}>
+    <span role="status" className="relative">
+      <span style={{ height: height || 20 + "px", width: height || 20 + "px" }} className={center?'t-[50%] l-[50%] -x-translate-1/2 -y-translate-1/2':''}>
         <svg
           aria-hidden="true"
           className={`animate-spin ${bgColor} ${fgColor} max-w-fit max-h-fit`}
@@ -51,9 +51,9 @@ const Spinner = (props: SpinnerProps) => {
             fill="currentFill"
           />
         </svg>
-      </div>
+      </span>
       <span className="sr-only">Loading...</span>
-    </div>
+    </span>
   )
 }
 

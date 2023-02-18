@@ -21,7 +21,7 @@ import {
   ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
   Share, ShareDeleteProps, ShareFeed,
   User, UserDetail, UserFeed,
-  ChatMessage,ChatRoom, ChatDetail,
+  ChatMessage,ChatRoom, ChatDetail, ChatCreateProps, SendMessageProps
 } from "./types"
 
 import {includes} from './types'
@@ -58,7 +58,7 @@ export type {
   GalleryFeed, GalleryDetail, GalleryEngageProps, GalleryCreateProps,
   ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
   UserFeed, UserDetail, CyfrUser,
-  ChatDetail,
   MainFeed,
+  ChatDetail,ChatCreateProps, SendMessageProps,
   PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostFeed, PostDetail,
 }
