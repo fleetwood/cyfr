@@ -21,10 +21,11 @@ const ChatList = () => {
     }
 
     const addRoom = (secondPerson:User) => {
-        const room = {
+        const room:ChatRoomProps = {
             firstPerson: cyfrUser,
             secondPerson,
-            lastUpdated: now()
+            lastUpdated: now(),
+            onCloseRoom: closeRoom
         }
         
         // filter out the current room, this will either add the room
@@ -34,6 +35,18 @@ const ChatList = () => {
             r.secondPerson.id === room.secondPerson.id
         )), room])
         setShow(() => true)
+    }
+
+    const closeRoom = (secondPersonId: string) => {
+        log(`ChatList.closeRoom ${secondPersonId}`)
+        setChatRooms((rooms) => [...rooms.filter(r => !(
+            r.secondPerson.id === secondPersonId
+        ))])
+    }
+
+    const onCloseAll = () => {
+        setChatRooms(() => [])
+        setShow(() => false)
     }
 
     useEffect(() => {
@@ -53,7 +66,7 @@ const ChatList = () => {
         )}
         <div className={`flex w-[50%] absolute bottom-28 right-56 justify-end space-x-4 pl-12 ${show ? `scale-x-100` : `scale-x-0`}`}>
             <div className="h-[20px]">
-                <label className="z-10 absolute btn btn-sm right-0 -top-12" onClick={() => setShow(() => false)}>CLOSE ALL ►</label>
+                <label className="z-10 absolute btn btn-sm right-0 -top-12" onClick={onCloseAll}>CLOSE ALL ►</label>
             </div>
             {chatRooms.slice(0,3).map(room => 
                 <ChatRoom {...room} key={uniqueKey('chatroom',room.firstPerson,room.secondPerson)} />

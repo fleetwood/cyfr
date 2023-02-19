@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useChatRoomFeed } from "../../../hooks/useChatQuery"
 import { ChatMessage, User } from "../../../prisma/prismaContext"
 import { now, timeDifference, uniqueKey } from "../../../utils/helpers"
+import { log } from "../../../utils/log"
 import TailwindInput from "../../forms/TailwindInput"
 import Avatar from "../../ui/avatar"
 import { ChatSendIcon } from "../../ui/icons"
@@ -10,12 +11,13 @@ export type ChatRoomProps = {
     firstPerson: User
     secondPerson: User
     lastUpdated?: Date
+    onCloseRoom: Function
 }
 
 // @ts-ignore
 let socket
 
-const ChatRoom = ({firstPerson, secondPerson, lastUpdated=now()}:ChatRoomProps) => {
+const ChatRoom = ({firstPerson, secondPerson, onCloseRoom, lastUpdated=now()}:ChatRoomProps) => {
     const users = [firstPerson.id, secondPerson.id]
     const {room, sendMessage, invalidateFeed} =  useChatRoomFeed(users)
     const [message, setMessage] = useState<string|null>(null)
@@ -35,7 +37,8 @@ const ChatRoom = ({firstPerson, secondPerson, lastUpdated=now()}:ChatRoomProps) 
     }
 
     const closeChatRoom = () => {
-
+        log(`ChatRoom.closeChatRoom ${secondPerson.id}`)
+        onCloseRoom(secondPerson.id)
     }
 
     // const room = SocketListeners.chat.room(users),
