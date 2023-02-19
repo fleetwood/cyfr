@@ -10,7 +10,7 @@ export default async function ConnectToChat(req: NextApiRequest,res: NextApiResp
     const result = await PrismaChat.connectToChat({ users });
 
     if (result) {
-      log(`api/chat/connect result ${JSON.stringify(result, null, 2)}`);
+      // log(`api/chat/connect result ${JSON.stringify(result, null, 2)}`);
       res.status(200).json({ result });
     }
   } catch (e: Error | any) {

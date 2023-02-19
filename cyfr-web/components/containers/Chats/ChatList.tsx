@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import useCyfrUser from "../../../hooks/useCyfrUser"
-import { User } from "../../../prisma/prismaContext"
+import { User, UserFeed } from "../../../prisma/prismaContext"
 import { getApi } from "../../../utils/api"
 import { now, uniqueKey, uuid } from "../../../utils/helpers"
 import { log } from "../../../utils/log"
@@ -10,7 +10,7 @@ import ChatRoom, { ChatRoomProps } from "./ChatRoom"
 const ChatList = () => {
     const [cyfrUser] = useCyfrUser()
     const [show, setShow] = useState<boolean>(false)
-    const [chatList, setChatList] = useState<User[]>([])
+    const [chatList, setChatList] = useState<UserFeed[]>([])
     const [chatRooms, setChatRooms] = useState<ChatRoomProps[]>([])
 
     const getMentions = async () => {

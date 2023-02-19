@@ -15,12 +15,20 @@ export default async function handle(
     const search:string|undefined = req.query.search as string
     const email = session?.user?.email
     const user = await PrismaUser.byEmail(email!)
-    const result = await PrismaUser.canMention(user.id, search)
-
-    if (result) {
-      res.status(200).json({ result })
+    if (user === null) {
+      res.status(200).json({ })
+      res.end()
+      return
     } else {
-      throw { code: "api/user/follow", message: `No results from Follow` }
+      const result = await PrismaUser.canMention(user!.id, search)
+
+      if (result) {
+        res.status(200).json({ result })
+        res.end()
+        return
+      } else {
+        throw { code: "api/user/follow", message: `No results from Follow` }
+      }
     }
   } catch (e: Error | ResponseError | any) {
     logError("\tFAIL", e)

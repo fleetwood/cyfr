@@ -50,7 +50,7 @@ export const useChatRoomFeed = (users:string[]) => {
     const q = users
       ? ['chat', { party: users.sort().join('-') }]
       : ['chat']
-    log(`invalidating ${JSON.stringify(q)}`)
+    // log(`invalidating ${JSON.stringify(q)}`)
     qc.invalidateQueries(q)
   }
   
