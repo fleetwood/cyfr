@@ -9,14 +9,17 @@ import Spinner from "./spinner"
 type MentionsMenuProps = {
     onSelect: Function
     searchTerm: string
-    show?: boolean
+    showMenu: boolean
+    setShowMenu: Function
+    index:number
+    setIndex:Function
 }
 
-const MentionsMenu = ({onSelect, searchTerm, show = true}:MentionsMenuProps) => {
-    const [showMenu, setShowMenu] = useState(show)
+const MentionsMenu = ({onSelect, searchTerm='', index, setIndex, showMenu, setShowMenu}:MentionsMenuProps) => {
     const [search, setSearch] = useState<string>('')
     const [mentions, setMentions] = useState<User[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    
     const repl = (id:string, name:string) => `<span class="mention-link" username="${name}" userid="${id}">@${name}</span>`
 
     const onChoose = (user:User) => {
@@ -24,6 +27,9 @@ const MentionsMenu = ({onSelect, searchTerm, show = true}:MentionsMenuProps) => 
         log(`onChoose ${chose}`)
         if (onSelect) {
             onSelect(chose)
+            setShowMenu(false)
+            setSearch('')
+            setIndex(() => 0)
         }
     }
 
@@ -32,6 +38,7 @@ const MentionsMenu = ({onSelect, searchTerm, show = true}:MentionsMenuProps) => 
         if (res) {
             setMentions(() => res)
             setIsLoading(() => false)
+            setIndex(() => 0)
         }
     }
 
@@ -40,24 +47,40 @@ const MentionsMenu = ({onSelect, searchTerm, show = true}:MentionsMenuProps) => 
     }, [searchTerm])
 
     useEffect(() => {
-        setIsLoading(() => true)
         getMentions()
     }, [search])
 
   return (
     <div className="relative">
-        <button className="cursor-pointer p-2 rounded-sm bg-secondary bg-opacity-0 text-xl hover:bg-opacity-30 hover:text-secondary-content" onClick={()=> {setShowMenu(() => !showMenu)}}>@</button>
+        <button className="
+            cursor-pointer p-2 rounded-sm bg-secondary bg-opacity-0 text-xl 
+            hover:bg-opacity-30 hover:text-secondary-content" 
+            onClick={(e)=> {e.stopPropagation(); setShowMenu(() => !showMenu)}}>@</button>
         {showMenu && 
         <>
-        <input type="text" className="opacity-50" value={search} onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearch(e.currentTarget.value)} />
-        <ul className="absolute right-0 bottom-10 shadow-md shadow-primary bg-opacity-90 bg-base-200 p-2 rounded-lg min-w-max flex flex-col space-y-2">
-        {isLoading && 
-            <li><Spinner size="sm" /></li>
-        }
-        {!isLoading && mentions && mentions.map(user => (
-            <li onClick={() => onChoose(user)} key={uniqueKey(user,mentions)} className="flex justify-items-start space-x-1 cursor-pointer px-2 rounded-sm hover:bg-opacity-30 hover:bg-primary"><Avatar user={user} link={false} sz="xs" /><span>{user.name}</span></li>
-            ))}
-        </ul>
+            <input type="text" className="opacity-50 text-base-content" value={search} onChange={(e:React.ChangeEvent<HTMLInputElement>) => setSearch(e.currentTarget.value)} />
+            {isLoading && 
+                <li><Spinner size="sm" /></li>
+            }
+            {!isLoading && mentions && mentions.length > 0 && 
+                <ul className="
+                    absolute right-0 bottom-10 shadow-md shadow-primary 
+                    bg-opacity-90 bg-base-200 p-2 rounded-lg min-w-max 
+                    flex flex-col space-y-2">
+                {mentions && mentions.map((user, i) => (
+                    <li onClick={(e) => onChoose(user)} 
+                        key={uniqueKey(user,mentions)} 
+                        className={`
+                            flex justify-items-start space-x-1 cursor-pointer px-2 
+                            rounded-sm bg-primary hover:bg-opacity-50 
+                            ${index === i ? 'bg-opacity-30' : 'bg-opacity-0'}
+                            `}>
+                        <Avatar user={user} link={false} sz="xs" />
+                        <span>{user.name}</span>
+                    </li>
+                ))}
+                </ul>
+            }
         </>
         }
     </div>
