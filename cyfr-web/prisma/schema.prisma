@@ -2,29 +2,38 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// DIRECT
 datasource db {
   provider          = "postgresql"
   url               = env("HEROKU_DATABASE_URL_PROD")
   shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
 }
 
+// PROXY
+// datasource db {
+//   provider          = "postgresql"
+//   url               = env("PRISMA_HEROKU_PROXY")
+// }
+
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
-  fanOf         Fan[]     @relation("user_fans")
-  fans          Fan[]     @relation("user_fan_of")
-  follower      Follow[]  @relation("user_followed_by")
-  following     Follow[]  @relation("user_following")
-  galleries     Gallery[] @relation("user_galleries")
-  images        Image[]   @relation("user_images")
-  likes         Like[]    @relation("user_likes")
-  posts         Post[]    @relation("user_posts")
+  fanOf         Fan[]         @relation("user_fans")
+  fans          Fan[]         @relation("user_fan_of")
+  follower      Follow[]      @relation("user_followed_by")
+  following     Follow[]      @relation("user_following")
+  galleries     Gallery[]     @relation("user_galleries")
+  images        Image[]       @relation("user_images")
+  likes         Like[]        @relation("user_likes")
+  posts         Post[]        @relation("user_posts")
   sessions      Session[]
-  shares        Share[]   @relation("user_shares")
+  shares        Share[]       @relation("user_shares")
+  chats         ChatRoom[]    @relation("user_chats")
+  chatMessages  ChatMessage[] @relation("user_chat_messages")
 }
 
 model Post {
@@ -124,6 +133,29 @@ model Fan {
   updatedAt DateTime @default(now())
   fan       User     @relation("user_fans", fields: [fanId], references: [id])
   fanOf     User     @relation("user_fan_of", fields: [fanOfId], references: [id])
+}
+
+model ChatRoom {
+  id        String        @id @default(cuid())
+  party     String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @default(now())
+  visible   Boolean       @default(true)
+  users     User[]        @relation("user_chats")
+  messages  ChatMessage[]
+}
+
+model ChatMessage {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+  visible    Boolean  @default(true)
+  seen       Boolean  @default(false)
+  chatRoomId String
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+  authorId   String
+  author     User     @relation("user_chat_messages", fields: [authorId], references: [id])
+  content    String
 }
 
 model VerificationToken {

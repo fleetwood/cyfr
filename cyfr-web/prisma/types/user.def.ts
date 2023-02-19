@@ -3,6 +3,9 @@ import { GalleryFeed, GalleryFeedInclude } from './gallery.def';
 import { PostFeedInclude } from "./post.def"
 
 export type UserFeed = User & {
+  _count: {
+    sessions: number
+  }
   posts: Post[]
   likes: Like[]
   following: Follow[]
@@ -18,12 +21,16 @@ export const UserFeedInclude = {
   follower: true,
   fans: true,
   fanOf: true,
+  _count: {
+    sessions: true,
+  }
 }
 
 export type UserDetail = User & {
   _count: {
     likes: number
     shares: number
+    sessions: number
   }
   posts: PostFeed[]
   following: { follower: User }[]
@@ -38,6 +45,7 @@ export const UserDetailInclude = {
     _count: {
       select: {
         likes: true,
+        sessions: true,
         shares: true
       }
     },

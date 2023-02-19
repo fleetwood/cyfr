@@ -138,7 +138,7 @@ export const uuid = (key?:string) => key || uid()
 export const uniqueKey = (...items:any) => {
   if (!items) return uuid()
   const key = items.flatMap((item:any) => typeof item === "object" 
-    ? `${item.id || uuid()}`
+    ? `${item?.id || uuid()}`
     : item
     ).join('-')
   return key

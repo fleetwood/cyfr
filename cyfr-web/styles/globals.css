@@ -225,6 +225,26 @@
     .image-footer {
         @apply absolute w-full -bottom-20 transition-all duration-200 ease-linear p-4 bg-primary bg-opacity-50 flex justify-around space-x-4
     }
+
+    .mention {
+        @apply relative inline-block mx-1
+    }
+    .mention > .mention-popover {
+        @apply absolute flex justify-between overflow-visible left-0 bottom-1 scale-y-0 opacity-0 transition-all duration-200 bg-base-100 min-w-fit p-2 border-2 border-primary rounded-md shadow-primary shadow-md
+    }
+    .mention:hover > .mention-popover {
+        @apply scale-y-100 opacity-100
+    }
+    .mention-link {
+        @apply font-semibold bg-primary bg-opacity-30 px-1 rounded-md max-w-fit
+    }
+    .mention > .mention-link {
+        @apply left-0
+    }
+
+    .scrollbar-only {
+        @apply scrollbar-track-transparent scrollbar-thumb-primary
+    }
     
 }
 

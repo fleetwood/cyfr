@@ -18,7 +18,7 @@ module.exports = {
     base: true,
     utils: true,
     prefix: "",
-    darkTheme: "luxury",
+    darkTheme: "light",
     themes: [
       "light",
       "dark",
@@ -55,5 +55,6 @@ module.exports = {
     require("daisyui"),
     require('@tailwindcss/forms'),
     require('tailwind-scrollbar-hide'),
+    require('tailwind-scrollbar'),
   ],
 }

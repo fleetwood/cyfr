@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ResponseError } from "../../types/response";
-import Spinner, { SpinnerSize } from "../ui/spinner";
+import Spinner from "../ui/spinner";
 
 export type StatusProps = {
   watch?: any,
@@ -27,7 +27,7 @@ export default function PageStatus(props: StatusProps) {
   return (
     <>
       {(isLoading && 
-        <Spinner size={SpinnerSize.lg} />
+        <Spinner size="lg" />
       ) 
       || (error && (
         <div className="text-error italic">

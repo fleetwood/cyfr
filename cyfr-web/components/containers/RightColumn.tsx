@@ -1,3 +1,5 @@
+import ChatList from "./Chats/ChatList"
+
 const RightColumn = () => {
   return (
     <div className="flex sm:flex-col px-2">
@@ -8,6 +10,7 @@ const RightColumn = () => {
           </h2>
         </div>
       </div>
+      <ChatList />
     </div>
   )
 }

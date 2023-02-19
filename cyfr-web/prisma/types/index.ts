@@ -6,23 +6,18 @@ import {
     Follow,
     Fan,
     Image,
-    Gallery
-  } from "@prisma/client/edge"
-  import { ShareDeleteProps, ShareFeed } from "./share.def"
-  import { GalleryFeed, GalleryDetail, GalleryDetailInclude, GalleryEngageProps, GalleryCreateProps, GalleryFeedInclude } from './gallery.def';
-  import { UserFeed, UserDetail, CyfrUser, UserDetailInclude, UserFeedInclude } from './user.def';
-  import {
-    PostCreateProps,
-    PostDeleteProps,
-    PostEngageProps,
-    PostCommentProps,
-    PostFeed,
-    PostDetail,
-  } from "./post.def"
-
-import {ShareWithAuthorPost, ShareWithAuthorPostInclude} from './like.def'
-import { ImageFeed, ImageFeedInclude, ImageDetailInclude, ImageDetail } from './image.def';
+    Gallery,
+    ChatRoom,
+    ChatMessage
+} from "@prisma/client/edge"
+import { GalleryFeed, GalleryDetail, GalleryDetailInclude, GalleryEngageProps, GalleryCreateProps, GalleryFeedInclude } from './gallery.def';
+import { PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostFeed, PostDetail, } from "./post.def"
+import { ShareDeleteProps, ShareFeed } from "./share.def"
+import { UserFeed, UserDetail, CyfrUser, UserDetailInclude, UserFeedInclude } from './user.def';
+import { ShareWithAuthorPost, ShareWithAuthorPostInclude} from './like.def'
+import { ImageFeed, ImageFeedInclude, ImageDetailInclude, ImageDetail, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps } from './image.def';
 import { PostFeedInclude, PostDetailInclude } from './post.def';
+import { ChatDetail, ChatDetailInclude, ChatCreateProps, SendMessageProps } from "./chat.def";
 
 type MainFeed = {
     type: 'PostFeed' | 'ShareFeed'
@@ -78,17 +73,19 @@ export const includes = {
     GalleryFeedInclude, GalleryDetailInclude,
     ImageFeedInclude, ImageDetailInclude,
     PostFeedInclude, PostDetailInclude,
-    UserFeedInclude, UserDetailInclude
+    UserFeedInclude, UserDetailInclude,
+    ChatDetailInclude
 }
 
 export type {
     // from prisma client
-    Post,User,Share,Like,Follow,Fan,Image,Gallery,
+    Post,User,Share,Like,Follow,Fan,Image,Gallery,ChatMessage,ChatRoom,
     // from Gallery defs
     GalleryFeed, GalleryDetail, 
     GalleryCreateProps, GalleryEngageProps,
     // from image defs
     ImageFeed, ImageDetail,
+    ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
     // from user defs
     UserFeed, UserDetail, CyfrUser,
     // from share defs
@@ -96,6 +93,9 @@ export type {
     // from Posts defs
     PostFeed,PostDetail,
     PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps,
+    // from ChatRoom defs
+    ChatDetail,
+    ChatCreateProps, SendMessageProps,
     // from like defs
     ShareWithAuthorPost,
     // from here (types)

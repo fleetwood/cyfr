@@ -1,33 +1,40 @@
-import { CSSProperties, HTMLAttributes } from "react";
-
-export enum SpinnerSize {
-  xs = 10,
-  sm = 20,
-  md = 40,
-  lg = 80,
-  xl = 160,
+type SpinnerProps = {
+  bgColor?: string
+  fgColor?: string
+  height?: number
+  size?: "xs" | "sm" | "md" | "lg" | "xl"
+  center?: boolean
 }
 
-type SpinnerProps = {
-  bgColor?: string;
-  fgColor?: string;
-  height?: number;
-  size?: SpinnerSize;
-  center?: boolean
-};
-
 const Spinner = (props: SpinnerProps) => {
-  let { bgColor, fgColor, height, size, center } = props;
+  let { bgColor, fgColor, height, size, center } = props
 
-  bgColor = bgColor || "text-gray-500";
-  fgColor = fgColor || "fill-teal-400";
+  bgColor = bgColor || "text-gray-500"
+  fgColor = fgColor || "fill-teal-400"
   if (size) {
-    height = size;
+    switch (size) {
+      case "xs":
+        height = 10
+        break
+      case "sm":
+        height = 20
+        break
+      case "lg":
+        height = 80
+        break
+      case "xl":
+        height = 160
+        break
+      case "md":
+      default :
+        height = 40
+        break
+    }
   }
 
   return (
-    <div role="status" className="relative">
-      <div style={{ height: height || 20 + "px", width: height || 20 + "px" }} className={center?'t-[50%] l-[50%] -x-translate-1/2 -y-translate-1/2':''}>
+    <span role="status" className="relative">
+      <span style={{ height: height || 20 + "px", width: height || 20 + "px" }} className={center?'t-[50%] l-[50%] -x-translate-1/2 -y-translate-1/2':''}>
         <svg
           aria-hidden="true"
           className={`animate-spin ${bgColor} ${fgColor} max-w-fit max-h-fit`}
@@ -44,10 +51,10 @@ const Spinner = (props: SpinnerProps) => {
             fill="currentFill"
           />
         </svg>
-      </div>
+      </span>
       <span className="sr-only">Loading...</span>
-    </div>
-  );
-};
+    </span>
+  )
+}
 
-export default Spinner;
+export default Spinner

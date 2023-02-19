@@ -14,9 +14,17 @@ export default async function handle(
 ) {
   try {
     const session = await getSession({ req })
-    const email = session?.user?.email
-    const result = await PrismaUser.byEmail(email!)
-    res.status(200).json({ result })
+    if (session === null || session.user === null || session.user?.email === null) {
+      // log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nNO USER in session.... ${JSON.stringify(session, null, 2)}`)
+      res.status(200).json({})
+      res.end()
+      return
+    } else {
+      // log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nYES USER in session.... ${JSON.stringify(session, null, 2)}`)
+      const email = session?.user?.email
+      const result = await PrismaUser.byEmail(email!)
+      res.status(200).json({ result })
+    }
   } catch (e: Error | ResponseError | any) {
     logError(`me FAIL`, e)
     const error = GetResponseError(e)
