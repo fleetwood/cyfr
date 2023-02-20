@@ -33,12 +33,16 @@ const EmojiMenu = ({ cat, group, name, onSelect }: EmojiMenuProps) => {
   return (
     <Popover>
       {/* @ts-ignore */}
-      <Popover.Button ref={setReferenceElement} className="cursor-pointer p-2 rounded-sm bg-secondary bg-opacity-0 text-xl hover:bg-opacity-30 hover:text-secondary-content">☺️</Popover.Button>
+      <Popover.Button ref={setReferenceElement} 
+        className="
+          cursor-pointer rounded-sm bg-secondary bg-opacity-0 text-xl 
+          hover:bg-opacity-30 hover:text-secondary-content"
+          >☺️</Popover.Button>
 
         <Popover.Panel
           /* @ts-ignore */
           ref={setPopperElement}
-          className="scrollbar-hide bg-base-200 rounded-xl mx-2 p-2 max-h-[250px] overflow-y-auto"
+          className="scrollbar-hide bg-base-200 rounded-xl max-h-[250px] overflow-y-auto"
           style={{...styles.popper,
             placeSelf: 'auto',
           }}
@@ -49,24 +53,24 @@ const EmojiMenu = ({ cat, group, name, onSelect }: EmojiMenuProps) => {
               cardClassName="w-full flex space-x-2 border-1 border-base-content border-opacity-50 sticky" 
               inputClassName=""
               />
-              <div className="w-full flex py-2 space-x-2 justify-around sticky">
+              <div className="w-full flex space-x-2 justify-around sticky">
                 <div className={`text-base-content
                   cursor-pointer hover:text-primary-content hover:bg-primary 
-                  rounded-md p-2 font-semibold`
+                  rounded-md font-semibold`
                 }
                 onClick={() => setActiveGroup('')}>ALL</div>
                 {groups.map(g => (
                   <div className={`
                     ${activeGroup===g?'text-primary':'text-base-content'} 
                     cursor-pointer hover:text-primary-content hover:bg-primary 
-                    rounded-md p-2 font-semibold`}
+                    rounded-md font-semibold`}
                     onClick={() => setActiveGroup(g)} key={`emoji-group-${g}`}>
                     {g}
                   </div>
                 ))}
               </div>
               {emoji?.filter(e => e.name.indexOf(search||'')>=0).map((e) => (
-                <button className="btn border-none bg-opacity-0 m-1 px-1 hover:bg-opacity-10 transition-all duration-200" key={e.char} onClick={() => onSelect(e)}>
+                <button className="btn border-none bg-opacity-0 hover:bg-opacity-10 transition-all duration-200" key={e.char} onClick={() => onSelect(e)}>
                   {e.char}
                 </button>
               ))} 

@@ -19,6 +19,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   const [cyfrUser] = useCyfrUser()
   const { notify } = useToast()
   const [content, setContent] = useState<string|null>(null)
+  const [wordCount, setWordCount] = useState<number>(0)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
   const {createPost, invalidateFeed} = useFeed({type: 'post'})
   const [images, setImages] = useState<string[]>([])
@@ -28,10 +29,17 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
     log(`\tCreatePost.onFilesComplete ${JSON.stringify(setFiles, null, 2)}`)
     setImages((current) => [...current, ...setFiles])
   }
+
+  const handleChange = (s:string, l:number) => {
+    log(`CreatePost handleChange shold be setting content ${s}`)
+    setContent((c) => s)
+    setWordCount((c) => l)
+  }
   
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (isDisabled) {
+      log(`Something is disabled.... ${JSON.stringify({cyfrUser, content}, null, 2)}}`)
       return
     }
 
@@ -59,9 +67,9 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   }
 
   useEffect(() => {
-    const disabled =
-      !cyfrUser || !content || content.length < 1
-    setIsDisabled((current) => disabled)
+    log(`useEffect content change ${JSON.stringify({content}, null, 2)}`)
+    const disabled = !cyfrUser || wordCount < 1
+    setIsDisabled(() => disabled)
   }, [content])
 
   return (
@@ -75,7 +83,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
       <div className="w-full mx-auto p-2 sm:p-6 lg:p-4">
           <form className=" flex flex-col" onSubmit={handleSubmit}>
             <i className="tw twa-black-cat" />
-          <SimpleQuill content={content} setContent={setContent} />
+          {/* <SimpleQuill content={content} setContent={handleChange} /> */}
 
           <Dropzone limit={5} onUploadComplete={onFilesComplete} />
 

@@ -17,6 +17,6 @@
     "sourceMap": true,
     "outDir": "dist",
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "quill.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }
