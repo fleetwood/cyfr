@@ -12,7 +12,7 @@ const Test = () => {
 
   return (
     <StaticLayout sectionTitle="Remirror" >
-      <RemirrorEditor content={message} setContent={setMessage} />
+      <RemirrorEditor content={message} setContent={setMessage} maxChar={128} />
       <div className="mt-2 p-2 font-ibarra">{message}</div>
     </StaticLayout>
   );

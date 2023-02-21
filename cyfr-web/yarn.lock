@@ -734,6 +734,14 @@
     "@remirror/core" "^2.0.11"
     "@remirror/messages" "^2.0.2"
 
+"@remirror/extension-count@^2.0.11":
+  version "2.0.11"
+  resolved "https://registry.yarnpkg.com/@remirror/extension-count/-/extension-count-2.0.11.tgz#33098f7b04a36cb7f3ea01bd3edfff38f5b5351c"
+  integrity sha512-37F2K03nyz9868xCAIEVNj/RFZxP2jsQofvrfRSdaAkuSvE45eBSs7dVG83RNK8Vq7UDbH6xDoWaPUZjbsB9tQ==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@remirror/core" "^2.0.11"
+
 "@remirror/extension-diff@^2.0.11":
   version "2.0.11"
   resolved "https://registry.yarnpkg.com/@remirror/extension-diff/-/extension-diff-2.0.11.tgz#1bb2633f4b51abe4433576dcf6c02b62f7bd59b2"

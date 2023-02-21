@@ -20,7 +20,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   const [cyfrUser] = useCyfrUser();
   const { notify } = useToast();
   const [content, setContent] = useState<string | null>(null);
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [valid, setIsValid] = useState<boolean>(false);
   const { createPost, invalidateFeed } = useFeed({ type: "post" });
   const [images, setImages] = useState<string[]>([]);
 
@@ -32,7 +32,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (isDisabled) {
+    if (!valid) {
       log(
         `Something is disabled.... ${JSON.stringify(
           { cyfrUser, content },
@@ -64,13 +64,7 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
     }
 
     onCreate();
-  };
-
-  useEffect(() => {
-    log(`useEffect content change ${JSON.stringify({ content }, null, 2)}`);
-    const disabled = !cyfrUser || content === null || content.length < 1;
-    setIsDisabled(() => disabled);
-  }, [content]);
+  }
 
   return (
     <div
@@ -83,15 +77,16 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
         <div className="w-full mx-auto p-2 sm:p-6 lg:p-4">
           <form className=" flex flex-col" onSubmit={handleSubmit}>
             <i className="tw twa-black-cat" />
-            <RemirrorEditor content={content} setContent={setContent} />
+            <RemirrorEditor content={content} setContent={setContent} maxChar={128} setValid={setIsValid} />
 
             <Dropzone limit={5} onUploadComplete={onFilesComplete} />
 
             <div className="w-full grid place-items-end mt-2">
               <button
-                disabled={isDisabled}
+                disabled={!valid}
                 className="btn lg:btn-sm p-2 
                 bg-secondary text-primary-content
+                disabled:bg-warning
                 disabled:bg-opacity-40
                 disabled:text-primary
                 "
