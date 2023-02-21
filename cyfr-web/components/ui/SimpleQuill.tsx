@@ -1,17 +1,9 @@
 import dynamic from "next/dynamic"
 import { DeltaStatic, Sources } from "quill"
-import { Dispatch, SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import ReactQuill, { UnprivilegedEditor } from "react-quill"
 import 'react-quill/dist/quill.snow.css'
 import useCyfrUser, { getCyfrUser } from "../../hooks/useCyfrUser"
-import { User } from "../../prisma/prismaContext"
-import { EmojiChar } from "../../prisma/types/emoji.def"
-import { getApi } from "../../utils/api"
-import { log } from "../../utils/log"
-import Mention from './mention'
-import EmojiMenu from "./EmojiMenu"
-import MentionsMenu from "./MentionsMenu"
-import { match } from "assert"
 
 const SQuill = dynamic(import('react-quill'), { ssr: false })
 

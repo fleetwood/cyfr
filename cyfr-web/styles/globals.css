@@ -1,6 +1,11 @@
+/*****************/
+/*** REMIRROR ****/
+@import url('remirror-thame.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 @font-face {
     font-family: 'Peace';
@@ -244,8 +249,8 @@
 
     .scrollbar-only {
         @apply scrollbar-track-transparent scrollbar-thumb-primary
-    }
-    
+    }  
+
 }
 
 @layer utilities {
