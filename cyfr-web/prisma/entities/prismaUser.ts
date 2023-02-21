@@ -127,7 +127,7 @@ const byEmail = async (email: string): Promise<CyfrUser|null> => {
 
 const canMention = async (id: string, search?:string) => {
   try {
-    log(`prismaUser.canMention`, {id, search})
+    // log(`prismaUser.canMention`, {id, search})
     const followers = await prisma.follow.findMany({
       where: {
         followingId: id,
