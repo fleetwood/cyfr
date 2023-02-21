@@ -12,6 +12,7 @@ import { cloudinary } from "../utils/cloudinary"
 import { log } from "../utils/log"
 import UserDetailPage from "./user/[id]"
 import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
+import { InferGetServerSidePropsType } from "next";
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await PrismaUser.userInSession(context)
@@ -23,7 +24,7 @@ type AccountProps = {
   user?: CyfrUser | undefined
 }
 
-const Account = ({user}:AccountProps) => {
+const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [session] = useSession({required: true, redirectTo: '/login'})
   const [cyfrUser] = useCyfrUser()
   const {updateUser, invalidateUser}=useCyfrUserApi()
@@ -38,7 +39,7 @@ const Account = ({user}:AccountProps) => {
       ...cyfrUser,
       name: cyfrName
     } as unknown as CyfrUser
-    updateUser({newUser:newCyfrUser})
+    updateUser({data:newCyfrUser})
       .then(r => {
         log(`\tonNameChange complete`)
         invalidateUser()
@@ -56,7 +57,7 @@ const Account = ({user}:AccountProps) => {
         ...cyfrUser,
         image: file.secure_url
       } as unknown as CyfrUser
-      updateUser({newUser:newCyfrUser})
+      updateUser({data:newCyfrUser})
         .then(r => {
           // setShowZone('none')
           invalidateUser()
