@@ -7,7 +7,7 @@ import {
   PlaceholderExtension,
   MentionAtomNodeAttributes,
 } from "remirror/extensions"
-import { prosemirrorNodeToHtml, htmlToProsemirrorNode } from "remirror"
+import { prosemirrorNodeToHtml, htmlToProsemirrorNode, RemirrorEventListener, RemirrorEventListenerProps } from "remirror"
 import {
   EditorComponent,
   EmojiPopupComponent,
@@ -20,16 +20,17 @@ import data from "svgmoji/emoji.json"
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react"
 import { useCyfrUserApi } from "../../hooks/useCyfrUser"
 import { log } from "../../utils/log"
+import { Node } from "@remirror/pm/dist-types/model"
 
 type MentionItem = {id: string, label: string}
 
 type RemirrorEditorProps = {
     placeholder?: string,
-    value?: string|null, 
-    setValue?: Dispatch<SetStateAction<string|null>>
+    content?: string|null, 
+    setContent?: Dispatch<SetStateAction<string|null>>
 }
 
-const RemirrorEditor = ({placeholder, value, setValue}:RemirrorEditorProps) => {
+const RemirrorEditor = ({placeholder, content, setContent}:RemirrorEditorProps) => {
 const [mentions, setMentions] = useState<MentionItem[]>([])
 const [search, setSearch] = useState('')
   const extensions = useCallback(
@@ -45,9 +46,9 @@ const [search, setSearch] = useState('')
     ],
     []
   )
-  const { manager, state } = useRemirror({ extensions })
+  const { manager, state } = useRemirror({ extensions, stringHandler: 'html', content: content || '' })
 
-  const htmlString = prosemirrorNodeToHtml(state.doc)
+  const htmlString = (doc:Node|undefined) => doc ? prosemirrorNodeToHtml(doc) : null
 
   const {getMentions} = useCyfrUserApi()
 
@@ -56,6 +57,13 @@ const [search, setSearch] = useState('')
         setSearch(() => e.query.full)
     } else {
         setSearch('')
+    }
+  }
+
+  const onChange = (params:RemirrorEventListenerProps<Remirror.Extensions>) => {
+    // log(`RemirrorEditor.onchange ${JSON.stringify({content: params.tr?.doc.content, html: htmlString(params.tr?.doc)}, null, 1)}`)
+    if (setContent) {
+        setContent(htmlString(params.tr?.doc))
     }
   }
 
@@ -79,7 +87,7 @@ const [search, setSearch] = useState('')
 
   return (
     <div className="remirror-theme">
-      <Remirror manager={manager} initialContent={state} autoFocus>
+      <Remirror manager={manager} initialContent={state} onChange={(p) => onChange(p)} autoFocus>
         <EmojiPopupComponent />
         <MentionAtomPopupComponent items={mentions} onChange={mentionSelect} />
         <EditorComponent />
