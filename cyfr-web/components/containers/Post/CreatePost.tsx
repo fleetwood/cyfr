@@ -84,16 +84,11 @@ const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
             <div className="w-full grid place-items-end mt-2">
               <button
                 disabled={!valid}
-                className="btn lg:btn-sm p-2 
-                bg-secondary text-primary-content
-                disabled:bg-warning
-                disabled:bg-opacity-40
-                disabled:text-primary
-                "
                 onClick={handleSubmit}
-              >
-                Post
-              </button>
+                className="
+                  btn lg:btn-sm p-2 bg-secondary text-primary-content
+                  disabled:bg-warning disabled:bg-opacity-40 disabled:text-primary
+                ">Post</button>
             </div>
           </form>
         </div>
