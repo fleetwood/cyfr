@@ -1,4 +1,4 @@
-import { Image, User, Like, ImageDetail,ImageFeed,includes, ImageCreateProps, ImageDeleteProps, ImageEngageProps } from "../prismaContext"
+import { Image, User, Like, ImageDetail,ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude } from "../prismaContext"
 import { log, todo } from "../../utils/log"
 
 const fileName = 'prismaImage'
@@ -12,7 +12,7 @@ const byId = async (id: string): Promise<ImageDetail | null> => {
         id: id,
         visible: true
       },
-      include: includes.ImageDetailInclude,
+      include: ImageDetailInclude,
     })
   } catch (error) {
     throw { code: "images/byId", message: "No images were returned!" }
@@ -31,7 +31,7 @@ const all = async (): Promise<ImageFeed[] | []> => {
       where: {
         visible: true
       },
-      include: includes.ImageFeedInclude,
+      include: ImageFeedInclude,
       orderBy: [
         {
           updatedAt: "desc",

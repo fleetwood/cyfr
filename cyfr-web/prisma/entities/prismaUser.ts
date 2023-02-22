@@ -1,6 +1,18 @@
 import { GetSessionParams, getSession } from "next-auth/react"
 import { stringify } from "superjson"
-import { includes, CyfrUser, Fan, FanProps, Follow, prisma, UpdatePreferencesProps, User, UserDetail } from "../prismaContext"
+import { 
+  CommentThreadDetails ,
+  CommentThreadDetailsInclude,
+  CyfrUser, 
+  Fan, 
+  FanProps, 
+  Follow, 
+  prisma, 
+  UpdatePreferencesProps, 
+  User, 
+  UserDetail,
+  UserDetailInclude, 
+} from "../prismaContext"
 import {
   GenericResponseError,
   ResponseError,
@@ -77,7 +89,7 @@ const byId = async (id: string): Promise<UserDetail> => {
       where: {
         id: id?.toString(),
       },
-      include: includes.UserDetailInclude,
+      include: UserDetailInclude,
     })
     if (!user) {
       throw { code: "users/byId", message: `Did not find user for ${id}` }
@@ -176,6 +188,73 @@ const canMention = async (id: string, search?:string) => {
       .slice(0,10) as unknown as User[]
   } catch (error) {
     log(`prismaUser.canMention broke ${JSON.stringify(error, null, 2)}`)
+    throw error
+  }
+}
+
+const userInbox = async (userId:string):Promise<any[]> => {
+  try {
+    const inbox = await prisma.commentThread.findMany({
+      where: {
+        entity: 'INBOX',
+        commune: {
+          users: {
+            some: {
+              userId
+            },
+            none: {
+              role: 'BLOCKED'
+            }
+          }
+        }
+      },
+      include: CommentThreadDetailsInclude
+    })
+    if (inbox) {
+      return inbox
+    }
+    throw({code: 'prismaUser.userInbox', message: 'Unable to obtain inbox for user'})
+  } catch (error) {
+    throw error
+  }
+}
+
+type InboxProps = {
+  threadId?:  string
+  userId:     string
+  partyId:    string
+}
+const inbox = async ({threadId, userId, partyId}:InboxProps):Promise<any> => {
+  try {
+    const thread = await prisma.commentThread.upsert({
+      where: {
+        id: threadId
+      },
+      update: {},
+      create: {
+        entity: 'INBOX',
+        requiredRole: 'PRIVATE',
+        commune: {
+          create: {
+            entity: 'INBOX',
+            ownerId: userId,
+            users: {
+              createMany: 
+                {data: [
+                  {userId: userId, role: 'OWNER'},
+                  {userId: partyId, role: 'OWNER'},
+                ]}
+            }
+          }
+        }
+      },
+      include: CommentThreadDetailsInclude
+    })
+    if (thread) {
+      return thread
+    }
+    throw({code: 'prismaUser.inbox', message: 'Unable to find or create inbox'})
+  } catch (error) {
     throw error
   }
 }
@@ -292,4 +371,6 @@ export const PrismaUser = {
   stan,
   updatePreferences,
   canMention,
+  userInbox,
+  inbox
 }

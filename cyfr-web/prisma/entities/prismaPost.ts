@@ -1,5 +1,5 @@
-import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, PostDeleteProps, Like, includes } from "../prismaContext"
 import { log } from "../../utils/log"
+import { Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed, PostFeedInclude } from "../prismaContext"
 
 const fileName = 'prismaPost'
 const fileMethod = (method:string) => `${fileName}.${method}`
@@ -62,7 +62,7 @@ const all = async (): Promise<PostFeed[] | []> => {
         visible: true,
         commentId: null
       },
-      include: includes.PostFeedInclude,
+      include: PostFeedInclude,
       orderBy: [
         {
           updatedAt: "desc",

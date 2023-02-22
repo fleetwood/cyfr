@@ -1,7 +1,7 @@
 import {
   ChatCreateProps,
   ChatDetail,
-  includes,
+  ChatDetailInclude,
   SendMessageProps,
   User,
 } from "../prismaContext";
@@ -30,7 +30,7 @@ const byId = async (id: string): Promise<ChatDetail | null> => {
         id: id,
         visible: true,
       },
-      include: includes.ChatDetailInclude,
+      include: ChatDetailInclude,
     });
     if (result) {
       return result as unknown as ChatDetail;
