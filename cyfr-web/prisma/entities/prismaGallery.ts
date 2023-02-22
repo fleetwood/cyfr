@@ -1,5 +1,5 @@
 import { log } from "../../utils/log";
-import { Gallery, GalleryDetail, Like } from "../types";
+import { Gallery, GalleryDetail, ImageCreateProps, Like } from "../types";
 import { GalleryCreateProps } from '../types/gallery.def';
 import {
   GalleryDetailInclude,
@@ -11,14 +11,11 @@ import {
 const fileName = "prismaGallery";
 const fileMethod = (method: string) => `${fileName}.${method}`;
 const trace = (method: string, t?: any) =>
-  log(fileMethod(method) + t ? " " + JSON.stringify(t, null, 2) : "");
+  log(fileMethod(method) + t + " " + JSON.stringify(t, null, 2));
 
 export type GalleryAddImageProps = {
   id: string;
-  images: {
-    url: string;
-    authorId: string;
-  }[];
+  images: ImageCreateProps[];
 };
 
 const userGalleries = async (authorId: string): Promise<GalleryDetail[]> => {
@@ -119,7 +116,7 @@ const createGallery = async ({
   images,
 }: GalleryCreateProps) => {
   try {
-    trace(`createGallery`, { authorId, title, description, images });
+    // trace(`createGallery`, { authorId, title, description, images });
     const data = images ?
       {
         authorId,
@@ -127,7 +124,7 @@ const createGallery = async ({
         description,
         images: {
           createMany: {
-            data: images?.map(url => {return {authorId,url}})
+            data: images
           }
         }
       }

@@ -6,6 +6,8 @@ import useFeed from "../../../hooks/useFeed"
 import { CyfrLogo } from "../../ui/icons"
 import TailwindInput from "../../forms/TailwindInput"
 import Dropzone, { CompleteFile } from "../../forms/Dropzone"
+import { url } from "inspector"
+import { ImageCreateProps } from "../../../prisma/types"
 
 const GalleryCreateView = ({limit=-1}) => {
   const createGalleryModal = "createGalleryModal"
@@ -17,13 +19,18 @@ const GalleryCreateView = ({limit=-1}) => {
   
   const [title, setTitle] = useState<string | null>(null)
   const [description, setDescription] = useState<string | null>(null)
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<ImageCreateProps[]>([])
   const [createEnabled, setCreateEnabled] = useState(false)
   
   const { createGallery, invalidateFeed } = useFeed({ type: "gallery" })
 
   const onFilesComplete = async (files: CompleteFile[]) => {
-    const setFiles = files.flatMap(f => f.secure_url)
+    const setFiles = files.map(f => { return {
+      authorId: cyfrUser.id,
+      url: f.secure_url,
+      height: f.height,
+      width: f.width
+    } as unknown as ImageCreateProps })
     log(`\tGalleryCreateView.onFilesComplete ${JSON.stringify({files}, null, 2)}`)
     setImages((current) => [...current, ...setFiles])
   }

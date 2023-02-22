@@ -1,4 +1,4 @@
-import { ImageFeed, ImageFeedInclude } from './image.def';
+import { ImageCreateProps, ImageFeed, ImageFeedInclude } from './image.def';
 import {
   Fan,
   Follow,
@@ -13,7 +13,7 @@ export type GalleryCreateProps = {
   authorId: string
   title?: string|null
   description?: string|null
-  images?: string[]|null
+  images?: ImageCreateProps[]|null
 }
 
 export type GalleryEngageProps = {
