@@ -74,6 +74,8 @@ model Image {
   updatedAt DateTime @default(now())
   visible   Boolean  @default(true)
   url       String
+  height    Int?     @default(0)
+  width     Int?     @default(0)
   title     String?
   authorId  String
   galleryId String?
