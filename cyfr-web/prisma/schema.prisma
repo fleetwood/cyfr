@@ -2,18 +2,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// DIRECT
 datasource db {
   provider          = "postgresql"
   url               = env("HEROKU_DATABASE_URL_PROD")
   shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
 }
-
-// PROXY
-// datasource db {
-//   provider          = "postgresql"
-//   url               = env("PRISMA_HEROKU_PROXY")
-// }
 
 model User {
   id            String        @id @default(cuid())
@@ -22,6 +15,12 @@ model User {
   emailVerified DateTime?
   image         String?
   accounts      Account[]
+  blocked       Block[]       @relation("user_is_blocked")
+  blocking      Block[]       @relation("blocked_from_user")
+  chatMessages  ChatMessage[] @relation("user_chat_messages")
+  comments      Comment[]     @relation("user_comments")
+  ownedCommunes Commune[]     @relation("commune_owner")
+  communes      CommuneUser[] @relation("user_in_commune")
   fanOf         Fan[]         @relation("user_fans")
   fans          Fan[]         @relation("user_fan_of")
   follower      Follow[]      @relation("user_followed_by")
@@ -33,7 +32,6 @@ model User {
   sessions      Session[]
   shares        Share[]       @relation("user_shares")
   chats         ChatRoom[]    @relation("user_chats")
-  chatMessages  ChatMessage[] @relation("user_chat_messages")
 }
 
 model Post {
@@ -45,12 +43,12 @@ model Post {
   shareId       String?
   commentId     String?
   authorId      String
+  images        Image[]  @relation("post_images")
   likes         Like[]   @relation("post_likes")
   author        User     @relation("user_posts", fields: [authorId], references: [id])
   comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
   post_comments Post[]   @relation("post_comments")
   shares        Share[]  @relation("post_shares")
-  images        Image[]  @relation("post_images")
 }
 
 model Gallery {
@@ -62,6 +60,8 @@ model Gallery {
   description String?
   authorId    String
   shareId     String?
+  blocking    Block[]  @relation("blocked_from_gallery")
+  commune     Commune? @relation("gallery_commune")
   author      User     @relation("user_galleries", fields: [authorId], references: [id])
   images      Image[]  @relation("gallery_images")
   likes       Like[]   @relation("gallery_likes")
@@ -73,14 +73,14 @@ model Image {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
   visible   Boolean  @default(true)
-  url       String
-  height    Int?     @default(0)
-  width     Int?     @default(0)
   title     String?
   authorId  String
   galleryId String?
-  postId    String?
   shareId   String?
+  url       String
+  postId    String?
+  height    Int?     @default(0)
+  width     Int?     @default(0)
   author    User     @relation("user_images", fields: [authorId], references: [id])
   gallery   Gallery? @relation("gallery_images", fields: [galleryId], references: [id])
   post      Post?    @relation("post_images", fields: [postId], references: [id])
@@ -96,7 +96,9 @@ model Like {
   updatedAt DateTime @default(now())
   galleryId String?
   imageId   String?
+  commentId String?
   author    User     @relation("user_likes", fields: [authorId], references: [id])
+  comment   Comment? @relation("comment_likes", fields: [commentId], references: [id])
   gallery   Gallery? @relation("gallery_likes", fields: [galleryId], references: [id])
   image     Image?   @relation("image_likes", fields: [imageId], references: [id])
   post      Post?    @relation("post_likes", fields: [postId], references: [id])
@@ -139,12 +141,12 @@ model Fan {
 
 model ChatRoom {
   id        String        @id @default(cuid())
-  party     String        @unique
   createdAt DateTime      @default(now())
   updatedAt DateTime      @default(now())
   visible   Boolean       @default(true)
-  users     User[]        @relation("user_chats")
+  party     String        @unique
   messages  ChatMessage[]
+  users     User[]        @relation("user_chats")
 }
 
 model ChatMessage {
@@ -154,10 +156,72 @@ model ChatMessage {
   visible    Boolean  @default(true)
   seen       Boolean  @default(false)
   chatRoomId String
-  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
   authorId   String
-  author     User     @relation("user_chat_messages", fields: [authorId], references: [id])
   content    String
+  author     User     @relation("user_chat_messages", fields: [authorId], references: [id])
+  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+}
+
+model CommentThread {
+  id           String    @id @default(cuid())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now())
+  entity       Entity
+  requiredRole Role      @default(PUBLIC)
+  blocked      Block[]   @relation("blocked_from_thread")
+  comments     Comment[] @relation("thread_comments")
+  commune      Commune?  @relation("thread_commune")
+}
+
+model Comment {
+  id         String        @id @default(cuid())
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @default(now())
+  threadType Entity
+  threadId   String
+  authorId   String
+  content    String
+  visible    Boolean       @default(true)
+  author     User          @relation("user_comments", fields: [authorId], references: [id])
+  thread     CommentThread @relation("thread_comments", fields: [threadId], references: [id])
+  likes      Like[]        @relation("comment_likes")
+}
+
+model Commune {
+  id        String        @id @default(cuid())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @default(now())
+  ownerId   String
+  entity    Entity
+  entityId  String        @unique
+  owner     User          @relation("commune_owner", fields: [ownerId], references: [id])
+  gallery   Gallery       @relation("gallery_commune", fields: [entityId], references: [id], map: "FK_gallery_commune")
+  comments  CommentThread @relation("thread_commune", fields: [entityId], references: [id], map: "FK_thread_commune")
+  users     CommuneUser[] @relation("commune_users")
+}
+
+model CommuneUser {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  communeId String
+  userId    String
+  role      Role     @default(READONLY)
+  commune   Commune  @relation("commune_users", fields: [communeId], references: [id])
+  user      User     @relation("user_in_commune", fields: [userId], references: [id])
+}
+
+model Block {
+  id             String         @id @default(cuid())
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @default(now())
+  entity         Entity?
+  entityId       String?
+  blockedId      String
+  blockedUser    User           @relation("blocked_from_user", fields: [blockedId], references: [id])
+  blockedThread  CommentThread? @relation("blocked_from_thread", fields: [entityId], references: [id], map: "FK_thread_block")
+  blockedGallery Gallery?       @relation("blocked_from_gallery", fields: [entityId], references: [id], map: "FK_gallery_block")
+  blocked        User?          @relation("user_is_blocked", fields: [entityId], references: [id], map: "FK_user_is_blocked")
 }
 
 model VerificationToken {
@@ -194,4 +258,25 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  BLOCKED
+  PUBLIC
+  PRIVATE
+  READONLY
+  COMMENTONLY
+  CONTRIBUTOR
+  ADMIN
+  OWNER
+}
+
+enum Entity {
+  INBOX
+  GALLERY
+  POST
+  ARTICLE
+  BOOK
+  CHARACTER
+  USER
 }
