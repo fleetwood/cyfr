@@ -113,3 +113,9 @@ export type CyfrUser = User & {
   fans: Fan[]
   fanOf: Fan[]
 }
+
+export type UpdatePreferencesProps = {
+  id: string
+  name: string
+  image: string
+}

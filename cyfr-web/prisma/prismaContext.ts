@@ -20,8 +20,9 @@ import {
   Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed,
   ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
   Share, ShareDeleteProps, ShareFeed,
-  User, UserDetail, UserFeed,
-  ChatMessage,ChatRoom, ChatDetail, ChatCreateProps, SendMessageProps
+  User, UserDetail, UserFeed, UpdatePreferencesProps,
+  ChatMessage,ChatRoom, ChatDetail, ChatCreateProps, SendMessageProps,
+  FanProps
 } from "./types"
 
 import {includes} from './types'
@@ -57,8 +58,9 @@ export type {
   ShareDeleteProps, ShareFeed,
   GalleryFeed, GalleryDetail, GalleryEngageProps, GalleryCreateProps,
   ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
-  UserFeed, UserDetail, CyfrUser,
+  UserFeed, UserDetail, CyfrUser, UpdatePreferencesProps,
   MainFeed,
+  FanProps,
   ChatDetail,ChatCreateProps, SendMessageProps,
   PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostFeed, PostDetail,
 }

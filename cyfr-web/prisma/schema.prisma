@@ -15,8 +15,8 @@ model User {
   emailVerified DateTime?
   image         String?
   accounts      Account[]
-  blocked       Block[]       @relation("user_is_blocked")
   blocking      Block[]       @relation("blocked_from_user")
+  blocked       Block[]       @relation("user_is_blocked")
   chatMessages  ChatMessage[] @relation("user_chat_messages")
   comments      Comment[]     @relation("user_comments")
   ownedCommunes Commune[]     @relation("commune_owner")
@@ -188,16 +188,17 @@ model Comment {
 }
 
 model Commune {
-  id        String        @id @default(cuid())
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @default(now())
+  id        String         @id @default(cuid())
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @default(now())
   ownerId   String
   entity    Entity
-  entityId  String        @unique
-  owner     User          @relation("commune_owner", fields: [ownerId], references: [id])
-  gallery   Gallery       @relation("gallery_commune", fields: [entityId], references: [id], map: "FK_gallery_commune")
-  comments  CommentThread @relation("thread_commune", fields: [entityId], references: [id], map: "FK_thread_commune")
-  users     CommuneUser[] @relation("commune_users")
+  galleryId String?        @unique
+  threadId  String?        @unique
+  gallery   Gallery?       @relation("gallery_commune", fields: [galleryId], references: [id])
+  owner     User           @relation("commune_owner", fields: [ownerId], references: [id])
+  thread    CommentThread? @relation("thread_commune", fields: [threadId], references: [id])
+  users     CommuneUser[]  @relation("commune_users")
 }
 
 model CommuneUser {
@@ -218,10 +219,13 @@ model Block {
   entity         Entity?
   entityId       String?
   blockedId      String
+  galleryId      String?
+  threadId       String?
+  userId         String
   blockedUser    User           @relation("blocked_from_user", fields: [blockedId], references: [id])
-  blockedThread  CommentThread? @relation("blocked_from_thread", fields: [entityId], references: [id], map: "FK_thread_block")
-  blockedGallery Gallery?       @relation("blocked_from_gallery", fields: [entityId], references: [id], map: "FK_gallery_block")
-  blocked        User?          @relation("user_is_blocked", fields: [entityId], references: [id], map: "FK_user_is_blocked")
+  blockedGallery Gallery?       @relation("blocked_from_gallery", fields: [galleryId], references: [id])
+  blockedThread  CommentThread? @relation("blocked_from_thread", fields: [threadId], references: [id])
+  user           User           @relation("user_is_blocked", fields: [userId], references: [id])
 }
 
 model VerificationToken {

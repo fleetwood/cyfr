@@ -13,11 +13,12 @@ import {
 import { GalleryFeed, GalleryDetail, GalleryDetailInclude, GalleryEngageProps, GalleryCreateProps, GalleryFeedInclude } from './gallery.def';
 import { PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostFeed, PostDetail, } from "./post.def"
 import { ShareDeleteProps, ShareFeed } from "./share.def"
-import { UserFeed, UserDetail, CyfrUser, UserDetailInclude, UserFeedInclude } from './user.def';
+import { UserFeed, UserDetail, CyfrUser, UpdatePreferencesProps, UserDetailInclude, UserFeedInclude } from './user.def';
 import { ShareWithAuthorPost, ShareWithAuthorPostInclude} from './like.def'
 import { ImageFeed, ImageFeedInclude, ImageDetailInclude, ImageDetail, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps } from './image.def';
 import { PostFeedInclude, PostDetailInclude } from './post.def';
 import { ChatDetail, ChatDetailInclude, ChatCreateProps, SendMessageProps } from "./chat.def";
+import { FanProps } from "./follow.def";
 
 type MainFeed = {
     type: 'PostFeed' | 'ShareFeed'
@@ -87,7 +88,7 @@ export type {
     ImageFeed, ImageDetail,
     ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
     // from user defs
-    UserFeed, UserDetail, CyfrUser,
+    UserFeed, UserDetail, CyfrUser, UpdatePreferencesProps,
     // from share defs
     ShareDeleteProps, ShareFeed,
     // from Posts defs
@@ -98,6 +99,8 @@ export type {
     ChatCreateProps, SendMessageProps,
     // from like defs
     ShareWithAuthorPost,
+    // from follow defs
+    FanProps,
     // from here (types)
     MainFeed,
 }

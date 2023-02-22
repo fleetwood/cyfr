@@ -1,15 +1,12 @@
 import { GetSessionParams, getSession } from "next-auth/react"
 import { stringify } from "superjson"
-import { Follow, Fan, User, Post, Like } from ".prisma/client"
-import { prisma } from "../prismaContext"
+import { includes, CyfrUser, Fan, FanProps, Follow, prisma, UpdatePreferencesProps, User, UserDetail } from "../prismaContext"
 import {
   GenericResponseError,
   ResponseError,
   GetResponseError,
 } from "../../types/response"
 import { log } from "../../utils/log"
-import { FanProps } from "../types/follow.def"
-import { CyfrUser, UserDetail, UserDetailInclude, UserFeedInclude } from "../types/user.def"
 import { dedupe } from "../../utils/helpers"
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
@@ -80,7 +77,7 @@ const byId = async (id: string): Promise<UserDetail> => {
       where: {
         id: id?.toString(),
       },
-      include: UserDetailInclude,
+      include: includes.UserDetailInclude,
     })
     if (!user) {
       throw { code: "users/byId", message: `Did not find user for ${id}` }
@@ -267,16 +264,11 @@ const userCurrentlyOnline = async (id:string) => {
   }
 }
 
-type updatePreferencesProps = {
-  id: string
-  name: string
-  image: string
-}
 const updatePreferences = async ({
   id,
   name,
   image,
-}: updatePreferencesProps): Promise<User> => {
+}: UpdatePreferencesProps): Promise<User> => {
   try {
     const user = await prisma.user.update({
       where: { id },
