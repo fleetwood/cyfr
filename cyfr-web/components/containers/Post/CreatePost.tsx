@@ -1,15 +1,10 @@
-import { FormEvent, useEffect, useState } from "react";
-import useCyfrUser, { useCyfrUserProps } from "../../../hooks/useCyfrUser";
-import { sendApi } from "../../../utils/api";
+import { FormEvent, useState } from "react";
+import useCyfrUser from "../../../hooks/useCyfrUser";
 import { log } from "../../../utils/log";
 import { useToast } from "../../context/ToastContextProvider";
-import TailwindTextarea from "../../forms/TailwindTextarea";
 import { LoggedIn } from "../../ui/toasty";
 import useFeed from "../../../hooks/useFeed";
-import GalleryCreatePage from "../../../pages/gallery/create";
-import GalleryCreateView from "../Gallery/GalleryCreateView";
 import Dropzone, { CompleteFile } from "../../forms/Dropzone";
-import SimpleQuill from "../../ui/SimpleQuill";
 import RemirrorEditor from "../../ui/RemirrorEditor";
 
 type CreatePostProps = {

@@ -1,9 +1,10 @@
 import { Image, User, Like, Share, Gallery, Post } from "../prismaContext"
-import { UserFeed } from "./user.def"
 
 export type ImageCreateProps = {
   authorId: string
   url: string
+  height: number
+  width: number
   title?: string
   galleryId?: string
 }

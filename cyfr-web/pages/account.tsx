@@ -52,7 +52,7 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
   const onFileComplete = async (files:CompleteFile[]) => {
     const file = files[0]
     if (file.secure_url) {
-      // setShowZone(null)
+      log(`onFileComplete ${JSON.stringify(file,null,1)}`)
       const newCyfrUser = {
         ...cyfrUser,
         image: file.secure_url

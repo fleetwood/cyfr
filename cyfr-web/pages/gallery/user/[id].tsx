@@ -1,5 +1,8 @@
+import { use } from "react";
+import GalleryCreateView from "../../../components/containers/Gallery/GalleryCreateView";
 import GalleryDetailView from "../../../components/containers/Gallery/GalleryDetailView";
 import MainLayout from "../../../components/layouts/MainLayout";
+import useCyfrUser from "../../../hooks/useCyfrUser";
 import {
   PrismaGallery,
   GalleryDetail,
@@ -7,6 +10,7 @@ import {
   UserDetail,
 } from "../../../prisma/prismaContext";
 import { uuid } from "../../../utils/helpers";
+import { InferGetServerSidePropsType } from "next";
 
 export async function getServerSideProps(context: any) {
   const authorId = context.params.id;
@@ -26,9 +30,15 @@ type UserGalleryPageProps = {
   user: UserDetail;
 };
 
-const UserGalleryPage = ({ user, galleries }: UserGalleryPageProps) => (
+const UserGalleryPage = ({ user, galleries }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [cyfrUser] = useCyfrUser()
+
+  return (
   <MainLayout sectionTitle="Galleries" subTitle={user?.name || ""}>
     <div className="flex flex-col space-y-4">
+      {cyfrUser && cyfrUser.id === user.id && 
+        <GalleryCreateView  />
+      }
       {galleries.map((gallery) => (
         <div className="relative" key={`user:${user.id}-gallery:${gallery.id}`}>
           <GalleryDetailView gallery={gallery} />
@@ -36,6 +46,6 @@ const UserGalleryPage = ({ user, galleries }: UserGalleryPageProps) => (
       ))}
     </div>
   </MainLayout>
-);
+)};
 
 export default UserGalleryPage;
