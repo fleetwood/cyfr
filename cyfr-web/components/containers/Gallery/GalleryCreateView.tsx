@@ -24,7 +24,7 @@ const GalleryCreateView = ({limit=-1}) => {
 
   const onFilesComplete = async (files: CompleteFile[]) => {
     const setFiles = files.flatMap(f => f.secure_url)
-    log(`\tGalleryCreateView.onFilesComplete ${JSON.stringify(setFiles, null, 2)}`)
+    log(`\tGalleryCreateView.onFilesComplete ${JSON.stringify({files}, null, 2)}`)
     setImages((current) => [...current, ...setFiles])
   }
 
