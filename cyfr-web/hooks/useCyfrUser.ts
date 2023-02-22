@@ -50,7 +50,7 @@ const useCyfrUser = ():[CyfrUser,boolean,unknown] => {
     }
   }
 
-  const query = useQuery([cyfrUserQuery], getCyfrUser, {onSettled,refetchInterval})
+  const query = useQuery([cyfrUserQuery], getCyfrUser, {onSettled})
 
   return [query.data, query.status === "loading", query.error]
 }
@@ -60,12 +60,12 @@ export const useCyfrUserApi = () => {
   const invalidateUser = () => qc.invalidateQueries([cyfrUserQuery])
 
   type updateUserType = {
-    newUser: User | CyfrUser | UserDetail
+    data: User | CyfrUser | UserDetail
   }
   
-  const updateUser = async ({newUser}:updateUserType) => {
+  const updateUser = async ({data}:updateUserType) => {
     try {
-      const {id, name, image} = newUser
+      const {id, name, image} = data
       const update = await sendApi('/user/preferences', {id,name,image})
       if (update) {
         invalidateUser()
@@ -78,7 +78,12 @@ export const useCyfrUserApi = () => {
     }
   }
 
-  return { invalidateUser, updateUser }
+  const getMentions = async (search?:string):Promise<{result:User[]}> => {
+    const results = await getApi(`user/mentions?search=${search}`)
+    return {...results} || []
+  }
+
+  return { invalidateUser, updateUser, getMentions }
 }
 
 export default useCyfrUser

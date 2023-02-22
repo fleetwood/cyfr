@@ -91,7 +91,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
             >
               <div className="w-full mx-auto p-2 sm:p-6 lg:p-4 bg-content">
                 <form className=" flex flex-col" onSubmit={handleSubmit}>
-                  <SimpleQuill limit={128} content={content} setContent={setContent} />
+                  {/* <SimpleQuill limit={128} content={content} setContent={setContent} /> */}
 
                   <div className="w-full grid place-items-end mt-2">
                     <button

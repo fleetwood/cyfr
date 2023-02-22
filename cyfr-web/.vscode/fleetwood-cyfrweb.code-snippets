@@ -20,5 +20,11 @@
 		"prefix": "@tsi",
 		"body": ["// @ts-ignore"],
 		"description": "Ignore the following line in TS linting"
-	}
+	},
+	"json stringigy" : {
+		"scope": "typescript, typescriptreact",
+		"prefix": "jsf",
+		"body": ["JSON.stringify($0,null,1)"],
+		"description": "stringify the json"
+	},
 }
