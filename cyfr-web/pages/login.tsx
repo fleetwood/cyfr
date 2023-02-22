@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect } from "react"
 import {
   getProviders,
   signOut,
@@ -6,47 +6,50 @@ import {
   ClientSafeProvider,
   LiteralUnion,
   getCsrfToken,
-} from "next-auth/react";
-import { BuiltInProviderType } from "next-auth/providers";
-import { useSession } from "../lib/next-auth-react-query";
-import MainLayout from "../components/layouts/MainLayout";
+} from "next-auth/react"
+import { BuiltInProviderType } from "next-auth/providers"
+import { useSession } from "../lib/next-auth-react-query"
+import MainLayout from "../components/layouts/MainLayout"
 import {
   FacebookSVG,
   GoogleSVG,
   TwitterSVG,
   WordpressSVG,
-} from "../components/ui/svgs";
-import { DefaultSession } from "next-auth";
-import { log } from "../utils/log";
-import { apiUrl } from "../utils/api";
+} from "../components/ui/svgs"
+import { DefaultSession } from "next-auth"
+import { apiUrl } from "../utils/api"
+import useDebug from "../hooks/useDebug"
+
+
+const [debug] = useDebug('pages/login')
 
 const Login: FC = (props) => {
   const [providers, setproviders] = useState<Record<
     LiteralUnion<BuiltInProviderType, string>,
     ClientSafeProvider
-  > | null>();
-  const [user, setUser] = useState<DefaultSession["user"]>();
+  > | null>()
+  const [user, setUser] = useState<DefaultSession["user"]>()
   const [session, loading] = useSession({
     required: false,
     queryConfig: {
       staleTime: 60 * 1000 * 60 * 3, // 3 hours
       refetchInterval: 60 * 1000 * 5, // 5 minutes
     },
-  });
+  })
 
   useEffect(() => {
     const setTheProviders = async () => {
-      const setupProviders = await getProviders();
-      setproviders(setupProviders);
-    };
-    setTheProviders();
-  }, []);
+      const setupProviders = await getProviders()
+      setproviders(setupProviders)
+    }
+    setTheProviders()
+  }, [])
 
   useEffect(() => {
     if (session?.user) {
-      setUser(session.user);
+      setUser(session.user)
     }
-  }, [session]);
+  }, [session])
 
   return (
     <MainLayout
@@ -127,17 +130,17 @@ const Login: FC = (props) => {
         )}
       </div>
     </MainLayout>
-  );
-};
+  )
+}
 
 export async function getServerSideProps(context: any) {
-  const csrfToken = await getCsrfToken(context);
-  log("Login SSP", csrfToken);
+  const csrfToken = await getCsrfToken(context)
+  debug('getServerSideProps', csrfToken)
   return {
     props: {
       csrfToken,
     },
-  };
+  }
 }
 
-export default Login;
+export default Login

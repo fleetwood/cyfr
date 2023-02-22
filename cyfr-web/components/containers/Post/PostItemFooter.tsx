@@ -1,5 +1,4 @@
 import useCyfrUser from "../../../hooks/useCyfrUser";
-import { log } from "../../../utils/log";
 import { useCommentContext } from "../../context/CommentContextProvider";
 import { useToast } from "../../context/ToastContextProvider";
 import AvatarList from "../../ui/avatarList";
@@ -9,6 +8,9 @@ import { LoggedIn } from "../../ui/toasty";
 
 import { PostFeed } from "../../../prisma/prismaContext";
 import useFeed from "../../../hooks/useFeed";
+
+import useDebug from "../../../hooks/useDebug"
+const [debug] = useDebug("PostItemFooter")
 
 type PostItemFooterProps = {
   post: PostFeed;
@@ -35,7 +37,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
 
   const handleComment = async () => {
     if (!isLoggedIn()) return;
-    log(`PostItemFooter.handleComment`);
+    debug(`handleComment`);
     setCommentId(post.id);
     showComment();
   };
@@ -43,7 +45,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   const handleLike = async () => {
     if (!isLoggedIn()) return;
 
-    log(`PostItemFooter.handleLike`);
+    debug(`handleLike`);
     const liked = await likePost({ postId: post.id, authorId: cyfrUser!.id });
     if (liked) {
       notify({ type: "success", message: "You liked this post!!!!!!!!!!!" });
@@ -56,7 +58,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   const handleShare = async () => {
     if (!isLoggedIn()) return;
 
-    log(`PostItemFooter.handleShare`);
+    debug(`handleShare`);
     const shared = await sharePost({ postId: post.id, authorId: cyfrUser!.id });
     if (shared) {
       notify({ type: "success", message: "You shared this post" });

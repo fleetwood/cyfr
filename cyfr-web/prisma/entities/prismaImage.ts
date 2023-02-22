@@ -1,9 +1,6 @@
-import { Image, User, Like, ImageDetail,ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude } from "../prismaContext"
-import { log, todo } from "../../utils/log"
-
-const fileName = 'prismaImage'
-const fileMethod = (method:string) => `${fileName}.${method}`
-const trace = (method:string, t?:any) => log(fileMethod(method)+t?' '+JSON.stringify(t,null,2) :'')
+import { Image, Like, ImageDetail,ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude } from "../prismaContext"
+import useDebug from "../../hooks/useDebug"
+const [debug, warn, todo, fileMethod] = useDebug('entities/prismaImage')
 
 const byId = async (id: string): Promise<ImageDetail | null> => {
   try {
@@ -25,7 +22,7 @@ const byId = async (id: string): Promise<ImageDetail | null> => {
  * @returns ImageFeed[]
  */
 const all = async (): Promise<ImageFeed[] | []> => {
-  trace('all')
+  debug('all')
   try {
     return await prisma.image.findMany({
       where: {
@@ -46,10 +43,10 @@ const all = async (): Promise<ImageFeed[] | []> => {
 const createImage = async (props: ImageCreateProps): Promise<Image> => {
   const data = { ...props }
   try {
-    trace('createImage', data)
+    debug('createImage', data)
     return await prisma.image.create({ data })
   } catch (error) {
-    trace("\tcreateImage ERROR: ", error)
+    warn("createImage ERROR: ", error)
     throw { code: "images/create", message: "Image was not created!" }
   }
 }
@@ -57,7 +54,7 @@ const createImage = async (props: ImageCreateProps): Promise<Image> => {
 const deleteImage = async ({imageId, authorId}: ImageDeleteProps): Promise<Image> => {
   try {
     todo('Need to make sure the user in session matches the user making the request')
-    trace("deleteImage", {imageId, authorId})
+    debug("deleteImage", {imageId, authorId})
     return await prisma.image.update({ 
       where: {
         id: imageId,
@@ -67,7 +64,7 @@ const deleteImage = async ({imageId, authorId}: ImageDeleteProps): Promise<Image
       }
     })
   } catch (error) {
-    trace("deleteImage ERROR: ", error)
+    debug("deleteImage ERROR: ", error)
     throw { code: "images/create", message: "Image was not created!" }
   }
 }
@@ -75,7 +72,7 @@ const deleteImage = async ({imageId, authorId}: ImageDeleteProps): Promise<Image
 const likeImage = async (props: ImageEngageProps): Promise<Like> => {
   const data = { ...props }
   try {
-    trace("likeImage", data)
+    debug("likeImage", data)
     const success = await prisma.like.create({
       data: {...props}
     })
@@ -84,7 +81,7 @@ const likeImage = async (props: ImageEngageProps): Promise<Like> => {
     }  
     throw new Error("Unable to connect like to image")
   } catch (error) {
-    log("\tERROR: ", error)
+    warn("likeImage ERROR: ", error)
     throw { code: fileMethod('likeImage'), ...{error} }
   }
 }
@@ -92,7 +89,7 @@ const likeImage = async (props: ImageEngageProps): Promise<Like> => {
 const shareImage = async (props: ImageEngageProps): Promise<Image> => {
   const { authorId, imageId } = props
   try {
-    log("Images.share", props)
+    debug("shareImage", props)
     const image = await prisma.image.findUnique({ where: { id: imageId } })
 
     const updateImage = await prisma.image.update({
@@ -102,7 +99,7 @@ const shareImage = async (props: ImageEngageProps): Promise<Image> => {
 
     return updateImage
   } catch (error) {
-    log("\tERROR: ", error)
+    warn("shareImage ERROR: ", error)
     throw { code: "images/share", message: "Image not shared!" }
   }
 }
@@ -110,9 +107,9 @@ const shareImage = async (props: ImageEngageProps): Promise<Image> => {
 const commentOnImage = async (props: any): Promise<Image> => {
   const {commentId, authorId, content} = props
   try {
-    throw {code: fileMethod, message: 'commentOnImage not implemented'}
+    debug("comment", {...props})
+    throw {code: fileMethod('commentOnImage'), message: 'commentOnImage not implemented'}
 
-    log("Images.comment", {...props})
     // const success = await prisma.image.create({
     //   data: {
     //     authorId,
@@ -129,7 +126,7 @@ const commentOnImage = async (props: any): Promise<Image> => {
     //   })
     // }
   } catch (error) {
-    log("\tERROR: ", error)
+    warn("commentOnImage ERROR: ", error)
     throw error
   }
 }

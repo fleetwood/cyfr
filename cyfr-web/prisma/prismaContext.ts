@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client"
+import useDebug from "../hooks/useDebug"
 import { __prod__ } from "../utils/constants"
-import { log } from "../utils/log"
-
+const [info] = useDebug("prismaContext")
 declare global {
   var prisma: PrismaClient
 }
@@ -13,10 +13,10 @@ declare global {
 export var prisma: PrismaClient
 
 if (__prod__) {
-  log(`prisma is running on prod`)
+  info(`prisma is running on prod`)
   prisma = new PrismaClient()
 } else {
-  log(`prisma is running globally`)
+  info(`prisma is running globally`)
   if (!global.prisma) {
     global.prisma = new PrismaClient()
   }

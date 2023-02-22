@@ -2,18 +2,14 @@ import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { GalleryCreateProps, GalleryEngageProps, GalleryFeed, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostFeed } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
-import { log } from "../utils/log"
+import useDebug from "./useDebug"
 
 export const mainFeedQuery = ['feed', { type: 'main'}]
 export const postFeedQuery = ['feed', { type: 'post'}]
 export const galleryFeedQuery = ['feed', { type: 'gallery'}]
 export const imageFeedQuery = ['feed', { type: 'image'}]
 
-const fileName = "useFeed";
-const fileMethod = (method: string) => `${fileName}.${method}`;
-const trace = (method: string, t?: any) =>
-  log(fileMethod(method) + t ? " " + JSON.stringify(t, null, 2) : "");
-
+const [debug] = useDebug("useFeed")
 
 export async function getMainFeed():Promise<MainFeed[]|null> {
   const data = await getApi(`feed/main`)
@@ -64,9 +60,7 @@ export const useFeed = ({type}:FeedTypes) => {
     {
       onSettled(data,error) {
         if (error || data === null) {
-          log(
-            `\tuseMainFeed.onSettled(${mainFeedQuery}) ERROR ${JSON.stringify({ error, data })}`
-          )
+          debug(`onSettled(${mainFeedQuery}) ERROR`,{ error, data })
         }
         if (data) {
             setFeed(data)
@@ -90,7 +84,7 @@ export const useFeed = ({type}:FeedTypes) => {
   const likePost = async (props: PostEngageProps) => await send("post/like", props)
 
   const createGallery = async (props: GalleryCreateProps) => {
-    trace('createGallery', props)
+    debug('createGallery', props)
     return await send("gallery/create", props)
   }
 
@@ -107,7 +101,7 @@ export const useFeed = ({type}:FeedTypes) => {
 
   const invalidateFeed = (t?:FeedTypes) => {
     const q = t ? ['feed', {type: t.type}] : ['feed']
-    log(`invalidating ${JSON.stringify(q)}`)
+    debug(`invalidateFeed`,q)
     qc.invalidateQueries(q)
   }
   

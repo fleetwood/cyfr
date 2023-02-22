@@ -18,8 +18,9 @@ import {
   ResponseError,
   GetResponseError,
 } from "../../types/response"
-import { log } from "../../utils/log"
 import { dedupe } from "../../utils/helpers"
+import useDebug from "../../hooks/useDebug"
+const [debug, warn] = useDebug('entities/prismaUser')
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {
@@ -44,11 +45,11 @@ const follow = async (follows: string, follower: string): Promise<Follow> => {
     }
     return follow
   } catch (error) {
-    log(`api/follow error...
-      \n${stringify({ follows, follower })}
-      \n${stringify(data)}
-      \n${JSON.stringify(error, null, 2)}
-    `)
+    debug(`follow error...`, {
+      ...{follows, follower},
+      ...{data},
+      ...{error}
+    })
     throw GenericResponseError(error as unknown as ResponseError)
   }
 }
@@ -127,9 +128,7 @@ const byEmail = async (email: string): Promise<CyfrUser|null> => {
     // log(`user.entity.byEmail found ${user.name}`)
     return user as CyfrUser
   } catch (error) {
-    log(`user.entity.byEmail FAIL
-      ${JSON.stringify(error, null, 2)}
-    `)
+    warn(`byEmail FAIL`,error)
     throw error
   }
 }
@@ -187,7 +186,7 @@ const canMention = async (id: string, search?:string) => {
       ], 'id')
       .slice(0,10) as unknown as User[]
   } catch (error) {
-    log(`prismaUser.canMention broke ${JSON.stringify(error, null, 2)}`)
+    warn(`canMention broke`, error)
     throw error
   }
 }
@@ -244,7 +243,7 @@ const userInSession = async (context: GetSessionParams | undefined) => {
     }
     return user
   } catch (error) {
-    log(`Error getting userInSession`)
+    warn(`userInSession ERROR`)
     return null
   }
 }
@@ -271,7 +270,7 @@ const userCurrentlyOnline = async (id:string) => {
     }
     return user._count.sessions > 0
   } catch (error) {
-    log(`Error getting userInSession`)
+    warn(`userCurrentlyOnline error`)
     return null
   }
 }

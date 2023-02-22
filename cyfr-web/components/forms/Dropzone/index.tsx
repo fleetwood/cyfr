@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react"
 import { FileRejection, useDropzone } from 'react-dropzone'
 import { uuid } from "../../../utils/helpers"
-import { log, todo } from "../../../utils/log"
 import UploadFileView from "./UploadingFileView"
 import { UploadableFile, CompleteFile, DropzoneProps } from "./types.defs"
+import useDebug from "../../../hooks/useDebug"
+const [debug] = useDebug("Dropzone/index")
 
 function Dropzone({limit=-1, onUploadComplete, children}:DropzoneProps) {
   const [files, setFiles] = useState<UploadableFile[]>([])
@@ -13,9 +14,7 @@ function Dropzone({limit=-1, onUploadComplete, children}:DropzoneProps) {
   const getLimit = (a:any[]) => limit>0?limit:a.length
 
   const onDrop = useCallback((acceptedFiles:File[], rejectedFiles:FileRejection[]) => {
-    log(`Dropzone.onDrop(
-      ${JSON.stringify({acceptedFiles, rejectedFiles}, null, 2)}
-    )`)
+    debug(`onDrop`,{acceptedFiles, rejectedFiles})
     
     const mapAccepted = acceptedFiles.slice(0, getLimit(acceptedFiles)).map(file => ({file, errors: [], id: uuid()}))
     const mapRejected = [
@@ -34,7 +33,7 @@ function Dropzone({limit=-1, onUploadComplete, children}:DropzoneProps) {
   useEffect(() => {
     if (files.length > 0 && completedFiles.length===files.length) {
       if (onUploadComplete) {
-        log(`Dropzone.useEffect [completedFiles ${completedFiles.length}/${files.length}]`)
+        debug(`useEffect completedFiles: ${completedFiles.length}/${files.length}`)
         onUploadComplete(completedFiles)
       }
     }

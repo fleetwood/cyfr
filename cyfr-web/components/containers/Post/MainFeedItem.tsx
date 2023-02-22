@@ -4,8 +4,10 @@ import PostItemFooter from "./PostItemFooter"
 import ReactHtmlParser from "react-html-parser"
 import { MainFeed } from "../../../prisma/types"
 import Link from "next/link"
-import { log } from "../../../utils/log"
 import HtmlContent from "../../ui/htmlContent"
+
+import useDebug from "../../../hooks/useDebug"
+const [debug] = useDebug("MainFeedItem")
 
 type MainFeedItemProps = {
   item: MainFeed

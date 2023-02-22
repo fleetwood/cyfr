@@ -1,4 +1,5 @@
 export const __prod__ = process.env.NODE_ENV === 'production'
+export const __logLevel__ = process.env.NEXT_PUBLIC_LOG_LEVEL || 'ERROR'
 
 export const __proto__ = process.env.NEXT_PUBLIC_PROTOCOL || 'http'
 export const __host__ = process.env.NEXT_PUBLIC_HOST || 'localhost'

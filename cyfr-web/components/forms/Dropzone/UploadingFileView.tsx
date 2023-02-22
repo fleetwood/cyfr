@@ -1,38 +1,38 @@
-import { useEffect, useState } from "react";
-import { cloudinary } from "../../../utils/cloudinary";
-import { FileError } from "react-dropzone";
-import { log, logError } from "../../../utils/log";
-import Spinner from "../../ui/spinner";
-import { CompleteFile, UploadFileViewProps } from "./types.defs";
-import { uuid } from "../../../utils/helpers";
+import { useEffect, useState } from "react"
+import { cloudinary } from "../../../utils/cloudinary"
+import { FileError } from "react-dropzone"
+import Spinner from "../../ui/spinner"
+import { CompleteFile, UploadFileViewProps } from "./types.defs"
+import useDebug from "../../../hooks/useDebug"
+const [debug] = useDebug("Dropzone/UploadingFileView")
 
 const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
-  const [fileProgress, setFileProgress] = useState<number>(0);
-  const [fileErrors, setFileErrors] = useState<FileError[]>([]);
-  const [preview, setPreview] = useState<CompleteFile | null>(null);
+  const [fileProgress, setFileProgress] = useState<number>(0)
+  const [fileErrors, setFileErrors] = useState<FileError[]>([])
+  const [preview, setPreview] = useState<CompleteFile | null>(null)
 
   const progressStyle = (e: boolean, p: number) =>
-    e ? "progress-error" : p < 100 ? "progress-info" : "progress-success";
+    e ? "progress-error" : p < 100 ? "progress-info" : "progress-success"
 
   const onProgress = (p: number) => {
-    setFileProgress(p);
-  };
+    setFileProgress(p)
+  }
 
   const onFileComplete = (e:any) => {
     if (onComplete) onComplete(e)
-  };
+  }
 
   useEffect(() => {
     async function upload() {
-      const url = await cloudinary.upload({file: file.file, onProgress, onComplete: onFileComplete });
+      const url = await cloudinary.upload({file: file.file, onProgress, onComplete: onFileComplete })
       if (url) {
         // @ts-ignore
-        const file = JSON.parse(url) as unknown as CompleteFile;
-        setPreview((c) => file);
+        const file = JSON.parse(url) as unknown as CompleteFile
+        setPreview((c) => file)
       }
     }
-    upload();
-  }, []);
+    upload()
+  }, [])
 
   return (
     <div className="relative mb-2" key={file.id}>
@@ -54,7 +54,7 @@ const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
         <div>{e.message}</div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default UploadFileView;
+export default UploadFileView

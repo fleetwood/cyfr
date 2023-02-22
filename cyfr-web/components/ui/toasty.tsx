@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
-import { log } from "../../utils/log";
 import { useToast } from "../context/ToastContextProvider";
+import useDebug from "../../hooks/useDebug";
+const [debug] = useDebug('toasty')
 
 type ToastType = {
   message: ReactNode | string

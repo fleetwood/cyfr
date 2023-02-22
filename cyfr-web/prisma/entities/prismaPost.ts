@@ -1,9 +1,6 @@
-import { log } from "../../utils/log"
 import { Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed, PostFeedInclude } from "../prismaContext"
-
-const fileName = 'prismaPost'
-const fileMethod = (method:string) => `${fileName}.${method}`
-const trace = (method:string, t?:any) => log(fileMethod(method)+t?' '+JSON.stringify(t,null,2) :'')
+import useDebug from "../../hooks/useDebug"
+const [debug, warn, fileMethod] = useDebug('entities/prismaPosts')
 
 const byId = async (id: string): Promise<PostDetail | null> => {
   try {
@@ -43,9 +40,9 @@ const byId = async (id: string): Promise<PostDetail | null> => {
     if (result) {
       return result as unknown as PostDetail
     }
-    throw {code: fileMethod('prismaPost.byId'), message: 'Failed fetching post'}
+    throw {code: fileMethod('byId'), message: 'Failed fetching post'}
   } catch (error) {
-    throw { code: "posts/byId", message: "No posts were returned!" }
+    throw { code: fileMethod("byId"), message: "No posts were returned!" }
   }
 }
 
@@ -55,7 +52,7 @@ const byId = async (id: string): Promise<PostDetail | null> => {
  * @returns PostFeed[]
  */
 const all = async (): Promise<PostFeed[] | []> => {
-  trace('all')
+  debug('all')
   try {
     return await prisma.post.findMany({
       where: {
@@ -70,7 +67,7 @@ const all = async (): Promise<PostFeed[] | []> => {
       ],
     }) as unknown as PostFeed[]
   } catch (error) {
-    throw { code: "posts/all", message: "No posts were returned!" }
+    throw { code: fileMethod('all'), message: "No posts were returned!" }
   }
 }
 
@@ -94,17 +91,17 @@ const createPost = async (props: PostCreateProps): Promise<Post> => {
   }
 
   try {
-    trace('createPost', data)
+    debug('createPost', data)
     return await prisma.post.create({ data })
   } catch (error) {
-    trace("\tcreatePost ERROR: ", error)
-    throw { code: "posts/create", message: "Post was not created!" }
+    warn("createPost ERROR: ", error)
+    throw { code: fileMethod("createPost"), message: "Post was not created!" }
   }
 }
 
 const deletePost = async ({postId, authorId}: PostDeleteProps): Promise<Post> => {
   try {
-    trace("deletePost", {postId, authorId})
+    debug("deletePost", {postId, authorId})
     return await prisma.post.update({ 
       where: {
         id: postId,
@@ -114,15 +111,15 @@ const deletePost = async ({postId, authorId}: PostDeleteProps): Promise<Post> =>
       }
     })
   } catch (error) {
-    trace("deletePost ERROR: ", error)
-    throw { code: "posts/create", message: "Post was not created!" }
+    warn("deletePost ERROR: ", error)
+    throw { code: fileMethod("deletePost"), message: "Post was not deleted!" }
   }
 }
 
 const likePost = async (props: PostEngageProps): Promise<Like> => {
   const data = { ...props }
   try {
-    trace("likePost", data)
+    debug("likePost", data)
     const success = await prisma.like.create({
       data: {...props}
     })
@@ -133,7 +130,7 @@ const likePost = async (props: PostEngageProps): Promise<Like> => {
     }
     throw new Error("Unable to find user and post to like")
   } catch (error) {
-    log("\tERROR: ", error)
+    warn("likePost ERROR: ", error)
     throw { code: fileMethod('likePost'), ...{error} }
   }
 }
@@ -141,7 +138,7 @@ const likePost = async (props: PostEngageProps): Promise<Like> => {
 const sharePost = async (props: PostEngageProps): Promise<Post> => {
   const { authorId, postId } = props
   try {
-    log("Posts.share", props)
+    debug("sharePost", props)
     const post = await prisma.post.findUnique({ where: { id: postId } })
 
     const newShare = await prisma.share.create({
@@ -162,15 +159,15 @@ const sharePost = async (props: PostEngageProps): Promise<Post> => {
     })
     return updatePost
   } catch (error) {
-    log("\tERROR: ", error)
-    throw { code: "posts/share", message: "Post not shared!" }
+    warn("sharePost ERROR: ", error)
+    throw { code: fileMethod("sharePost"), message: "Post not shared!" }
   }
 }
 
 const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
   const {commentId, authorId, content} = props
   try {
-    log("Posts.comment", {...props})
+    debug("commentonPost", {...props})
     const success = await prisma.post.create({
       data: {
         authorId,
@@ -187,8 +184,8 @@ const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
       })
     }
   } catch (error) {
-    log("\tERROR: ", error)
-    throw { code: "posts/comment", message: "Post not commented!" }
+    warn("commentOnPost ERROR: ", error)
+    throw { code: fileMethod("commentOnPost"), message: "Post not commented!" }
   }
 }
 

@@ -1,8 +1,10 @@
 import React, { createContext, FormEvent, ReactNode, useContext, useEffect, useRef, useState } from "react"
 import useCyfrUser from "../../hooks/useCyfrUser"
-import { log } from "../../utils/log"
 import { useToast } from "./ToastContextProvider"
 import useFeed from "../../hooks/useFeed"
+
+import useDebug from "../../hooks/useDebug"
+const [debug] = useDebug("CommentContextProvider")
 
 type CommentProviderProps = {
   children?: ReactNode
@@ -56,7 +58,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
     hideComment()
 
     if (post) {
-      log(`CommentContextProvider.handleSubmit success`)
+      debug(`handleSubmit success`)
       invalidateFeed()
     } else {
       notify({

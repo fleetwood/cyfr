@@ -3,7 +3,8 @@ import { PrismaUser, User } from "../../../prisma/prismaContext"
 
 import { getSession } from "next-auth/react"
 import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response"
-import { log, logError, todo } from "../../../utils/log"
+import useDebug from "../../../hooks/useDebug"
+const [debug, todo, warn] = useDebug('api/user/mentions')
 
 export default async function handle(
   req: NextApiRequest,
@@ -20,11 +21,11 @@ export default async function handle(
       res.end()
       return
     } else {
-      // log(`api/user/mentions ${JSON.stringify({user: user.id, search}, null, 1)}`)
+      debug(`handle`,{user: user.id, search})
       const result = await PrismaUser.canMention(user!.id, search)
 
       if (result) {
-        // log(`\tapi/user/mentions result: ${JSON.stringify(result, null, 1)}`)
+        debug('handle: result',result)
         res.status(200).json({ result })
         res.end()
         return
@@ -33,7 +34,7 @@ export default async function handle(
       }
     }
   } catch (e: Error | ResponseError | any) {
-    logError("\tFAIL", e)
+    warn("FAIL", e)
     const error = GetResponseError(e)
     res.status(200).json({ })
   }

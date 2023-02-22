@@ -1,4 +1,5 @@
-import { log } from "./log";
+import useDebug from "../hooks/useDebug"
+const [debug, warn] = useDebug('utils/cloudinary')
 
 type UploadingProps = {
     file: File
@@ -115,7 +116,7 @@ const upload = ({file, onProgress, onComplete}:UploadingProps) => new Promise((r
     }
 
     xhr.onerror = (e) => {
-        log(`cloudinary.uploadFile.onError: ${JSON.stringify(e)}`)
+        warn(`uploadFile.onError:`, e)
         rej(e)
     }
 

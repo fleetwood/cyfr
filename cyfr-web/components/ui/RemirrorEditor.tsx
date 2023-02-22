@@ -31,8 +31,9 @@ import {
   useState,
 } from "react"
 import { useCyfrUserApi } from "../../hooks/useCyfrUser"
-import { log } from "../../utils/log"
 import { Node } from "@remirror/pm/dist-types/model"
+import useDebug from "../../hooks/useDebug"
+const [debug] = useDebug("RemirrorEditor")
 
 type MentionItem = { id: string, label: string }
 
