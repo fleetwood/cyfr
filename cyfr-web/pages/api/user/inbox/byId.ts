@@ -10,7 +10,7 @@ export default async function handle(
 ) {
   try {
     const session = await getSession({ req });
-    const {partyId, userId, threadId} = req.body.body
+    const { userId, threadId } = req.body.body
     
     if (
       session === null ||
@@ -24,7 +24,7 @@ export default async function handle(
     } else {
       // log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nYES USER in session.... ${JSON.stringify(session, null, 2)}`)
       todo('This should only get inbox that the user is included in')
-      const result = PrismaComment.inbox({partyId, userId, threadId}) as unknown as CommentThread
+      const result = PrismaComment.threadById(userId, threadId) as unknown as CommentThread
       if (!result) {
         res.status(200).json({});
         res.end();

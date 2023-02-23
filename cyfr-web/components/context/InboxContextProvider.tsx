@@ -4,42 +4,44 @@ import { useToast } from "./ToastContextProvider"
 import useFeed from "../../hooks/useFeed"
 
 import useDebug from "../../hooks/useDebug"
-const {debug} = useDebug({fileName: "CommentContextProvider"})
+const {debug} = useDebug({fileName: "InboxContextProvider"})
 
-type CommentProviderProps = {
+type InboxProviderProps = {
   children?: ReactNode
 }
 
-type CommentProviderType = {
-  commentId: string|null
-  setCommentId: Function
-  showComment: Function
-  hideComment: Function
+type InboxProviderType = {
+  content: string|null
+  setContent: Function
+  partyId: string|null
+  setPartyId: Function
+  show: Function
+  hide: Function
 }
 
-export const CommentContext = createContext({} as CommentProviderType)
-export const useCommentContext = () => useContext(CommentContext)
+export const InboxContext = createContext({} as InboxProviderType)
+export const useCommentContext = () => useContext(InboxContext)
 
-const CommentProvider = ({ children }: CommentProviderProps) => {
+const InboxProvider = ({ children }: InboxProviderProps) => {
   const [cyfrUser] = useCyfrUser()
-  const {commentOnPost, invalidateFeed} = useFeed({type: 'post'})
+  const {sendMessage, invalidateFeed} = useFeed({type: 'inbox'})
   const {notify} = useToast()
   
-  const commentPostModal = 'commentPostModal'
+  const inboxUserModal = 'inboxUserModal'
   const modal = useRef<HTMLInputElement>(null)
   
   const [checked, setChecked] = useState(false)
   const [content, setContent] = useState<string | null>(null)
-  const [commentId, setCommentId] = useState<string|null>(null)
+  const [partyId, setPartyId] = useState<string|null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
 
   // @ts-ignore
-  const showComment = () => setChecked(() => true)
+  const show = () => setChecked(() => true)
 
   // @ts-ignore
-  const hideComment = () => {
+  const hide = () => {
     setContent(null)
-    setCommentId(null)
+    setPartyId(null)
     setChecked(() => false)
   }
 
@@ -49,15 +51,15 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
       return
     }
 
-    const post = await commentOnPost({
+    const thread = await sendMessage({
+      partyId: partyId!,
+      ownerId: cyfrUser.id,
       content: content!,
-      authorId: cyfrUser.id,
-      commentId: commentId!,
     })
 
-    hideComment()
+    hide()
 
-    if (post) {
+    if (thread) {
       debug(`handleSubmit success`)
       invalidateFeed()
     } else {
@@ -69,19 +71,19 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
   }
 
   useEffect(() => {
-    const disabled = !cyfrUser || !commentId || !content || content.length < 1
+    const disabled = !cyfrUser || !partyId || !content || content.length < 1
     setIsDisabled(() => disabled)
   }, [content])
 
-  const value={commentId, setCommentId, showComment, hideComment}
+  const value={content, setContent, partyId, setPartyId, show, hide}
 
   return (
-    <CommentContext.Provider value={value}>
-        <input type="checkbox" ref={modal} id={commentPostModal} className="modal-toggle" checked={checked} onChange={()=>{}} />
+    <InboxContext.Provider value={value}>
+        <input type="checkbox" ref={modal} id={inboxUserModal} className="modal-toggle" checked={checked} onChange={()=>{}} />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box bg-opacity-0 overflow-visible scrollbar-hide">
             
-            <label onClick={hideComment} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+            <label onClick={hide} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 
             <div className="
               mb-3 rounded-xl w-full 
@@ -98,7 +100,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
                       className="btn lg:btn-sm p-2 bg-secondary text-primary-content disabled:bg-opacity-40 disabled:text-primary"
                       onClick={handleSubmit}
                       >
-                      Comment
+                      Send
                     </button>
                   </div>
                 </form>
@@ -107,8 +109,8 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
           </div>
         </div>
       {children}
-    </CommentContext.Provider>
+    </InboxContext.Provider>
   )
 }
 
-export default CommentProvider
+export default InboxProvider

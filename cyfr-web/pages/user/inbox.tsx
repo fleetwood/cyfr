@@ -11,43 +11,20 @@ import Avatar from "../../components/ui/avatar"
 import { uniqueKey } from "../../utils/helpers"
 import CommentThreadDetail from "../../components/containers/Comment/CommentThreadDetail"
 import InboxThreadList from "../../components/containers/Comment/InboxThreadList"
+import { CyfrLogo } from "../../components/ui/icons"
+import useFeed from "../../hooks/useFeed"
 
 const {debug, info, todo} = useDebug({fileName: "pages/user/inbox"})
 
-export async function getServerSideProps(context: GetSessionParams | undefined) {
-    const user = await PrismaUser.userInSession(context)
-    const inboxes = user ? await PrismaComment.userInbox(user.id) : []
-    debug('getServerSideProps', {user, inboxes})
-
-    return { props: { user, inboxes: inboxes } }
-}
-
-type InboxProps = {
-    cyfrUser: CyfrUser,
-    inboxes: CommentThreadDetails[]
-}
-
-const Inbox = ({inboxes}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Inbox = (props:any) => {
     useSession({required: true, redirectTo: '/login'})
     const [cyfrUser] = useCyfrUser()
-    const [threads, setThreads] = useState<CommentThreadDetails[]>(inboxes)
+    const {feed, sendMessage, invalidateFeed} = useFeed({type: 'inbox'})
     const [activeThread, setActiveThread] = useState<CommentThreadDetails>()
 
-    const getInboxes = async () => {
-        console.log('::getInboxes')
-        debug('getInboxes(')
-        todo('This should be in a query for invalidation purposes')
-        const inboxes = await getApi('user/inbox')
-        if (inboxes) {
-            debug(`getInboxes result:`, {inboxes})
-        } else {
-            info('getInboxes fail')
-        }
-    }
-
     useEffect(() => {
-        debug('useEffect', threads)
-        getInboxes()
+        debug('useEffect', feed)
+        invalidateFeed({type: 'inbox'})
     }, [cyfrUser])
 
   return (
@@ -57,11 +34,15 @@ const Inbox = ({inboxes}: InferGetServerSidePropsType<typeof getServerSideProps>
                 bg-base-100 rounded-lg p-2
                 flex flex-col flex-grow flex-wrap space-x-4
                 sm:flex-row sm:flex-nowrap">
-            {cyfrUser &&
             <div className="w-fixed w-full flex-shrink flex-grow-0">
-                <InboxThreadList cyfrUser={cyfrUser} threads={inboxes} setActive={setActiveThread} />
+                <label htmlFor={'inboxUserModal'} className="btn btn-info space-x-2">
+                    <CyfrLogo className="animate-pulse text-info-content w-[1.25rem]" />
+                    <span className="text-info-content">Send a Message</span>
+                </label>
+                {cyfrUser &&
+                    <InboxThreadList cyfrUser={cyfrUser} threads={feed} setActive={setActiveThread} />
+                }
             </div>
-            }
             {cyfrUser &&
             <div className="w-full min-h-screen flex-grow m-0 overflow-auto scrollbar-hide relative">
                 {activeThread && 

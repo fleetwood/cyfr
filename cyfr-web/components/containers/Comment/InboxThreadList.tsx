@@ -45,6 +45,7 @@ const InboxThreadList = ({
                 >
                   <Avatar user={u.user} sz="sm" link={false} />
                   <span>{u.user.name}</span>
+                  <span className="float-right">({thread.comments.length})</span>
                 </div>
               ))}
           </div>

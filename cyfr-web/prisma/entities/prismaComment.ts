@@ -1,6 +1,36 @@
 import useDebug from "../../hooks/useDebug"
-import { CommentThreadDetailsInclude, InboxProps } from "../prismaContext"
+import { CommentThreadDetails, CommentThreadDetailsInclude, UpsertInboxProps } from "../prismaContext"
 const {debug, fileMethod} = useDebug({fileName: 'entities/prismaComment'})
+
+const threadById = async (threadId: string, userId: string): Promise<CommentThreadDetails> => {
+  try {
+    debug(`userInbox`, userId)
+    const inbox = await prisma.commentThread.findFirst({
+      where: {
+        id: threadId,
+        commune: {
+          users: {
+            some: {
+              id : userId
+            }
+          }
+        }
+      },
+      // @ts-ignore
+      include: CommentThreadDetailsInclude
+    })
+    debug(`userInbox result`, {userId, inbox})
+    if (inbox) {
+      return inbox as unknown as CommentThreadDetails
+    }
+    throw {
+      code: fileMethod(`userInbox`),
+      message: "Unable to obtain inbox for user",
+    }
+  } catch (error) {
+    throw error
+  }
+}
 
 const userInbox = async (userId: string): Promise<any[]> => {
   try {
@@ -19,6 +49,7 @@ const userInbox = async (userId: string): Promise<any[]> => {
           }
         }
       },
+      // @ts-ignore
       include: CommentThreadDetailsInclude
     })
     debug(`userInbox result`, {userId, inbox})
@@ -34,39 +65,31 @@ const userInbox = async (userId: string): Promise<any[]> => {
   }
 }
 
-const inbox = async ({
+const upsertInbox = async ({
   threadId,
   userId,
   partyId,
-}: InboxProps): Promise<any> => {
+  messages
+}: UpsertInboxProps): Promise<any> => {
   try {
-    const create = {
-      entity: "INBOX",
-      requiredRole: "PRIVATE",
-      commune: {
-        create: {
-          entity: "INBOX",
-          ownerId: userId,
-          users: {
-            createMany: {
-              data: [
-                { userId: userId, role: "OWNER" },
-                { userId: partyId, role: "OWNER" },
-              ],
-            },
-          },
-        },
-      },
+    const comments = {
+      createMany: {
+        data: messages?.map(m => { return {...m, threadType: 'INBOX'}}) || []
+      }
     }
-
     const thread = await prisma.commentThread.upsert({
       where: {
         id: threadId,
       },
-      update: {},
+      update: comments,
       create: {
         entity: "INBOX",
         requiredRole: "PRIVATE",
+        comments: {
+          createMany: {
+            data: messages?.map(m => { return {...m, threadType: 'INBOX'}}) || []
+          }
+        },
         commune: {
           create: {
             entity: "INBOX",
@@ -79,12 +102,14 @@ const inbox = async ({
                 ],
               },
             },
+            
           },
-        },
+        }
       },
+      // @ts-ignore
       include: CommentThreadDetailsInclude,
     })
-    debug("inbox result", { create, thread })
+    debug("inbox result", { thread })
     if (thread) {
       return thread
     }
@@ -97,4 +122,4 @@ const inbox = async ({
   }
 }
 
-export const PrismaComment = { userInbox, inbox }
+export const PrismaComment = { threadById, userInbox, upsertInbox }
