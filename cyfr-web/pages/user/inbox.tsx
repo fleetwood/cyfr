@@ -9,6 +9,8 @@ import { getApi } from "../../utils/api"
 import { InferGetServerSidePropsType } from "next";
 import Avatar from "../../components/ui/avatar"
 import { uniqueKey } from "../../utils/helpers"
+import CommentThreadDetail from "../../components/containers/Comment/CommentThreadDetail"
+import InboxThreadList from "../../components/containers/Comment/InboxThreadList"
 
 const {debug, info, todo} = useDebug({fileName: "pages/user/inbox"})
 
@@ -50,39 +52,22 @@ const Inbox = ({inboxes}: InferGetServerSidePropsType<typeof getServerSideProps>
 
   return (
     <MainLayout pageTitle="Inbox" sectionTitle="Inbox">
-        <div className="bg-base-100 w-full p-2 rounded-lg text-base-content columns-8">
+        <div className="
+                w-full min-h-screen max-h-screen 
+                bg-base-100 rounded-lg p-2
+                flex flex-col flex-grow flex-wrap space-x-4
+                sm:flex-row sm:flex-nowrap">
             {cyfrUser &&
-            <>
-            <div className="col-2">
-                {threads && threads.map(thread => (
-                    <div key={uniqueKey(cyfrUser, thread)}>
-                    {thread.commune.users.filter(u => u.userId !== cyfrUser.id).map(u => (
-                        <div className={`
-                            flex m-auto space-y-2 cursor-pointer p-2 rounded-md 
-                            transition-all duration-200 ease-out
-                            ${activeThread && activeThread.id === thread.id ? `bg-primary bg-opacity-30` : ''}
-                            hover:bg-base-300
-                            `}
-                            key={uniqueKey(cyfrUser, thread, u)}
-                            onClick={() => setActiveThread(() => thread)}
-                            >
-                            <Avatar user={u.user} sz="sm" />{u.user.name}
-                        </div>
-                    ))}
-                    </div>
-                ))}
+            <div className="w-fixed w-full flex-shrink flex-grow-0">
+                <InboxThreadList cyfrUser={cyfrUser} threads={inboxes} setActive={setActiveThread} />
             </div>
-            <div className="col-6">
-                {activeThread && (
-                    <div>
-                        <h2>Thread</h2>
-                        {activeThread.comments.map(comment => (
-                            <div>{comment.content}</div>
-                        ))}
-                    </div>
-                )}
+            }
+            {cyfrUser &&
+            <div className="w-full min-h-screen flex-grow m-0 overflow-auto scrollbar-hide relative">
+                {activeThread && 
+                    <CommentThreadDetail thread={activeThread} user={cyfrUser} />
+                }
             </div>
-            </>
             }
         </div>
     </MainLayout>
