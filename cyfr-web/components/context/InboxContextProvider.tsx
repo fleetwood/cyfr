@@ -53,8 +53,8 @@ const InboxProvider = ({ children }: InboxProviderProps) => {
 
     const thread = await sendMessage({
       partyId: partyId!,
-      ownerId: cyfrUser.id,
-      content: content!,
+      userId: cyfrUser.id,
+      messages: [{authorId: cyfrUser.id, content: content!}]
     })
 
     hide()

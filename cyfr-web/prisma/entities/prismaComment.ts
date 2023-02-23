@@ -72,16 +72,17 @@ const upsertInbox = async ({
   messages
 }: UpsertInboxProps): Promise<any> => {
   try {
-    const comments = {
-      createMany: {
-        data: messages?.map(m => { return {...m, threadType: 'INBOX'}}) || []
-      }
-    }
     const thread = await prisma.commentThread.upsert({
       where: {
         id: threadId,
       },
-      update: comments,
+      update: {
+        comments: {
+          createMany: {
+            data: messages?.map(m => { return {...m, threadType: 'INBOX'}}) || []
+          }
+        }
+      },
       create: {
         entity: "INBOX",
         requiredRole: "PRIVATE",

@@ -1,10 +1,13 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import useDebug from "../../../hooks/useDebug"
 import { CommentThreadDetails, CyfrUser, User } from "../../../prisma/prismaContext"
 import Avatar from "../../ui/avatar"
 import ReactHtmlParser from "react-html-parser"
 import RemirrorEditor from "../../ui/RemirrorEditor"
 import { timeDifference, uniqueKey } from "../../../utils/helpers"
+import useFeed from "../../../hooks/useFeed"
+import { ChatSendIcon } from "../../ui/icons"
+import { useToast } from "../../context/ToastContextProvider"
 const {debug} = useDebug({fileName: 'CommentThreadDetail', level: 'DEBUG'})
 
 type CommentThreadDetailProps = {
@@ -13,8 +16,41 @@ type CommentThreadDetailProps = {
 }
 
 const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
+    const {sendMessage, invalidateFeed} = useFeed({type: 'inbox'})
+    const {notify} = useToast()
     const [message, setMessage] = useState<string|null>(null)
+    const [valid, setValid] = useState<boolean>(true)
+    const [canSend, setCanSend] = useState<boolean>(false)
+    // because this is type inbox, we know there is only one other user in the commune
     const party = thread.commune.users.find(u => u.userId !== user.id)?.user
+
+    const onSend = async () => {
+        if (!canSend || !message) {
+            notify({type: 'warning', message: "That didn't work...."})
+        }
+        
+        const data = {
+            threadId: thread.id, 
+            userId: user.id, 
+            partyId: party!.id, 
+            messages: [
+                { authorId: user.id, content: message! }
+            ]
+        }
+        debug('onSend', data)
+        
+        const send = await sendMessage(data)
+        
+        if (send) {
+            notify({type: 'success', message: "Message sent!"})
+            setMessage(() => null)
+            invalidateFeed({type: 'inbox'})
+        }
+    }
+
+    useEffect(() => {
+        setCanSend(() => (valid && user !== undefined && party !== undefined))
+    }, [message])
 
   return !party 
   ? (
@@ -39,7 +75,8 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
             ))}
         </div>
         <div>
-            <RemirrorEditor content={message} setContent={setMessage} />
+            <RemirrorEditor content={message} setContent={setMessage} setValid={setValid} />
+            <button disabled={!valid} className={`float-right p-2 ${valid ? 'text-info' : 'text-base-content opacity-50 cursor-not-allowed'}`} onClick={onSend}>{ChatSendIcon}</button>
         </div>
     </div>
   )

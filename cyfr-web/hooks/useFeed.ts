@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryFeed, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostFeed, StartInboxThreadProps } from "../prisma/prismaContext"
+import { CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryFeed, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostFeed, StartInboxThreadProps, UpsertInboxProps } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import useDebug from "./useDebug"
 
@@ -109,7 +109,7 @@ export const useFeed = ({type}:FeedTypes) => {
    */
   const commentOnPost = async (props:PostCommentProps) => await send("post/comment", props)
 
-  const sendMessage = async (props:StartInboxThreadProps) => await send('inbox/send', props)
+  const sendMessage = async (props:UpsertInboxProps) => await send('user/inbox/send', props)
 
   const invalidateFeed = (t?:FeedTypes) => {
     const q = t ? ['feed', {type: t.type}] : ['feed']

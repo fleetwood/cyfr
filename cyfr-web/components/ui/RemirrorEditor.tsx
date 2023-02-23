@@ -42,6 +42,7 @@ type RemirrorEditorProps = {
   content?: string | null
   setContent?: Dispatch<SetStateAction<string | null>>
   setValid?: Dispatch<SetStateAction<boolean>>
+  setCounter?: Dispatch<SetStateAction<number>>
   maxChar?: number
 }
 
@@ -50,7 +51,7 @@ const RemirrorEditor = ({
   content,
   setContent,
   maxChar = -1,
-  setValid
+  setValid,
 }: RemirrorEditorProps) => {
   const { getMentions } = useCyfrUserApi()
   const [mentions, setMentions] = useState<MentionItem[]>([])
