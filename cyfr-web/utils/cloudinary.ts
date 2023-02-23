@@ -1,5 +1,5 @@
 import useDebug from "../hooks/useDebug"
-const [debug, warn] = useDebug('utils/cloudinary')
+const {debug, info} = useDebug({fileName: 'utils/cloudinary'})
 
 type UploadingProps = {
     file: File
@@ -116,7 +116,7 @@ const upload = ({file, onProgress, onComplete}:UploadingProps) => new Promise((r
     }
 
     xhr.onerror = (e) => {
-        warn(`uploadFile.onError:`, e)
+        info(`uploadFile.onError:`, e)
         rej(e)
     }
 

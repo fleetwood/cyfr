@@ -8,7 +8,7 @@ import {
 } from "../../../types/response"
 import { logError, todo } from "../../../utils/log"
 
-const [fileMethod, debug] = useDebug("prismaComment")
+const {fileMethod, debug} = useDebug({fileName: "prismaComment"})
 
 export default async function handle(
   req: NextApiRequest,

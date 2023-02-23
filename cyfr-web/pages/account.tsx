@@ -13,7 +13,7 @@ import UserDetailPage from "./user/[id]"
 import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
 import { InferGetServerSidePropsType } from "next";
 import useDebug from "../hooks/useDebug"
-const [debug, warn] = useDebug('pages/account')
+const {debug, info} = useDebug({fileName: 'pages/account'})
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await PrismaUser.userInSession(context)
@@ -46,7 +46,7 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
         invalidateUser()
       })
       .catch(e => {
-        warn(`onNameChange error`,e)
+        info(`onNameChange error`,e)
       })
   }
 
@@ -64,7 +64,7 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
           invalidateUser()
         })
         .catch(e => {
-          warn(`onFileComplete error`,e)
+          info(`onFileComplete error`,e)
         })
     }
   }

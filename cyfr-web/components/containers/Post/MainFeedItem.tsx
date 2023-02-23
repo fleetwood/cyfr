@@ -7,7 +7,7 @@ import Link from "next/link"
 import HtmlContent from "../../ui/htmlContent"
 
 import useDebug from "../../../hooks/useDebug"
-const [debug] = useDebug("MainFeedItem")
+const {debug} = useDebug({fileName: "MainFeedItem"})
 
 type MainFeedItemProps = {
   item: MainFeed

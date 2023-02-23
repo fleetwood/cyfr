@@ -8,7 +8,7 @@ import Avatar from "../../ui/avatar"
 import { ChatSendIcon } from "../../ui/icons"
 
 
-const [debug] = useDebug('ChatRoom')
+const {debug} = useDebug({fileName: 'ChatRoom'})
 
 export type ChatRoomProps = {
     firstPerson: User

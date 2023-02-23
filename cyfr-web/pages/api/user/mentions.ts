@@ -4,7 +4,7 @@ import { PrismaUser, User } from "../../../prisma/prismaContext"
 import { getSession } from "next-auth/react"
 import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response"
 import useDebug from "../../../hooks/useDebug"
-const [debug, todo, warn] = useDebug('api/user/mentions')
+const {debug, todo, info} = useDebug({fileName: 'api/user/mentions'})
 
 export default async function handle(
   req: NextApiRequest,
@@ -34,7 +34,7 @@ export default async function handle(
       }
     }
   } catch (e: Error | ResponseError | any) {
-    warn("FAIL", e)
+    info("FAIL", e)
     const error = GetResponseError(e)
     res.status(200).json({ })
   }

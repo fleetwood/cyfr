@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import useDebug from "../../../hooks/useDebug"
 import { PrismaChat } from "../../../prisma/entities/prismaChat"
 import { GetResponseError } from "../../../types/response"
-const [debug, warn] = useDebug("api/chat/connect")
+const {debug, info} = useDebug({fileName: "api/chat/connect"})
 
 export default async function ConnectToChat(req: NextApiRequest,res: NextApiResponse) {
   try {
@@ -15,7 +15,7 @@ export default async function ConnectToChat(req: NextApiRequest,res: NextApiResp
       res.status(200).json({ result })
     }
   } catch (e: Error | any) {
-    warn(`FAIL`, e)
+    info(`FAIL`, e)
     const error = GetResponseError(e)
     res.status(200).json({ error })
   }

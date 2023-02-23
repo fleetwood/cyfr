@@ -1,6 +1,6 @@
 import { Image, Like, ImageDetail,ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
-const [debug, warn, todo, fileMethod] = useDebug('entities/prismaImage')
+const {debug, info, todo, fileMethod} = useDebug({fileName: 'entities/prismaImage'})
 
 const byId = async (id: string): Promise<ImageDetail | null> => {
   try {
@@ -46,7 +46,7 @@ const createImage = async (props: ImageCreateProps): Promise<Image> => {
     debug('createImage', data)
     return await prisma.image.create({ data })
   } catch (error) {
-    warn("createImage ERROR: ", error)
+    info("createImage ERROR: ", error)
     throw { code: "images/create", message: "Image was not created!" }
   }
 }
@@ -81,7 +81,7 @@ const likeImage = async (props: ImageEngageProps): Promise<Like> => {
     }  
     throw new Error("Unable to connect like to image")
   } catch (error) {
-    warn("likeImage ERROR: ", error)
+    info("likeImage ERROR: ", error)
     throw { code: fileMethod('likeImage'), ...{error} }
   }
 }
@@ -99,7 +99,7 @@ const shareImage = async (props: ImageEngageProps): Promise<Image> => {
 
     return updateImage
   } catch (error) {
-    warn("shareImage ERROR: ", error)
+    info("shareImage ERROR: ", error)
     throw { code: "images/share", message: "Image not shared!" }
   }
 }
@@ -126,7 +126,7 @@ const commentOnImage = async (props: any): Promise<Image> => {
     //   })
     // }
   } catch (error) {
-    warn("commentOnImage ERROR: ", error)
+    info("commentOnImage ERROR: ", error)
     throw error
   }
 }

@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import { CommentThreadDetailsInclude, InboxProps } from "../prismaContext"
-const [debug, fileMethod] = useDebug('entities/prismaComment', 'DEBUG')
+const {debug, fileMethod} = useDebug({fileName: 'entities/prismaComment'})
 
 const userInbox = async (userId: string): Promise<any[]> => {
   try {
@@ -19,25 +19,9 @@ const userInbox = async (userId: string): Promise<any[]> => {
           }
         }
       },
-      include: {
-        commune: {
-          include: {
-            users: true
-          }
-        },
-        comments: {
-          include: {
-            author: true,
-            _count: {
-              select: {
-                likes: true
-              }
-            }
-          }
-        }
-      }
+      include: CommentThreadDetailsInclude
     })
-    debug(`userInbox result`, inbox)
+    debug(`userInbox result`, {userId, inbox})
     if (inbox) {
       return inbox
     }

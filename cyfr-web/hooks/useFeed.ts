@@ -9,7 +9,7 @@ export const postFeedQuery = ['feed', { type: 'post'}]
 export const galleryFeedQuery = ['feed', { type: 'gallery'}]
 export const imageFeedQuery = ['feed', { type: 'image'}]
 
-const [debug] = useDebug("useFeed")
+const {debug} = useDebug({fileName: "useFeed"})
 
 export async function getMainFeed():Promise<MainFeed[]|null> {
   const data = await getApi(`feed/main`)

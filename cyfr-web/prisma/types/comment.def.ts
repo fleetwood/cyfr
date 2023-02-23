@@ -8,7 +8,9 @@ export type InboxProps = {
 
 export type CommentThreadDetails = CommentThread & {
   commune: Commune & {
-    users: CommuneUser[];
+    users: (CommuneUser & {
+      user: User
+    })[];
   };
   comments: (Comment & {
     author: User;
@@ -21,17 +23,21 @@ export type CommentThreadDetails = CommentThread & {
 export const CommentThreadDetailsInclude = {
   commune: {
     include: {
-      users: true,
-    },
+      users: {
+        include: {
+          user: true
+        }
+      }
+    }
   },
   comments: {
     include: {
       author: true,
       _count: {
         select: {
-          likes: true,
-        },
-      },
-    },
-  },
+          likes: true
+        }
+      }
+    }
+  }
 };

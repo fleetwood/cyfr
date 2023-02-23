@@ -7,7 +7,7 @@ import {
   GalleryFeed,
   GalleryFeedInclude,
 } from "../types/gallery.def";
-const [debug, warn, fileMethod] = useDebug('entities/prismaGallery')
+const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaGallery'})
 
 export type GalleryAddImageProps = {
   id: string;
@@ -45,7 +45,7 @@ const getDetail = async (galleryId: string): Promise<GalleryDetail> => {
     if (result) return result as unknown as GalleryDetail;
     throw { code: fileMethod, message: "Unable to find a gallery by that key" };
   } catch (error) {
-    warn(`getDetail ERROR`, error);
+    info(`getDetail ERROR`, error);
     throw error;
   }
 };
@@ -101,7 +101,7 @@ const addImages = async ({ id, ...props }: GalleryAddImageProps) => {
     });
     if (result) return result;
   } catch (error) {
-    warn(`addImage ERROR`, error);
+    info(`addImage ERROR`, error);
   }
 };
 
@@ -138,7 +138,7 @@ const createGallery = async ({
     }
     throw { code: fileMethod, message: "Unable to create gallery" };
   } catch (error) {
-    warn(`createGallery ERROR`, error);
+    info(`createGallery ERROR`, error);
   }
 };
 export const PrismaGallery = {

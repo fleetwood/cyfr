@@ -1,6 +1,6 @@
 import { Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed, PostFeedInclude } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
-const [debug, warn, fileMethod] = useDebug('entities/prismaPosts')
+const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaPosts'})
 
 const byId = async (id: string): Promise<PostDetail | null> => {
   try {
@@ -94,7 +94,7 @@ const createPost = async (props: PostCreateProps): Promise<Post> => {
     debug('createPost', data)
     return await prisma.post.create({ data })
   } catch (error) {
-    warn("createPost ERROR: ", error)
+    info("createPost ERROR: ", error)
     throw { code: fileMethod("createPost"), message: "Post was not created!" }
   }
 }
@@ -111,7 +111,7 @@ const deletePost = async ({postId, authorId}: PostDeleteProps): Promise<Post> =>
       }
     })
   } catch (error) {
-    warn("deletePost ERROR: ", error)
+    info("deletePost ERROR: ", error)
     throw { code: fileMethod("deletePost"), message: "Post was not deleted!" }
   }
 }
@@ -130,7 +130,7 @@ const likePost = async (props: PostEngageProps): Promise<Like> => {
     }
     throw new Error("Unable to find user and post to like")
   } catch (error) {
-    warn("likePost ERROR: ", error)
+    info("likePost ERROR: ", error)
     throw { code: fileMethod('likePost'), ...{error} }
   }
 }
@@ -159,7 +159,7 @@ const sharePost = async (props: PostEngageProps): Promise<Post> => {
     })
     return updatePost
   } catch (error) {
-    warn("sharePost ERROR: ", error)
+    info("sharePost ERROR: ", error)
     throw { code: fileMethod("sharePost"), message: "Post not shared!" }
   }
 }
@@ -184,7 +184,7 @@ const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
       })
     }
   } catch (error) {
-    warn("commentOnPost ERROR: ", error)
+    info("commentOnPost ERROR: ", error)
     throw { code: fileMethod("commentOnPost"), message: "Post not commented!" }
   }
 }

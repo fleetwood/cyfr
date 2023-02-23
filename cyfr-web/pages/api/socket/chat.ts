@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import { Server } from "socket.io"
 import useDebug from "../../../hooks/useDebug"
 import {SocketListeners} from '../../../utils/api'
-const [debug] = useDebug("api/socket")
+const {debug} = useDebug("api/socket")
 
 export default function SocketHandler(
   req: NextApiRequest,

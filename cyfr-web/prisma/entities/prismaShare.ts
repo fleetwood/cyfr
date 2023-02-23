@@ -1,7 +1,7 @@
 import { Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
 
-const [debug, warn, fileMethod] = useDebug('entities/prismaShare')
+const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaShare'})
 
 const byId = async (id: string): Promise<Share | null> => {
   try {
@@ -81,7 +81,7 @@ const deleteShare = async ({id, authorId}: ShareDeleteProps): Promise<Share> => 
       }
     })
   } catch (error) {
-    warn("deleteShare ERROR: ", error)
+    info("deleteShare ERROR: ", error)
     throw { code: fileMethod("deleteShare"), message: "Share was not deleted!" }
   }
 }

@@ -14,7 +14,7 @@ type GalleryFooterProps = {
   feed: FeedTypes
 }
 
-const [debug] = useDebug('GalleryFooter')
+const {debug} = useDebug({fileName: 'GalleryFooter'})
 
 const GalleryFooter = ({
   gallery,

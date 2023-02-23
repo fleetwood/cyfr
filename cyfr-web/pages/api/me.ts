@@ -7,7 +7,7 @@ import {
 import { getSession } from "next-auth/react"
 import { PrismaUser } from "../../prisma/prismaContext"
 import useDebug from "../../hooks/useDebug"
-const [debug, error] = useDebug('api/me')
+const {debug, error} = useDebug({fileName: 'api/me'})
 
 export default async function handle(
   req: NextApiRequest,

@@ -20,7 +20,7 @@ import {
 } from "../../types/response"
 import { dedupe } from "../../utils/helpers"
 import useDebug from "../../hooks/useDebug"
-const [debug, warn] = useDebug('entities/prismaUser')
+const {debug, info} = useDebug({fileName: 'entities/prismaUser'})
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {
@@ -128,7 +128,7 @@ const byEmail = async (email: string): Promise<CyfrUser|null> => {
     // log(`user.entity.byEmail found ${user.name}`)
     return user as CyfrUser
   } catch (error) {
-    warn(`byEmail FAIL`,error)
+    info(`byEmail FAIL`,error)
     throw error
   }
 }
@@ -186,7 +186,7 @@ const canMention = async (id: string, search?:string) => {
       ], 'id')
       .slice(0,10) as unknown as User[]
   } catch (error) {
-    warn(`canMention broke`, error)
+    info(`canMention broke`, error)
     throw error
   }
 }
@@ -243,7 +243,7 @@ const userInSession = async (context: GetSessionParams | undefined) => {
     }
     return user
   } catch (error) {
-    warn(`userInSession ERROR`)
+    info(`userInSession ERROR`)
     return null
   }
 }
@@ -270,7 +270,7 @@ const userCurrentlyOnline = async (id:string) => {
     }
     return user._count.sessions > 0
   } catch (error) {
-    warn(`userCurrentlyOnline error`)
+    info(`userCurrentlyOnline error`)
     return null
   }
 }

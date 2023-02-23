@@ -4,7 +4,7 @@ import { FileError } from "react-dropzone"
 import Spinner from "../../ui/spinner"
 import { CompleteFile, UploadFileViewProps } from "./types.defs"
 import useDebug from "../../../hooks/useDebug"
-const [debug] = useDebug("Dropzone/UploadingFileView")
+const {debug} = useDebug({fileName: "Dropzone/UploadingFileView"})
 
 const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
   const [fileProgress, setFileProgress] = useState<number>(0)

@@ -4,7 +4,7 @@ import { ChatDetail, SendMessageProps } from "../prisma/prismaContext"
 import { sendApi } from "../utils/api"
 import useDebug from "./useDebug"
 
-const [debug, warn] = useDebug("useChatQuery")
+const {debug, info} = useDebug({fileName: "useChatQuery"})
 
 export async function getChatRoom(users:string[]):Promise<ChatDetail|null> {
   const res = await (await sendApi(`chat/connect`, {users})).data
@@ -26,7 +26,7 @@ export const useChatRoomFeed = (users:string[]) => {
       refetchInterval: 1000,
       onSettled(data,error) {
         if (error || data === null) {
-          warn(`onSettled ${['chat', { party }]} ERROR`, { error, data })
+          info(`onSettled ${['chat', { party }]} ERROR`, { error, data })
         }
         if (data) {
           debug(`onSettled`, data)

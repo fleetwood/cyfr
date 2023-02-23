@@ -4,7 +4,7 @@ import { getApi, sendApi } from "../utils/api"
 import { FollowProps, FanProps } from "../prisma/types/follow.def"
 import { UserDetail } from "../prisma/prismaContext"
 import useDebug from "./useDebug"
-const [debug, warn] = useDebug('useUserDetails')
+const {debug, info} = useDebug({fileName: 'useUserDetails'})
 
 export const userDetailQuery = "userDetailQuery"
 
@@ -35,7 +35,7 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
     {
       onSettled(data,error) {
         if (error || data === null) {
-          warn(`onSettled(${queryTag}) ERROR`,{ error, data })
+          info(`onSettled(${queryTag}) ERROR`,{ error, data })
         }
         if (data) {
           debug(`onSettled() success`)

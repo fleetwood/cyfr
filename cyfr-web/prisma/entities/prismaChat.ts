@@ -6,7 +6,7 @@ import {
 } from "../prismaContext";
 import { now } from "next-auth/client/_utils";
 import useDebug from "../../hooks/useDebug";
-const [debug, warn, fileMethod] = useDebug('entities/prismaChat')
+const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaChat'})
 
 const chatError = (method: string, error?: any, message?: string) => {
   return {
@@ -55,7 +55,7 @@ const connectToChat = async (props: ChatCreateProps): Promise<ChatDetail> => {
     });
     return chatRoom as unknown as ChatDetail;
   } catch (error) {
-    warn("connectToChat ERROR", error);
+    info("connectToChat ERROR", error);
     throw chatError("connectToChat", error);
   }
 };
@@ -82,7 +82,7 @@ const sendMessage = async (data: SendMessageProps) => {
 
     throw chatError("sendMessage", "failed to send message");
   } catch (error) {
-    warn("sendMessage ERROR:", error);
+    info("sendMessage ERROR:", error);
     throw chatError("sendMessage", error);
   }
 };

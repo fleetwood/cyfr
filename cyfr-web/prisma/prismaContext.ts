@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client"
 import useDebug from "../hooks/useDebug"
 import { __prod__ } from "../utils/constants"
-const [info] = useDebug("prismaContext")
+const {info} = useDebug({fileName: "prismaContext"})
 declare global {
   var prisma: PrismaClient
 }

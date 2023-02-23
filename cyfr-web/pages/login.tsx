@@ -19,11 +19,12 @@ import {
 import { DefaultSession } from "next-auth"
 import { apiUrl } from "../utils/api"
 import useDebug from "../hooks/useDebug"
+import { InferGetServerSidePropsType } from "next";
 
+const {debug} = useDebug({fileName: 'pages/login'})
 
-const [debug] = useDebug('pages/login')
-
-const Login: FC = (props) => {
+// @ts-ignore
+const Login: FC = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [providers, setproviders] = useState<Record<
     LiteralUnion<BuiltInProviderType, string>,
     ClientSafeProvider
@@ -135,7 +136,7 @@ const Login: FC = (props) => {
 
 export async function getServerSideProps(context: any) {
   const csrfToken = await getCsrfToken(context)
-  debug('getServerSideProps', csrfToken)
+  debug('getServerSideProps', {csrfToken})
   return {
     props: {
       csrfToken,

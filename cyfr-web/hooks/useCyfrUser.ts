@@ -5,7 +5,7 @@ import { getApi, sendApi } from "../utils/api"
 import { __cyfr_refetch__ } from "../utils/constants"
 
 import useDebug from "./useDebug"
-const [debug, warn] = useDebug("useCyfrUser")
+const {debug, info} = useDebug({fileName: "useCyfrUser"})
 
 const cyfrUserQuery = "cyfrUserQuery"
 
@@ -41,7 +41,7 @@ const useCyfrUser = ():[CyfrUser,boolean,unknown] => {
   const onSettled = (data, error) => {
     // debug(`useCyfrUser.onSettled()`)
     if (error || data?.error || null) {
-      warn(`onSettled ERROR`,{ error, data })
+      info(`onSettled ERROR`,{ error, data })
       return null
     }
     if (data) {
@@ -74,7 +74,7 @@ export const useCyfrUserApi = () => {
         throw ({code: 'useCyfrUserApi/updateUser', message: 'That dint work'})
       }
     } catch (error) {
-      warn(`updateUser ERROR`,error)
+      info(`updateUser ERROR`,error)
     }
   }
 

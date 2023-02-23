@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "react-query"
 import { getApi, sendApi } from "../utils/api"
 import { PostCommentProps, PostCreateProps, PostEngageProps, PostFeed } from "../prisma/prismaContext"
 import useDebug from "./useDebug"
-const [debug, warn] = useDebug("usePosts")
+const {debug, info} = useDebug({fileName: "usePosts"})
 
 export const allPostsQuery = ['feed', {type: 'posts'}]
 
@@ -27,7 +27,7 @@ export const usePosts = () => {
     {
       onSettled(data,error) {
         if (error || data === null) {
-          warn(`onSettled(${allPostsQuery}) ERROR`,{ error, data })
+          info(`onSettled(${allPostsQuery}) ERROR`,{ error, data })
         }
         if (data) {
           setPosts(() => data as PostFeed[])

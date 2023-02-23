@@ -8,7 +8,7 @@ import RemirrorEditor from "../../ui/RemirrorEditor"
 import useDebug from "../../../hooks/useDebug"
 
 type CreatePostProps = {onCreate: () => void}
-const [debug] = useDebug("CreatePost")
+const {debug} = useDebug({fileName: "CreatePost"})
 
 const CreatePost = ({ onCreate }: CreatePostProps): JSX.Element => {
   const [cyfrUser] = useCyfrUser()

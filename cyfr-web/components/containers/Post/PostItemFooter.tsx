@@ -10,7 +10,7 @@ import { PostFeed } from "../../../prisma/prismaContext";
 import useFeed from "../../../hooks/useFeed";
 
 import useDebug from "../../../hooks/useDebug"
-const [debug] = useDebug("PostItemFooter")
+const {debug} = useDebug({fileName: "PostItemFooter"})
 
 type PostItemFooterProps = {
   post: PostFeed;

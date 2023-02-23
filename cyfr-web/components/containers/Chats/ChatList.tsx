@@ -7,7 +7,7 @@ import { now, uniqueKey, uuid } from "../../../utils/helpers"
 import Avatar from "../../ui/avatar"
 import ChatRoom, { ChatRoomProps } from "./ChatRoom"
 
-const [debug] = useDebug("ChatList.tpx")
+const {debug} = useDebug({fileName: "ChatList.tpx"})
 
 const ChatList = () => {
     const [cyfrUser] = useCyfrUser()

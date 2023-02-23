@@ -33,7 +33,7 @@ import {
 import { useCyfrUserApi } from "../../hooks/useCyfrUser"
 import { Node } from "@remirror/pm/dist-types/model"
 import useDebug from "../../hooks/useDebug"
-const [debug] = useDebug("RemirrorEditor")
+const {debug} = useDebug({fileName: "RemirrorEditor"})
 
 type MentionItem = { id: string, label: string }
 

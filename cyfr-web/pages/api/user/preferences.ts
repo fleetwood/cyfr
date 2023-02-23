@@ -3,7 +3,7 @@ import useDebug from "../../../hooks/useDebug";
 import { User, PrismaUser } from "../../../prisma/prismaContext";
 
 import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response";
-const [debug, warn, todo] = useDebug('api/user/preferences')
+const {debug, info, todo} = useDebug({fileName: 'api/user/preferences'})
 
 export default async function handle(
   req: NextApiRequest,
@@ -22,7 +22,7 @@ export default async function handle(
       throw { code: "api/user/preferences", message: `No results from Users.updatePreferences` };
     }
   } catch (e: Error | ResponseError | any) {
-    warn("FAIL", e)
+    info("FAIL", e)
     const error = GetResponseError(e)
     res.status(500).json({ error })
   }
