@@ -29,23 +29,21 @@ const InboxThreadList = ({
             {thread.commune.users
               .filter((u) => u.userId !== cyfrUser.id)
               .map((u) => (
-                <div
-                  className={`
-                flex m-auto space-y-2 cursor-pointer p-2 rounded-md 
-                transition-all duration-200 ease-out w-full
-                ${
-                  activeThread && activeThread.id === thread.id
-                    ? `bg-primary bg-opacity-30`
-                    : ""
-                }
-                hover:bg-base-300
-                `}
+                <div className={`
+                  flex my-2 cursor-pointer p-2 rounded-md 
+                  transition-all duration-200 ease-out w-full border
+                  ${
+                    activeThread && activeThread.id === thread.id
+                      ? `bg-primary bg-opacity-30`
+                      : ""
+                  }
+                  hover:bg-base-300`}
                   key={uniqueKey(cyfrUser, thread, u)}
                   onClick={() => onThreadClick(thread)}
                 >
                   <Avatar user={u.user} sz="sm" link={false} />
-                  <span>{u.user.name}</span>
-                  <span className="float-right">({thread.comments.length})</span>
+                  <span className="my-2 mx-2">{u.user.name}</span>
+                  <span className="m-auto text-xs text-primary-content text-center float-right rounded-full h-4 w-4 bg-primary">{thread.comments.length}</span>
                 </div>
               ))}
           </div>

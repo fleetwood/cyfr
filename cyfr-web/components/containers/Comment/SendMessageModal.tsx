@@ -1,28 +1,18 @@
-import React, { createContext, FormEvent, ReactNode, useContext, useEffect, useRef, useState } from "react"
-import useCyfrUser from "../../hooks/useCyfrUser"
-import { useToast } from "./ToastContextProvider"
-import useFeed from "../../hooks/useFeed"
+import React, { createContext, Dispatch, FormEvent, ReactNode, SetStateAction, useContext, useEffect, useRef, useState } from "react"
+import useCyfrUser from "../../../hooks/useCyfrUser"
+import { useToast } from "../../context/ToastContextProvider"
+import useFeed from "../../../hooks/useFeed"
 
-import useDebug from "../../hooks/useDebug"
+import useDebug from "../../../hooks/useDebug"
 const {debug} = useDebug({fileName: "InboxContextProvider"})
 
 type InboxProviderProps = {
   children?: ReactNode
+  checked: boolean
+  setChecked: Dispatch<SetStateAction<boolean>>
 }
 
-type InboxProviderType = {
-  content: string|null
-  setContent: Function
-  partyId: string|null
-  setPartyId: Function
-  show: Function
-  hide: Function
-}
-
-export const InboxContext = createContext({} as InboxProviderType)
-export const useCommentContext = () => useContext(InboxContext)
-
-const InboxProvider = ({ children }: InboxProviderProps) => {
+const SendMessageModal = ({checked, setChecked, children }: InboxProviderProps) => {
   const [cyfrUser] = useCyfrUser()
   const {sendMessage, invalidateFeed} = useFeed({type: 'inbox'})
   const {notify} = useToast()
@@ -30,7 +20,6 @@ const InboxProvider = ({ children }: InboxProviderProps) => {
   const inboxUserModal = 'inboxUserModal'
   const modal = useRef<HTMLInputElement>(null)
   
-  const [checked, setChecked] = useState(false)
   const [content, setContent] = useState<string | null>(null)
   const [partyId, setPartyId] = useState<string|null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
@@ -75,10 +64,8 @@ const InboxProvider = ({ children }: InboxProviderProps) => {
     setIsDisabled(() => disabled)
   }, [content])
 
-  const value={content, setContent, partyId, setPartyId, show, hide}
-
   return (
-    <InboxContext.Provider value={value}>
+    <div>
         <input type="checkbox" ref={modal} id={inboxUserModal} className="modal-toggle" checked={checked} onChange={()=>{}} />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box bg-opacity-0 overflow-visible scrollbar-hide">
@@ -109,8 +96,8 @@ const InboxProvider = ({ children }: InboxProviderProps) => {
           </div>
         </div>
       {children}
-    </InboxContext.Provider>
+    </div>
   )
 }
 
-export default InboxProvider
+export default SendMessageModal

@@ -8,7 +8,7 @@ import { timeDifference, uniqueKey } from "../../../utils/helpers"
 import useFeed from "../../../hooks/useFeed"
 import { ChatSendIcon } from "../../ui/icons"
 import { useToast } from "../../context/ToastContextProvider"
-const {debug} = useDebug({fileName: 'CommentThreadDetail', level: 'DEBUG'})
+const {debug} = useDebug({fileName: 'CommentThreadDetail'})
 
 type CommentThreadDetailProps = {
     user: CyfrUser | User
@@ -60,7 +60,7 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
   ) 
   : (
     <div className="min-h-fit border-1">
-        <div className="flex justify-between border-2 p-2">
+        <div className="flex justify-between border-2 p-4">
             <span><Avatar user={user} sz="md" link={false} />{user.name}</span>
             <span>{party.name}<Avatar user={party} sz="md" link={false} /></span>
         </div>
@@ -74,9 +74,9 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
                 </div>
             ))}
         </div>
-        <div>
+        <div className="pb-12">
             <RemirrorEditor content={message} setContent={setMessage} setValid={setValid} />
-            <button disabled={!valid} className={`float-right p-2 ${valid ? 'text-info' : 'text-base-content opacity-50 cursor-not-allowed'}`} onClick={onSend}>{ChatSendIcon}</button>
+            <button disabled={!valid} className={`float-right my-4 p-2 ${valid ? 'text-info' : 'text-base-content opacity-50 cursor-not-allowed'}`} onClick={onSend}>{ChatSendIcon}</button>
         </div>
     </div>
   )
