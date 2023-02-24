@@ -46,9 +46,26 @@ model Post {
   images        Image[]  @relation("post_images")
   likes         Like[]   @relation("post_likes")
   author        User     @relation("user_posts", fields: [authorId], references: [id])
+  news          News?    @relation("news_post")
   comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
   post_comments Post[]   @relation("post_comments")
   shares        Share[]  @relation("post_shares")
+}
+
+model News {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  visible   Boolean   @default(true)
+  title     String
+  banner    String?
+  startDate DateTime?
+  endDate   DateTime?
+  postId    String    @unique
+  post      Post      @relation("news_post", fields: [postId], references: [id])
+  audience  Audience
+  views     Int       @default(0)
+  priority  Int       @default(0)
 }
 
 model Gallery {
@@ -262,6 +279,15 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Audience {
+  PUBLIC
+  USER
+  MEMBER
+  MEMBER_EXP
+  AGENT
+  AGENT_EXP
 }
 
 enum Role {
