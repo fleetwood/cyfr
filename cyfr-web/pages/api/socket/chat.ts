@@ -1,20 +1,21 @@
 // @ts-nocheck
-import { NextApiRequest, NextApiResponse } from "next";
-import { Server } from "socket.io";
+import { NextApiRequest, NextApiResponse } from "next"
+import { Server } from "socket.io"
+import useDebug from "../../../hooks/useDebug"
 import {SocketListeners} from '../../../utils/api'
-import { log } from "../../../utils/log";
+const {debug} = useDebug("api/socket")
 
 export default function SocketHandler(
   req: NextApiRequest,
   res: NextApiResponse
   ) {
   if (res.socket.server.io) {
-    res.end();
-    return;
+    res.end()
+    return
   }
 
-  const io = new Server(res.socket.server);
-  res.socket.server.io = io;
+  const io = new Server(res.socket.server)
+  res.socket.server.io = io
 
 
   if (req.body?.body?.users) {
@@ -26,12 +27,12 @@ export default function SocketHandler(
 
     io.on(SocketListeners.connection, (socket) => {
         socket.join(room)
-        log(`io connection on ${JSON.stringify({socket: socket.id, room})}`)
+        debug(`io connection on ${JSON.stringify({socket: socket.id, room})}`)
         socket.to(room).on(announce, (obj) => {
-            log(`io emitting on ${JSON.stringify({socket: socket.id, room})}`)
+            debug(`io emitting on ${JSON.stringify({socket: socket.id, room})}`)
             io.to(room).emit(subscribe, obj)
         })
     })
   }
-  res.end();
+  res.end()
 }

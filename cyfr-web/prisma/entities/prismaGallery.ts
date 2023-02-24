@@ -1,4 +1,4 @@
-import { log } from "../../utils/log";
+import useDebug from "../../hooks/useDebug";
 import { Gallery, GalleryDetail, ImageCreateProps, Like } from "../types";
 import { GalleryCreateProps } from '../types/gallery.def';
 import {
@@ -7,11 +7,7 @@ import {
   GalleryFeed,
   GalleryFeedInclude,
 } from "../types/gallery.def";
-
-const fileName = "prismaGallery";
-const fileMethod = (method: string) => `${fileName}.${method}`;
-const trace = (method: string, t?: any) =>
-  log(fileMethod(method) + t + " " + JSON.stringify(t, null, 2));
+const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaGallery'})
 
 export type GalleryAddImageProps = {
   id: string;
@@ -40,7 +36,7 @@ const userGalleries = async (authorId: string): Promise<GalleryDetail[]> => {
 }
 
 const getDetail = async (galleryId: string): Promise<GalleryDetail> => {
-  trace("getDetail", { galleryId });
+  debug("getDetail", { galleryId });
   try {
     const result = await prisma.gallery.findUnique({
       where: { id: galleryId },
@@ -49,7 +45,7 @@ const getDetail = async (galleryId: string): Promise<GalleryDetail> => {
     if (result) return result as unknown as GalleryDetail;
     throw { code: fileMethod, message: "Unable to find a gallery by that key" };
   } catch (error) {
-    trace(`getDetail ERROR`, error);
+    info(`getDetail ERROR`, error);
     throw error;
   }
 };
@@ -58,7 +54,7 @@ const like = async ({
   galleryId,
   authorId,
 }: GalleryEngageProps): Promise<Like> => {
-  trace(`like`, { galleryId, authorId });
+  debug(`like`, { galleryId, authorId });
   throw { code: fileMethod, message: "Feature not implemented" };
 };
 
@@ -66,7 +62,7 @@ const share = async ({
   galleryId,
   authorId,
 }: GalleryEngageProps): Promise<Like> => {
-  trace(`share`, { galleryId, authorId });
+  debug(`share`, { galleryId, authorId });
   throw { code: fileMethod, message: "Feature not implemented" };
 };
 
@@ -89,7 +85,7 @@ const all = async (): Promise<GalleryFeed[]> => {
 };
 
 const addImages = async ({ id, ...props }: GalleryAddImageProps) => {
-  trace("addImage", { id, ...props });
+  debug("addImage", { id, ...props });
   try {
     const result = await prisma.gallery.update({
       where: {
@@ -105,7 +101,7 @@ const addImages = async ({ id, ...props }: GalleryAddImageProps) => {
     });
     if (result) return result;
   } catch (error) {
-    trace(`\taddImage ERROR`, error);
+    info(`addImage ERROR`, error);
   }
 };
 
@@ -116,7 +112,7 @@ const createGallery = async ({
   images,
 }: GalleryCreateProps) => {
   try {
-    // trace(`createGallery`, { authorId, title, description, images });
+    // debug(`createGallery`, { authorId, title, description, images });
     const data = images ?
       {
         authorId,
@@ -134,7 +130,7 @@ const createGallery = async ({
         title,
         description,
       }
-    trace(`createGallery`, data)
+    debug(`createGallery`, data)
     const result = await prisma.gallery.create({data})
 
     if (result) {
@@ -142,7 +138,7 @@ const createGallery = async ({
     }
     throw { code: fileMethod, message: "Unable to create gallery" };
   } catch (error) {
-    trace(`\tcreateGallery ERROR`, error);
+    info(`createGallery ERROR`, error);
   }
 };
 export const PrismaGallery = {

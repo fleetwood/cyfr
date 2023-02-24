@@ -1,10 +1,13 @@
-import { TabPanel } from "react-tabs"
+import { useState } from "react"
 import useUserDetail, { UserDetailHookProps } from "../../../hooks/useUserDetail"
-import Tabby from "../../ui/Tabby"
 import Avatar from "../../ui/avatar"
 
 const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
   const { currentUser, invalidateUser } = useUserDetail({user, id})
+  const [activeTab, setActiveTab] = useState('Posts')
+  const activeTabClass = (tab:string) => activeTab === tab 
+    ? `btn-secondary rounded-b-none mt-0`
+    : `btn-primary -mt-1`
 
   return (
     <div className="">
@@ -52,41 +55,55 @@ const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
               </div>
             </div>
           </div>
-          <Tabby defaultIndex={0} invalidate={false}>
-            <TabPanel title="Posts" className="p-2 md:p-4 min-w-fit">
-                {/* {currentUser.posts.map((post: PostWithDetails) => (
+          
+          
+        <div className="border-b-8 border-secondary flex justify-between space-x-2">
+          <button className={`btn ${activeTabClass('Posts')} w-[30%]`} onClick={() => setActiveTab("Posts")}>Posts</button>
+          <button className={`btn ${activeTabClass('Follows')} w-[30%]`} onClick={() => setActiveTab("Follows")}>Follows</button>
+          <button className={`btn ${activeTabClass("Fans")} w-[30%]`} onClick={() => setActiveTab("Fans")}>Fans</button>
+        </div>
+
+        {activeTab==="Posts" &&
+          <div className="bg-base-300 rounded-md p-4 mt-4">
+             {/* {currentUser.posts.map((post: PostWithDetails) => (
                   <UserDetailPostItem post={post} key={post.id} />
+              ))} */}
+          </div>
+        }
+
+        {activeTab==="Follows" &&
+          <div className="bg-base-300 rounded-md p-4 mt-4">
+             <div>
+                <h2>Following</h2>
+                {/* {currentUser.follower.map((follow:UserFollows) => (
+                  <UserDetailFollow following={follow} key={follow.id} />
                 ))} */}
-            </TabPanel>
-            <TabPanel title="Follows" className="flex flex-col sm:flex-row justify-evenly">
-                <div>
-                  <h2>Following</h2>
-                  {/* {currentUser.follower.map((follow:UserFollows) => (
-                    <UserDetailFollow following={follow} key={follow.id} />
-                  ))} */}
-                </div>
-                <div>
-                  <h2>Followers</h2>
-                  {/* {currentUser.following.map((follow:UserFollows) => (
-                    <UserDetailFollow follower={follow} key={follow.id} />
-                  ))} */}
-                </div>
-            </TabPanel>
-            <TabPanel title="Fans" className="flex flex-col sm:flex-row justify-evenly">
-                <div>
-                  <h2>Fans</h2>
-                  {/* {currentUser.fans.map((fan: { fan: User; id: string | undefined }) => (
-                    <UserDetailFan fan={fan.fan} key={fan.id} />
-                  ))} */}
-                </div>
-                <div>
-                  <h2>Stans</h2>
-                  {/* {currentUser.fanOf.map((fan: { fanOf: User; id: string | undefined }) => (
-                    <UserDetailFan fan={fan.fanOf} key={fan.id} />
-                  ))} */}
-                </div>
-            </TabPanel>
-          </Tabby>
+              </div>
+              <div>
+                <h2>Followers</h2>
+                {/* {currentUser.following.map((follow:UserFollows) => (
+                  <UserDetailFollow follower={follow} key={follow.id} />
+                ))} */}
+              </div>
+          </div>
+        }
+
+        {activeTab==="Fans" &&
+          <div className="bg-base-300 rounded-md p-4 mt-4">
+             <div>
+                <h2>Fans</h2>
+                {/* {currentUser.fans.map((fan: { fan: User; id: string | undefined }) => (
+                  <UserDetailFan fan={fan.fan} key={fan.id} />
+                ))} */}
+              </div>
+              <div>
+                <h2>Stans</h2>
+                {/* {currentUser.fanOf.map((fan: { fanOf: User; id: string | undefined }) => (
+                  <UserDetailFan fan={fan.fanOf} key={fan.id} />
+                ))} */}
+              </div>
+          </div>
+        }
         </>
       )}
     </div>

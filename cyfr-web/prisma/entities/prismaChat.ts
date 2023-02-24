@@ -1,16 +1,13 @@
 import {
   ChatCreateProps,
   ChatDetail,
-  includes,
+  ChatDetailInclude,
   SendMessageProps,
-  User,
 } from "../prismaContext";
-import { log } from "../../utils/log";
-import { sendApi } from "../../utils/api";
 import { now } from "next-auth/client/_utils";
+import useDebug from "../../hooks/useDebug";
+const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaChat'})
 
-const fileName = "prismaChat";
-const fileMethod = (method: string) => `${fileName}.${method}`;
 const chatError = (method: string, error?: any, message?: string) => {
   return {
     code: fileMethod(method),
@@ -20,8 +17,6 @@ const chatError = (method: string, error?: any, message?: string) => {
   };
 };
 
-const trace = (method: string, t?: any) =>
-  log(fileMethod(method) + t ? " " + JSON.stringify(t, null, 2) : "");
 
 const byId = async (id: string): Promise<ChatDetail | null> => {
   try {
@@ -30,7 +25,7 @@ const byId = async (id: string): Promise<ChatDetail | null> => {
         id: id,
         visible: true,
       },
-      include: includes.ChatDetailInclude,
+      include: ChatDetailInclude,
     });
     if (result) {
       return result as unknown as ChatDetail;
@@ -60,14 +55,14 @@ const connectToChat = async (props: ChatCreateProps): Promise<ChatDetail> => {
     });
     return chatRoom as unknown as ChatDetail;
   } catch (error) {
-    trace("\tconnectToChat ERROR: ", error);
+    info("connectToChat ERROR", error);
     throw chatError("connectToChat", error);
   }
 };
 
 const sendMessage = async (data: SendMessageProps) => {
   try {
-    // log(`prismaChat.sendMessage ${JSON.stringify(data, null, 2)}`)
+    debug(`sendMessage`,data)
     const message = await prisma.chatMessage.create({ data });
 
     if (message) {
@@ -87,7 +82,7 @@ const sendMessage = async (data: SendMessageProps) => {
 
     throw chatError("sendMessage", "failed to send message");
   } catch (error) {
-    trace("\tsendMessage ERROR: ", error);
+    info("sendMessage ERROR:", error);
     throw chatError("sendMessage", error);
   }
 };

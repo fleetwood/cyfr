@@ -31,8 +31,9 @@ import {
   useState,
 } from "react"
 import { useCyfrUserApi } from "../../hooks/useCyfrUser"
-import { log } from "../../utils/log"
 import { Node } from "@remirror/pm/dist-types/model"
+import useDebug from "../../hooks/useDebug"
+const {debug} = useDebug({fileName: "RemirrorEditor"})
 
 type MentionItem = { id: string, label: string }
 
@@ -41,6 +42,7 @@ type RemirrorEditorProps = {
   content?: string | null
   setContent?: Dispatch<SetStateAction<string | null>>
   setValid?: Dispatch<SetStateAction<boolean>>
+  setCounter?: Dispatch<SetStateAction<number>>
   maxChar?: number
 }
 
@@ -49,7 +51,7 @@ const RemirrorEditor = ({
   content,
   setContent,
   maxChar = -1,
-  setValid
+  setValid,
 }: RemirrorEditorProps) => {
   const { getMentions } = useCyfrUserApi()
   const [mentions, setMentions] = useState<MentionItem[]>([])

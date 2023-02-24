@@ -9,10 +9,11 @@ import { useSession } from "../lib/next-auth-react-query"
 import { PrismaUser } from "../prisma/entities/prismaUser"
 import { CyfrUser } from "../prisma/types/user.def"
 import { cloudinary } from "../utils/cloudinary"
-import { log } from "../utils/log"
 import UserDetailPage from "./user/[id]"
 import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
 import { InferGetServerSidePropsType } from "next";
+import useDebug from "../hooks/useDebug"
+const {debug, info} = useDebug({fileName: 'pages/account'})
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await PrismaUser.userInSession(context)
@@ -41,18 +42,18 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
     } as unknown as CyfrUser
     updateUser({data:newCyfrUser})
       .then(r => {
-        log(`\tonNameChange complete`)
+        debug(`onNameChange complete`)
         invalidateUser()
       })
       .catch(e => {
-        log(`\tonNameChange error ${JSON.stringify(e,null,2)}`)
+        info(`onNameChange error`,e)
       })
   }
 
   const onFileComplete = async (files:CompleteFile[]) => {
     const file = files[0]
     if (file.secure_url) {
-      log(`onFileComplete ${JSON.stringify(file,null,1)}`)
+      debug(`onFileComplete`,file)
       const newCyfrUser = {
         ...cyfrUser,
         image: file.secure_url
@@ -63,7 +64,7 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
           invalidateUser()
         })
         .catch(e => {
-          log(`\tonFileComplete error ${JSON.stringify(e,null,2)}`)
+          info(`onFileComplete error`,e)
         })
     }
   }

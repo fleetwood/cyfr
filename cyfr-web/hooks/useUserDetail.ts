@@ -1,9 +1,10 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { getApi, sendApi } from "../utils/api"
-import { log } from "../utils/log"
 import { FollowProps, FanProps } from "../prisma/types/follow.def"
 import { UserDetail } from "../prisma/prismaContext"
+import useDebug from "./useDebug"
+const {debug, info} = useDebug({fileName: 'useUserDetails'})
 
 export const userDetailQuery = "userDetailQuery"
 
@@ -34,12 +35,10 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
     {
       onSettled(data,error) {
         if (error || data === null) {
-          log(
-            `\tuseUserDetail.onSettled(${queryTag}) ERROR ${JSON.stringify({ error, data })}`
-          )
+          info(`onSettled(${queryTag}) ERROR`,{ error, data })
         }
         if (data) {
-          log(`useUserDetail.onSettled() success`)
+          debug(`onSettled() success`)
           setCurrentUser(() => data as UserDetail)
         }
       }
@@ -60,7 +59,7 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
   const stan = async (props:FanProps) => await send(`user/stan`, props)
 
   const invalidateUser = () => {
-    log(`useUserDetail.invalidateUser(${queryTag})`)
+    debug(`invalidateUser(${queryTag})`)
     return qc.invalidateQueries([queryTag])
   }
   

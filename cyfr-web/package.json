@@ -12,7 +12,7 @@
     "pr-pull": "npx prisma db pull",
     "pr-gen-edge": "npx prisma generate --data-proxy",
     "pr-gen": "npx prisma generate",
-    "pr-reset": "yarn pr-migrate && yarn pr-pull && yarn pr-format && yarn pr-generate",
+    "pr-reset": "yarn pr-migrate && yarn pr-pull && yarn pr-format && yarn pr-gen",
     "build": "next build",
     "start": "next start",
     "start:redis": "redis-server --daemonize yes",

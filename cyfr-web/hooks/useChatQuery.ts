@@ -1,9 +1,10 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { ChatDetail, ChatMessage, ChatRoom, SendMessageProps, User, UserDetail } from "../prisma/prismaContext"
-import { getApi, sendApi } from "../utils/api"
-import { __cyfr_refetch__ } from "../utils/constants"
-import { log } from "../utils/log"
+import { ChatDetail, SendMessageProps } from "../prisma/prismaContext"
+import { sendApi } from "../utils/api"
+import useDebug from "./useDebug"
+
+const {debug, info} = useDebug({fileName: "useChatQuery"})
 
 export async function getChatRoom(users:string[]):Promise<ChatDetail|null> {
   const res = await (await sendApi(`chat/connect`, {users})).data
@@ -25,12 +26,10 @@ export const useChatRoomFeed = (users:string[]) => {
       refetchInterval: 1000,
       onSettled(data,error) {
         if (error || data === null) {
-          log(
-            `\tuseChatRoomFeed.onSettled(${['chat', { party }]}) ERROR ${JSON.stringify({ error, data })}`
-          )
+          info(`onSettled ${['chat', { party }]} ERROR`, { error, data })
         }
         if (data) {
-          // log(`useChatRoomFeed.onSettled(${JSON.stringify(data, null, 2)})`)
+          debug(`onSettled`, data)
             setRoom(data)
         }
       }
@@ -38,7 +37,7 @@ export const useChatRoomFeed = (users:string[]) => {
   )
 
   const sendMessage = async (message:SendMessageProps) => {
-    // log(`useChatQuery.sendMessage ${JSON.stringify(message, null, 2)}`)
+    debug(`sendMessage`,message)
     const res = await sendApi(`chat/message/send`, message)
     if (res) {
       return res
@@ -50,7 +49,7 @@ export const useChatRoomFeed = (users:string[]) => {
     const q = users
       ? ['chat', { party: users.sort().join('-') }]
       : ['chat']
-    // log(`invalidating ${JSON.stringify(q)}`)
+    debug(`invalidating`,q)
     qc.invalidateQueries(q)
   }
   

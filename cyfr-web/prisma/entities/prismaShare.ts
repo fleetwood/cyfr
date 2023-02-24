@@ -1,5 +1,7 @@
-import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps, PostFeed, Post, User, PostDeleteProps, Share, ShareFeed, ShareDeleteProps } from "../prismaContext"
-import { log } from "../../utils/log"
+import { Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
+import useDebug from "../../hooks/useDebug"
+
+const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaShare'})
 
 const byId = async (id: string): Promise<Share | null> => {
   try {
@@ -52,7 +54,7 @@ const all = async (): Promise<ShareFeed[] | []> => {
       ],
     }) as unknown as ShareFeed[]
   } catch (error) {
-    throw { code: "prismaShare.all", message: "No shares were returned!" }
+    throw { code: fileMethod("all"), message: "No shares were returned!" }
   }
 }
 
@@ -69,7 +71,7 @@ const all = async (): Promise<ShareFeed[] | []> => {
 
 const deleteShare = async ({id, authorId}: ShareDeleteProps): Promise<Share> => {
   try {
-    log("PrismaShare.deleteShare", {id, authorId})
+    debug("deleteShare", {id, authorId})
     return await prisma.share.update({ 
       where: {
         id,
@@ -79,8 +81,8 @@ const deleteShare = async ({id, authorId}: ShareDeleteProps): Promise<Share> => 
       }
     })
   } catch (error) {
-    log("\tERROR: ", error)
-    throw { code: "posts/create", message: "Post was not created!" }
+    info("deleteShare ERROR: ", error)
+    throw { code: fileMethod("deleteShare"), message: "Share was not deleted!" }
   }
 }
 

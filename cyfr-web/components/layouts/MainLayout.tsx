@@ -4,6 +4,7 @@ import LeftColumn from "../containers/LeftColumn"
 import Navbar from "../containers/Navbar"
 import CreatePost from "../containers/Post/CreatePost"
 import RightColumn from "../containers/RightColumn"
+import SendMessageModal from "../containers/Comment/SendMessageModal"
 import { useToast } from "../context/ToastContextProvider"
 import Section from "../ui/section"
 
@@ -16,8 +17,6 @@ type MainLayoutProps = {
 
 const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
   const createPostModal = 'createPostModal'
-  const commentPostModal = 'commentPostModal'
-
   const onCreate = () => {
     const createModal = document.getElementById(createPostModal)
     // @ts-ignore
@@ -77,6 +76,7 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
           <CreatePost onCreate={onCreate} />
         </div>
       </div>
+      
     </div>
   )
 }

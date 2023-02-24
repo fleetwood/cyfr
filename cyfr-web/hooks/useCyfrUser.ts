@@ -3,15 +3,17 @@ import { useQuery, useQueryClient } from "react-query"
 import { CyfrUser, User, UserDetail } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import { __cyfr_refetch__ } from "../utils/constants"
-import { log } from "../utils/log"
+
+import useDebug from "./useDebug"
+const {debug, info} = useDebug({fileName: "useCyfrUser"})
 
 const cyfrUserQuery = "cyfrUserQuery"
 
 export async function getCyfrUser() {
-  log(`useCyfrUser.getCyfrUser()`)
+  debug(`getCyfrUser`)
   const data = await getApi(`/me`)
   try {
-    log(`useCyfrUser.getCyfrUser result(${JSON.stringify(data)})`)
+    debug(`getCyfrUser result`,data)
     const cyfrUser = data as CyfrUser
     return cyfrUser
   } catch (error) {
@@ -37,15 +39,13 @@ const useCyfrUser = ():[CyfrUser,boolean,unknown] => {
 
   // @ts-ignore
   const onSettled = (data, error) => {
-    // log(`useCyfrUser.onSettled()`)
+    // debug(`useCyfrUser.onSettled()`)
     if (error || data?.error || null) {
-      log(
-        `\tuseCyfrUser.onSettled() ERROR ${JSON.stringify({ error, data })}`
-      )
+      info(`onSettled ERROR`,{ error, data })
       return null
     }
     if (data) {
-      // log(`\tSUCCESS`)
+      debug(`onSettled SUCCESS`)
       return data as CyfrUser
     }
   }
@@ -74,7 +74,7 @@ export const useCyfrUserApi = () => {
         throw ({code: 'useCyfrUserApi/updateUser', message: 'That dint work'})
       }
     } catch (error) {
-      log(`useCyfrUser.updateUser ERROR ${JSON.stringify(error, null, 2)}`)
+      info(`updateUser ERROR`,error)
     }
   }
 

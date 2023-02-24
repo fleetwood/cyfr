@@ -1,31 +1,7 @@
-import { __prod__ } from "../utils/constants"
-import { log } from "../utils/log"
-
 import { PrismaClient } from "@prisma/client"
-import { PrismaShare } from "./entities/prismaShare"
-import { PrismaPost } from "./entities/prismaPost"
-import { PrismaUser } from "./entities/prismaUser"
-import { PrismaGallery } from "./entities/prismaGallery"
-import { PrismaImage } from "./entities/prismaImage"
-import { PrismaSession } from "./entities/prismaSession"
-
-import {
-  CyfrUser,
-  Fan,
-  Follow,
-  Image,
-  Like,
-  MainFeed,
-  Gallery, GalleryFeed, GalleryDetail, GalleryEngageProps, GalleryCreateProps,
-  Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed,
-  ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
-  Share, ShareDeleteProps, ShareFeed,
-  User, UserDetail, UserFeed,
-  ChatMessage,ChatRoom, ChatDetail, ChatCreateProps, SendMessageProps
-} from "./types"
-
-import {includes} from './types'
-
+import useDebug from "../hooks/useDebug"
+import { __prod__ } from "../utils/constants"
+const {info} = useDebug({fileName: "prismaContext"})
 declare global {
   var prisma: PrismaClient
 }
@@ -34,31 +10,18 @@ declare global {
  * Prisma Client is a singleton in the global scope
  * @type {PrismaClient}
  */
-var prisma: PrismaClient
+export var prisma: PrismaClient
 
 if (__prod__) {
-  log(`prisma is running on prod`)
+  info(`prisma is running on prod`)
   prisma = new PrismaClient()
 } else {
-  log(`prisma is running globally`)
+  info(`prisma is running globally`)
   if (!global.prisma) {
     global.prisma = new PrismaClient()
   }
   prisma = global.prisma
 }
 
-/*******************************/
-/*******************************/
-/*******************************/
-
-export { prisma, PrismaPost, PrismaUser, PrismaSession, PrismaShare, PrismaGallery, PrismaImage, includes }
-export type {
-  Post, User, Follow, Fan, Share, Like, Image, Gallery, ChatRoom, ChatMessage,
-  ShareDeleteProps, ShareFeed,
-  GalleryFeed, GalleryDetail, GalleryEngageProps, GalleryCreateProps,
-  ImageDetail, ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageViewProps,
-  UserFeed, UserDetail, CyfrUser,
-  MainFeed,
-  ChatDetail,ChatCreateProps, SendMessageProps,
-  PostCreateProps, PostDeleteProps, PostEngageProps, PostCommentProps, PostFeed, PostDetail,
-}
+export * from "./types"
+export * from './entities'

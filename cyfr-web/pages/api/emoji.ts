@@ -1,6 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import Emoji from "../../utils/emoji";
-import { log } from "../../utils/log";
+import { NextApiRequest, NextApiResponse } from "next"
+import useDebug from "../../hooks/useDebug"
+import Emoji from "../../utils/emoji"
+const {debug} = useDebug({fileName: 'api/emoji'})
 
 export default async function handle(
   req: NextApiRequest,
@@ -11,6 +12,6 @@ export default async function handle(
         name ? Emoji.byName(name.toString()) :
         group ? Emoji.byGroup(group.toString()) :
         Emoji.all
-    log(`api/emoji`,{cat, name, group, count: result.length})
-    return res.status(200).json([...result]);
+    debug(`api/emoji`,{cat, name, group, count: result.length})
+    return res.status(200).json([...result])
 }

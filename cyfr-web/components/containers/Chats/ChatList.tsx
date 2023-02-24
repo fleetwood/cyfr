@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react"
 import useCyfrUser from "../../../hooks/useCyfrUser"
+import useDebug from "../../../hooks/useDebug"
 import { User, UserFeed } from "../../../prisma/prismaContext"
 import { getApi } from "../../../utils/api"
 import { now, uniqueKey, uuid } from "../../../utils/helpers"
-import { log } from "../../../utils/log"
 import Avatar from "../../ui/avatar"
 import ChatRoom, { ChatRoomProps } from "./ChatRoom"
+
+const {debug} = useDebug({fileName: "ChatList.tpx"})
 
 const ChatList = () => {
     const [cyfrUser] = useCyfrUser()
@@ -38,7 +40,7 @@ const ChatList = () => {
     }
 
     const closeRoom = (secondPersonId: string) => {
-        log(`ChatList.closeRoom ${secondPersonId}`)
+        debug(`closeRoom`, secondPersonId)
         setChatRooms((rooms) => [...rooms.filter(r => !(
             r.secondPerson.id === secondPersonId
         ))])

@@ -1,16 +1,26 @@
 import { GetSessionParams, getSession } from "next-auth/react"
 import { stringify } from "superjson"
-import { Follow, Fan, User, Post, Like } from ".prisma/client"
-import { prisma } from "../prismaContext"
+import { 
+  CommentThreadDetails ,
+  CommentThreadDetailsInclude,
+  CyfrUser, 
+  Fan, 
+  FanProps, 
+  Follow, 
+  prisma, 
+  UpdatePreferencesProps, 
+  User, 
+  UserDetail,
+  UserDetailInclude, 
+} from "../prismaContext"
 import {
   GenericResponseError,
   ResponseError,
   GetResponseError,
 } from "../../types/response"
-import { log } from "../../utils/log"
-import { FanProps } from "../types/follow.def"
-import { CyfrUser, UserDetail, UserDetailInclude, UserFeedInclude } from "../types/user.def"
 import { dedupe } from "../../utils/helpers"
+import useDebug from "../../hooks/useDebug"
+const {debug, info} = useDebug({fileName: 'entities/prismaUser'})
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {
@@ -35,11 +45,11 @@ const follow = async (follows: string, follower: string): Promise<Follow> => {
     }
     return follow
   } catch (error) {
-    log(`api/follow error...
-      \n${stringify({ follows, follower })}
-      \n${stringify(data)}
-      \n${JSON.stringify(error, null, 2)}
-    `)
+    debug(`follow error...`, {
+      ...{follows, follower},
+      ...{data},
+      ...{error}
+    })
     throw GenericResponseError(error as unknown as ResponseError)
   }
 }
@@ -118,9 +128,7 @@ const byEmail = async (email: string): Promise<CyfrUser|null> => {
     // log(`user.entity.byEmail found ${user.name}`)
     return user as CyfrUser
   } catch (error) {
-    log(`user.entity.byEmail FAIL
-      ${JSON.stringify(error, null, 2)}
-    `)
+    info(`byEmail FAIL`,error)
     throw error
   }
 }
@@ -178,7 +186,7 @@ const canMention = async (id: string, search?:string) => {
       ], 'id')
       .slice(0,10) as unknown as User[]
   } catch (error) {
-    log(`prismaUser.canMention broke ${JSON.stringify(error, null, 2)}`)
+    info(`canMention broke`, error)
     throw error
   }
 }
@@ -235,7 +243,7 @@ const userInSession = async (context: GetSessionParams | undefined) => {
     }
     return user
   } catch (error) {
-    log(`Error getting userInSession`)
+    info(`userInSession ERROR`)
     return null
   }
 }
@@ -262,21 +270,16 @@ const userCurrentlyOnline = async (id:string) => {
     }
     return user._count.sessions > 0
   } catch (error) {
-    log(`Error getting userInSession`)
+    info(`userCurrentlyOnline error`)
     return null
   }
 }
 
-type updatePreferencesProps = {
-  id: string
-  name: string
-  image: string
-}
 const updatePreferences = async ({
   id,
   name,
   image,
-}: updatePreferencesProps): Promise<User> => {
+}: UpdatePreferencesProps): Promise<User> => {
   try {
     const user = await prisma.user.update({
       where: { id },
@@ -299,5 +302,5 @@ export const PrismaUser = {
   follow,
   stan,
   updatePreferences,
-  canMention,
+  canMention
 }

@@ -2,7 +2,8 @@ import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { MainFeed, PostCommentProps, PostCreateProps, PostEngageProps } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
-import { log } from "../utils/log"
+import useDebug from "./useDebug"
+const {debug, info} = useDebug({fileName: "useMainFeed"})
 
 export const mainFeedQuery = ['feed', { type: 'mainPage'}]
 
@@ -26,9 +27,7 @@ export const useMainFeed = () => {
     {
       onSettled(data,error) {
         if (error || data === null) {
-          log(
-            `\tuseMainFeed.onSettled(${mainFeedQuery}) ERROR ${JSON.stringify({ error, data })}`
-          )
+          info(`onSettled(${mainFeedQuery}) ERROR`,{ error, data })
         }
         if (data) {
           setFeed(() => data as MainFeed[])

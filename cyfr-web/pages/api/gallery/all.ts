@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
+import useDebug from "../../../hooks/useDebug"
 import { Gallery, GalleryFeed, PrismaGallery } from "../../../prisma/prismaContext"
 import {
   GetResponseError,
@@ -6,6 +7,8 @@ import {
   ResponseResult
 } from "../../../types/response"
 import { logError, todo } from "../../../utils/log"
+
+const {fileMethod, debug} = useDebug({fileName: "prismaComment"})
 
 export default async function handle(
   req: NextApiRequest,

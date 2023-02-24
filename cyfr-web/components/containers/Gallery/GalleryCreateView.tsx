@@ -1,13 +1,14 @@
 import { FormEvent, useEffect, useRef, useState } from "react"
-import { log } from "../../../utils/log"
 import { useToast } from "../../context/ToastContextProvider"
 import useCyfrUser from "../../../hooks/useCyfrUser"
 import useFeed from "../../../hooks/useFeed"
 import { CyfrLogo } from "../../ui/icons"
 import TailwindInput from "../../forms/TailwindInput"
 import Dropzone, { CompleteFile } from "../../forms/Dropzone"
-import { url } from "inspector"
 import { ImageCreateProps } from "../../../prisma/types"
+import useDebug from "../../../hooks/useDebug"
+
+const {debug} = useDebug({fileName: 'GalleryCreateView'})
 
 const GalleryCreateView = ({limit=-1}) => {
   const createGalleryModal = "createGalleryModal"
@@ -31,7 +32,7 @@ const GalleryCreateView = ({limit=-1}) => {
       height: f.height,
       width: f.width
     } as unknown as ImageCreateProps })
-    log(`\tGalleryCreateView.onFilesComplete ${JSON.stringify({files}, null, 2)}`)
+    debug('onFilesComplete',files)
     setImages((current) => [...current, ...setFiles])
   }
 
@@ -46,7 +47,7 @@ const GalleryCreateView = ({limit=-1}) => {
       description,
       images
     }
-    log(`GalleryCreateView.handleSubmit`, data)
+    debug(`handleSubmit`, data)
 
     const gallery = await createGallery(data)
     if (!gallery) {

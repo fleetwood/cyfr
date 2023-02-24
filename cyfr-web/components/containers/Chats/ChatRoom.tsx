@@ -1,11 +1,14 @@
 import { useState } from "react"
 import { useChatRoomFeed } from "../../../hooks/useChatQuery"
+import useDebug from "../../../hooks/useDebug"
 import { ChatMessage, User } from "../../../prisma/prismaContext"
 import { now, timeDifference, uniqueKey } from "../../../utils/helpers"
-import { log } from "../../../utils/log"
 import TailwindInput from "../../forms/TailwindInput"
 import Avatar from "../../ui/avatar"
 import { ChatSendIcon } from "../../ui/icons"
+
+
+const {debug} = useDebug({fileName: 'ChatRoom'})
 
 export type ChatRoomProps = {
     firstPerson: User
@@ -28,7 +31,7 @@ const ChatRoom = ({firstPerson, secondPerson, onCloseRoom, lastUpdated=now()}:Ch
             content: message!,
             chatRoomId: room!.id
         }
-        // log(`onSendClick ${JSON.stringify(data, null, 2)}`)
+        debug('onSendClick', data)
         const send = await sendMessage(data)
         if (send) {
             setMessage(null)
@@ -37,7 +40,7 @@ const ChatRoom = ({firstPerson, secondPerson, onCloseRoom, lastUpdated=now()}:Ch
     }
 
     const closeChatRoom = () => {
-        log(`ChatRoom.closeChatRoom ${secondPerson.id}`)
+        debug(`closeChatRoom`,secondPerson.id)
         onCloseRoom(secondPerson.id)
     }
 
@@ -61,13 +64,13 @@ const ChatRoom = ({firstPerson, secondPerson, onCloseRoom, lastUpdated=now()}:Ch
   
     //   socket.on(subscribe, (data) => {
     //     // @ts-ignore
-    //     log(`ChatRoom.tsx ${socket.id}: ${JSON.stringify(data)}`)
+    //     debug(`ChatRoom`, {socketid: socket.id, data})
     //     setChatMessages((pre) => [...pre, data])
     //   })
     // }
   
     // function sendMessage() {
-    //   console.log("sending message")
+    //   debug("sending message")
     //   // @ts-ignore
     //   socket.emit(announce, {
     //     userid: firstPerson.id,
