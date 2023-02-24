@@ -1,4 +1,5 @@
 export * from "@prisma/client";
+export * from "./audience.def"
 export * from "./share.def"
 export * from './gallery.def';
 export * from './user.def';

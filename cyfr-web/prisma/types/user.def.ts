@@ -1,4 +1,4 @@
-import { Fan, Follow, Like, Post, PostFeed, Share, User, Image, Gallery } from "./../prismaContext"
+import { Fan, Follow, Like, Post, PostFeed, Share, User, Image, Gallery, Membership } from "./../prismaContext"
 import { GalleryFeed, GalleryFeedInclude } from './gallery.def';
 import { PostFeedInclude } from "./post.def"
 
@@ -6,6 +6,7 @@ export type UserFeed = User & {
   _count: {
     sessions: number
   }
+  membership: Membership
   posts: Post[]
   likes: Like[]
   following: Follow[]
@@ -15,6 +16,7 @@ export type UserFeed = User & {
 }
 
 export const UserFeedInclude = {
+  membership: true,
   posts: true,
   likes: true,
   following: true,
@@ -32,6 +34,7 @@ export type UserDetail = User & {
     shares: number
     sessions: number
   }
+  membership: Membership,
   posts: PostFeed[]
   following: { follower: User }[]
   follower: { following: User }[]
@@ -49,6 +52,7 @@ export const UserDetailInclude = {
         shares: true
       }
     },
+    membership: true,
     posts: {
       include: {
         author: true,
@@ -106,6 +110,7 @@ export const UserDetailInclude = {
 }
 
 export type CyfrUser = User & {
+  membership: Membership
   posts: Post[]
   likes: Like[]
   following: Follow[]

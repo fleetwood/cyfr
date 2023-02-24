@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { CyfrUser, User, UserDetail } from "../prisma/prismaContext"
+import { AudienceType, CyfrUser, GetAudienceLevel, User, UserDetail } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import { __cyfr_refetch__ } from "../utils/constants"
 
