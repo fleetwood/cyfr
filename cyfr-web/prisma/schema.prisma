@@ -232,11 +232,11 @@ model CommuneUser {
 }
 
 model Membership {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  active    Boolean  @default(true)
-  level     Audience @default(USER)
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  active    Boolean   @default(true)
+  level     Audience? @default(USER)
   user      User? @relation("user_membership")
 }
 
