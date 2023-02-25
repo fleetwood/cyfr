@@ -7,7 +7,7 @@ import WordpressProvider from "next-auth/providers/wordpress";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./../../../prisma/prismaContext"
 import useDebug from "../../../hooks/useDebug";
-const {debug} = useDebug({fileName: "api/auth/nextauth"})
+const {debug, error} = useDebug({fileName: "api/auth/nextauth", level: 'DEBUG'})
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -128,57 +128,19 @@ export default NextAuth({
   // Events are useful for logging
   // https://next-auth.js.org/configuration/events
   events: {
-    // signIn: async ({ user, account, profile, isNewUser }) => {
-    //   let prismaUser = await prisma.user.findUnique({
-    //     where: { email: user.email || undefined },
-    //     include: { profile: true },
-    //   });
-    //   try {
-    //     if (isNewUser || prismaUser?.profile===null) {
-    //       log(`We have a new user!!!!!!!!!!`, user);
-  
-    //       if (prismaUser) {
-    //         const newProfile = await prisma.user.update({
-    //           where: {
-    //             email: user.email!,
-    //           },
-    //           data: {
-    //             profile: {
-    //               connectOrCreate: {
-    //                 where: {id: prismaUser.id},
-    //                 create: {
-    //                   displayName: prismaUser.name || prismaUser.email,
-    //                   photoURL: user.image || null,
-    //                   createdAt: new Date(),
-    //                   lastLoginAt: new Date(),
-    //                 }
-    //               },
-    //             },
-    //           },
-    //         });
-    //         if (!newProfile) {
-    //           throw new Error("\tFAILED CREATING Profile!");
-    //         }
-    //       }
-    //     } else {
-    //       const updateProfile = await prisma.profile.update({
-    //         where: {
-    //           id: prismaUser?.id,
-    //         },
-    //         data: {
-    //           lastLoginAt: new Date()
-    //         },
-    //       });
-  
-    //       if (!updateProfile) {
-    //         throw new Error("\tFAILED UPDATING last login!");
-    //       }
-    //     }
-    //   } catch (error) {
-    //     logError('signIn Error',{error,user,prismaUser})
-    //   }
-    // },
-    // updateUser({ user })
+    signIn: async ({ user, account, profile, isNewUser }) => {
+      try {
+        let prismaUser = await prisma.user.findUnique({
+          where: { email: user.email || undefined },
+          include: { membership: true },
+        });
+        if (isNewUser) {
+          debug(`We have a new user!!!!!!!!!!`, user);
+        }
+      } catch (e) {
+        error('signIn Error',{error: e,user})
+      }
+    },
   },
 
   // Enable debug messages in the console if you are having problems
