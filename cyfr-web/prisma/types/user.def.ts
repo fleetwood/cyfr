@@ -6,7 +6,7 @@ export type UserFeed = User & {
   _count: {
     sessions: number
   }
-  membership: Membership
+  membership?: Membership
   posts: Post[]
   likes: Like[]
   following: Follow[]
@@ -34,7 +34,7 @@ export type UserDetail = User & {
     shares: number
     sessions: number
   }
-  membership: Membership,
+  membership?: Membership,
   posts: PostFeed[]
   following: { follower: User }[]
   follower: { following: User }[]
@@ -110,7 +110,7 @@ export const UserDetailInclude = {
 }
 
 export type CyfrUser = User & {
-  membership: Membership
+  membership?: Membership
   posts: Post[]
   likes: Like[]
   following: Follow[]

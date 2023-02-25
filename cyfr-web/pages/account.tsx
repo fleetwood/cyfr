@@ -13,6 +13,7 @@ import UserDetailPage from "./user/[id]"
 import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
 import { InferGetServerSidePropsType } from "next";
 import useDebug from "../hooks/useDebug"
+import UserBillingDetail from "../components/containers/User/UserBillingDetail"
 const {debug, info} = useDebug({fileName: 'pages/account'})
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
@@ -105,7 +106,7 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
         }
         
         {activeTab==="Billing" &&
-          <h2 className="subtitle">Billing</h2>
+          <UserBillingDetail />
         }
               
         {activeTab==="User" &&

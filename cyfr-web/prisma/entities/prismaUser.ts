@@ -92,7 +92,7 @@ const byId = async (id: string): Promise<UserDetail> => {
     if (!user) {
       throw { code: "users/byId", message: `Did not find user for ${id}` }
     }
-    return user
+    return user as unknown as UserDetail
   } catch (error) {
     throw GetResponseError(error)
   }
