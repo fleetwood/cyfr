@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("HEROKU_DATABASE_URL_PROD")
-  shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
+  provider = "postgresql"
+  url      = env("DIGITAL_OCEAN_CYFR_DB")
+  // shadowDatabaseUrl = env("HEROKU_DATABASE_URL_STAGE")
 }
 
 model User {
@@ -32,8 +32,8 @@ model User {
   sessions      Session[]
   shares        Share[]       @relation("user_shares")
   chats         ChatRoom[]    @relation("user_chats")
-  membershipId  String @unique
-  membership Membership @relation("user_membership", fields: [membershipId], references: [id])
+  membershipId  String?       @unique
+  membership    Membership?   @relation("user_membership", fields: [membershipId], references: [id])
 }
 
 model Post {
@@ -237,7 +237,7 @@ model Membership {
   updatedAt DateTime  @default(now())
   active    Boolean   @default(true)
   level     Audience? @default(USER)
-  user      User? @relation("user_membership")
+  user      User?     @relation("user_membership")
 }
 
 model Block {

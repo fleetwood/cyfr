@@ -38,7 +38,7 @@ export type AccessProps = {
 }
 export const canAccess = ({required,user,cyfrUser}:AccessProps) => 
     GetAudienceLevel(
-        cyfrUser ? cyfrUser.membership.level 
-        : user ? AudienceType.USER 
+        cyfrUser ? cyfrUser.membership.level || AudienceType.PUBLIC
+        : user ? AudienceType.USER || AudienceType.PUBLIC
         : AudienceType.PUBLIC
     ) >= GetAudienceLevel(required)
