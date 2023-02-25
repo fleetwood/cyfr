@@ -14,7 +14,6 @@ model User {
   email         String?       @unique
   emailVerified DateTime?
   image         String?
-  membership    Membership?   @relation("user_membership")
   accounts      Account[]
   blocking      Block[]       @relation("blocked_from_user")
   blocked       Block[]       @relation("user_is_blocked")
@@ -33,6 +32,8 @@ model User {
   sessions      Session[]
   shares        Share[]       @relation("user_shares")
   chats         ChatRoom[]    @relation("user_chats")
+  membershipId  String @unique
+  membership Membership @relation("user_membership", fields: [membershipId], references: [id])
 }
 
 model Post {
@@ -236,8 +237,7 @@ model Membership {
   updatedAt DateTime @default(now())
   active    Boolean  @default(true)
   level     Audience @default(USER)
-  userId    String   @unique
-  user      User     @relation("user_membership", fields: [userId], references: [id])
+  user      User? @relation("user_membership")
 }
 
 model Block {
