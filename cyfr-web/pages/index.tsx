@@ -1,11 +1,16 @@
 import MainFeedItem from "../components/containers/Post/MainFeedItem"
+import { useToast } from "../components/context/ToastContextProvider"
 import MainLayout from "../components/layouts/MainLayout"
 import { CyfrLogo } from "../components/ui/icons"
 import useFeed from "../hooks/useFeed"
 import { uuid } from "../utils/helpers"
 
-const HomePage = () => {
+type HomePageProps = {
+
+}
+const HomePage = (props:HomePageProps) => {
   const {feed} = useFeed({type: 'main'})
+  const {notify} = useToast()
 
   const CyfrHome = 
     <div className="flex">

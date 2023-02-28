@@ -128,16 +128,20 @@
         background: linear-gradient(181deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 1) 100%);
     }
 
-    .alert-info {
-        @apply bg-info text-info-content
+    .alert.alert-info {
+        @apply bg-info text-info-content border-4 border-info-content
     }
 
-    .alert-success {
-        @apply bg-success text-success-content
+    .alert.alert-success {
+        @apply bg-success text-success-content border-4 border-info-content 
     }
 
-    .alert-warning {
-        @apply bg-warning text-warning-content
+    .alert.alert-warning {
+        @apply bg-warning text-warning-content border-4 border-info-content
+    }
+
+    .alert.alert-error {
+        @apply bg-error text-error-content border-4 border-info-content
     }
 
     .accent-glow-sm {
