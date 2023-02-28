@@ -240,7 +240,24 @@
 
     .scrollbar-only {
         @apply scrollbar-track-transparent scrollbar-thumb-primary
-    }  
+    }
+
+    .avatar.member::after, .avatar.agent::after {
+        content: '\00a0';
+        border-radius: 9999px;
+        width: 15%;
+        height: 15%;
+        bottom: 7%;
+        right: 7%;
+        box-shadow: 0 0 0 2px hsl(var(--b1));
+        @apply block z-10 absolute
+    }
+    .avatar.member::after {
+        @apply bg-primary 
+    }
+    .avatar.agent::after {
+        @apply bg-yellow-500 
+    }
 
 }
 
