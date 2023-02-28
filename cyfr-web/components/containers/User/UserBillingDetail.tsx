@@ -4,6 +4,7 @@ import useCyfrUser, { useCyfrUserApi } from "../../../hooks/useCyfrUser";
 import useDebug from "../../../hooks/useDebug";
 import { sendApi } from "../../../utils/api";
 import { uniqueKey } from "../../../utils/helpers";
+import { CheckBadge } from "../../ui/icons";
 
 const {debug} = useDebug({fileName: "UserBillingDetail", level: 'DEBUG'})
 
@@ -101,20 +102,21 @@ const UserBillingDetail = () => {
           We’re working on a suite of tools to make writing a social effort, for everyone for free.
         </p>
         <div className="flex flex-col space-y-6 mt-6">
-            {plans.map(plan => (
-                <div className="w-full flex justify-between" key={uniqueKey(cyfrUser,plan)}>
-                    <div className={`w-full py-4 px-6 mr-1 transition-all duration-200
-                        text-base leading-none text-base-content text-opacity-70
-                        bg-base-100 rounded-md cursor-pointer shadow
-                        hover:shadow-lg hover:border-l-8 hover:border-primary
-                        ${isPlan(plan) ? `border-l-8 border-success` : ``}
+            {plans.map(p => (
+                    <div className={`w-full py-4 px-6 transition-all duration-200 flex justify-between
+                        text-base leading-none text-base-content text-opacity-70 bg-base-100 rounded-md 
+                        cursor-pointer shadow border-l-8
+                        hover:shadow-lg hover:border-primary
+                        ${p === plan 
+                            ? 'border-secondary' 
+                            : 'border-base-100'}
                     `}
-                    id={plan.label}
-                    onClick={() => setPlan(plan)}
+                    key={uniqueKey(cyfrUser,p)}
+                    onClick={() => setPlan(p)}
                     >
-                        <h2 className="text-2xl font-semibold leading-6 text-base-content ">{plan.label}</h2>
+                        <h2 className="text-2xl font-semibold leading-6 text-base-content ">{p.label}</h2>
+                        {p.audience  === cyfrUser.membership?.level && <span className="text-success text-xl">{CheckBadge}</span>}
                     </div>
-                </div>
             ))}
         </div>
       </div>
@@ -125,21 +127,21 @@ const UserBillingDetail = () => {
           <p className="md:w-80 text-base leading-6 mt-4 text-base-content text-opacity-70">
             {plan.description}
           </p>
-          <div className="md:flex items-center justify-between space-x-4">
-            <div className="my-2">
+          <div className="md:flex justify-between space-x-4">
+            <div className="my-2 p-2 bg-base-100 rounded-md shadow flex-grow">
                 <p className="font-semibold">Monthly</p>
                 <h2 className="text-2xl font-semibold leading-6 text-base-content">${plan.price.monthly}/mo</h2>
-                <p className="my-2 text-sm">{plan.cta.monthly}</p>
+                <p className="my-2 text-sm flex-grow">{plan.cta.monthly}</p>
                 {plan.audience !== Audience.USER && 
-                    <button className="btn bg-base-content" onClick={() => choosePlan(plan, 'monthly')}>Choose {plan.label} monthly</button>
+                    <button className="btn bg-base-content bottom-0" onClick={() => choosePlan(plan, 'monthly')}>Choose {plan.label} monthly</button>
                 }
             </div>
-            <div className="my-2">
+            <div className="my-2 p-2 bg-base-100 rounded-md shadow flex-grow">
                 <p className="font-semibold">Annually</p>
                 <h2 className="text-2xl font-semibold leading-6 text-primary">${plan.price.annually}/yr</h2>
-                <p className="my-2 text-sm">{plan.cta.annually}</p>
+                <p className="my-2 text-sm flex-grow">{plan.cta.annually}</p>
                 {plan.audience !== Audience.USER && 
-                <button className="btn btn-success" onClick={() => choosePlan(plan, 'annually')}>Choose {plan.label} annually</button>
+                <button className="btn btn-success bottom-0" onClick={() => choosePlan(plan, 'annually')}>Choose {plan.label} annually</button>
                 }
             </div>
           </div>
