@@ -17,7 +17,7 @@ import UserBillingDetail from "../components/containers/User/UserBillingDetail"
 const {debug, info} = useDebug({fileName: 'pages/account'})
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
-  const user = await PrismaUser.userInSession(context)
+  const user = await PrismaUser.userInSessionContext(context)
   
   return { props: { user } }
 }
