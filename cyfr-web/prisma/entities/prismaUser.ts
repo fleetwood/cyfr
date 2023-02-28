@@ -1,5 +1,6 @@
 import { GetSessionParams, getSession } from "next-auth/react"
 import { 
+  Audience,
   CyfrUser, 
   Fan, 
   FanProps, 
@@ -8,7 +9,9 @@ import {
   UpdatePreferencesProps, 
   User, 
   UserDetail,
-  UserDetailInclude, 
+  UserDetailInclude,
+  UserFeed,
+  UserFeedInclude, 
 } from "../prismaContext"
 import {
   GenericResponseError,
@@ -17,7 +20,9 @@ import {
 } from "../../types/response"
 import { dedupe } from "../../utils/helpers"
 import useDebug from "../../hooks/useDebug"
-const {debug, info} = useDebug({fileName: 'entities/prismaUser'})
+import { NextApiRequest } from "next"
+import { Session } from "next-auth"
+const {debug, info} = useDebug({fileName: 'entities/prismaUser', level: 'DEBUG'})
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {
@@ -188,47 +193,17 @@ const canMention = async (id: string, search?:string) => {
   }
 }
 
-const userInSession = async (context: GetSessionParams | undefined) => {
-  try {
-    const session = await getSession(context)
-    const currentUser = await byEmail(session?.user?.email!)
+const userBySessionEmail = async (session:Session|null|undefined):Promise<UserFeed|null> => {
+  if (session === undefined || session === null || session?.user === null || session?.user?.email === null) {
+    return null
+  } else {
+    const email = session?.user?.email
+    const currentUser = await PrismaUser.byEmail(email!)
     const user = await prisma.user.findUnique({
       where: {
         id: currentUser?.id?.toString(),
       },
-      include: {
-        posts: {
-          include: {
-            author: true,
-            likes: true,
-          },
-        },
-        likes: true,
-        following: {
-          include: {
-            following: true,
-            follower: true,
-          },
-        },
-        follower: {
-          include: {
-            following: true,
-            follower: true,
-          },
-        },
-        fanOf: {
-          include: {
-            fanOf: true,
-            fan: true,
-          },
-        },
-        fans: {
-          include: {
-            fanOf: true,
-            fan: true,
-          },
-        },
-      },
+      include: UserFeedInclude
     })
     if (!user) {
       throw {
@@ -238,10 +213,57 @@ const userInSession = async (context: GetSessionParams | undefined) => {
           : "No user in session",
       }
     }
-    return user
+    return user as unknown as UserFeed || null
+  }
+}
+
+const userInSessionReq = async (req:NextApiRequest):Promise<UserFeed|null> => {
+  try {
+    const session = await getSession({req})
+    return userBySessionEmail(session)
+  } catch (e) {
+    return null
+  }
+}
+
+const userInSessionContext = async (context: GetSessionParams | undefined):Promise<UserFeed|null> => {
+  try {
+    const session = await getSession(context)
+    return userBySessionEmail(session)
   } catch (error) {
     info(`userInSession ERROR`)
     return null
+  }
+}
+
+const setMembership = async (userId: string, audience:Audience, cadence:string):Promise<UserFeed|null> => {
+  try {
+    debug('setMembership', {userId, audience: audience, cadence})
+    const user = await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        membership: {
+          upsert: {
+            create: {
+              level: audience
+            },
+            update: {
+              level: audience
+            }
+          }
+        }
+      },
+      include: UserFeedInclude
+    })
+    if (user) {
+      return user as unknown as UserFeed || null
+    }
+    debug('setMembership', 'Null response when updating')
+    return null
+  } catch (e) {
+    throw(e)
   }
 }
 
@@ -292,12 +314,14 @@ const updatePreferences = async ({
 }
 
 export const PrismaUser = {
-  userInSession,
+  userInSessionContext,
+  userInSessionReq,
   userCurrentlyOnline,
   byEmail,
   byId,
   follow,
   stan,
+  setMembership,
   updatePreferences,
   canMention
 }

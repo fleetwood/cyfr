@@ -24,7 +24,9 @@ export const UserFeedInclude = {
   fans: true,
   fanOf: true,
   _count: {
-    sessions: true,
+    select: {
+      sessions: true
+    }
   }
 }
 
