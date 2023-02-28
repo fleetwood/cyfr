@@ -1,4 +1,4 @@
-import { CommentThread, Comment, Commune, CommuneUser, User } from "./../prismaContext";
+import { CommentThread, Comment, Commune, CommuneUser, User, UserFeed } from "./../prismaContext";
 
 /**
  * @property threadId Will create a new CommentThread if undefined
@@ -25,7 +25,7 @@ export type StartInboxThreadProps = {
 export type CommentThreadDetails = CommentThread & {
   commune: Commune & {
     users: (CommuneUser & {
-      user: User
+      user: UserFeed
     })[];
   };
   comments: (Comment & {

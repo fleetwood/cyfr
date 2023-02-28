@@ -1,19 +1,32 @@
 import React, { useEffect, useState } from "react";
-import RemirrorEditor from "../components/ui/RemirrorEditor";
+import { PrismaPost } from "../prisma/entities";
+import { PostDetail } from "../prisma/types";
+import { timeDifference, ymd } from "../utils/helpers";
 import StaticLayout from './../components/layouts/StaticLayout'
+import { InferGetServerSidePropsType } from "next";
+import { now } from "next-auth/client/_utils";
 
-const Test = () => {
-  const [message, setMessage] = useState<string|null>("<p>This is the default message</p>");
+export async function getServerSideProps(context: any) {
+  const post = await PrismaPost.byId('clenla3qm001yjpn6uplujp87')
+  return {
+    props: {
+      post
+    },
+  };
+}
 
-  function handleSubmit(e:any) {
-    e.preventDefault();
-    setMessage("");
-  }
+type TestProps = {
+  post: PostDetail
+}
+
+const Test = ({post}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const time = ymd()
 
   return (
-    <StaticLayout sectionTitle="Remirror" >
-      <RemirrorEditor content={message} setContent={setMessage} maxChar={128} />
-      <div className="mt-2 p-2 font-ibarra">{message}</div>
+    <StaticLayout sectionTitle="Time" >
+      <p>{time}</p>
+      <p>{ymd(post?.createdAt)}</p>
+      <p>{timeDifference(post ? post.createdAt : new Date())}</p>
     </StaticLayout>
   );
 };

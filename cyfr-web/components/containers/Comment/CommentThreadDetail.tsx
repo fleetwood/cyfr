@@ -11,7 +11,7 @@ import { useToast } from "../../context/ToastContextProvider"
 const {debug} = useDebug({fileName: 'CommentThreadDetail'})
 
 type CommentThreadDetailProps = {
-    user: CyfrUser | User
+    user: CyfrUser
     thread: CommentThreadDetails
 }
 

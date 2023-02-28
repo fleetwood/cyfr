@@ -1,5 +1,7 @@
 import { useId } from 'react'
 import { v4 as uid } from 'uuid'
+import useDebug from '../hooks/useDebug'
+const {debug} = useDebug({fileName: 'utils/helpers', level: 'DEBUG'})
 
 export const URLify = (content: string) => {
   const urls = content.match(
@@ -93,17 +95,18 @@ export const timeDifference = (from:Date|string) => {
   var days = Math.floor(milisec_diff / 1000 / 60 / (60 * 24))
   var date_diff = new Date(milisec_diff)
   const ago = {
-    weeks: Math.floor(days / 7),
+    weeks: Math.round(days / 7),
     days,
     hours: date_diff.getHours(),
     minutes: date_diff.getMinutes(),
   }
+debug('timeDifference', {fromDate: fromDate.getTime(), current, datetime, milisec_diff, days, date_diff, ago})
   if (ago.weeks > 3) {
     return `${dayOf(fromDate.getDay())}, ${fromDate.getFullYear()} ${monthOf(fromDate.getMonth())}-${fromDate.getDate() > 9 ? fromDate.getDate() : "0" + fromDate.getDate()}`
-  } else if (ago.weeks > 0) {
+  } else if (ago.weeks > 1) {
     return isOne(ago.weeks, " week")
   } else if (ago.days > 0) {
-    return isOne(ago.days, " day")
+    return ago.days === 1 ? 'yesterday' : `${ago.days} days ago`
   } else if (ago.hours > 0) {
     return isOne(ago.hours, " hour")
   } else if (ago.minutes >= 2) {
