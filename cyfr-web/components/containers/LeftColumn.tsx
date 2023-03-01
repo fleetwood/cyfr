@@ -30,7 +30,7 @@ const LeftColumn = () => {
             <ShrinkableIconLink
               href={"/test"}
               target="_self"
-              label="Test Page (Quill)"
+              label="Test Page"
               icon={FeatherIcon}
             />
           </li>
