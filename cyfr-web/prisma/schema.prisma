@@ -386,10 +386,13 @@ model Session {
 enum Audience {
   PUBLIC
   USER
+  READER
   MEMBER
   MEMBER_EXP
   AGENT
   AGENT_EXP
+  ADMIN
+  OWNER
 }
 
 enum Role {
