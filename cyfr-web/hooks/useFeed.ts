@@ -10,8 +10,7 @@ export const galleryFeedQuery = ['feed', { type: 'gallery'}]
 export const imageFeedQuery = ['feed', { type: 'image'}]
 export const inboxFeedQuery = ['feed', { type: 'inbox'}]
 
-const {debug} = useDebug({fileName: "useFeed"})
-
+const {debug} = useDebug({fileName: "useFeed", level:"DEBUG"})
 
 export type FeedTypes = {
   type: 'main'|'post'|'gallery'|'inbox'
@@ -112,9 +111,10 @@ export const useFeed = ({type}:FeedTypes) => {
   const sendMessage = async (props:UpsertInboxProps) => await send('user/inbox/send', props)
 
   const invalidateFeed = (t?:FeedTypes) => {
-    const q = t ? ['feed', {type: t.type}] : ['feed']
-    debug(`invalidateFeed`,{q})
-    qc.invalidateQueries(q)
+    const queryKey = t ? ['feed', {type: t.type}] : ['feed']
+    const q = {queryKey}
+    debug(`invalidateFeed`,{queryKey})
+    qc.invalidateQueries({queryKey})
   }
   
   return {feed, 

@@ -59,8 +59,10 @@ export const usePosts = () => {
   const comment = async (props:PostCommentProps) => await send("post/comment", props)
 
   const invalidatePosts = () => {
-    debug(`invalidatePosts`, allPostsQuery)
-    return qc.invalidateQueries([allPostsQuery])}
+    const queryKey = allPostsQuery
+    const q = {queryKey}
+    debug(`invalidatePosts`, {allPostsQuery, queryKey, q})
+    return qc.invalidateQueries(queryKey)}
   
   return {posts, create, share, like, comment, commentId, setCommentId, invalidatePosts}
 }
