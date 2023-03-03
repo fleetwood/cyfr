@@ -4,7 +4,9 @@ import { CyfrLogo } from "../components/ui/icons"
 import useFeed from "../hooks/useFeed"
 import { uuid } from "../utils/helpers"
 
-const HomePage = () => {
+type HomePageProps = {}
+
+const HomePage = (props:HomePageProps) => {
   const {feed} = useFeed({type: 'main'})
 
   const CyfrHome = 
