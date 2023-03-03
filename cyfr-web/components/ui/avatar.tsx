@@ -1,8 +1,8 @@
-import { UserDetail, UserFeed, Audience } from "../../prisma/types"
+import { UserDetail, UserFeed, User, CyfrUser } from "../../prisma/prismaContext"
 import { AvatarSizeProps, cloudinary } from "../../utils/cloudinary"
 
 type AvatarProps = AvatarSizeProps & {
-  user?: UserDetail | UserFeed
+  user?: CyfrUser | UserDetail | UserFeed | User
   link?: boolean
   shadow?: boolean
   className?: string
@@ -11,14 +11,15 @@ type AvatarProps = AvatarSizeProps & {
 
 const Avatar = ({user,placeholder,className,shadow,sz,link = true}: AvatarProps) => {
   const content = user && user.image 
-    ? <img src={cloudinary.avatar(user.image, sz as unknown as AvatarSizeProps)}/> 
-    : placeholder ? placeholder : '?'
+    ? <img src={cloudinary.avatar(user.image, sz as unknown as AvatarSizeProps)}/> : 
+    placeholder ? placeholder : 
+    user ? user.name :
+    '?'
 
     // @ts-ignore
     const online = user && user._count && user._count.sessions && user._count.sessions > 0 ? 'online' : ''
-    const member = user?.membership?.level === Audience.MEMBER ? 'member' : 
-                   user?.membership?.level === Audience.AGENT ? 'agent' : 
-                   ''
+    // @ts-ignore
+    const member = user?.membership?.level.toLowerCase() || ''
   return (
     <div className={`avatar ${online} ${member}`}>
       <div className={`mask mask-squircle`}>

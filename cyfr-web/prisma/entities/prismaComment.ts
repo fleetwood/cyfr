@@ -85,7 +85,7 @@ const upsertInbox = async ({
       },
       create: {
         entity: "INBOX",
-        requiredRole: "PRIVATE",
+        requiredRole: "OWNER",
         comments: {
           createMany: {
             data: messages?.map(m => { return {...m, threadType: 'INBOX'}}) || []

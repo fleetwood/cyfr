@@ -6,6 +6,7 @@ import { timeDifference, uuid, uniqueKey } from '../../utils/helpers';
 import ReactHtmlParser from "react-html-parser"
 import { PrismaPost } from "../../prisma/entities/prismaPost"
 import { PostDetail, PostFeed } from "../../prisma/types/post.def"
+import { InferGetServerSidePropsType } from "next";
 
 type PostDetailPageProps = {
   post: PostFeed
@@ -22,8 +23,8 @@ export async function getServerSideProps(context: any) {
   }
 }
 
-const PostDetailPage = ({ post }: PostDetailPageProps) => {
-  return (
+const PostDetailPage = ({ post }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  return (post && 
     <MainLayout
       pageTitle={`${post.author.name}`}
       sectionTitle=''
