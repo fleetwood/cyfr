@@ -285,6 +285,7 @@ model Book {
   hook       String?
   synopsis   String?
   back       String?
+  words      Int            @default(0)
   authors    User[]         @relation("user_books")
   chapters   Chapter[]      @relation("book_chapters")
   characters Character[]    @relation("book_characters")
@@ -324,6 +325,7 @@ model Chapter {
   updatedAt  DateTime    @default(now())
   active     Boolean     @default(true)
   content    String      @default("")
+  words      Int         @default(0)
   characters Character[] @relation("chapter_characters")
   bookId     String
   book       Book        @relation("book_chapters", fields: [bookId], references: [id])

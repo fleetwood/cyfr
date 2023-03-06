@@ -1,44 +1,52 @@
 import { Book, BookCategory, Chapter, Character, Follow, Gallery, Genre, Like, User, UserFeed } from "../prismaContext"
 
+export type GenreDeleteProps = {
+    id?: string
+    title?: string
+}
+
+export type GenreUpsertProps = {
+    title: string
+    description: string
+}
+
+export type GenreAddBookProps = {
+    title: string
+    book: Book
+}
+
+export type GenreList = Genre & {
+    books: true
+}
+
 export type GenreFeed = Genre & {
-    books: Book & {
-        categories: BookCategory[]
+    books: (Book & {
         authors: User[]
-        chapters: Chapter[]
-        characters: Character[],
-        gallery: Gallery[],
-        fans: Follow[],
-        likes: Like[]
-    }[]
+        categories: BookCategory[]
+        gallery: Gallery
+        _count: {
+            chapters: Number
+            characters: Number
+            fans: Number
+            likes: Number
+        }
+    })[]
 }
 
 export const GenreFeedInclude = {
-    books:{
+    books: {
         include: {
-          authors: {
-            include: {
-              membership: true,
-              blocked: true,
-              _count: {
-                select: {
-                  books: true,
-                  fanOf: true,
-                  fans: true,
-                  posts: true,
-                  follower: true,
-                  following: true,
-                  sessions: true,
-                  likes: true,
-                  shares: true
-                }
-              }
-            }
-          },
+          authors: true,
           categories: true,
-          chapters: true,
-          characters: true,
           gallery: true,
-          likes: true
+          _count: {
+            select: {
+              chapters: true,
+              characters: true,
+              fans: true,
+              likes: true
+            }
+          }
         }
       }
 }

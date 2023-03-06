@@ -10,3 +10,4 @@ export * from "./chat.def";
 export * from "./follow.def";
 export * from './comment.def'
 export * from "./feed.def"
+export * from "./genre.def"
