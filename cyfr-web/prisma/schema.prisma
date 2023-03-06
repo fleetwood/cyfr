@@ -256,7 +256,7 @@ model Genre {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
-  title       String
+  title       String   @unique
   description String
   books       Book[]   @relation("book_genre")
 }
