@@ -9,6 +9,7 @@ import useDebug from "../hooks/useDebug";
 import GenreAdmin from "../components/containers/Genre/GenreAdmin";
 import { uniqueKey } from "../utils/helpers";
 import { InferGetServerSidePropsType } from "next";
+import Link from "next/link";
 
 const { debug } = useDebug({ fileName: "admin page", level: "DEBUG" });
 
@@ -43,13 +44,16 @@ const AdminPage = ({allow, genres}: InferGetServerSidePropsType<typeof getServer
     allow && (
       <AdminLayout sectionTitle={CyfrHome}>
         <div>
+          <Link href="/"><h2 className="h-subtitle">Home</h2></Link>
+        </div>
+        <div>
           <h2 className="h-title">Dashboard</h2>
         </div>
         <div>
           <h2 className="h-subtitle">Genres</h2>
-          <div className="flex justify-evenly">
+          <div className="flex flex-wrap justify-items-center">
             {genres?.map(genre => 
-              <div key={uniqueKey(genre)} className='btn btn-primary text-primary-content rounded-md px-2' onClick={() => setEditGenre(genre)}>
+              <div key={uniqueKey(genre)} className='btn btn-primary text-primary-content rounded-md px-2 mr-2 mb-2 sm:w-1/3 md:w-1/6' onClick={() => setEditGenre(genre)}>
                 {genre.title}
               </div>)}
           </div>

@@ -258,6 +258,7 @@ model Genre {
   updatedAt   DateTime @default(now())
   title       String   @unique
   description String
+  fiction     Boolean  @default(true)
   books       Book[]   @relation("book_genre")
 }
 

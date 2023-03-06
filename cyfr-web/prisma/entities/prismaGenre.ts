@@ -65,16 +65,18 @@ const list = async (): Promise<GenreList[]> => {
 const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
   const method = "upsertGenre"
   try {
-    const {title, description} = props
+    const {title, description, fiction} = props
     debug(method, {title, description})
     const data = {
       update: {
         title,
         description,
+        fiction
       },
       create: {
         title,
-        description
+        description,
+        fiction
       }
     }
     

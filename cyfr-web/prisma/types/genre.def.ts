@@ -8,6 +8,7 @@ export type GenreDeleteProps = {
 export type GenreUpsertProps = {
     title: string
     description: string
+    fiction: boolean
 }
 
 export type GenreAddBookProps = {

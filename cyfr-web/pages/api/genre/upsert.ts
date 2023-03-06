@@ -12,9 +12,9 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<GenreFeed>>
 ) {
   todo('Why is this posting req.body.body????')
-  const { title, description } = req.body.body
+  const { title, description, fiction } = req.body.body
   try {
-    const result = await PrismaGenre.upsertGenre({title, description})
+    const result = await PrismaGenre.upsertGenre({title, description, fiction})
     if (result) {
       res.status(200).json({ result })
     } else {

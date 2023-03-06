@@ -4,6 +4,7 @@ import { Genre, GenreFeed, GenreList } from "../../../prisma/prismaContext"
 import { sendApi } from "../../../utils/api"
 import { useToast } from "../../context/ToastContextProvider"
 import TailwindInput from "../../forms/TailwindInput"
+import Toggler from "../../ui/toggler"
 const {debug } = useDebug({fileName: 'AddGenre', level: 'DEBUG'})
 
 type GenreAdminProps = {
@@ -13,11 +14,13 @@ type GenreAdminProps = {
 const GenreAdmin = ({editGenre}:GenreAdminProps) => {
     const [title, setTitle] = useState<string|null>(null)
     const [description, setDescription] = useState<string|null>(null)
+    const [fiction, setFiction] = useState<boolean>(false)
     const {notify} = useToast()
 
     useEffect(() => {
         setTitle(() => editGenre ? editGenre.title : null)
         setDescription(() => editGenre ? editGenre.description : null)
+        setFiction(() => editGenre ? editGenre.fiction : false)
     },[editGenre])
 
     const upsertGenre = async () => {
@@ -25,7 +28,7 @@ const GenreAdmin = ({editGenre}:GenreAdminProps) => {
             debug('addGenre', 'Not valid!')
             return
         }
-        const genre = await sendApi('genre/upsert', {title, description})
+        const genre = await sendApi('genre/upsert', {title, description, fiction})
         if (genre.data.result) {
             debug('addGenre', {...genre.data.result})
             resetGenre()
@@ -36,6 +39,7 @@ const GenreAdmin = ({editGenre}:GenreAdminProps) => {
     const resetGenre = () => {
         setTitle(() => null)
         setDescription(() => null)
+        setFiction(() => false)
     }
 
     const deleteGenre = async () => {
@@ -47,6 +51,7 @@ const GenreAdmin = ({editGenre}:GenreAdminProps) => {
     <div className="m-4 p-4 rounded-lg border border-primary bg-base-200">
         <TailwindInput type="text" label="Genre Title" placeholder="Make sure no typos! Title is used as a key" value={title} setValue={setTitle} />
         <TailwindInput type="text" label="Description" placeholder="Gotta give a description. HTMLInput forthcoming..." value={description} setValue={setDescription} />
+        <Toggler checked={fiction} setChecked={setFiction} label="Non-Fiction" rightLabel="Fiction" variant="primary" />
         <div className="flex justify-between">
             <button className="btn btn-primary rounded-lg text-primary-content px-4" onClick={upsertGenre} disabled={title===null || description === null}>Adminstrate</button>
             <button className="btn btn-primary rounded-lg text-primary-content px-4" onClick={resetGenre} disabled={title===null}>Clear</button>
