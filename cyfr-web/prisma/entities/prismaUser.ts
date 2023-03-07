@@ -158,6 +158,24 @@ const byEmail = async (email: string): Promise<CyfrUser|null> => {
   }
 }
 
+const byNameOrId = async (idOrName:string):Promise<UserDetail|undefined> => {
+try {
+  debug("byNameOrId", {idOrName})
+  const userById = await byId(idOrName)
+  if (userById) {
+    return userById
+  }
+  const userByName = await byName(idOrName)
+  if (userByName) {
+    return userByName
+  }
+  throw {code: fileMethod('byNameOrId'), message: 'Unable to obtain a user by name or id'}
+} catch (error) {
+  debug('userById', {error})
+  return undefined
+}
+}
+
 const canMention = async (id: string, search?:string) => {
   try {
     // log(`prismaUser.canMention`, {id, search})
@@ -343,6 +361,7 @@ export const PrismaUser = {
   byEmail,
   byName,
   byId,
+  byNameOrId,
   follow,
   stan,
   setMembership,

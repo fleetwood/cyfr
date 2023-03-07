@@ -14,8 +14,8 @@ import { InferGetServerSidePropsType } from "next";
 
 export async function getServerSideProps(context: any) {
   const authorId = context.params.id;
-  const user = await PrismaUser.byId(authorId);
-  const galleries = await PrismaGallery.userGalleries(authorId);
+  const user = await PrismaUser.byNameOrId(authorId);
+  const galleries = user ? await PrismaGallery.userGalleries(user.id) : []
 
   return {
     props: {
