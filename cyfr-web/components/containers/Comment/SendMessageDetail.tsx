@@ -11,7 +11,7 @@ import useDebug from "../../../hooks/useDebug";
 import useFeed from "../../../hooks/useFeed";
 import { useToast } from "../../context/ToastContextProvider";
 
-const {debug} = useDebug({fileName: 'SendMessageDetail', level: 'DEBUG'})
+const {debug} = useDebug({fileName: 'SendMessageDetail'})
 
 type SendMessageDetailProps = {
     cyfrUser: CyfrUser

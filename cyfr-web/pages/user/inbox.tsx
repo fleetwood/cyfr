@@ -1,25 +1,18 @@
-import { GetSessionParams } from "next-auth/react"
 import { useEffect, useState } from "react"
-import MainLayout from "../../components/layouts/MainLayout"
-import useCyfrUser from "../../hooks/useCyfrUser"
-import useDebug from "../../hooks/useDebug"
-import { useSession } from "../../lib/next-auth-react-query"
-import { CommentThread, CommentThreadDetails, CyfrUser, PrismaComment, PrismaUser, User } from "../../prisma/prismaContext"
-import { getApi } from "../../utils/api"
-import { InferGetServerSidePropsType } from "next";
-import Avatar from "../../components/ui/avatar"
-import { uniqueKey } from "../../utils/helpers"
 import CommentThreadDetail from "../../components/containers/Comment/CommentThreadDetail"
 import InboxThreadList from "../../components/containers/Comment/InboxThreadList"
-import { ChatSendIcon, CyfrLogo } from "../../components/ui/icons"
-import useFeed from "../../hooks/useFeed"
-import SendMessageModal from "../../components/containers/Comment/SendMessageModal"
-import TailwindInput from "../../components/forms/TailwindInput"
 import SendMessageDetail from "../../components/containers/Comment/SendMessageDetail"
+import MainLayout from "../../components/layouts/MainLayout"
+import { CyfrLogo } from "../../components/ui/icons"
+import useCyfrUser from "../../hooks/useCyfrUser"
+import useDebug from "../../hooks/useDebug"
+import useFeed from "../../hooks/useFeed"
+import { useSession } from "../../lib/next-auth-react-query"
+import { CommentThreadDetails } from "../../prisma/prismaContext"
 
 const {debug, info, todo} = useDebug({fileName: "pages/user/inbox"})
 
-const Inbox = (props:any) => {
+const Inbox = ({}) => {
     useSession({required: true, redirectTo: '/login'})
     const [cyfrUser] = useCyfrUser()
     const {feed, sendMessage, invalidateFeed} = useFeed({type: 'inbox'})

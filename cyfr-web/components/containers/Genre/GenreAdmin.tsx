@@ -5,7 +5,7 @@ import { sendApi } from "../../../utils/api"
 import { useToast } from "../../context/ToastContextProvider"
 import TailwindInput from "../../forms/TailwindInput"
 import Toggler from "../../ui/toggler"
-const {debug } = useDebug({fileName: 'AddGenre', level: 'DEBUG'})
+const {debug } = useDebug({fileName: 'AddGenre'})
 
 type GenreAdminProps = {
     editGenre: GenreList|GenreFeed|Genre|null

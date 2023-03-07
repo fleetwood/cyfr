@@ -22,7 +22,7 @@ import { dedupe } from "../../utils/helpers"
 import useDebug from "../../hooks/useDebug"
 import { NextApiRequest } from "next"
 import { Session } from "next-auth"
-const {debug, info} = useDebug({fileName: 'entities/prismaUser', level: 'DEBUG'})
+const {fileMethod, debug, info} = useDebug({fileName: 'entities/prismaUser'})
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {
@@ -47,7 +47,7 @@ const follow = async (follows: string, follower: string): Promise<Follow> => {
     }
     return follow
   } catch (error) {
-    debug(`follow error...`, {
+    debug(`follow ERROR`, {
       ...{follows, follower},
       ...{data},
       ...{error}
@@ -59,7 +59,7 @@ const follow = async (follows: string, follower: string): Promise<Follow> => {
 const stan = async (props: FanProps): Promise<Fan> => {
   if (props.fanOfId === props.fanId) {
     throw {
-      code: "user/error",
+      code: fileMethod("stan"),
       message: `We are fans of loving yourself, but cmon now...`,
     }
   }
@@ -76,7 +76,7 @@ const stan = async (props: FanProps): Promise<Fan> => {
     })
     if (!follow) {
       throw {
-        code: "users/stab",
+        code: fileMethod("stab"),
         message: `Unable to stan (stan:${props.fanOfId}, fan: ${props.fanId})`,
       }
     }
@@ -86,18 +86,41 @@ const stan = async (props: FanProps): Promise<Fan> => {
   }
 }
 
-const byId = async (id: string): Promise<UserDetail> => {
+const byId = async (id: string): Promise<UserDetail|undefined> => {
   try {
+    debug('byId', {id})
     const user = await prisma.user.findUnique({
       where: {
         id: id?.toString(),
       },
       include: UserDetailInclude,
     })
-    if (!user) {
-      throw { code: "users/byId", message: `Did not find user for ${id}` }
-    }
-    return user as unknown as UserDetail
+    return user
+      ? user as unknown as UserDetail
+      : undefined
+
+  } catch (error) {
+    throw GetResponseError(error)
+  }
+}
+
+const byName = async (name: string): Promise<UserDetail|undefined> => {
+  try {
+    debug('byName', {name})
+    const user = await prisma.user.findMany({
+      where: {
+        name: {
+          equals: name,
+          mode: 'insensitive'
+        }
+      },
+      include: UserDetailInclude,
+    })
+    
+    return user[0]
+      ? user[0] as unknown as UserDetail
+      : undefined
+
   } catch (error) {
     throw GetResponseError(error)
   }
@@ -123,7 +146,7 @@ const byEmail = async (email: string): Promise<CyfrUser|null> => {
     })
     if (!user) {
       throw {
-        code: "user.entity.byEmail",
+        code: fileMethod("byEmail"),
         message: `Did not find user for ${email}`,
       }
     }
@@ -207,7 +230,7 @@ const userBySessionEmail = async (session:Session|null|undefined):Promise<UserFe
     })
     if (!user) {
       throw {
-        code: "Users.userInSession()",
+        code: fileMethod('userBySessionEmail'),
         message: currentUser
           ? `Did not find user for ${currentUser?.id}`
           : "No user in session",
@@ -231,7 +254,7 @@ const userInSessionContext = async (context: GetSessionParams | undefined):Promi
     const session = await getSession(context)
     return userBySessionEmail(session)
   } catch (error) {
-    info(`userInSession ERROR`)
+    info(fileMethod('userInSessionContext'), {error})
     return null
   }
 }
@@ -283,7 +306,7 @@ const userCurrentlyOnline = async (id:string) => {
     })
     if (!user) {
       throw {
-        code: "Users.userInSession()",
+        code: fileMethod('userCurrentlyOnline'),
         message: `Did not find user for ${id}`
       }
     }
@@ -318,6 +341,7 @@ export const PrismaUser = {
   userInSessionReq,
   userCurrentlyOnline,
   byEmail,
+  byName,
   byId,
   follow,
   stan,

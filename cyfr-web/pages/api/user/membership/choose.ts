@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import { GetResponseError, ResponseError, ResponseResult } from "../../../../types/response"
 import useDebug from "../../../../hooks/useDebug"
 
-const {debug, todo, error, fileMethod} = useDebug({fileName: 'api/user/membership/choose', level: 'DEBUG'})
+const {debug, todo, error, fileMethod} = useDebug({fileName: 'api/user/membership/choose'})
 
 export default async function handle(
   req: NextApiRequest,

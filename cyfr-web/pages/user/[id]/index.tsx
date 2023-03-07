@@ -1,7 +1,7 @@
-import MainLayout from "../../components/layouts/MainLayout"
-import useCyfrUser from "../../hooks/useCyfrUser"
-import useUserDetail from "../../hooks/useUserDetail"
-import UserDetailComponent from "../../components/containers/User/UserDetailComponent"
+import MainLayout from "../../../components/layouts/MainLayout"
+import useCyfrUser from "../../../hooks/useCyfrUser"
+import useUserDetail from "../../../hooks/useUserDetail"
+import UserDetailComponent from "../../../components/containers/User/UserDetailComponent"
 
 export async function getServerSideProps(context: any) {
   const userId = context.params.id
