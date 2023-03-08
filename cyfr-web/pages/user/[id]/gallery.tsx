@@ -9,13 +9,13 @@ import {
   PrismaUser,
   UserDetail,
 } from "../../../prisma/prismaContext";
-import { uuid } from "../../../utils/helpers";
+
 import { InferGetServerSidePropsType } from "next";
 
 export async function getServerSideProps(context: any) {
   const authorId = context.params.id;
-  const user = await PrismaUser.byId(authorId);
-  const galleries = await PrismaGallery.userGalleries(authorId);
+  const user = await PrismaUser.byNameOrId(authorId);
+  const galleries = user ? await PrismaGallery.userGalleries(user.id) : []
 
   return {
     props: {
@@ -25,22 +25,17 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-type UserGalleryPageProps = {
-  galleries: GalleryDetail[];
-  user: UserDetail;
-};
-
 const UserGalleryPage = ({ user, galleries }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [cyfrUser] = useCyfrUser()
 
   return (
   <MainLayout sectionTitle="Galleries" subTitle={user?.name || ""}>
     <div className="flex flex-col space-y-4">
-      {cyfrUser && cyfrUser.id === user.id && 
+      {cyfrUser && cyfrUser.id === user?.id && 
         <GalleryCreateView  />
       }
       {galleries.map((gallery) => (
-        <div className="relative" key={`user:${user.id}-gallery:${gallery.id}`}>
+        <div className="relative" key={`user:${user?.id}-gallery:${gallery.id}`}>
           <GalleryDetailView gallery={gallery} />
         </div>
       ))}

@@ -19,10 +19,9 @@ const AdminLayout = ({
     const { toasts } = useToast();
 
   return (
-    <div className="grad-1">
-      <div className="grad-2">
+    <div className="bg-base text-base-content">
         <div className="w-full min-h-screen max-h-screen flex flex-col sm:flex-row flex-wrap sm:flex-nowrap flex-grow">
-          <div className="w-fixed w-full flex-shrink flex-grow-0">
+          <div className="w-fixed w-full flex-shrink flex-grow-0 bg-gradient-to-b from-primary to-black">
             <LeftColumn />
           </div>
           <main
@@ -42,8 +41,7 @@ const AdminLayout = ({
             <Footer />
           </main>
         </div>
-      </div>
-    </div>
+        </div>
   );
 };
 export default AdminLayout;

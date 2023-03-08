@@ -1,5 +1,5 @@
 import ShrinkableIconLink from "../ui/shrinkableIconLink";
-import { ClipbardIcon, PhotoIcon, QuestionMarkIcon, FeatherIcon } from '../ui/icons';
+import { ClipbardIcon, PhotoIcon, QuestionMarkIcon, FeatherIcon, GearIcon, DatabaseIcon } from '../ui/icons';
 import { __prod__ } from "../../utils/constants";
 
 const LeftColumn = () => {
@@ -32,6 +32,24 @@ const LeftColumn = () => {
               target="_self"
               label="Test Page"
               icon={FeatherIcon}
+            />
+          </li>
+        }{!__prod__ &&   
+          <li>
+            <ShrinkableIconLink
+              href={"/admin"}
+              target="_self"
+              label="Admin Page"
+              icon={GearIcon}
+            />
+          </li>
+        }{!__prod__ &&   
+          <li>
+            <ShrinkableIconLink
+              href={"https://cloud.prisma.io/fleetwood/cyfrprisma"}
+              target="_self"
+              label="Prisma IO"
+              icon={DatabaseIcon}
             />
           </li>
         }

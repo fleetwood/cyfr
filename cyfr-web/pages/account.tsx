@@ -9,11 +9,11 @@ import { useSession } from "../lib/next-auth-react-query"
 import { PrismaUser } from "../prisma/entities/prismaUser"
 import { CyfrUser } from "../prisma/types/user.def"
 import { cloudinary } from "../utils/cloudinary"
-import UserDetailPage from "./user/[id]"
 import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
 import { InferGetServerSidePropsType } from "next";
 import useDebug from "../hooks/useDebug"
 import UserBillingDetail from "../components/containers/User/UserBillingDetail"
+import UserDetailPage from "./user/[id]"
 const {debug, info} = useDebug({fileName: 'pages/account'})
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {

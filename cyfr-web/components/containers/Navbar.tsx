@@ -21,6 +21,8 @@ const Navbar = ({
   const [cyfrUser] = useCyfrUser();
   const [isPageScrolled, setIsPageScrolled] = useState(false);
 
+  const userUrl = cyfrUser ? cyfrUser.name : ''
+
   useEffect(() => {
     setIsPageScrolled(active);
   }, [active]);
@@ -63,9 +65,9 @@ const Navbar = ({
             </label>
             <ul tabIndex={0} className="menu dropdown-content p-2 drop-shadow-lg bg-secondary text-secondary-content bg-opacity-75 rounded-box mt-2 space-y-2 w-[400px]">
               <li><Link href="/user/inbox" className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Inbox</Link></li>
-              <li><Link href="#" className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Posts</Link></li>
-              <li><Link href={`/gallery/user/${cyfrUser.id}`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Galleries</Link></li>
-              <li><Link href={`/user/${cyfrUser.id}`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Profile</Link></li>
+              <li><Link href={`/user/${userUrl}/books`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Books</Link></li>
+              <li><Link href={`/user/${userUrl}/gallery`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Galleries</Link></li>
+              <li><Link href={`/user/${userUrl}`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Profile</Link></li>
               <li><Link href={`/account`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Acccount</Link></li>
               <li><Link href={`#`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md' onClick={() => signOut()} >Log Out</Link></li>
             </ul>

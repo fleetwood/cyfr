@@ -59,8 +59,10 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
   const stan = async (props:FanProps) => await send(`user/stan`, props)
 
   const invalidateUser = () => {
-    debug(`invalidateUser(${queryTag})`)
-    return qc.invalidateQueries([queryTag])
+    const queryKey = queryTag
+    const q = {queryKey}
+    debug('invalidateUser',{queryTag, queryKey, q})
+    return qc.invalidateQueries(q)
   }
   
   return {currentUser, follow, stan, invalidateUser}

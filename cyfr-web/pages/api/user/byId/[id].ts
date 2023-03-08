@@ -4,6 +4,9 @@ import { ResponseResult } from "../../../../types/response"
 import { logError, jsonify } from "../../../../utils/log"
 import { UserDetail } from "../../../../prisma/types/user.def"
 import { PrismaUser } from "../../../../prisma/entities/prismaUser"
+import useDebug from "../../../../hooks/useDebug"
+
+const {debug, fileMethod} = useDebug({fileName: 'api/user/byId/[id]'})
 
 export default async function handle(
   req: NextApiRequest,
@@ -11,14 +14,24 @@ export default async function handle(
 ) {
   const id = req.query.id?.toString() || ""
   try {
-    const result = await PrismaUser.byId(id)
-    if (result) {
-      res.status(200).json({ result })
-    } else {
-      throw { code: "api/user/byId", message: `No results (${id})` }
+    const byId = await PrismaUser.byId(id)
+    if (byId) {
+      debug('byId', {byId})
+      res.status(200).json({ result: byId })
+      res.end()
+      return
     }
+    const byName = await PrismaUser.byName(id)
+    if (byName) {
+      debug('byName', {byName})
+      res.status(200).json({ result: byName })
+      res.end()
+      return
+    }
+    
+    throw { code: fileMethod(''), message: `No results for (${id})` }
   } catch (e) {
-    logError("\tFAIL", e)
+    debug(fileMethod(" FAIL"), {e})
     res.status(500).json({ error: { code: "api/error", message: jsonify(e) } })
   }
 }

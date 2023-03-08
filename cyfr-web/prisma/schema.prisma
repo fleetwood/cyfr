@@ -34,6 +34,7 @@ model User {
   chats         ChatRoom[]    @relation("user_chats")
   membershipId  String?       @unique
   membership    Membership?   @relation("user_membership", fields: [membershipId], references: [id])
+  books         Book[]        @relation("user_books")
 }
 
 model Post {
@@ -71,20 +72,23 @@ model News {
 }
 
 model Gallery {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  visible     Boolean  @default(true)
-  title       String?
-  description String?
-  authorId    String
-  shareId     String?
-  blocking    Block[]  @relation("blocked_from_gallery")
-  commune     Commune? @relation("gallery_commune")
-  author      User     @relation("user_galleries", fields: [authorId], references: [id])
-  images      Image[]  @relation("gallery_images")
-  likes       Like[]   @relation("gallery_likes")
-  shares      Share[]  @relation("gallery_shares")
+  id                String     @id @default(cuid())
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @default(now())
+  visible           Boolean    @default(true)
+  title             String?
+  description       String?
+  authorId          String
+  shareId           String?
+  blocking          Block[]    @relation("blocked_from_gallery")
+  commune           Commune?   @relation("gallery_commune")
+  author            User       @relation("user_galleries", fields: [authorId], references: [id])
+  images            Image[]    @relation("gallery_images")
+  likes             Like[]     @relation("gallery_likes")
+  shares            Share[]    @relation("gallery_shares")
+  book_gallery      Book?      @relation("book_gallery")
+  character_gallery Character? @relation("character_gallery")
+  chapter_gallery   Chapter?   @relation("chapter_gallery")
 }
 
 model Image {
@@ -108,19 +112,23 @@ model Image {
 }
 
 model Like {
-  id        String   @id @default(cuid())
-  authorId  String
-  postId    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  galleryId String?
-  imageId   String?
-  commentId String?
-  author    User     @relation("user_likes", fields: [authorId], references: [id])
-  comment   Comment? @relation("comment_likes", fields: [commentId], references: [id])
-  gallery   Gallery? @relation("gallery_likes", fields: [galleryId], references: [id])
-  image     Image?   @relation("image_likes", fields: [imageId], references: [id])
-  post      Post?    @relation("post_likes", fields: [postId], references: [id])
+  id          String     @id @default(cuid())
+  authorId    String
+  postId      String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+  galleryId   String?
+  imageId     String?
+  commentId   String?
+  characterId String?
+  bookId      String?
+  author      User       @relation("user_likes", fields: [authorId], references: [id])
+  comment     Comment?   @relation("comment_likes", fields: [commentId], references: [id])
+  gallery     Gallery?   @relation("gallery_likes", fields: [galleryId], references: [id])
+  image       Image?     @relation("image_likes", fields: [imageId], references: [id])
+  post        Post?      @relation("post_likes", fields: [postId], references: [id])
+  character   Character? @relation("character_likes", fields: [characterId], references: [id])
+  book        Book?      @relation("book_likes", fields: [bookId], references: [id])
 }
 
 model Share {
@@ -139,13 +147,17 @@ model Share {
 }
 
 model Follow {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   followerId  String
-  followingId String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  follower    User     @relation("user_followed_by", fields: [followerId], references: [id])
-  following   User     @relation("user_following", fields: [followingId], references: [id])
+  followingId String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+  follower    User       @relation("user_followed_by", fields: [followerId], references: [id])
+  following   User?      @relation("user_following", fields: [followingId], references: [id])
+  characterId String?
+  character   Character? @relation("character_fans", fields: [characterId], references: [id])
+  bookId      String?
+  book        Book?      @relation("book_fans", fields: [bookId], references: [id])
 }
 
 model Fan {
@@ -186,7 +198,7 @@ model CommentThread {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @default(now())
   entity       Entity
-  requiredRole Role      @default(PUBLIC)
+  requiredRole Role      @default(VIEW)
   blocked      Block[]   @relation("blocked_from_thread")
   comments     Comment[] @relation("thread_comments")
   commune      Commune?  @relation("thread_commune")
@@ -226,7 +238,7 @@ model CommuneUser {
   updatedAt DateTime @default(now())
   communeId String
   userId    String
-  role      Role     @default(READONLY)
+  role      Role     @default(VIEW)
   commune   Commune  @relation("commune_users", fields: [communeId], references: [id])
   user      User     @relation("user_in_commune", fields: [userId], references: [id])
 }
@@ -238,6 +250,98 @@ model Membership {
   active    Boolean   @default(true)
   level     Audience? @default(USER)
   user      User?     @relation("user_membership")
+}
+
+model Genre {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  title       String   @unique
+  description String
+  fiction     Boolean  @default(true)
+  books       Book[]   @relation("book_genre")
+  covers      Covers[]  @relation("genre_covers")
+}
+
+model Covers {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  url         String
+  genreId     String
+  genre       Genre @relation("genre_covers", fields: [genreId], references: [id])
+}
+
+model BookCategory {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  title       String
+  description String
+  books       Book[]   @relation("book_categories")
+}
+
+model Book {
+  id         String         @id @default(cuid())
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @default(now())
+  active     Boolean        @default(true)
+  status     BookStatus?    @default(PRIVATE)
+  prospect   Boolean        @default(false)
+  title      String
+  cover      String
+  genreId    String
+  genre      Genre          @relation("book_genre", fields: [genreId], references: [id])
+  categories BookCategory[] @relation("book_categories")
+  hook       String?
+  synopsis   String?
+  back       String?
+  words      Int            @default(0)
+  authors    User[]         @relation("user_books")
+  chapters   Chapter[]      @relation("book_chapters")
+  characters Character[]    @relation("book_characters")
+  galleryId  String?        @unique
+  gallery    Gallery?       @relation("book_gallery", fields: [galleryId], references: [id])
+  fans       Follow[]       @relation("book_fans")
+  likes      Like[]         @relation("book_likes")
+}
+
+model Character {
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  active      Boolean   @default(true)
+  name        String
+  familyName  String
+  givenName   String
+  middleName  String
+  thumbnail   String
+  age         String
+  role        String
+  description String
+  backstory   String
+  title       String
+  archetype   String
+  likes       Like[]    @relation("character_likes")
+  fans        Follow[]  @relation("character_fans")
+  books       Book[]    @relation("book_characters")
+  chapters    Chapter[] @relation("chapter_characters")
+  galleryId   String?   @unique
+  gallery     Gallery?  @relation("character_gallery", fields: [galleryId], references: [id])
+}
+
+model Chapter {
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @default(now())
+  active     Boolean     @default(true)
+  content    String      @default("")
+  words      Int         @default(0)
+  characters Character[] @relation("chapter_characters")
+  bookId     String
+  book       Book        @relation("book_chapters", fields: [bookId], references: [id])
+  galleryId  String?     @unique
+  gallery    Gallery?    @relation("chapter_gallery", fields: [galleryId], references: [id])
 }
 
 model Block {
@@ -306,11 +410,10 @@ enum Audience {
 
 enum Role {
   BLOCKED
-  PUBLIC
-  PRIVATE
-  READONLY
-  COMMENTONLY
-  CONTRIBUTOR
+  VIEW
+  COMMENT
+  REVIEW
+  EDIT
   ADMIN
   OWNER
 }
@@ -323,4 +426,19 @@ enum Entity {
   BOOK
   CHARACTER
   USER
+}
+
+enum BookStatus {
+  PRIVATE
+  DRAFT
+  MANUSCRIPT
+  PUBLISHED
+}
+
+enum Visibility {
+  PUBLIC
+  READERS
+  MEMBERS
+  AGENTS
+  GROUP
 }
