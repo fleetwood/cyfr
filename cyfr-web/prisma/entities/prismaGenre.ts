@@ -62,6 +62,29 @@ const list = async (): Promise<GenreList[]> => {
   }
 }
 
+const covers = async(byGenre?:string): Promise<any> => {
+  try {
+    const results = prisma.genre.findMany({
+      select: {
+        title: true,
+        id: true,
+        covers: {
+          select: {
+            url: true
+          }
+        }
+      }
+    })
+    if (results) {
+      return results
+    }
+    throw({ code: fileMethod('covers'), message: `Unable to obtain genre covers (${byGenre})`})
+  } catch (error) {
+    debug('covers', {error, byGenre})
+    return null
+  }
+}
+
 const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
   const method = "upsertGenre"
   try {
@@ -107,4 +130,4 @@ const deleteGenre = async ({id, title}: GenreDeleteProps): Promise<Genre|null> =
   }
 }
 
-export const PrismaGenre = { all, list, byId, byTitle, upsertGenre, deleteGenre }
+export const PrismaGenre = { all, list, byId, byTitle, covers, upsertGenre, deleteGenre }

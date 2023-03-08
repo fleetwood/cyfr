@@ -2,34 +2,43 @@ import { Switch } from "@headlessui/react"
 import { uuid } from "../../utils/helpers"
 
 type TogglerParams = {
-    label?: string
-    checked:  boolean
-    setChecked: (value:boolean) => void
-    rightLabel?: string
-    variant?: 'primary' | 'secondary' | 'accent'
+  checked:  boolean
+  setChecked: (value:boolean) => void
+  variant?: 'primary' | 'secondary' | 'accent'
+  trueLabel?: string
+  falseLabel?: string
+  debug?: boolean
 }
 
-export default function Toggler({label, checked, setChecked, rightLabel, variant}:TogglerParams) {
-    return (
-      <div className="flex place-items-center">
-        {label && <span className={`text-${variant}${checked ? '-content':''}`}>{label}</span>}
-        <Switch
-          checked={checked}
-          onChange={setChecked}
-          className="relative inline-flex h-[38px] w-[74px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75"
-        >
-          <span
-            aria-hidden="true"
-            className={`
-              ${checked ? 'translate-x-9' : 'translate-x-0'}
-              pointer-events-none 
-              inline-block h-[34px] w-[34px] 
-              transform rounded-full 
-              bg-${variant} shadow-lg ring-0 
-              transition duration-200 ease-in-out`}
-            />
-        </Switch>
-        {rightLabel && <span className={`text-${variant}${!checked ? '-content':''}`}>{rightLabel}</span>}
-      </div>
-    )
-  }
+const Toggler = ({trueLabel, falseLabel, checked, setChecked, variant = 'primary', debug = false}:TogglerParams) =>
+  <div className="flex place-items-center relative">
+    {trueLabel && <span className={`w-1/3 text-center text-${variant} ${checked ? 'font-semibold':'text-opacity-50'}`}>{trueLabel}</span>}
+    <Switch
+      checked={checked}
+      onChange={setChecked}
+      className={`
+        relative inline-flex 
+        h-[2.25rem] w-[4rem] shrink-0 
+        cursor-pointer rounded-full 
+        bg-${variant} bg-opacity-25
+        border-2 border-transparent  
+        transition-all duration-200 ease-in-out 
+        ring-0`}
+    >
+      <span
+        aria-hidden="true"
+        className={`
+          ${checked ? 'translate-x-0 bg-opacity-100' : 'translate-x-[1.75rem] bg-opacity-50'}
+          pointer-events-none 
+          inline-block h-[2rem] w-[2rem] 
+          border-2 border-${variant}-focus
+          transform rounded-full   
+          bg-${variant} shadow-lg ring-0 
+          transition-all duration-200 ease-in-out`}
+        />
+    </Switch>
+    {falseLabel && <span className={`w-1/3 text-center text-${variant} ${!checked ? 'font-semibold':'text-opacity-50'}`}>{falseLabel}</span>}
+    {debug && <span className="mx-2 px-2 text-sm text-info-content bg-info">Checked: {checked.toString()}</span>}
+  </div>
+
+export default Toggler

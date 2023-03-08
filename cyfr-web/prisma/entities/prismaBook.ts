@@ -4,7 +4,7 @@ import {
   BookDeleteProps,
   BookDetail,
   BookDetailInclude,
-  getDefaultCover,
+  PrismaGenre,
 } from "../prismaContext";
 import useDebug from "../../hooks/useDebug";
 
@@ -55,7 +55,7 @@ const byUser = async (id: string): Promise<BookDetail[]> => {
 const createBook = async (props:BookCreateProps): Promise<BookDetail|null> => {
     try {
         const data =  {
-            cover: getDefaultCover(props.genreId),
+            cover: PrismaGenre.covers(props.genreId),
             authors: {
               connect: {
                 id: props.authorId

@@ -51,7 +51,7 @@ const GenreAdmin = ({editGenre}:GenreAdminProps) => {
     <div className="m-4 p-4 rounded-lg border border-primary bg-base-200">
         <TailwindInput type="text" label="Genre Title" placeholder="Make sure no typos! Title is used as a key" value={title} setValue={setTitle} />
         <TailwindInput type="text" label="Description" placeholder="Gotta give a description. HTMLInput forthcoming..." value={description} setValue={setDescription} />
-        <Toggler checked={fiction} setChecked={setFiction} label="Non-Fiction" rightLabel="Fiction" variant="primary" />
+        <Toggler checked={fiction} setChecked={setFiction} trueLabel="Non-Fiction" rightLabel="Fiction" variant="primary" />
         <div className="flex justify-between">
             <button className="btn btn-primary rounded-lg text-primary-content px-4" onClick={upsertGenre} disabled={title===null || description === null}>Adminstrate</button>
             <button className="btn btn-primary rounded-lg text-primary-content px-4" onClick={resetGenre} disabled={title===null}>Clear</button>
