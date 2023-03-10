@@ -2,6 +2,7 @@ import { GetSessionParams, getSession } from "next-auth/react"
 import { 
   Audience,
   CyfrUser, 
+  CyfrUserInclude, 
   Fan, 
   FanProps, 
   Follow, 
@@ -135,14 +136,7 @@ const byEmail = async (email: string): Promise<CyfrUser|null> => {
       where: {
         email,
       },
-      include: {
-        posts: true,
-        likes: true,
-        following: true,
-        follower: true,
-        fans: true,
-        fanOf: true,
-      },
+      include: CyfrUserInclude
     })
     if (!user) {
       throw {
@@ -234,7 +228,7 @@ const canMention = async (id: string, search?:string) => {
   }
 }
 
-const userBySessionEmail = async (session:Session|null|undefined):Promise<UserFeed|null> => {
+const userBySessionEmail = async (session:Session|null|undefined):Promise<UserDetail|null> => {
   if (session === undefined || session === null || session?.user === null || session?.user?.email === null) {
     return null
   } else {
@@ -244,7 +238,7 @@ const userBySessionEmail = async (session:Session|null|undefined):Promise<UserFe
       where: {
         id: currentUser?.id?.toString(),
       },
-      include: UserFeedInclude
+      include: UserDetailInclude
     })
     if (!user) {
       throw {
@@ -254,11 +248,11 @@ const userBySessionEmail = async (session:Session|null|undefined):Promise<UserFe
           : "No user in session",
       }
     }
-    return user as unknown as UserFeed || null
+    return user as unknown as UserDetail || null
   }
 }
 
-const userInSessionReq = async (req:NextApiRequest):Promise<UserFeed|null> => {
+const userInSessionReq = async (req:NextApiRequest):Promise<UserDetail|null> => {
   try {
     const session = await getSession({req})
     return userBySessionEmail(session)
@@ -267,7 +261,7 @@ const userInSessionReq = async (req:NextApiRequest):Promise<UserFeed|null> => {
   }
 }
 
-const userInSessionContext = async (context: GetSessionParams | undefined):Promise<UserFeed|null> => {
+const userInSessionContext = async (context: GetSessionParams | undefined):Promise<UserDetail|null> => {
   try {
     const session = await getSession(context)
     return userBySessionEmail(session)
