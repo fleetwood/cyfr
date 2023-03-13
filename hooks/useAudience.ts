@@ -2,6 +2,11 @@ import { useState } from "react"
 import { AudienceType, canAccess, GetAudienceLevel } from "../prisma/prismaContext"
 import useCyfrUser from "./useCyfrUser"
 
+/**
+ * 
+ * @param required The level of membership required to view this content.
+ * @returns 
+ */
 export const useAudience = (required?:'public'|'user'|'member'|'member_exp'|'agent'|'agent_exp') => {
   const [level, setLevel] = useState<string>(required || AudienceType.PUBLIC)
   const [value, setValue] = useState<number>(GetAudienceLevel(AudienceType.PUBLIC))
