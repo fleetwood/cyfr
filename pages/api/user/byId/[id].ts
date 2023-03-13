@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
 import { ResponseResult } from "../../../../types/response"
-import { logError, jsonify } from "../../../../utils/log"
 import { UserDetail } from "../../../../prisma/types/user.def"
 import { PrismaUser } from "../../../../prisma/entities/prismaUser"
 import useDebug from "../../../../hooks/useDebug"
 
-const {debug, fileMethod} = useDebug({fileName: 'api/user/byId/[id]'})
+const {debug, err, stringify, todo, fileMethod} = useDebug('api/user/byId/[id]')
 
 export default async function handle(
   req: NextApiRequest,
@@ -15,6 +14,7 @@ export default async function handle(
   const id = req.query.id?.toString() || ""
   try {
     const byId = await PrismaUser.byId(id)
+    todo('handle', 'Add slug to User model.')
     if (byId) {
       debug('byId', {byId})
       res.status(200).json({ result: byId })
@@ -29,9 +29,9 @@ export default async function handle(
       return
     }
     
-    throw { code: fileMethod(''), message: `No results for (${id})` }
+    throw { code: fileMethod('handle'), message: `No results for (${id})` }
   } catch (e) {
-    debug(fileMethod(" FAIL"), {e})
-    res.status(500).json({ error: { code: "api/error", message: jsonify(e) } })
+    debug(fileMethod("handle"), {e})
+    res.status(500).json({ error: { code: "api/error", message: stringify(e) } })
   }
 }

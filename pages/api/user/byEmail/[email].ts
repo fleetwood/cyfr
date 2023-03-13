@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next"
+import useDebug from "../../../../hooks/useDebug"
 import { User, PrismaUser } from "../../../../prisma/prismaContext"
-
 import { ResponseResult } from "../../../../types/response"
-import { logError, jsonify, log } from "../../../../utils/log"
+const {debug, err, fileMethod, stringify} = useDebug('api/user/byEmail/[email]')
+
 
 export default async function handle(
   req: NextApiRequest,
@@ -12,16 +13,13 @@ export default async function handle(
   try {
     const result = await PrismaUser.byEmail(email)
     if (result) {
-      log(`api/user/byEmail(
-        ${email},
-        ${JSON.stringify(result, null, 2)}
-      )`)
+      debug(`handler`,{email, result})
       res.status(200).json({ result })
     } else {
-      throw { code: "api/post", message: `No results from Posts.all()` }
+      throw { code: fileMethod('handler'), message: `No results from Posts.all()` }
     }
   } catch (e) {
-    logError("\tFAIL", e)
-    res.status(500).json({ error: { code: "api/error", message: jsonify(e) } })
+    err("fail", e)
+    res.status(500).json({ error: { code: "api/error", message: stringify(e) } })
   }
 }

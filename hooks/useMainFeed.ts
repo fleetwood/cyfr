@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "react-query"
 import { MainFeed, PostCommentProps, PostCreateProps, PostEngageProps } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import useDebug from "./useDebug"
-const {debug, info} = useDebug({fileName: "useMainFeed"})
+const {debug, info} = useDebug("useMainFeed")
 
 export const mainFeedQuery = ['feed', { type: 'mainPage'}]
 

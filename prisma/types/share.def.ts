@@ -1,5 +1,4 @@
-import { Post, PostFeed, Share, User } from "./../prismaContext"
-import { PostFeedInclude } from "./post.def"
+import { PostFeed, Share, User } from "./../prismaContext"
 
 export type ShareDeleteProps = {
   id: string

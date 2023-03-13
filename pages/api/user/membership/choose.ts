@@ -4,13 +4,13 @@ import { NextApiRequest, NextApiResponse } from "next"
 import { GetResponseError, ResponseError, ResponseResult } from "../../../../types/response"
 import useDebug from "../../../../hooks/useDebug"
 
-const {debug, todo, error, fileMethod} = useDebug({fileName: 'api/user/membership/choose'})
+const {debug, todo, err, fileMethod} = useDebug('api/user/membership/choose')
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<UserFeed|null>>
 ) {
-  todo('Why is this posting req.body.body????')
+  todo('handle','Why is this posting req.body.body????')
   const code = fileMethod('choose')
   const { audience, cadence } = req.body.body
   try {
@@ -25,8 +25,7 @@ export default async function handle(
       throw { code, message: "Failed to create membership" }
     }
   } catch (e: Error | ResponseError | any) {
-    error(code, e)
-    const err = GetResponseError(e)
-    res.status(500).json({ error: err })
+    err(code, e)
+    res.status(500).json({ error: GetResponseError(e) })
   }
 }

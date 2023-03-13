@@ -1,20 +1,42 @@
-import React, { useEffect, useState } from "react";
-import RemirrorEditor from "../components/ui/RemirrorEditor";
-import StaticLayout from './../components/layouts/StaticLayout'
+import AdminLayout from "../components/layouts/AdminLayout";
+// import useDebug from "../hooks/useDebug";
+
+// const {debug, info, error, fileMethod} = useDebug({fileName: 'test', level: 'DEBUG'})
 
 const Test = () => {
-  const [message, setMessage] = useState<string|null>("<p>This is the default message</p>");
+  // const [cyfrUser] = useCyfrUser()
+  // const [mentions, setMentions] = useState<User[]>([])
+  // const [cyfrMentions, setCyfrMentions] = useState<User[]>([])
 
-  function handleSubmit(e:any) {
-    e.preventDefault();
-    setMessage("");
-  }
+  // const mapMentions = async() => {
+  //   if (!cyfrUser) {
+  //     return []
+  //   }
+  //   debug('mapMentions', {following: cyfrUser.following.length, fans: cyfrUser.fans.length})
+
+  //   const list= await (await getApi('user/mentions')).result
+  //   if (list) {
+  //       setMentions((c) => list)
+  //   }
+
+  //   const cm = dedupe([
+  //     ...cyfrUser.following.map((f) => f.follower),
+  //     ...cyfrUser.fans.map((f) => f.fan)
+  //   ], 'id')
+  //   .slice(0,10) as unknown as User[]
+
+  //   setCyfrMentions(() => cm)
+  // }
+
+  // useEffect(() => {
+  //   mapMentions()
+  // }, [cyfrUser])
 
   return (
-    <StaticLayout sectionTitle="Remirror" >
-      <RemirrorEditor content={message} setContent={setMessage} maxChar={128} />
-      <div className="mt-2 p-2 font-ibarra">{message}</div>
-    </StaticLayout>
+    <AdminLayout sectionTitle="Remirror" >
+      {/* <JsonBlock data={mentions.map(m => m.name)} />
+      <JsonBlock data={cyfrMentions.map(m => m.name)} /> */}
+    </AdminLayout>
   );
 };
 

@@ -21,7 +21,7 @@ import { apiUrl } from "../utils/api"
 import useDebug from "../hooks/useDebug"
 import { InferGetServerSidePropsType } from "next";
 
-const {debug} = useDebug({fileName: 'pages/login'})
+const {debug} = useDebug('pages/login')
 
 // @ts-ignore
 const Login: FC = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {

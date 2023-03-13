@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useToast } from "../context/ToastContextProvider";
 import useDebug from "../../hooks/useDebug";
-const {debug} = useDebug({fileName: 'toasty'})
+const {debug} = useDebug('toasty')
 
 type ToastType = {
   message: ReactNode | string

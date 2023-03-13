@@ -1,24 +1,21 @@
-import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { QueryClient, QueryClientProvider, Hydrate } from "react-query";
-import {ReactQueryDevtools} from 'react-query/devtools'
-import ToastProvider from './../components/context/ToastContextProvider'
+import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import CyfrUserProvider from "../components/context/CyfrUserProvider";
-import CommentProvider from "../components/context/CommentContextProvider";
+import "../styles/globals.css";
+import ToastProvider from "./../components/context/ToastContextProvider";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const qc = new QueryClient()
+function MyApp({ Component, pageProps }:AppProps) {
+  const qc = new QueryClient();
 
   return (
     <QueryClientProvider client={qc}>
       <Hydrate state={pageProps.dehydratedState}>
-          <ToastProvider {...pageProps}>
+        <ToastProvider {...pageProps}>
           <CyfrUserProvider {...pageProps}>
-          <CommentProvider {...pageProps}>
-              <Component {...pageProps} />
-          </CommentProvider>
+            <Component {...pageProps} />
           </CyfrUserProvider>
-          </ToastProvider>
+        </ToastProvider>
       </Hydrate>
 
       <ReactQueryDevtools initialIsOpen={false} />

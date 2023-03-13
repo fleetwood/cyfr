@@ -1,11 +1,11 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { AudienceType, CyfrUser, GetAudienceLevel, User, UserDetail } from "../prisma/prismaContext"
+import { CyfrUser, User, UserDetail } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import { __cyfr_refetch__ } from "../utils/constants"
 
 import useDebug from "./useDebug"
-const {debug, info} = useDebug({fileName: "useCyfrUser"})
+const {debug, info} = useDebug("useCyfrUser")
 
 const cyfrUserQuery = "cyfrUserQuery"
 

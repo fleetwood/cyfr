@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import { CommentThreadDetails, CommentThreadDetailsInclude, UpsertInboxProps } from "../prismaContext"
-const {debug, fileMethod} = useDebug({fileName: 'entities/prismaComment'})
+const {debug, fileMethod} = useDebug('entities/prismaComment')
 
 const threadById = async (threadId: string, userId: string): Promise<CommentThreadDetails> => {
   try {

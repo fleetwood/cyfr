@@ -3,13 +3,13 @@ import useDebug from "../../../hooks/useDebug";
 import { User, PrismaUser } from "../../../prisma/prismaContext";
 
 import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response";
-const {debug, info, todo} = useDebug({fileName: 'api/user/preferences'})
+const {debug, info, todo} = useDebug('api/user/preferences')
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<User>>
 ) {
-  todo('Why is this posting req.body.body????')
+  todo('handle','Why is this posting req.body.body????')
   debug("handle", req.body.body)
   try {
     const { id, name, image } = req.body.body

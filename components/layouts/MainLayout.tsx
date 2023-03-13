@@ -2,7 +2,7 @@ import { ReactNode, useRef, useState } from "react"
 import Footer from "../containers/Footer"
 import LeftColumn from "../containers/LeftColumn"
 import Navbar from "../containers/Navbar"
-import CreatePost from "../containers/Post/CreatePost"
+import CreatePostModal from "../containers/Post/CreatePostModal"
 import RightColumn from "../containers/RightColumn"
 import SendMessageModal from "../containers/Comment/SendMessageModal"
 import { useToast } from "../context/ToastContextProvider"
@@ -16,12 +16,6 @@ type MainLayoutProps = {
 }
 
 const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
-  const createPostModal = 'createPostModal'
-  const onCreate = () => {
-    const createModal = document.getElementById(createPostModal)
-    // @ts-ignore
-    createModal!.checked = false
-  }
 
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -69,13 +63,7 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
         </div>
       </div>
 
-      <input type="checkbox" id={createPostModal} className="modal-toggle" />
-      <div className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box bg-opacity-0 shadow-none overflow-visible scrollbar-hide">
-          <label htmlFor={createPostModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-          <CreatePost onCreate={onCreate} />
-        </div>
-      </div>
+      <CreatePostModal />
       
     </div>
   )

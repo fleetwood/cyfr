@@ -1,18 +1,18 @@
 import useDebug from "../../hooks/useDebug"
 import { CyfrUser, User } from "../prismaContext"
 
-const { debug } = useDebug({ fileName: "audience.def.ts", level: "DEBUG" })
+const { debug } = useDebug("audience.def.ts", 'DEBUG')
 
 export const AudienceType = {
-  PUBLIC: "PUBLIC",
-  USER: "USER",
-  READER: "READER",
-  MEMBER: "MEMBER",
+  PUBLIC:     "PUBLIC",
+  USER:       "USER",
+  READER:     "READER",
+  MEMBER:     "MEMBER",
   MEMBER_EXP: "MEMBER_EXP",
-  AGENT: "AGENT",
-  AGENT_EXP: "AGENT_EXP",
-  ADMIN: "ADMIN",
-  OWNER: "OWNER",
+  AGENT:      "AGENT",
+  AGENT_EXP:  "AGENT_EXP",
+  ADMIN:      "ADMIN",
+  OWNER:      "OWNER",
 }
 
 export const GetAudienceLevel = (type: string) => {
@@ -39,13 +39,18 @@ export const GetAudienceLevel = (type: string) => {
   return 0
 }
 
+/**
+ * see AudienceType enum
+ */
 export type AccessProps = {
     required: "public" | "reader" | "user" | "member" | "member_exp" | "agent" | "agent_exp" | "admin" | "owner",
     user?: User
     cyfrUser?: CyfrUser
 }
+
 export const canAccess = ({required,user,cyfrUser}:AccessProps) => {
     const allow = GetAudienceLevel(
+        // cyfrUser or user membership level, in all cases default to public if none found
         cyfrUser ? cyfrUser.membership?.level || AudienceType.PUBLIC
         : user ? AudienceType.USER || AudienceType.PUBLIC
         : AudienceType.PUBLIC

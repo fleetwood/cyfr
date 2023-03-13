@@ -4,13 +4,13 @@ import { PrismaUser, User } from "../../../prisma/prismaContext"
 import { getSession } from "next-auth/react"
 import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response"
 import useDebug from "../../../hooks/useDebug"
-const {debug, todo, info} = useDebug({fileName: 'api/user/mentions'})
+const {debug, todo, info} = useDebug('api/user/mentions')
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<User[]>>
 ) {
-  todo('Why is this posting req.body.body????')
+  todo('handle','Why is this posting req.body.body????')
   try {
     const session = await getSession({ req })
     const search:string|undefined = req.query.search as string

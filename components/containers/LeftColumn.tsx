@@ -1,11 +1,21 @@
 import ShrinkableIconLink from "../ui/shrinkableIconLink";
-import { ClipbardIcon, PhotoIcon, QuestionMarkIcon, FeatherIcon, GearIcon, DatabaseIcon } from '../ui/icons';
+import { ClipbardIcon, PhotoIcon, QuestionMarkIcon, FeatherIcon, GearIcon, DatabaseIcon, HouseIcon } from '../ui/icons';
 import { __prod__ } from "../../utils/constants";
 
 const LeftColumn = () => {
   return (
     <div className="sticky top-0 p-4 rounded-xl w-full h-full">
       <ul className="flex sm:flex-col overflow-hidden content-center justify-center">
+        {!__prod__ && 
+          <li>
+          <ShrinkableIconLink
+            href={"/"}
+            target="_self"
+            label="Home"
+            icon={HouseIcon}
+          />
+        </li>
+        }
         {!__prod__ && 
           <li>
           <ShrinkableIconLink

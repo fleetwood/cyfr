@@ -7,7 +7,7 @@ import {
   GalleryFeed,
   GalleryFeedInclude,
 } from "../types/gallery.def";
-const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaGallery'})
+const {debug, info, fileMethod} = useDebug('entities/prismaGallery')
 
 export type GalleryAddImageProps = {
   id: string;

@@ -6,7 +6,7 @@ import {
   ResponseError,
   ResponseResult
 } from "../../../types/response"
-const {debug, info} = useDebug({fileName: "api/gallery/create"})
+const {debug, info} = useDebug("api/gallery/create")
 
 export default async function handle(
   req: NextApiRequest,
@@ -22,7 +22,7 @@ export default async function handle(
       throw { code: "api/gallery/create", message: "Failed to create gallery" }
     }
   } catch (e: Error | ResponseError | any) {
-    info("\tFAIL", e)
+    info("handle.error", e)
     const error = GetResponseError(e)
     res.status(500).json({ error })
   }

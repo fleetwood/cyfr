@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import useDebug from "../../../hooks/useDebug"
 import { PrismaChat } from "../../../prisma/entities/prismaChat"
 import { GetResponseError } from "../../../types/response"
-const {debug, info} = useDebug({fileName: "api/chat/connect"})
+const {debug, info} = useDebug("api/chat/connect")
 
 export default async function ConnectToChat(req: NextApiRequest,res: NextApiResponse) {
   try {

@@ -4,7 +4,7 @@ import { useToast } from "./ToastContextProvider"
 import useFeed from "../../hooks/useFeed"
 
 import useDebug from "../../hooks/useDebug"
-const {debug} = useDebug({fileName: "CommentContextProvider"})
+const {debug} = useDebug("CommentContextProvider")
 
 type CommentProviderProps = {
   children?: ReactNode

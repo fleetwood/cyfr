@@ -1,7 +1,7 @@
 import { Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
 
-const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaShare'})
+const {debug, info, fileMethod} = useDebug('entities/prismaShare')
 
 const byId = async (id: string): Promise<Share | null> => {
   try {

@@ -1,6 +1,6 @@
 import { Image, Like, ImageDetail,ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
-const {debug, info, todo, fileMethod} = useDebug({fileName: 'entities/prismaImage'})
+const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage')
 
 const byId = async (id: string): Promise<ImageDetail | null> => {
   try {
@@ -53,7 +53,7 @@ const createImage = async (props: ImageCreateProps): Promise<Image> => {
 
 const deleteImage = async ({imageId, authorId}: ImageDeleteProps): Promise<Image> => {
   try {
-    todo('Need to make sure the user in session matches the user making the request')
+    todo('deleteImage','Need to make sure the user in session matches the user making the request')
     debug("deleteImage", {imageId, authorId})
     return await prisma.image.update({ 
       where: {

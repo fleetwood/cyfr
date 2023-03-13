@@ -8,7 +8,7 @@ import { timeDifference, uniqueKey } from "../../../utils/helpers"
 import useFeed from "../../../hooks/useFeed"
 import { ChatSendIcon } from "../../ui/icons"
 import { useToast } from "../../context/ToastContextProvider"
-const {debug} = useDebug({fileName: 'CommentThreadDetail'})
+const {debug} = useDebug('components/containers/CommentThreadDetail')
 
 type CommentThreadDetailProps = {
     user: CyfrUser | User
