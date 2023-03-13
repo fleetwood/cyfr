@@ -8,7 +8,7 @@ import Dropzone, { CompleteFile } from "../../forms/Dropzone"
 import { ImageCreateProps } from "../../../prisma/types"
 import useDebug from "../../../hooks/useDebug"
 
-const {debug} = useDebug({fileName: 'GalleryCreateView'})
+const {debug} = useDebug('components/containers/GalleryGalleryCreateView')
 
 const GalleryCreateView = ({limit=-1}) => {
   const createGalleryModal = "createGalleryModal"

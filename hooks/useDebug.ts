@@ -1,64 +1,43 @@
 import { __logLevel__ } from "../utils/constants"
-import { log } from "../utils/log"
 
-const DEBUG = 'DEBUG'
-const INFO = 'INFO'
-const ERROR = 'ERROR'
+type DebugProps = 'DEBUG'|'INFO'|'ERROR'
 
-/*
-        debug   info    todo    error <- method
-DEBUG   true    true    true    false
-INFO    false   true    true    false
-ERROR   false   false   true    true
-  ^
-level
-
-*/
-
-type useDebugProps = {
-  fileName: string
-  level?: 'DEBUG'|'INFO'|'ERROR'|string
-}
-
-const useDebug = ({fileName, level=__logLevel__}:useDebugProps) => {
+const useDebug = (fileName:string, level:DebugProps=__logLevel__ as unknown as DebugProps) => {
   const fileMethod = (method: string) => `${fileName}.${method}`
-  const trace = (method: string, t?: any) => log(`
-..........................................
+  const lineBreak = (char:string='.',label?:string) => Array(10).map((a,i) => label && i === 5 ? label : char).join()
+  const methodData = (data?:any) => data ? lineBreak()+stringify({ ...(data || null) }) : ``
+
+  const stringify = (data:any) => JSON.stringify(data, null, 2)
+
+  const log = (method: string, t?: any) => console.log(`
+${lineBreak()}
 ${fileMethod(method)} 
-  ..............
-${t ? JSON.stringify({ ...(t || null) },null,2) : ''}
-..........................................
-  
+${methodData(t)}
+${lineBreak()}
 `) 
   
-  const error = (method: string, data?: any) => trace(method, {error: '**************ERROR**************', data})
+  const err = (method: string, data?: any) => log(method, {error: lineBreak('!', 'ERROR'), data})
   
   const debug = (method: string, data?: any) => {
-    if(level === DEBUG) {
-      trace(method, {level, data})
+    if(level === 'DEBUG') {
+      log(method, {level, data})
     }
   }
   const info  = (method: string, data?: any) => {
-    if(level === DEBUG || level === INFO) {
-      trace(method, {level, data})
+    if(level === 'DEBUG' || level === 'INFO') {
+      log(method, {level, data})
     }
   }
   
-  const todo  = (method: string, data?: any) => {
-    if(level === DEBUG || level === INFO) {log(`
-TODO************************
+  const todo  = (method: string, message: string) => {
+    if(level === 'DEBUG' || level === 'INFO') {log(`
+${lineBreak('*','TODO')}
 ${fileMethod(method)} 
-****************************
-${data 
-// if there's data
-? JSON.stringify({
-    level, data 
-  },null,2)
-// if no data
-: level}
-****************************`
+${message}
+${lineBreak('*','TODO')}
+`
   )}}
 
-  return {todo, debug, info, error, fileMethod}
+  return {debug, info, err, todo, stringify, fileMethod}
 }
 export default useDebug

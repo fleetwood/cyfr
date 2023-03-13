@@ -4,7 +4,7 @@ import { uuid } from "../../../utils/helpers"
 import UploadFileView from "./UploadingFileView"
 import { UploadableFile, CompleteFile, DropzoneProps } from "./types.defs"
 import useDebug from "../../../hooks/useDebug"
-const {debug} = useDebug({fileName: "Dropzone/index"})
+const {debug} = useDebug("components/forms/Dropzone/index")
 
 function Dropzone({limit=-1, onUploadComplete, children}:DropzoneProps) {
   const [files, setFiles] = useState<UploadableFile[]>([])

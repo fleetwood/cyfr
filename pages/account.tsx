@@ -14,7 +14,7 @@ import { InferGetServerSidePropsType } from "next";
 import useDebug from "../hooks/useDebug"
 import UserBillingDetail from "../components/containers/User/UserBillingDetail"
 import UserDetailPage from "./user/[id]"
-const {debug, info} = useDebug({fileName: 'pages/account'})
+const {debug, info} = useDebug('pages/account')
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await PrismaUser.userInSessionContext(context)

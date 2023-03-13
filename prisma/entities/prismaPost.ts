@@ -1,6 +1,6 @@
 import { Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed, PostFeedInclude } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
-const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaPosts'})
+const {debug, info, fileMethod} = useDebug('entities/prismaPosts')
 
 const byId = async (id: string): Promise<PostDetail | null> => {
   try {

@@ -4,7 +4,7 @@ import { getApi, sendApi } from "../utils/api"
 import { FollowProps, FanProps } from "../prisma/types/follow.def"
 import { UserDetail } from "../prisma/prismaContext"
 import useDebug from "./useDebug"
-const {debug, info} = useDebug({fileName: 'useUserDetails'})
+const {debug, info} = useDebug('useUserDetails')
 
 export const userDetailQuery = "userDetailQuery"
 

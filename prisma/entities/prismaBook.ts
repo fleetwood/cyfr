@@ -8,9 +8,7 @@ import {
 } from "../prismaContext";
 import useDebug from "../../hooks/useDebug";
 
-const { debug, info, todo, fileMethod } = useDebug({
-  fileName: "entities/prismaBook",
-});
+const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook");
 
 const byId = async (id: string): Promise<BookDetail | null> => {
   try {

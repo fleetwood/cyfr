@@ -10,7 +10,7 @@ export const galleryFeedQuery = ['feed', { type: 'gallery'}]
 export const imageFeedQuery = ['feed', { type: 'image'}]
 export const inboxFeedQuery = ['feed', { type: 'inbox'}]
 
-const {debug} = useDebug({fileName: "useFeed", level:"DEBUG"})
+const {debug} = useDebug("useFeed","DEBUG")
 
 export type FeedTypes = {
   type: 'main'|'post'|'gallery'|'inbox'

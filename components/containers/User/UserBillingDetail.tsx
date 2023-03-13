@@ -6,7 +6,7 @@ import { sendApi } from "../../../utils/api";
 import { uniqueKey } from "../../../utils/helpers";
 import { CheckBadge } from "../../ui/icons";
 
-const {debug} = useDebug({fileName: "UserBillingDetail"})
+const {debug} = useDebug("UserBillingDetail")
 
 type PlanType = {
     audience: Audience

@@ -1,5 +1,5 @@
 import useDebug from "../hooks/useDebug"
-const {debug, info} = useDebug({fileName: 'utils/cloudinary'})
+const {debug, info} = useDebug('utils/cloudinary')
 
 type UploadingProps = {
     file: File

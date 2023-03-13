@@ -6,7 +6,7 @@ import {
 } from "../prismaContext";
 import { now } from "next-auth/client/_utils";
 import useDebug from "../../hooks/useDebug";
-const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaChat'})
+const {debug, info, fileMethod} = useDebug('entities/prismaChat')
 
 const chatError = (method: string, error?: any, message?: string) => {
   return {

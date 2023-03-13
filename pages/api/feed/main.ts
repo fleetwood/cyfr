@@ -1,8 +1,9 @@
-import { Post, PostFeed, PrismaPost, PrismaShare, Share, ShareFeed } from "../../../prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from "next"
-import { ResponseResult } from "../../../types/response"
-import { jsonify, logError } from "../../../utils/log"
+import useDebug from "../../../hooks/useDebug"
+import { PrismaPost, PrismaShare } from "../../../prisma/prismaContext"
 import { MainFeed, MapToMainFeed } from "../../../prisma/types"
+import { ResponseResult } from "../../../types/response"
+const {err, stringify}= useDebug('/api/feed/main')
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse<ResponseResult<MainFeed[]>>) {
   try {
@@ -15,7 +16,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse<R
       throw { code: 'api/post/all', message: `No results from Posts.all()` }
     }
   } catch (e) {
-    logError("\tFAIL", e)
-    res.status(500).json({ error: { code: "api/error", message: jsonify(e) } })
+    err("FAIL", e)
+    res.status(500).json({ error: { code: "api/error", message: stringify(e) } })
   }
 }

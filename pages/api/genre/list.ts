@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import useDebug from "../../../hooks/useDebug";
 import { PrismaGenre } from "../../../prisma/prismaContext";
-import { jsonify, logError } from "../../../utils/log";
+const {err, stringify} = useDebug('api/genre/list')
 
 const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -11,8 +12,8 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).json({ result: null });
     }
   } catch (e) {
-    logError("\tFAIL", e);
-    res.status(500).json({ error: { code: "api/error", message: jsonify(e) } });
+    err("\tFAIL", e);
+    res.status(500).json({ error: { code: "api/error", message: stringify(e) } });
   }
 };
 

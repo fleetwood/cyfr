@@ -3,7 +3,7 @@ import useDebug from "../../../../hooks/useDebug"
 import { PrismaChat } from "../../../../prisma/entities/prismaChat"
 import { GetResponseError } from "../../../../types/response"
 
-const {debug, info} = useDebug({fileName: "api/chat/message/send"})
+const {debug, info} = useDebug("api/chat/message/send")
 
 export default async function sendMessage(req: NextApiRequest,res: NextApiResponse) {
   try {
@@ -12,7 +12,6 @@ export default async function sendMessage(req: NextApiRequest,res: NextApiRespon
     const result = await PrismaChat.sendMessage(message)
 
     if (result) {
-      // log(`api/chat/message/send result ${JSON.stringify(result, null, 2)}`)
       res.status(200).json({ result })
     }
     

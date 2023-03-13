@@ -4,7 +4,7 @@ import { useToast } from "../../context/ToastContextProvider"
 import useFeed from "../../../hooks/useFeed"
 
 import useDebug from "../../../hooks/useDebug"
-const {debug} = useDebug({fileName: "InboxContextProvider"})
+const {debug} = useDebug("components/containers/Comment/InboxContextProvider")
 
 type InboxProviderProps = {
   children?: ReactNode

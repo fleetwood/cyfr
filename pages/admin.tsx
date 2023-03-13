@@ -11,7 +11,7 @@ import { uniqueKey } from "../utils/helpers";
 import { InferGetServerSidePropsType } from "next";
 import Link from "next/link";
 
-const { debug } = useDebug({ fileName: "admin page", level: "DEBUG" });
+const { debug } = useDebug("admin page", "DEBUG");
 
 export async function getServerSideProps(
   context: GetSessionParams | undefined

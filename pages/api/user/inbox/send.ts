@@ -3,20 +3,20 @@ import { getSession } from "next-auth/react"
 import useDebug from "../../../../hooks/useDebug"
 import { CommentThread, PrismaComment, PrismaUser } from "../../../../prisma/prismaContext"
 import { ResponseResult } from "../../../../types/response"
-const {debug, info, error} = useDebug({fileName: 'api/user/inbox/send'})
+const {debug, err} = useDebug('api/user/inbox/send')
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<CommentThread[]>>
 ) {
-  debug('handle')
+  debug('handler')
   try {
     const session = await getSession({ req })
     if (
       session === null ||
       session.user === null
     ) {
-      error(`NO USER in session....`,session)
+      err(`NO USER in session....`,session)
       res.status(200).json({})
       res.end()
       return
@@ -27,7 +27,7 @@ export default async function handle(
       res.status(200).json({result})
     }
   } catch (e) {
-    error(`Failed to send message`, {e})
+    err(`handler`, e)
     throw(e)
   }
 }

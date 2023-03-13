@@ -4,7 +4,7 @@ import { ChatDetail, SendMessageProps } from "../prisma/prismaContext"
 import { sendApi } from "../utils/api"
 import useDebug from "./useDebug"
 
-const {debug, info} = useDebug({fileName: "useChatQuery"})
+const {debug, info} = useDebug("useChatQuery")
 
 export async function getChatRoom(users:string[]):Promise<ChatDetail|null> {
   const res = await (await sendApi(`chat/connect`, {users})).data

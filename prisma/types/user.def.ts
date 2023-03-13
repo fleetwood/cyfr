@@ -1,6 +1,18 @@
-import { Fan, Follow, Like, Post, PostFeed, Share, User, Image, Gallery, Membership, Book } from "./../prismaContext"
-import { GalleryFeed, GalleryFeedInclude } from './gallery.def';
-import { PostFeedInclude } from "./post.def"
+import { Fan, Follow, Like, Post, PostFeed, User, Image, Membership, Book, GalleryFeed } from "./../prismaContext"
+
+/**
+ * This is complaining if imported from Post.defs that it can't be
+ * accessed before initialization. Prolly a different issues, but
+ * this will work for now.
+ */
+const PostFeedInclude = {
+  author: true,
+  comment: true,
+  images: true,
+  post_comments: { include: { author: true } },
+  likes: { include: { author: true } },
+  shares: { include: { author: true } },
+}
 
 export type UserFeed = User & {
   _count: {

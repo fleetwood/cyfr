@@ -5,7 +5,7 @@ import TailwindInput from "../../forms/TailwindInput"
 import EZButton from "../../ui/ezButton"
 import Toggler from "../../ui/toggler"
 
-const {debug} = useDebug({fileName: 'UpsertBook', level: 'DEBUG'})
+const {debug} = useDebug('UpsertBook','DEBUG')
 
 type UpsertBookProps = {
     book?: BookDetail

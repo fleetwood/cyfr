@@ -1,7 +1,7 @@
 import { Genre, GenreDeleteProps, GenreFeed, GenreFeedInclude, GenreList, GenreUpsertProps, Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
 
-const {debug, info, fileMethod} = useDebug({fileName: 'entities/prismaGenre'})
+const {debug, info, fileMethod} = useDebug('entities/prismaGenre')
 
 const byId = async (id: string): Promise<GenreFeed|null> => {
   try {

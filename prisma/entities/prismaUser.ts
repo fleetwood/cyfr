@@ -23,7 +23,7 @@ import { dedupe } from "../../utils/helpers"
 import useDebug from "../../hooks/useDebug"
 import { NextApiRequest } from "next"
 import { Session } from "next-auth"
-const {fileMethod, debug, info} = useDebug({fileName: 'entities/prismaUser'})
+const {fileMethod, debug, info} = useDebug('entities/prismaUser')
 
 const follow = async (follows: string, follower: string): Promise<Follow> => {
   const data = {

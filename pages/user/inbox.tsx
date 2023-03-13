@@ -10,7 +10,7 @@ import useFeed from "../../hooks/useFeed"
 import { useSession } from "../../lib/next-auth-react-query"
 import { CommentThreadDetails } from "../../prisma/prismaContext"
 
-const {debug, info, todo} = useDebug({fileName: "pages/user/inbox"})
+const {debug, info, todo} = useDebug('pages/user/inbox')
 
 const Inbox = ({}) => {
     useSession({required: true, redirectTo: '/login'})
