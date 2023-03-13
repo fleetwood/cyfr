@@ -4,15 +4,15 @@ import { CyfrUser, User } from "../prismaContext"
 const { debug } = useDebug("audience.def.ts", 'DEBUG')
 
 export const AudienceType = {
-  PUBLIC: "PUBLIC",
-  USER: "USER",
-  READER: "READER",
-  MEMBER: "MEMBER",
+  PUBLIC:     "PUBLIC",
+  USER:       "USER",
+  READER:     "READER",
+  MEMBER:     "MEMBER",
   MEMBER_EXP: "MEMBER_EXP",
-  AGENT: "AGENT",
-  AGENT_EXP: "AGENT_EXP",
-  ADMIN: "ADMIN",
-  OWNER: "OWNER",
+  AGENT:      "AGENT",
+  AGENT_EXP:  "AGENT_EXP",
+  ADMIN:      "ADMIN",
+  OWNER:      "OWNER",
 }
 
 export const GetAudienceLevel = (type: string) => {
