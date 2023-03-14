@@ -19,12 +19,17 @@ import {
 import { DefaultSession } from "next-auth"
 import { apiUrl } from "../utils/api"
 import useDebug from "../hooks/useDebug"
-import { InferGetServerSidePropsType } from "next";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import Link from "next/link"
 
 const {debug} = useDebug('pages/login')
 
+type LoginProps = {
+  csrfToken: string | undefined
+}
+
 // @ts-ignore
-const Login: FC = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Login: FC = ({csrfToken}: LoginProps) => {
   const [providers, setproviders] = useState<Record<
     LiteralUnion<BuiltInProviderType, string>,
     ClientSafeProvider
@@ -57,49 +62,48 @@ const Login: FC = (props: InferGetServerSidePropsType<typeof getServerSideProps>
       sectionTitle="Login"
       subTitle={user ? user.name || user.email || undefined : "Please login"}
     >
-      <div className="m-0">
+      <div className="p-4 bg-base-100 rounded-lg">
         {session && (
-          <>
-            Signed in as {session.user?.email} <br />
-            <button
+          <div>
+            <div>
+              Signed in as <span className="font-semibold">{session.user?.name}</span><br />
+            </div>
+            <div className="flex justify-items-start space-x-4">
+            
+            <Link
+              href={`/user/${user?.name?.replace(" ","-")}`}
+              className="bg-primary hover:bg-primary-focus text-primary-content p-4 max-h-fit content-center transition-colors duration-200 ease-in-out"
+            >
+              Dashboard (TBD)
+            </Link>
+            <Link
+              href={`/user/${user?.name?.replace(" ","-")}`}
+              className="bg-primary hover:bg-primary-focus text-primary-content p-4 max-h-fit content-center transition-colors duration-200 ease-in-out"
+            >
+              Profile
+            </Link>
+            <Link
+              href={`/user/account`}
+              className="bg-primary hover:bg-primary-focus text-primary-content p-4 max-h-fit content-center transition-colors duration-200 ease-in-out"
+            >
+              Account
+            </Link>
+
+            <Link
+              href={'#'}
               onClick={() => signOut()}
-              className="bg-primary hover:bg-primary-focus text-primary-content p-2 mx-2 transition-colors duration-200 ease-in-out"
+              className="bg-secondary hover:bg-secondary-focus text-secondary-content p-4 max-h-fit content-center transition-colors duration-200 ease-in-out"
             >
               Sign out
-            </button>
-          </>
+            </Link >
+
+            </div>
+          </div>
         )}
         {!session && (
           <>
-            <form
-              action={apiUrl("/signin/email")}
-              method="POST"
-              className="flex space-x-1"
-            >
-              <input
-                name="csrfToken"
-                type="hidden"
-                defaultValue={
-                  // @ts-ignore
-                  props.csrfToken
-                }
-              />
-              <input
-                id="input-email-for-email-provider"
-                type="text"
-                name="email"
-                placeholder="email@example.com"
-                className="p-2 bg-base-200 text-primary-content"
-              />
-              <button
-                type="submit"
-                className="btn btn-primary transition-colors duration-200 ease-in-out"
-              >
-                Email Login
-              </button>
-            </form>
             <p className="border-t border-t-secondary opacity-50 my-4">
-              Or login with any of the following
+              Login with any of the following
             </p>
             <div className="flex flex-row justify-evenly">
               <button
@@ -134,13 +138,11 @@ const Login: FC = (props: InferGetServerSidePropsType<typeof getServerSideProps>
   )
 }
 
-export async function getServerSideProps(context: any) {
-  const csrfToken = await getCsrfToken(context)
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const csrfToken = await getCsrfToken(context) || undefined
   debug('getServerSideProps', {csrfToken})
   return {
-    props: {
-      csrfToken,
-    },
+    props: { csrfToken },
   }
 }
 

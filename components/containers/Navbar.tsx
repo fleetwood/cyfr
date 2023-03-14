@@ -6,6 +6,7 @@ import ShrinkableIconLink from '../ui/shrinkableIconLink';
 import ShrinkableLink from '../ui/shrinkableLink';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import { Transition } from '@headlessui/react';
 
 type NavbarProps = {
   className?: string;
@@ -39,16 +40,24 @@ const Navbar = ({
           ${isPageScrolled ? "shadow-lg shadow-black" : ""}
           `}
       >
-        <div className="flex justify-start">
-          <ShrinkableLink
-            href="/"
-            label="Cyfr"
-            className={`ml-1 text-primary transition-all duration-200 ease-linear ${
-              active ? "mt-0" : "-mt-20"
-            }`}
-          >
-            <CyfrLogo size="sm" className="text-primary" />
-          </ShrinkableLink>
+        <div className="flex justify-start relative">
+          <Transition 
+            className="transition-all duration-100 ease-linear"
+            enterFrom="-mt-6"
+            enterTo='mt-0'
+            leaveTo="-mt-6"
+            leaveFrom='mt-0'
+            show={active}
+            >
+
+            <ShrinkableLink
+              href="/"
+              label="Cyfr"
+              className={`ml-1 text-primary `}
+              >
+              <CyfrLogo size="sm" className="text-primary" />
+            </ShrinkableLink>
+          </Transition>
         </div>
         <div className={`space-x-6 flex w-full justify-end`}>
           <ShrinkableIconLink

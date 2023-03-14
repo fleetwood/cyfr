@@ -71,6 +71,9 @@
     h3.post-title {
         @apply text-lg text-transparent max-w-fit bg-clip-text bg-gradient-to-r from-secondary to-accent [text-shadow:_0_0_0_rgb(155_155_155_/_50%)]
     }
+    .duration-500 {
+        transition-duration: 500ms;
+    }
     .accent {
         @apply text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-content
     }
