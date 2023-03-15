@@ -1,4 +1,4 @@
-import { __logLevel__ } from "../utils/constants"
+import { __logLevel__, __settings__ } from "../utils/constants"
 
 type DebugProps = 'DEBUG'|'INFO'|'ERROR'
 
@@ -8,6 +8,8 @@ const useDebug = (fileName:string, level:DebugProps=__logLevel__ as unknown as D
   const methodData = (data?:any) => data ? lineBreak()+stringify({ ...(data || null) }) : ``
 
   const stringify = (data:any) => JSON.stringify(data, null, 2)
+
+  const settings = __settings__
 
   const log = (method: string, t?: any) => console.log(`
 ${lineBreak()}
@@ -38,6 +40,6 @@ ${lineBreak('*','TODO')}
 `
   )}}
 
-  return {debug, info, err, todo, stringify, fileMethod}
+  return {debug, info, err, todo, stringify, settings, fileMethod}
 }
 export default useDebug

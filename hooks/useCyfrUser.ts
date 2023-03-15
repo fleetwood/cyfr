@@ -2,7 +2,6 @@ import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { CyfrUser, User, UserDetail } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
-import { __cyfr_refetch__ } from "../utils/constants"
 
 import useDebug from "./useDebug"
 const {debug, info} = useDebug("useCyfrUser")
@@ -29,11 +28,11 @@ export type useCyfrUserProps = {
 
 const useCyfrUser = ():[CyfrUser,boolean,unknown] => {
   const qc = useQueryClient()
-  const [refetchInterval, setRefetchInterval] = useState(__cyfr_refetch__)
+  const [refetchInterval, setRefetchInterval] = useState(1000)
 
   const getCyfrUser = async () => {
     const me = await getApi("/me")
-    setRefetchInterval((c) => (me ? __cyfr_refetch__ : 1000))
+    setRefetchInterval(me ? 5000 : 500)
     return me.result || me.error || null
   }
 

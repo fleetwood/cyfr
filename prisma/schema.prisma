@@ -1,6 +1,15 @@
 generator client {
   provider = "prisma-client-js"
 }
+generator docs {
+  provider = "node node_modules/prisma-docs-generator"
+  output = "./../public/doc"
+}
+// generator typegraphql {
+//   provider = "typegraphql-prisma"
+//   output   = "./generated/type-graphql"
+//   emitTranspiledCode = true
+// }
 
 datasource db {
   provider = "postgresql"
