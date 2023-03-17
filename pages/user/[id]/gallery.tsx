@@ -1,16 +1,12 @@
-import { use } from "react";
 import GalleryCreateView from "../../../components/containers/Gallery/GalleryCreateView";
 import GalleryDetailView from "../../../components/containers/Gallery/GalleryDetailView";
 import MainLayout from "../../../components/layouts/MainLayout";
-import useCyfrUser from "../../../hooks/useCyfrUser";
 import {
-  PrismaGallery,
-  GalleryDetail,
-  PrismaUser,
-  UserDetail,
+  PrismaGallery, PrismaUser
 } from "../../../prisma/prismaContext";
 
 import { InferGetServerSidePropsType } from "next";
+import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
 
 export async function getServerSideProps(context: any) {
   const authorId = context.params.id;
@@ -26,7 +22,7 @@ export async function getServerSideProps(context: any) {
 }
 
 const UserGalleryPage = ({ user, galleries }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [cyfrUser] = useCyfrUser()
+  const [cyfrUser] = useCyfrUserContext()
 
   return (
   <MainLayout sectionTitle="Galleries" subTitle={user?.name || ""}>

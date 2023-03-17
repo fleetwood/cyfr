@@ -1,4 +1,3 @@
-import useCyfrUser from "../../../hooks/useCyfrUser";
 import { useCommentContext } from "../../context/CommentContextProvider";
 import { useToast } from "../../context/ToastContextProvider";
 import AvatarList from "../../ui/avatarList";
@@ -6,10 +5,11 @@ import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons";
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 import { LoggedIn } from "../../ui/toasty";
 
-import { PostFeed } from "../../../prisma/prismaContext";
 import useFeed from "../../../hooks/useFeed";
+import { PostFeed } from "../../../prisma/prismaContext";
 
-import useDebug from "../../../hooks/useDebug"
+import useDebug from "../../../hooks/useDebug";
+import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 const {debug} = useDebug("PostItemFooter")
 
 type PostItemFooterProps = {
@@ -17,7 +17,7 @@ type PostItemFooterProps = {
   feed: "main" | "user" | "post" | "share" | "default";
 };
 const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
-  const [cyfrUser] = useCyfrUser();
+  const [cyfrUser] = useCyfrUserContext();
   // const { sharePost, likePost, invalidateMainFeed } = useMainFeed()
   const { sharePost, likePost, invalidateFeed } = useFeed({type: 'post'});
   const { notify } = useToast();

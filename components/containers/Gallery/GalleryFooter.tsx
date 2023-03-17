@@ -1,13 +1,13 @@
-import useCyfrUser from "../../../hooks/useCyfrUser"
 import { useCommentContext } from "../../context/CommentContextProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
 import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import { LoggedIn } from "../../ui/toasty"
 
-import { GalleryDetail, GalleryFeed } from "../../../prisma/prismaContext"
-import useFeed, { FeedTypes } from "../../../hooks/useFeed"
 import useDebug from "../../../hooks/useDebug"
+import useFeed, { FeedTypes } from "../../../hooks/useFeed"
+import { GalleryDetail, GalleryFeed } from "../../../prisma/prismaContext"
+import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 
 type GalleryFooterProps = {
   gallery: GalleryDetail | GalleryFeed
@@ -20,7 +20,7 @@ const GalleryFooter = ({
   gallery,
   feed: { type = "gallery" },
 }: GalleryFooterProps) => {
-  const [cyfrUser] = useCyfrUser()
+  const [cyfrUser] = useCyfrUserContext()
   const { shareGallery, likeGallery, invalidateFeed } = useFeed({ type })
   const { notify } = useToast()
   const { setCommentId, showComment, hideComment } = useCommentContext()

@@ -1,23 +1,21 @@
 import { useState } from "react";
 import useUserDetail from "../../../hooks/useUserDetail";
+import { uniqueKey } from '../../../utils/helpers';
+import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import { useToast } from "../../context/ToastContextProvider";
 import Avatar from "../../ui/avatar";
-import { HeartIcon, FireIcon } from "../../ui/icons";
+import { FireIcon, HeartIcon } from "../../ui/icons";
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
-import UserDetailPostItem from "../Post/UserDetailPostItem";
-import useCyfrUser from "../../../hooks/useCyfrUser";
-import GalleryItemView from "../Gallery/GalleryItemView";
 import GalleryCreateView from "../Gallery/GalleryCreateView";
-import GalleryDetailView from "../Gallery/GalleryDetailView";
-import { uuid, uniqueKey } from '../../../utils/helpers';
-import { cloudinary } from '../../../utils/cloudinary';
+import GalleryItemView from "../Gallery/GalleryItemView";
+import UserDetailPostItem from "../Post/UserDetailPostItem";
 
 type UserDetailComponentProps = {
   userId: String;
 };
 
 const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
-  const [cyfrUser] = useCyfrUser();
+  const [cyfrUser] = useCyfrUserContext();
   const { currentUser, follow, stan, invalidateUser } = useUserDetail({
     id: userId,
   });

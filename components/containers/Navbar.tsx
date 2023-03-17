@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import useCyfrUser from '../../hooks/useCyfrUser';
-import Avatar from '../ui/avatar';
-import { CyfrLogo, HouseIcon, UserIcon } from '../ui/icons';
-import ShrinkableIconLink from '../ui/shrinkableIconLink';
-import ShrinkableLink from '../ui/shrinkableLink';
-import Link from 'next/link';
-import { signOut } from 'next-auth/react';
+import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useCyfrUserContext } from "../context/CyfrUserProvider";
+import Avatar from "../ui/avatar";
+import { CyfrLogo, HouseIcon, UserIcon } from "../ui/icons";
+import ShrinkableIconLink from "../ui/shrinkableIconLink";
+import ShrinkableLink from "../ui/shrinkableLink";
 
 type NavbarProps = {
   className?: string;
@@ -18,7 +18,7 @@ const Navbar = ({
   iconClassName,
   pageScrolled: active,
 }: NavbarProps) => {
-  const [cyfrUser] = useCyfrUser();
+  const [cyfrUser] = useCyfrUserContext();
   const [isPageScrolled, setIsPageScrolled] = useState(false);
 
   const userUrl = cyfrUser ? cyfrUser.name : ''

@@ -1,12 +1,12 @@
 import { FormEvent, useEffect, useRef, useState } from "react"
-import { useToast } from "../../context/ToastContextProvider"
-import useCyfrUser from "../../../hooks/useCyfrUser"
-import useFeed from "../../../hooks/useFeed"
-import { CyfrLogo } from "../../ui/icons"
-import TailwindInput from "../../forms/TailwindInput"
-import Dropzone, { CompleteFile } from "../../forms/Dropzone"
-import { ImageCreateProps } from "../../../prisma/types"
 import useDebug from "../../../hooks/useDebug"
+import useFeed from "../../../hooks/useFeed"
+import { ImageCreateProps } from "../../../prisma/types"
+import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import { useToast } from "../../context/ToastContextProvider"
+import Dropzone, { CompleteFile } from "../../forms/Dropzone"
+import TailwindInput from "../../forms/TailwindInput"
+import { CyfrLogo } from "../../ui/icons"
 
 const {debug} = useDebug('components/containers/GalleryGalleryCreateView')
 
@@ -15,7 +15,7 @@ const GalleryCreateView = ({limit=-1}) => {
   const modal = useRef<HTMLInputElement>(null)
   const [checked, setChecked] = useState(false)
 
-  const [cyfrUser] = useCyfrUser()
+  const [cyfrUser] = useCyfrUserContext()
   const { notify } = useToast()
   
   const [title, setTitle] = useState<string | null>(null)
