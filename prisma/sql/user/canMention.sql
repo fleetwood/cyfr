@@ -1,8 +1,8 @@
--- FUNCTION: public.userStans(text)
+-- FUNCTION: public.canMention(text)
 
-DROP FUNCTION IF EXISTS public.userStans(text);
+DROP FUNCTION IF EXISTS public.canMention(text);
 
-CREATE OR REPLACE FUNCTION public.userStans(uid text)
+CREATE OR REPLACE FUNCTION public.canMention(uid text)
     RETURNS table (
 		userId text,
 		userName text,
@@ -10,11 +10,12 @@ CREATE OR REPLACE FUNCTION public.userStans(uid text)
 	)
     LANGUAGE 'sql'
 AS $BODY$
-select u.id as "userId", u.name as "userName", u.image as "userImage" 
-from "Fan" 
-	LEFT JOIN "User" u on u.id = "Fan"."fanOfId"
-where "fanId" = $1
+
+select * from userFollowers($1)
+union
+select * from userFans($1)
+
 $BODY$;
 
-ALTER FUNCTION public.userStans(text)
+ALTER FUNCTION public.canMention(text)
     OWNER TO doadmin;

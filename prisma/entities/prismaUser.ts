@@ -23,7 +23,7 @@ import { dedupe } from "../../utils/helpers";
 import useDebug from "../../hooks/useDebug";
 import { NextApiRequest } from "next";
 import { Session } from "next-auth";
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser");
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG');
 
 type AllPostQueryParams = {
   limit?: Number;
@@ -38,27 +38,11 @@ const allUsersQuery = async ({
 
   try {
     return await prisma.$queryRaw`
-    SELECT json_agg(posts) as "posts"
-	  FROM (
-		SELECT p."id", p."createdAt", p."updatedAt", p."visible", p."content",
-      (
-			SELECT count(*)
-			FROM "public"."Like"
-			WHERE "postId" = p."id"
-		  ) as likes,
-		  (
-			SELECT count(*)
-			FROM "public"."Share"
-			WHERE "postId" = p."id"
-		  ) as shares
-		FROM "public"."Post" p
-		WHERE p."authorId" = 'clert733o0000jpgwqbqoyx35'
-		AND p."visible" = true
-	  ) posts
+    select * from userInfoAll() as "user"
     `;
   } catch (error) {
-    err("Error getting frag", { error });
-    throw { code: fileMethod("frag"), message: "No posts were returned!" };
+    err("allUsersQuery", { error, limit, offset });
+    throw { code: fileMethod("allUsersQuery"), message: "No posts were returned!" };
   }
 };
 
@@ -212,6 +196,10 @@ const canMention = async (id: string, search?: string) => {
       "canMention",
       "Remove this in favor of a property in cyrUserContext...."
     );
+    const mentions = await prisma.$queryRaw`
+      SELECT * from canMention(\'${id}\')
+    `
+    debug('mentions', {mentions})
     const followers = await prisma.follow.findMany({
       where: {
         followingId: id,
@@ -269,6 +257,7 @@ const canMention = async (id: string, search?: string) => {
   }
 };
 
+
 const userBySessionEmail = async (
   session: Session | null | undefined
 ): Promise<UserDetail | null> => {
@@ -305,7 +294,19 @@ const userInSessionReq = async (
 ): Promise<UserDetail | null> => {
   try {
     const session = await getSession({ req });
-    return userBySessionEmail(session);
+    const result = await userBySessionEmail(session);
+
+    const cyfrUser = await prisma.$queryRaw`
+      SELECT * FROM cyfrUser(${result?.id})
+    `
+    debug('cyfrUser', {
+      1: '*************************************************',
+      id: result?.id, 
+      cyfrUser,
+      2: '*************************************************',
+    })
+
+    return result
   } catch (e) {
     return null;
   }
