@@ -12,7 +12,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse<R
     if (result) {
       res.status(200).json({result})
     } else {
-      throw { code: 'api/post/all', message: `No results from PrismaPost.all()` }
+      throw { code: 'api/post/all', message: `No results from PrismaPost.frag()` }
     }
   } catch (e) {
     err("\tFAIL", e)
