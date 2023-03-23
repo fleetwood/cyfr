@@ -291,22 +291,13 @@ const userBySessionEmail = async (
 
 const userInSessionReq = async (
   req: NextApiRequest
-): Promise<UserDetail | null> => {
+): Promise<any | null> => {
   try {
     const session = await getSession({ req });
-    const result = await userBySessionEmail(session);
+    const sessionUser = await userBySessionEmail(session);
 
-    const cyfrUser = await prisma.$queryRaw`
-      SELECT * FROM cyfrUser(${result?.id})
-    `
-    debug('cyfrUser', {
-      1: '*************************************************',
-      id: result?.id, 
-      cyfrUser,
-      2: '*************************************************',
-    })
-
-    return result
+    const result:[any] =  await prisma.$queryRaw`SELECT f_cyfrUser(${sessionUser?.id}) as "cyfrUser"`
+    return result[0] || {}
   } catch (e) {
     return null;
   }
