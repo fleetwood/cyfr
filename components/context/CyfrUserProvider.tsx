@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext } from "react"
-import useCyfrUser, { useCyfrUserProps } from "../../hooks/useCyfrUser"
+import useCyfrUser from "../../hooks/useCyfrUser"
 
 type CyfrUserProviderProps = {
   children?: ReactNode

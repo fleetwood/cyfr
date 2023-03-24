@@ -25,7 +25,7 @@ const UserBooksPage = ({ user, books }: InferGetServerSidePropsType<typeof getSe
   const [canEdit, setCanEdit] = useState<boolean>(false)
 
   useEffect(() => {
-    setCanEdit(() => cyfrUser !== undefined && user !== undefined && cyfrUser.id === user.id)
+    setCanEdit(() => cyfrUser !== undefined && user !== undefined && user !== null && cyfrUser.id === user!.id)
   }, [cyfrUser, user])
 
 

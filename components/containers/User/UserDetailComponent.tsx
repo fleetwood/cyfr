@@ -31,8 +31,9 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
     if (!cyfrUser || !currentUser) return;
 
     const result = await follow({
-      follower: cyfrUser.id,
-      following: currentUser.id,
+      followerId: cyfrUser.id,
+      followingId: currentUser.id,
+      isFan: false
     });
 
     if (result) {
@@ -48,8 +49,9 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
     if (!cyfrUser || !currentUser) return;
 
     const result = await stan({
-      fanOfId: currentUser.id,
-      fanId: cyfrUser.id,
+      followerId: currentUser.id,
+      followingId: cyfrUser.id,
+      isFan: true
     });
 
     if (result) {
@@ -96,12 +98,12 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
             <div>
               <strong>Follows:</strong> {currentUser?.follower.length}
             </div>
-            <div>
+            {/* <div>
               <strong>Fans:</strong> {currentUser?.fans.length}
             </div>
             <div>
               <strong>Stans:</strong> {currentUser?.fanOf.length}
-            </div>
+            </div> */}
           </div>
           <div
             className="
@@ -193,7 +195,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
         <div>
           <h2 className="subtitle">Follows</h2>
           {currentUser?.follower &&
-            currentUser?.follower.map((f) => (
+            (currentUser?.follower || []).map((f) => (
               <Avatar
                 user={f.following}
                 sz="md"
@@ -201,7 +203,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
             ))}
           <h2 className="subtitle">Followers</h2>
           {currentUser?.following &&
-            currentUser?.following.map((f) => (
+            (currentUser?.following || []).map((f) => (
               <Avatar
                 user={f.follower}
                 sz="md"
@@ -213,19 +215,9 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
       {activeTab === "Fan" && (
         <div>
           <h2 className="subtitle">Fans</h2>
-          {currentUser?.fans &&
-            currentUser?.fans.map((f) => (
-              <Avatar user={f.fan} sz="md" 
-              key={uniqueKey('user-fan',currentUser,f.fan)}/>
-            ))}
+          
           <h2 className="subtitle">Stan</h2>
-          {currentUser?.fanOf &&
-            currentUser?.fanOf.map((f) => (
-              <Avatar
-                user={f.fanOf}
-                sz="md"
-                key={uniqueKey('user-stan',currentUser,f.fanOf)}/>
-            ))}
+          
         </div>
       )}
     </div>

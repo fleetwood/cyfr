@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { getApi, sendApi } from "../utils/api"
-import { FollowProps, FanProps } from "../prisma/types/follow.def"
+import { FollowProps } from "../prisma/types/follow.def"
 import { UserDetail } from "../prisma/prismaContext"
 import useDebug from "./useDebug"
 const {debug, info} = useDebug('useUserDetails')
@@ -56,7 +56,7 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
 
   const follow = async (props:FollowProps) => await send(`user/follow`, props)
   
-  const stan = async (props:FanProps) => await send(`user/stan`, props)
+  const stan = async (props:FollowProps) => await send(`user/follow`, {...props, isFan: true})
 
   const invalidateUser = () => {
     const queryKey = queryTag

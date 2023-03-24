@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
 import { ResponseResult } from "../../../../types/response"
-import { UserDetail } from "../../../../prisma/types/user.def"
+import { CyfrUser, UserDetail } from "../../../../prisma/types/user.def"
 import { PrismaUser } from "../../../../prisma/entities/prismaUser"
 import useDebug from "../../../../hooks/useDebug"
 
@@ -9,7 +9,7 @@ const {debug, err, stringify, todo, fileMethod} = useDebug('api/user/byId/[id]')
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<UserDetail>>
+  res: NextApiResponse<ResponseResult<CyfrUser>>
 ) {
   const id = req.query.id?.toString() || ""
   try {

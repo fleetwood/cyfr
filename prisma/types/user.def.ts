@@ -51,8 +51,6 @@ export type UserDetail = User & {
   books:        Book[]
   following:    { follower: User }[]
   follower:     { following: User }[]
-  fanOf:        { fanOf: User }[]
-  fans:         { fan: User }[]
   images:       (Image & { _count: { likes: number, shares: number}})[]
   galleries:    GalleryFeed[]
 }
@@ -125,10 +123,9 @@ export type CyfrUser = User & {
   membership?:  Membership,
   posts:        PostFeed[]
   // books: Book[]
-  following:    { follower: User }[]
-  follower:     { following: User }[]
-  fanOf:        { fanOf: User }[]
-  fans:         { fan: User }[]
+  messagable:   UserProps[]
+  following:    UserProps[]
+  follower:     UserProps[]
   images:       (Image & { _count: { likes: number, shares: number}})[]
   galleries:    GalleryFeed[]
 }
@@ -191,7 +188,7 @@ export const CyfrUserInclude = {
     }
 }
 
-export type UpdatePreferencesProps = {
+export type UserProps = {
   id:     string
   name:   string
   image:  string

@@ -51,21 +51,11 @@ const byId = async (id: string): Promise<PostDetail | null> => {
  * @satisfies commentId:null //don't include Shares
  * @returns PostFeed[]
  */
-const all = async (): Promise<PostFeed[] | []> => {
+const all = async (): Promise<any> => {
   debug('all')
   try {
-    return await prisma.post.findMany({
-      where: {
-        visible: true,
-        commentId: null
-      },
-      include: PostFeedInclude,
-      orderBy: [
-        {
-          updatedAt: "desc",
-        },
-      ],
-    }) as unknown as PostFeed[]
+    const posts =  await prisma.$queryRaw`select * from f_post_feed()`;
+    return posts as unknown as PostFeed[]
   } catch (error) {
     throw { code: fileMethod('all'), message: "No posts were returned!" }
   }

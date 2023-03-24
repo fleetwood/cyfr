@@ -45,16 +45,15 @@ export const GetAudienceLevel = (type: string) => {
 export type AccessProps = {
     required: "public" | "reader" | "user" | "member" | "member_exp" | "agent" | "agent_exp" | "admin" | "owner",
     user?: User
-    cyfrUser?: CyfrUser
+    cyfrUser: CyfrUser | null
 }
 
-export const canAccess = ({required,user,cyfrUser}:AccessProps) => {
+export const canAccess = ({required, cyfrUser}:AccessProps) => {
     const allow = GetAudienceLevel(
-        // cyfrUser or user membership level, in all cases default to public if none found
+        // cyfrUser membership level, default to public if none found
         cyfrUser ? cyfrUser.membership?.level || AudienceType.PUBLIC
-        : user ? AudienceType.USER || AudienceType.PUBLIC
         : AudienceType.PUBLIC
     ) >= GetAudienceLevel(required)
-    debug(`canAccess`, {required, user, cyfrUser, allow})
+    debug(`canAccess`, {required, cyfrUser, allow})
     return allow
 }

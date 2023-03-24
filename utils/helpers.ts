@@ -83,7 +83,7 @@ export const timeDifference = (from:Date|string) => {
   if (from === null) {
     return ''
   }
-  const fromDate = new Date(from.toString())
+  const fromDate = (typeof Date === from ? from : new Date(from)) as Date
   const datetime = fromDate.getTime()
   const current = now().getTime()
   if (isNaN(datetime)) {

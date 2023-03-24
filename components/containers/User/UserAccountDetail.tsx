@@ -46,12 +46,6 @@ const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
                 <div>
                   <strong>Followers:</strong> {currentUser.follower.length}
                 </div>
-                <div>
-                  <strong>Fans:</strong> {currentUser.fans.length}
-                </div>
-                <div>
-                  <strong>Stans:</strong> {currentUser.fanOf.length}
-                </div>
               </div>
             </div>
           </div>

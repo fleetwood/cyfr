@@ -19,7 +19,7 @@ export async function getServerSideProps(
   const cyfrUser = await PrismaUser.userInSessionContext(context);
   const allow = canAccess({
     required: "owner",
-    cyfrUser: cyfrUser || undefined,
+    cyfrUser,
   })
   const genres = await PrismaGenre.list()
   return { props: { allow, genres } };

@@ -78,12 +78,7 @@ export const useCyfrUserApi = () => {
     }
   }
 
-  const getMentions = async (search?:string):Promise<{result:User[]}> => {
-    const results = await getApi(`user/mentions?search=${search}`)
-    return {...results} || []
-  }
-
-  return { invalidateUser, updateUser, getMentions }
+  return { invalidateUser, updateUser }
 }
 
 export default useCyfrUser

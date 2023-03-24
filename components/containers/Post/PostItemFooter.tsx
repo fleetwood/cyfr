@@ -76,10 +76,10 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Like (${post.likes.length})`}
+          label={`Like (${(post.likes || []).length})`}
           onClick={() => handleLike()}
         />
-        <AvatarList users={post.likes.map((p) => p.author)} sz="xs" />
+        <AvatarList users={(post.likes || []).map((p) => p.author)} sz="xs" />
       </div>
 
       <div className="font-semibold uppercase">
@@ -88,10 +88,10 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Share (${post.shares.length})`}
+          label={`Share (${(post.shares || []).length})`}
           onClick={() => handleShare()}
         />
-        <AvatarList users={post.shares.map((a) => a.author)} sz="xs" />
+        <AvatarList users={(post.shares || []).map((a) => a.author)} sz="xs" />
       </div>
       
       <div className="font-semibold uppercase">

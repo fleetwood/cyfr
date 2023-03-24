@@ -27,7 +27,7 @@ export const config:{
 
 const unsignedUploadPreset = "cyfr_unsigned"
 
-const isCloudinary = (url:string) => url.indexOf(config.cdn) >= 0
+const isCloudinary = (url?:string) => url && url.indexOf(config.cdn) >= 0
 
 const cloudUrl = (url:string, mod:string) => {
     if (!isCloudinary(url)) return `${config.fetch}/${mod}/${url}`

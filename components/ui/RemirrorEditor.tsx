@@ -1,39 +1,32 @@
-import dynamic from "next/dynamic"
-import {
-  BoldExtension,
-  ItalicExtension,
-  MentionAtomExtension,
-  EmojiExtension,
-  PlaceholderExtension,
-  MentionAtomNodeAttributes,
-} from "remirror/extensions"
 import { CountExtension } from "@remirror/extension-count"
-import {
-  prosemirrorNodeToHtml,
-  htmlToProsemirrorNode,
-  RemirrorEventListener,
-  RemirrorEventListenerProps,
-} from "remirror"
+import { Node } from "@remirror/pm/dist-types/model"
 import {
   EditorComponent,
   EmojiPopupComponent,
   MentionAtomPopupComponent,
   MentionAtomState,
   Remirror,
-  useRemirror,
+  useRemirror
 } from "@remirror/react"
-import data from "svgmoji/emoji.json"
+import dynamic from "next/dynamic"
 import {
   Dispatch,
   SetStateAction,
   useCallback,
   useEffect,
-  useState,
+  useState
 } from "react"
-import { useCyfrUserApi } from "../../hooks/useCyfrUser"
-import { Node } from "@remirror/pm/dist-types/model"
+import {
+  prosemirrorNodeToHtml, RemirrorEventListenerProps
+} from "remirror"
+import {
+  BoldExtension, EmojiExtension, ItalicExtension,
+  MentionAtomExtension, MentionAtomNodeAttributes, PlaceholderExtension
+} from "remirror/extensions"
+import data from "svgmoji/emoji.json"
 import useDebug from "../../hooks/useDebug"
-const {debug} = useDebug("RemirrorEditor")
+import { useCyfrUserContext } from "../context/CyfrUserProvider"
+const {debug, todo} = useDebug("RemirrorEditor", 'DEBUG')
 
 type MentionItem = { id: string, label: string }
 
@@ -53,7 +46,7 @@ const RemirrorEditor = ({
   maxChar = -1,
   setValid,
 }: RemirrorEditorProps) => {
-  const { getMentions } = useCyfrUserApi()
+  const { cyfrUser } = useCyfrUserContext()
   const [mentions, setMentions] = useState<MentionItem[]>([])
   const [search, setSearch] = useState("")
   const [count, setCount] = useState(-1)
@@ -109,15 +102,8 @@ const RemirrorEditor = ({
   }
 
   const get = () => {
-    getMentions(search).then((results) => {
-      if (!results.result) {
-        setMentions(() => [])
-      }
-      const mentions = results.result.map((m) => {
-        return { id: m.id, label: m.name }
-      }) as unknown as MentionItem[]
-      setMentions(mentions)
-    })
+    todo('get', 'Filter mentions by search')
+    return [] //cyfrUser.messagable || []
   }
 
   useEffect(() => {

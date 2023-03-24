@@ -1,27 +1,11 @@
--- ///////////////////////////////
--- // DO NOT DELETE //////////////
--- // SELECT FNS and IDX /////////
-SELECT pg_get_functiondef(f.oid)
-FROM pg_catalog.pg_proc f
-INNER JOIN pg_catalog.pg_namespace n ON (f.pronamespace = n.oid)
-WHERE n.nspname = 'public';
-
-SELECT indexdef||';' 
-AS idxdef 
-FROM pg_indexes 
-WHERE schemaname <>'pg_catalog'
-ORDER BY 1;
--- // DO NOT DELETE //////////////
--- ///////////////////////////////
-
-
-CREATE OR REPLACE FUNCTION public.uuid_nil()
+"pg_get_functiondef"
+"CREATE OR REPLACE FUNCTION public.uuid_nil()
  RETURNS uuid
  LANGUAGE c
  IMMUTABLE PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_nil$function$
-
-CREATE OR REPLACE FUNCTION public.f_user_fans(uid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_user_fans(uid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -33,62 +17,62 @@ FROM (
 	where ""fanOfId"" = $1
 )da
 $function$
-
-CREATE OR REPLACE FUNCTION public.uuid_ns_dns()
+"
+"CREATE OR REPLACE FUNCTION public.uuid_ns_dns()
  RETURNS uuid
  LANGUAGE c
  IMMUTABLE PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_ns_dns$function$
-
-CREATE OR REPLACE FUNCTION public.uuid_ns_url()
+"
+"CREATE OR REPLACE FUNCTION public.uuid_ns_url()
  RETURNS uuid
  LANGUAGE c
  IMMUTABLE PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_ns_url$function$
-
-CREATE OR REPLACE FUNCTION public.uuid_ns_oid()
+"
+"CREATE OR REPLACE FUNCTION public.uuid_ns_oid()
  RETURNS uuid
  LANGUAGE c
  IMMUTABLE PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_ns_oid$function$
-
-CREATE OR REPLACE FUNCTION public.uuid_ns_x500()
+"
+"CREATE OR REPLACE FUNCTION public.uuid_ns_x500()
  RETURNS uuid
  LANGUAGE c
  IMMUTABLE PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_ns_x500$function$
-
-CREATE OR REPLACE FUNCTION public.uuid_generate_v1()
+"
+"CREATE OR REPLACE FUNCTION public.uuid_generate_v1()
  RETURNS uuid
  LANGUAGE c
  PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_generate_v1$function$
-
-CREATE OR REPLACE FUNCTION public.uuid_generate_v1mc()
+"
+"CREATE OR REPLACE FUNCTION public.uuid_generate_v1mc()
  RETURNS uuid
  LANGUAGE c
  PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_generate_v1mc$function$
-
-CREATE OR REPLACE FUNCTION public.uuid_generate_v3(namespace uuid, name text)
+"
+"CREATE OR REPLACE FUNCTION public.uuid_generate_v3(namespace uuid, name text)
  RETURNS uuid
  LANGUAGE c
  IMMUTABLE PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_generate_v3$function$
-
-CREATE OR REPLACE FUNCTION public.uuid_generate_v4()
+"
+"CREATE OR REPLACE FUNCTION public.uuid_generate_v4()
  RETURNS uuid
  LANGUAGE c
  PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_generate_v4$function$
-
-CREATE OR REPLACE FUNCTION public.uuid_generate_v5(namespace uuid, name text)
+"
+"CREATE OR REPLACE FUNCTION public.uuid_generate_v5(namespace uuid, name text)
  RETURNS uuid
  LANGUAGE c
  IMMUTABLE PARALLEL SAFE STRICT
 AS '$libdir/uuid-ossp', $function$uuid_generate_v5$function$
-
-CREATE OR REPLACE FUNCTION public.f_post_likes(postid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_post_likes(postid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -101,8 +85,8 @@ AS $function$
 		WHERE l.""postId"" = $1
 	) lk
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_user_follows(uid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_user_follows(uid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -116,8 +100,8 @@ FROM (
 )da;
 
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_can_message(uid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_can_message(uid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -132,8 +116,8 @@ from (
 )messagable
 
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_user_infoall(l integer DEFAULT 100, o integer DEFAULT 0)
+"
+"CREATE OR REPLACE FUNCTION public.f_user_infoall(l integer DEFAULT 100, o integer DEFAULT 0)
  RETURNS TABLE(id text, name text, email text, image text, membership json, posts json, galleries json)
  LANGUAGE sql
 AS $function$
@@ -181,8 +165,8 @@ AS $function$
 	LIMIT $1
 	OFFSET $2
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_user_galleries(userid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_user_galleries(userid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -194,8 +178,8 @@ FROM (
 	AND g.""visible"" = true
 ) galleries
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_post_shares(postid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_post_shares(postid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -209,8 +193,8 @@ AS $function$
 	) sh
 	
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_user_followers(uid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_user_followers(uid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -223,8 +207,8 @@ FROM (
 	where ""followingId"" = $1
 )da;
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_can_mention(uid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_can_mention(uid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -242,8 +226,8 @@ from(
 	where ""fanOfId"" = $1
 )mention
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_user_info(uid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_user_info(uid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -258,8 +242,8 @@ AS $function$
     WHERE u.id = $1
 		) usr
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_user_posts(userid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_user_posts(userid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -275,8 +259,8 @@ FROM (
 ) ds
 
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_post_feed(lmt integer DEFAULT 100, oft integer DEFAULT 0)
+"
+"CREATE OR REPLACE FUNCTION public.f_post_feed(lmt integer DEFAULT 100, oft integer DEFAULT 0)
  RETURNS TABLE(id text, createdat text, updatedat text, visible boolean, content text, author json, likes json, shares json)
  LANGUAGE sql
 AS $function$
@@ -294,8 +278,8 @@ AS $function$
 	OFFSET (oft)
 	
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_cyfruser(uid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_cyfruser(uid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -341,8 +325,8 @@ FROM (
 	WHERE u.id = $1
 )usr
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_user_stans(uid text)
+"
+"CREATE OR REPLACE FUNCTION public.f_user_stans(uid text)
  RETURNS json
  LANGUAGE sql
 AS $function$
@@ -356,97 +340,4 @@ FROM (
 )da;
 
 $function$
-
-CREATE OR REPLACE FUNCTION public.f_cyfruser_byName(
-	uid text)
-    RETURNS json
-    LANGUAGE 'sql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
-
-SELECT (select f_cyfruser(u.id))
-FROM "User" u 
-WHERE LOWER(u.name) = LOWER($1)
-
-$BODY$;
-
-ALTER FUNCTION public.f_cyfruser_byName(text)
-    OWNER TO doadmin;
-
-
-CREATE OR REPLACE FUNCTION public.f_cyfruser_byEmail(
-	uid text)
-    RETURNS json
-    LANGUAGE 'sql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
-
-SELECT (select f_cyfruser(u.id))
-FROM "User" u 
-WHERE LOWER(u.email) = LOWER($1)
-
-$BODY$;
-
-ALTER FUNCTION public.f_cyfruser_byEmail(text)
-    OWNER TO doadmin;
-
--- //////////////////
--- // IDX
-CREATE INDEX ""_book_categories_B_index"" ON public._book_categories USING btree (""B"");
-CREATE INDEX ""_book_characters_B_index"" ON public._book_characters USING btree (""B"");
-CREATE INDEX ""_chapter_characters_B_index"" ON public._chapter_characters USING btree (""B"");
-CREATE INDEX ""FollowingId_key"" ON public.""Follow"" USING btree (""followingId"", ""followerId"");
-CREATE INDEX ""_user_books_B_index"" ON public._user_books USING btree (""B"");
-CREATE INDEX ""_user_chats_B_index"" ON public._user_chats USING btree (""B"");
-CREATE UNIQUE INDEX ""Account_pkey"" ON public.""Account"" USING btree (id);
-CREATE UNIQUE INDEX ""Account_provider_providerAccountId_key"" ON public.""Account"" USING btree (provider, ""providerAccountId"");
-CREATE UNIQUE INDEX ""Block_pkey"" ON public.""Block"" USING btree (id);
-CREATE UNIQUE INDEX ""_book_categories_AB_unique"" ON public._book_categories USING btree (""A"", ""B"");
-CREATE UNIQUE INDEX ""BookCategory_pkey"" ON public.""BookCategory"" USING btree (id);
-CREATE UNIQUE INDEX ""_book_characters_AB_unique"" ON public._book_characters USING btree (""A"", ""B"");
-CREATE UNIQUE INDEX ""Book_galleryId_key"" ON public.""Book"" USING btree (""galleryId"");
-CREATE UNIQUE INDEX ""Book_pkey"" ON public.""Book"" USING btree (id);
-CREATE UNIQUE INDEX ""_chapter_characters_AB_unique"" ON public._chapter_characters USING btree (""A"", ""B"");
-CREATE UNIQUE INDEX ""Chapter_galleryId_key"" ON public.""Chapter"" USING btree (""galleryId"");
-CREATE UNIQUE INDEX ""Chapter_pkey"" ON public.""Chapter"" USING btree (id);
-CREATE UNIQUE INDEX ""Character_galleryId_key"" ON public.""Character"" USING btree (""galleryId"");
-CREATE UNIQUE INDEX ""Character_pkey"" ON public.""Character"" USING btree (id);
-CREATE UNIQUE INDEX ""ChatMessage_pkey"" ON public.""ChatMessage"" USING btree (id);
-CREATE UNIQUE INDEX ""ChatRoom_party_key"" ON public.""ChatRoom"" USING btree (party);
-CREATE UNIQUE INDEX ""ChatRoom_pkey"" ON public.""ChatRoom"" USING btree (id);
-CREATE UNIQUE INDEX ""Comment_pkey"" ON public.""Comment"" USING btree (id);
-CREATE UNIQUE INDEX ""CommentThread_pkey"" ON public.""CommentThread"" USING btree (id);
-CREATE UNIQUE INDEX ""Commune_galleryId_key"" ON public.""Commune"" USING btree (""galleryId"");
-CREATE UNIQUE INDEX ""Commune_pkey"" ON public.""Commune"" USING btree (id);
-CREATE UNIQUE INDEX ""Commune_threadId_key"" ON public.""Commune"" USING btree (""threadId"");
-CREATE UNIQUE INDEX ""CommuneUser_pkey"" ON public.""CommuneUser"" USING btree (id);
-CREATE UNIQUE INDEX ""Covers_pkey"" ON public.""Covers"" USING btree (id);
-CREATE UNIQUE INDEX ""FanId_key"" ON public.""Fan"" USING btree (""fanId"", ""fanOfId"");
-CREATE UNIQUE INDEX ""Fan_pkey"" ON public.""Fan"" USING btree (id);
-CREATE UNIQUE INDEX ""Follow_pkey"" ON public.""Follow"" USING btree (id);
-CREATE UNIQUE INDEX ""Gallery_pkey"" ON public.""Gallery"" USING btree (id);
-CREATE UNIQUE INDEX ""Genre_pkey"" ON public.""Genre"" USING btree (id);
-CREATE UNIQUE INDEX ""Genre_title_key"" ON public.""Genre"" USING btree (title);
-CREATE UNIQUE INDEX ""Image_pkey"" ON public.""Image"" USING btree (id);
-CREATE UNIQUE INDEX ""Like_pkey"" ON public.""Like"" USING btree (id);
-CREATE UNIQUE INDEX ""LikePost_key"" ON public.""Like"" USING btree (id, ""postId"");
-CREATE UNIQUE INDEX ""Membership_pkey"" ON public.""Membership"" USING btree (id);
-CREATE UNIQUE INDEX ""News_pkey"" ON public.""News"" USING btree (id);
-CREATE UNIQUE INDEX ""News_postId_key"" ON public.""News"" USING btree (""postId"");
-CREATE UNIQUE INDEX ""Post_id_key"" ON public.""Post"" USING btree (id);
-CREATE UNIQUE INDEX ""Post_pkey"" ON public.""Post"" USING btree (id);
-CREATE UNIQUE INDEX _prisma_migrations_pkey ON public._prisma_migrations USING btree (id);
-CREATE UNIQUE INDEX ""Session_pkey"" ON public.""Session"" USING btree (id);
-CREATE UNIQUE INDEX ""Session_sessionToken_key"" ON public.""Session"" USING btree (""sessionToken"");
-CREATE UNIQUE INDEX ""Share_pkey"" ON public.""Share"" USING btree (id);
-CREATE UNIQUE INDEX ""SharePost_key"" ON public.""Share"" USING btree (id, ""postId"");
-CREATE UNIQUE INDEX ""_user_books_AB_unique"" ON public._user_books USING btree (""A"", ""B"");
-CREATE UNIQUE INDEX ""_user_chats_AB_unique"" ON public._user_chats USING btree (""A"", ""B"");
-CREATE UNIQUE INDEX ""User_email_key"" ON public.""User"" USING btree (email);
-CREATE UNIQUE INDEX ""User_id_key"" ON public.""User"" USING btree (id);
-CREATE UNIQUE INDEX ""User_membershipId_key"" ON public.""User"" USING btree (""membershipId"");
-CREATE UNIQUE INDEX ""User_pkey"" ON public.""User"" USING btree (id);
-CREATE UNIQUE INDEX ""VerificationToken_identifier_token_key"" ON public.""VerificationToken"" USING btree (identifier, token);
-CREATE UNIQUE INDEX ""VerificationToken_token_key"" ON public.""VerificationToken"" USING btree (token);
+"
