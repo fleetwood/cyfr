@@ -4,7 +4,7 @@ import {
 } from "../../types/response"
 import { PrismaUser } from "../../prisma/prismaContext"
 import useDebug from "../../hooks/useDebug"
-const {err} = useDebug('api/me')
+const {err} = useDebug('api/me', 'DEBUG')
 
 export default async function handle(
   req: NextApiRequest,

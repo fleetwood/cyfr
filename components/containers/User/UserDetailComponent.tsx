@@ -5,6 +5,7 @@ import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import { useToast } from "../../context/ToastContextProvider";
 import Avatar from "../../ui/avatar";
 import { FireIcon, HeartIcon } from "../../ui/icons";
+import JsonBlock from "../../ui/jsonBlock";
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 import GalleryCreateView from "../Gallery/GalleryCreateView";
 import GalleryItemView from "../Gallery/GalleryItemView";
@@ -90,13 +91,13 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
             "
           >
             <div>
-              <strong>Posts:</strong> {currentUser?.posts.length}
+              <strong>Posts:</strong> {(currentUser?.posts||[]).length}
             </div>
             <div>
-              <strong>Followers:</strong> {currentUser?.following.length}
+              <strong>Followers:</strong> {(currentUser?.following||[]).length}
             </div>
             <div>
-              <strong>Follows:</strong> {currentUser?.follower.length}
+              <strong>Follows:</strong> {(currentUser?.follower||[]).length}
             </div>
             {/* <div>
               <strong>Fans:</strong> {currentUser?.fans.length}
@@ -173,9 +174,11 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           {currentUser?.id === cyfrUser.id &&
             <GalleryCreateView />
           }
-          {currentUser?.galleries.map(gallery => 
+          {currentUser?.galleries && 
+            currentUser?.galleries.map(gallery => 
             <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
-                <GalleryItemView gallery={gallery}/>
+              <JsonBlock data={gallery} />
+                {/* <GalleryItemView gallery={gallery}/> */}
             </div>
         )}
         </div>

@@ -1,27 +1,17 @@
-import { GetSessionParams, getSession } from "next-auth/react";
-import {
-  Audience,
-  CyfrUser,
-  CyfrUserInclude,
-  Fan,
-  Follow,
-  FollowProps,
-  prisma,
-  UserProps,
-  User,
-  UserDetail,
-  UserDetailInclude,
-  UserFeed,
-  UserFeedInclude,
-} from "../prismaContext";
+import { NextApiRequest } from "next";
+import { getSession, GetSessionParams } from "next-auth/react";
+import useDebug from "../../hooks/useDebug";
 import {
   GenericResponseError,
-  ResponseError,
-  GetResponseError,
+  ResponseError
 } from "../../types/response";
-import useDebug from "../../hooks/useDebug";
-import { NextApiRequest } from "next";
-import { Session } from "next-auth";
+import {
+  Audience,
+  CyfrUser, Follow,
+  FollowProps,
+  prisma, User, UserFeed,
+  UserFeedInclude, UserProps
+} from "../prismaContext";
 const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG');
 
 type AllPostQueryParams = {
@@ -75,19 +65,27 @@ const follow = async (props:FollowProps): Promise<Follow> => {
 };
 
 const getCyfrUser = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => {
+  debug('getCyfrUser', idOrNameOrEmail)
   try {
     if (!idOrNameOrEmail) {
       return null;
     }
-    const user = await prisma.$queryRaw`select f_cyfrUser(${idOrNameOrEmail})`;
-    if (!user) {
-      throw {
-        code: fileMethod("getCyfrUser"),
-        message: `Did not find user for ${idOrNameOrEmail}`,
-      };
+    const user:any[] = await prisma.$queryRaw`SELECT f_cyfrUser(${idOrNameOrEmail}) as "cyfrUser"`;
+    if (!user[0].cyfrUser) {
+        throw {
+          code: fileMethod("getCyfrUser"),
+          message: `Did not find user for ${idOrNameOrEmail}`,
+        }
     }
-    // log(`user.entity.byEmail found ${user.name}`)
-    return user as unknown as CyfrUser;
+      try {
+        debug('casting cyfrUser', {
+          any: user[0].cyfrUser,
+          cyfrUser: user[0].cyfrUser as CyfrUser
+        })
+      } catch (error) {
+      
+    }
+    return user[0].cyfrUser as CyfrUser;
   } catch (error) {
     info(`getCyfrUser FAIL`, error);
     throw error;

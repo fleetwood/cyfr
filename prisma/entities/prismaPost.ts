@@ -1,5 +1,5 @@
-import { Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed, PostFeedInclude } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
+import { Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed } from "../prismaContext"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPosts', 'DEBUG')
 
 const byId = async (id: string): Promise<PostDetail | null> => {
@@ -14,9 +14,7 @@ const byId = async (id: string): Promise<PostDetail | null> => {
           posts: true,
           likes: true,
           following: true,
-          follower: true,
-          fans: true,
-          fanOf: true,
+          follower: true
         }},
         post_comments: { include: {
           author: true,

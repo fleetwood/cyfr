@@ -1,4 +1,4 @@
-import { Fan, Follow, Like, Post, PostFeed, User, Image, Membership, Book, GalleryFeed } from "./../prismaContext"
+import { Book, Follow, GalleryFeed, Image, Like, Membership, Post, PostFeed, User } from "./../prismaContext"
 
 /**
  * This is complaining if imported from Post.defs that it can't be
@@ -21,8 +21,6 @@ export type UserFeed = User & {
   likes:        Like[]
   following:    Follow[]
   follower:     Follow[]
-  fans:         Fan[]
-  fanOf:        Fan[]
 }
 
 export const UserFeedInclude = {
@@ -31,8 +29,6 @@ export const UserFeedInclude = {
   likes: true,
   following: true,
   follower: true,
-  fans: true,
-  fanOf: true,
   _count: {
     select: {
       sessions: true
@@ -100,16 +96,6 @@ export const UserDetailInclude = {
     follower: { 
       select: {
         following: true
-      }
-    },
-    fanOf: {
-      select: {
-        fanOf: true
-      }
-    },
-    fans:  {
-      select: {
-        fan: true
       }
     }
 }

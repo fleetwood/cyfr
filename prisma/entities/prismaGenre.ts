@@ -3,6 +3,11 @@ import useDebug from "../../hooks/useDebug"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGenre')
 
+const insertDefaults = async():Promise<any> => {
+  const genres = require('./../db.bak/genre.json')
+  return prisma.genre.createMany({data: genres})
+}
+
 const byId = async (id: string): Promise<GenreFeed|null> => {
   try {
     return await prisma.genre.findUnique({
@@ -130,4 +135,4 @@ const deleteGenre = async ({id, title}: GenreDeleteProps): Promise<Genre|null> =
   }
 }
 
-export const PrismaGenre = { all, list, byId, byTitle, covers, upsertGenre, deleteGenre }
+export const PrismaGenre = { all, list, byId, byTitle, covers, upsertGenre, deleteGenre, insertDefaults }

@@ -1,4 +1,4 @@
-import { Fan, Follow, PrismaUser } from "../../../prisma/prismaContext"
+import { Follow, PrismaUser } from "../../../prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from "next"
 
 import {

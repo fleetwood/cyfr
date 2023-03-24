@@ -94,7 +94,7 @@ const GalleryCreateView = ({limit=-1}) => {
                     setValue={setDescription}
                     inputClassName="text-base-content"
                   />
-                  <Dropzone limit={limit>0?limit:10} onUploadComplete={onFilesComplete} />
+                  <Dropzone limit={limit>0?limit:30} onUploadComplete={onFilesComplete} />
                 </form>
                 <div className="w-full grid place-items-end mt-2">
                   <button

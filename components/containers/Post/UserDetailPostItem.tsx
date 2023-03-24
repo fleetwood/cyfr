@@ -21,7 +21,7 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) =>
         {post.post_comments && post.post_comments.length > 0 && (
           <div className="mt-4 text-sm font-semibold">⤵ Replies</div>
         )}
-        {post.post_comments.slice(0, 5).map((comment) => (
+        {post.post_comments && post.post_comments.slice(0, 5).map((comment) => (
           <div 
             className="even:bg-base-300 odd:bg-base-200 bg-opacity-50 p-4 rounded-lg text-base-content mt-2 flex space-x-4"
             key={uniqueKey('post-comment',post, comment)}>
