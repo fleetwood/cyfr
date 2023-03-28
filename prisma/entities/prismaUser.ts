@@ -10,9 +10,9 @@ import {
   CyfrUser, Follow,
   FollowProps,
   prisma, User, UserFeed,
-  UserFeedInclude, UserProps
+  UserFeedInclude, UserSimple
 } from "../prismaContext";
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG');
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser");
 
 type AllPostQueryParams = {
   limit?: Number;
@@ -36,28 +36,41 @@ const allUsersQuery = async ({
 };
 
 const follow = async (props:FollowProps): Promise<Follow> => {
-  const data = {props};
+  const {followerId, followingId, isFan} = props;
   try {
-    if (props.followerId === props.followingId) {
+    if (followerId === followingId) {
       throw {
         code: "user/error",
         message: `Sorry you can't follow yourself. That would be weird, and probably break physics.`,
       };
     }
-    const exists = await prisma.follow.findFirst({ where:{...props} });
-    if (exists) return exists;
-    const follow = await prisma.follow.create({ data: props});
+    // we have to do this crazy little dance because composites in Follow model
+    const exists = await prisma.follow.findFirst({
+      where: {
+        followerId,
+        followingId
+      }
+    })
+    const data = {followerId,followingId,isFan}
+    const include = {follower: true,following: true}
+
+    const follow = exists 
+      ? await prisma.follow.update({
+        where: {id: exists.id},
+        data,
+        include
+      })
+      : await prisma.follow.create({
+        data,
+        include
+      })
     if (!follow) {
-      throw {
-        code: "users/follow",
-        message: `Unable to follow (${props}})`,
-      };
+      throw({code: fileMethod('follow'), message: 'Unable to follow user'})
     }
     return follow;
   } catch (error) {
     debug(`follow ERROR`, {
       ...{ props },
-      ...{ data },
       ...{ error },
     });
     throw GenericResponseError(error as unknown as ResponseError);
@@ -65,25 +78,17 @@ const follow = async (props:FollowProps): Promise<Follow> => {
 };
 
 const getCyfrUser = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => {
-  debug('getCyfrUser', idOrNameOrEmail)
+  debug('getCyfrUser', {idOrNameOrEmail})
   try {
     if (!idOrNameOrEmail) {
       return null;
     }
     const user:any[] = await prisma.$queryRaw`SELECT f_cyfrUser(${idOrNameOrEmail}) as "cyfrUser"`;
-    if (!user[0].cyfrUser) {
+    if (!user) {
         throw {
           code: fileMethod("getCyfrUser"),
           message: `Did not find user for ${idOrNameOrEmail}`,
         }
-    }
-      try {
-        debug('casting cyfrUser', {
-          any: user[0].cyfrUser,
-          cyfrUser: user[0].cyfrUser as CyfrUser
-        })
-      } catch (error) {
-      
     }
     return user[0].cyfrUser as CyfrUser;
   } catch (error) {
@@ -91,14 +96,6 @@ const getCyfrUser = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => 
     throw error;
   }
 }
-
-const byId = async (id: string) => getCyfrUser(id)
-
-const byName = async (name: string) => getCyfrUser(name)
-
-const byEmail = async (email: string) => getCyfrUser(email)
-
-const byNameOrId = async (idOrName: string) => getCyfrUser(idOrName)
 
 const canMention = async (id: string, search?: string):Promise<any> => {
   try {
@@ -204,7 +201,7 @@ const updatePreferences = async ({
   id,
   name,
   image,
-}: UserProps): Promise<User> => {
+}: UserSimple): Promise<User> => {
   try {
     const user = await prisma.user.update({
       where: { id },
@@ -221,15 +218,14 @@ const updatePreferences = async ({
 
 export const PrismaUser = {
   allUsersQuery,
+  getCyfrUser,
   userInSessionContext,
   userInSessionReq,
   userCurrentlyOnline,
-  byEmail,
-  byName,
-  byId,
-  byNameOrId,
   follow,
   setMembership,
   updatePreferences,
   canMention,
 };
+
+

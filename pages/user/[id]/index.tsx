@@ -1,7 +1,6 @@
-import UserDetailComponent from "../../../components/containers/User/UserDetailComponent"
-import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider"
-import MainLayout from "../../../components/layouts/MainLayout"
-import useUserDetail from "../../../hooks/useUserDetail"
+import UserDetailComponent from "../../../components/containers/User/UserDetailComponent";
+import MainLayout from "../../../components/layouts/MainLayout";
+import useUserDetail from "../../../hooks/useUserDetail";
 import { InferGetServerSidePropsType } from "next";
 
 export async function getServerSideProps(context: any) {
@@ -20,8 +19,7 @@ type UserDetailProps = {
 
 // @ts-ignore
 const UserDetailPage = ({ userId, layout='main' }:UserDetailProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const { currentUser, follow, stan, invalidateUser } = useUserDetail({id: userId})
+  const { currentUser } = useUserDetail({id: userId})
   
   return (
     <>

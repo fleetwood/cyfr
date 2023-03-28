@@ -7,8 +7,7 @@ import { PrismaBook, PrismaUser } from "../../../prisma/prismaContext";
 import { uniqueKey } from "../../../utils/helpers";
 
 export async function getServerSideProps(context: any) {
-  const authorId = context.params.id;
-  const user = await PrismaUser.byNameOrId(authorId);
+  const user = await PrismaUser.userInSessionContext(context)
   const books = user ? await PrismaBook.byUser(user.id) : []
 
   return {

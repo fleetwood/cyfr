@@ -11,7 +11,7 @@ export default async function handle(
 ) {
   const email = req.query.email?.toString() || ""
   try {
-    const result = await PrismaUser.byEmail(email)
+    const result = await PrismaUser.getCyfrUser(email)
     if (result) {
       debug(`handler`,{email, result})
       res.status(200).json({ result })

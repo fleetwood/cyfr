@@ -12,10 +12,8 @@ export default async function handle(
 ) {
   todo('handle','Why is this posting req.body.body????')
   try {
-    const session = await getSession({ req })
+    const user = await PrismaUser.userInSessionReq(req)
     const search:string|undefined = req.query.search as string
-    const email = session?.user?.email
-    const user = await PrismaUser.byEmail(email!)
     if (user === null) {
       res.status(200).json({ })
       res.end()

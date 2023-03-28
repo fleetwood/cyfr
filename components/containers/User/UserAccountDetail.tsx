@@ -1,9 +1,12 @@
 import { useState } from "react"
 import useUserDetail, { UserDetailHookProps } from "../../../hooks/useUserDetail"
+import { UserFollow } from "../../../prisma/prismaContext"
 import Avatar from "../../ui/avatar"
+import UserDetailFollow from "./UserDetailFollow"
 
 const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
-  const { currentUser, invalidateUser } = useUserDetail({user, id})
+
+  const { currentUser, followers, follows, fans, stans } = useUserDetail({user, id})
   const [activeTab, setActiveTab] = useState('Posts')
   const activeTabClass = (tab:string) => activeTab === tab 
     ? `btn-secondary rounded-b-none mt-0`
@@ -41,10 +44,16 @@ const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
                   <strong>Posts:</strong> {currentUser.posts.length}
                 </div>
                 <div>
-                  <strong>Follows:</strong> {currentUser.following.length}
+                  <strong>Followers:</strong> {followers.length}
                 </div>
                 <div>
-                  <strong>Followers:</strong> {currentUser.follower.length}
+                  <strong>Follows:</strong> {follows.length}
+                </div>
+                <div>
+                  <strong>Fans:</strong> {fans.length}
+                </div>
+                <div>
+                  <strong>Stans:</strong> {stans.length}
                 </div>
               </div>
             </div>
@@ -66,37 +75,45 @@ const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
         }
 
         {activeTab==="Follows" &&
-          <div className="bg-base-300 rounded-md p-4 mt-4">
-             <div>
-                <h2>Following</h2>
-                {/* {currentUser.follower.map((follow:UserFollows) => (
-                  <UserDetailFollow following={follow} key={follow.id} />
-                ))} */}
-              </div>
-              <div>
-                <h2>Followers</h2>
-                {/* {currentUser.following.map((follow:UserFollows) => (
-                  <UserDetailFollow follower={follow} key={follow.id} />
-                ))} */}
-              </div>
+          <div className="bg-base-300 rounded-md p-4 mt-4 grid grid-cols-2 gap-2">
+          <div className="col-span-1">
+            <h2 className="h-subtitle">Followers</h2>
+            <div className="flex space-x-2 space-y-2">
+              {followers.map((follow:UserFollow) => (
+                <Avatar user={follow} sz='md' />
+              ))}
+            </div>
           </div>
+          <div className="col-span-1">
+            <h2 className="h-subtitle">Follows</h2>
+            <div className="flex space-x-2 space-y-2">
+              {follows.map((follow:UserFollow) => (
+                <Avatar user={follow} sz='md' />
+              ))}
+            </div>
+          </div>
+        </div>
         }
 
         {activeTab==="Fans" &&
-          <div className="bg-base-300 rounded-md p-4 mt-4">
-             <div>
-                <h2>Fans</h2>
-                {/* {currentUser.fans.map((fan: { fan: User; id: string | undefined }) => (
-                  <UserDetailFan fan={fan.fan} key={fan.id} />
-                ))} */}
-              </div>
-              <div>
-                <h2>Stans</h2>
-                {/* {currentUser.fanOf.map((fan: { fanOf: User; id: string | undefined }) => (
-                  <UserDetailFan fan={fan.fanOf} key={fan.id} />
-                ))} */}
-              </div>
-          </div>
+         <div className="bg-base-300 rounded-md p-4 mt-4 grid grid-cols-2 gap-2">
+         <div className="col-span-1">
+           <h2 className="h-subtitle">Fans</h2>
+           <div className="flex space-x-2 space-y-2">
+             {fans.map((follow:UserFollow) => (
+               <Avatar user={follow} sz='md' />
+             ))}
+           </div>
+         </div>
+         <div className="col-span-1">
+           <h2 className="h-subtitle">Stans</h2>
+           <div className="flex space-x-2 space-y-2">
+             {stans.map((follow:UserFollow) => (
+               <Avatar user={follow} sz='md' />
+             ))}
+           </div>
+         </div>
+       </div>
         }
         </>
       )}

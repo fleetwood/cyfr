@@ -29,6 +29,12 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
   const userId = user?.id||id
   const queryTag = `userQuery.${userId}`
 
+  const followers = currentUser?.followers || []
+  const fans = followers.filter(f => f.isFan)
+  const follows = currentUser?.follows || []
+  const stans = follows.filter(f => f.isFan)
+  
+
   const query = useQuery(
     [queryTag],
     () => getUser(userId!),
@@ -54,9 +60,9 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
     return null
   }
 
-  const follow = async (props:FollowProps) => await send(`user/follow`, props)
+  const followUser = async (props:FollowProps) => await send(`user/follow`, props)
   
-  const stan = async (props:FollowProps) => await send(`user/follow`, {...props, isFan: true})
+  const stanUser = async (props:FollowProps) => await send(`user/follow`, {...props, isFan: true})
 
   const invalidateUser = () => {
     const queryKey = queryTag
@@ -65,7 +71,7 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
     return qc.invalidateQueries(q)
   }
   
-  return {currentUser, follow, stan, invalidateUser}
+  return {currentUser, fans, followers, follows, stans, followUser, stanUser, invalidateUser}
 }
 
 export default useUserDetail

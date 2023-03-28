@@ -18,9 +18,8 @@ export type UserFeed = User & {
   _count:       { sessions: number }
   membership?:  Membership
   posts:        Post[]
-  likes:        Like[]
-  following:    Follow[]
-  follower:     Follow[]
+  follows:      Follow[]
+  followers:    Follow[]
 }
 
 export const UserFeedInclude = {
@@ -45,8 +44,8 @@ export type UserDetail = User & {
   membership?:  Membership,
   posts:        PostFeed[]
   books:        Book[]
-  following:    { follower: User }[]
-  follower:     { following: User }[]
+  follows:      UserFollow[]
+  followers:    UserFollow[]
   images:       (Image & { _count: { likes: number, shares: number}})[]
   galleries:    GalleryFeed[]
 }
@@ -109,9 +108,10 @@ export type CyfrUser = User & {
   membership?:  Membership,
   posts:        PostFeed[]
   // books: Book[]
-  messagable:   UserProps[]
-  following:    UserProps[]
-  follower:     UserProps[]
+  messagable:   UserSimple[]
+  canMention:   UserSimple[]
+  follows:      UserFollow[]
+  followers:    UserFollow[]
   images:       (Image & { _count: { likes: number, shares: number}})[]
   galleries:    GalleryFeed[]
 }
@@ -174,8 +174,12 @@ export const CyfrUserInclude = {
     }
 }
 
-export type UserProps = {
+export type UserSimple = {
   id:     string
   name:   string
   image:  string
+}
+
+export type UserFollow = UserSimple & {
+  isFan?: boolean
 }

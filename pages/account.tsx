@@ -15,6 +15,7 @@ import { PrismaUser } from "../prisma/entities/prismaUser"
 import { CyfrUser } from "../prisma/types/user.def"
 import { cloudinary } from "../utils/cloudinary"
 import UserDetailPage from "./user/[id]"
+import { User } from "../prisma/prismaContext"
 const {debug, info} = useDebug('pages/account')
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
@@ -24,11 +25,11 @@ export async function getServerSideProps(context: GetSessionParams | undefined) 
 }
 
 type AccountProps = {
-  user?: CyfrUser | undefined
+  user?: User | undefined
 }
 
-const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [session] = useSession({required: true, redirectTo: '/login'})
+const Account = ({user}:AccountProps) => {
+  const [session] = useSession({required: true, redirectTo: '/login'})  
   const [cyfrUser] = useCyfrUserContext()
   const {updateUser, invalidateUser}=useCyfrUserApi()
   const [activeTab, setActiveTab] = useState('Preferences')

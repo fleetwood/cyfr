@@ -9,9 +9,8 @@ import { InferGetServerSidePropsType } from "next";
 import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
 
 export async function getServerSideProps(context: any) {
-  const authorId = context.params.id;
-  const user = await PrismaUser.byNameOrId(authorId);
-  const galleries = user ? await PrismaGallery.userGalleries(user.id) : []
+  const user = await PrismaUser.userInSessionContext(context);
+  const galleries = user ? await PrismaGallery.userGalleries(context.query.id) : []
 
   return {
     props: {

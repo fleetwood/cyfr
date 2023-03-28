@@ -1,22 +1,15 @@
-import { Follow } from '@prisma/client'
+import { UserFollow } from '../../../prisma/prismaContext'
+import { todo } from '../../../utils/log'
 import Avatar from '../../ui/avatar'
 
-type UserDetailFollowsProps = {
-    following?: Follow
-    follower?: Follow
-}
+type UserDetailFollowsProps = {user:UserFollow}
 
-const UserDetailFollow = ({following, follower}:UserDetailFollowsProps) => (
+const UserDetailFollow = ({user}:UserDetailFollowsProps) =>{
+    todo('UserDetailFollow is probably not necessary anymore....')
+    return (
     <div>
-        {following && 
-            // <Avatar user={following.following} sz='md' />
-            <>{following.followingId}</>
-        }
-        {follower && 
-            // <Avatar user={follower.follower} sz='md' />
-            <>{follower.followerId}</>
-        }
+        <Avatar user={user} sz='md' />
     </div>
-)
+)}
 
 export default UserDetailFollow

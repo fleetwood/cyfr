@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useUserDetail from "../../../hooks/useUserDetail";
+import { UserFollow } from "../../../prisma/prismaContext";
 import { uniqueKey } from '../../../utils/helpers';
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import { useToast } from "../../context/ToastContextProvider";
@@ -17,9 +18,7 @@ type UserDetailComponentProps = {
 
 const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
   const [cyfrUser] = useCyfrUserContext();
-  const { currentUser, follow, stan, invalidateUser } = useUserDetail({
-    id: userId,
-  });
+  const { currentUser, followers, follows, fans, stans, followUser, stanUser, invalidateUser } = useUserDetail({id: userId});
   const { notify } = useToast();
   const [activeTab, setActiveTab] = useState("Posts");
 
@@ -28,10 +27,10 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
       ? `btn-secondary rounded-b-none mt-0`
       : `btn-primary -mt-1`;
 
-  const followUser = async () => {
+  const clickFollow = async () => {
     if (!cyfrUser || !currentUser) return;
 
-    const result = await follow({
+    const result = await followUser({
       followerId: cyfrUser.id,
       followingId: currentUser.id,
       isFan: false
@@ -46,10 +45,10 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
     invalidateUser();
   };
 
-  const stanUser = async () => {
+  const clickStan = async () => {
     if (!cyfrUser || !currentUser) return;
 
-    const result = await stan({
+    const result = await stanUser({
       followerId: currentUser.id,
       followingId: cyfrUser.id,
       isFan: true
@@ -94,17 +93,17 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
               <strong>Posts:</strong> {(currentUser?.posts||[]).length}
             </div>
             <div>
-              <strong>Followers:</strong> {(currentUser?.following||[]).length}
+              <strong>Followers:</strong> {followers.length}
             </div>
             <div>
-              <strong>Follows:</strong> {(currentUser?.follower||[]).length}
-            </div>
-            {/* <div>
-              <strong>Fans:</strong> {currentUser?.fans.length}
+              <strong>Follows:</strong> {follows.length}
             </div>
             <div>
-              <strong>Stans:</strong> {currentUser?.fanOf.length}
-            </div> */}
+              <strong>Fans:</strong> {fans.length}
+            </div>
+            <div>
+              <strong>Stans:</strong> {stans.length}
+            </div>
           </div>
           <div
             className="
@@ -126,7 +125,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
               className="bg-opacity-0 hover:shadow-none"
               iconClassName="text-primary"
               labelClassName="text-primary"
-              onClick={followUser}
+              onClick={clickFollow}
             />
             <ShrinkableIconButton
               label="Fan"
@@ -134,7 +133,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
               className="bg-opacity-0 hover:shadow-none"
               iconClassName="text-primary"
               labelClassName="text-primary"
-              onClick={stanUser}
+              onClick={clickStan}
             />
           </div>
         </div>
@@ -175,10 +174,10 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
             <GalleryCreateView />
           }
           {currentUser?.galleries && 
-            currentUser?.galleries.map(gallery => 
+            currentUser.galleries.map(gallery => 
             <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
-              <JsonBlock data={gallery} />
-                {/* <GalleryItemView gallery={gallery}/> */}
+              {/* <JsonBlock data={gallery} /> */}
+              <GalleryItemView gallery={gallery}/>
             </div>
         )}
         </div>
@@ -195,33 +194,45 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
       )}
       {/* FOLLOWERS */}
       {activeTab === "Follow" && (
-        <div>
-          <h2 className="subtitle">Follows</h2>
-          {currentUser?.follower &&
-            (currentUser?.follower || []).map((f) => (
-              <Avatar
-                user={f.following}
-                sz="md"
-                key={uniqueKey('user-following',currentUser,f.following)}/>
+        <div className="bg-base-300 rounded-md p-4 mt-4 grid grid-cols-2 gap-2">
+        <div className="col-span-1">
+          <h2 className="h-subtitle">Followers</h2>
+          <div className="flex space-x-2 space-y-2">
+            {followers.map((follow:UserFollow) => (
+              <Avatar user={follow} sz='md' />
             ))}
-          <h2 className="subtitle">Followers</h2>
-          {currentUser?.following &&
-            (currentUser?.following || []).map((f) => (
-              <Avatar
-                user={f.follower}
-                sz="md"
-                key={uniqueKey('user-follower',currentUser,f.follower)}/>
-            ))}
+          </div>
         </div>
+        <div className="col-span-1">
+          <h2 className="h-subtitle">Follows</h2>
+          <div className="flex space-x-2 space-y-2">
+            {follows.map((follow:UserFollow) => (
+              <Avatar user={follow} sz='md' />
+            ))}
+          </div>
+        </div>
+      </div>
       )}
       {/* FANS */}
       {activeTab === "Fan" && (
-        <div>
-          <h2 className="subtitle">Fans</h2>
-          
-          <h2 className="subtitle">Stan</h2>
-          
+        <div className="bg-base-300 rounded-md p-4 mt-4 grid grid-cols-2 gap-2">
+        <div className="col-span-1">
+          <h2 className="h-subtitle">Fans</h2>
+          <div className="flex space-x-2 space-y-2">
+            {fans.map((follow:UserFollow) => (
+              <Avatar user={follow} sz='md' />
+            ))}
+          </div>
         </div>
+        <div className="col-span-1">
+          <h2 className="h-subtitle">Stans</h2>
+          <div className="flex space-x-2 space-y-2">
+            {stans.map((follow:UserFollow) => (
+              <Avatar user={follow} sz='md' />
+            ))}
+          </div>
+        </div>
+      </div>
       )}
     </div>
   );
