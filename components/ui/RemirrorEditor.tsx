@@ -46,7 +46,7 @@ const RemirrorEditor = ({
   maxChar = -1,
   setValid,
 }: RemirrorEditorProps) => {
-  const { cyfrUser } = useCyfrUserContext()
+  const [ cyfrUser ] = useCyfrUserContext()
   const [mentions, setMentions] = useState<MentionItem[]>([])
   const [search, setSearch] = useState("")
   const [count, setCount] = useState(-1)
@@ -102,8 +102,9 @@ const RemirrorEditor = ({
   }
 
   const get = () => {
-    todo('get', 'Filter mentions by search')
-    return [] //cyfrUser.messagable || []
+    setMentions((m) => (cyfrUser?.canMention || [])
+      .map(m => {return {id: m.id, label: m.name}})
+      .filter((m) => m.label.toLowerCase().indexOf(search.toLowerCase()) >= 0))
   }
 
   useEffect(() => {

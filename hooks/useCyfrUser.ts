@@ -34,7 +34,7 @@ const useCyfrUser = ():[CyfrUser,boolean,unknown] => {
   const getCyfrUser = async () => {
     const me = await getApi("/me")
     setRefetchInterval((c) => (me ? __cyfr_refetch__ : 1000))
-    return me.result || me.error || null
+    return me.result as CyfrUser || me.error || null
   }
 
   // @ts-ignore

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { UserDetail } from "../../prisma/prismaContext"
-import { getApi } from "../../utils/api"
 import { uniqueKey } from "../../utils/helpers"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
 import Avatar from "./avatar"
@@ -13,7 +12,7 @@ type MentionsMenuProps = {
 }
 
 const MentionsMenu = ({onSelect, searchTerm, show = true}:MentionsMenuProps) => {
-    const {cyfrUser} = useCyfrUserContext()
+    const [cyfrUser] = useCyfrUserContext()
     const [showMenu, setShowMenu] = useState(show)
     const [search, setSearch] = useState<string>('')
     const [isLoading, setIsLoading] = useState(true)
@@ -41,8 +40,8 @@ const MentionsMenu = ({onSelect, searchTerm, show = true}:MentionsMenuProps) => 
         {isLoading && 
             <li><Spinner size="sm" /></li>
         }
-        {!isLoading && (cyfrUser.mentions || []).map((user:any) => (
-            <li onClick={() => chooseMention(user)} key={uniqueKey(user,cyfrUser.mentions)} className="flex justify-items-start space-x-1 cursor-pointer px-2 rounded-sm hover:bg-opacity-30 hover:bg-primary"><Avatar user={user} link={false} sz="xs" /><span>{user.name}</span></li>
+        {!isLoading && (cyfrUser.canMention || []).map((user:any) => (
+            <li onClick={() => chooseMention(user)} key={uniqueKey(user,cyfrUser.canMention)} className="flex justify-items-start space-x-1 cursor-pointer px-2 rounded-sm hover:bg-opacity-30 hover:bg-primary"><Avatar user={user} link={false} sz="xs" /><span>{user.name}</span></li>
         ))}
         </ul>
         </>
