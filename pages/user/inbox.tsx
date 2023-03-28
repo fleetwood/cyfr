@@ -47,9 +47,9 @@ const Inbox = ({}) => {
                     <CyfrLogo className="animate-pulse text-info-content w-[1.25rem]" />
                     <span className="text-info-content">Send a Message</span>
                 </label>
-                {cyfrUser &&
+                {cyfrUser && (
                     <InboxThreadList cyfrUser={cyfrUser} threads={feed} setActive={showThreadView} />
-                }
+                )}
             </div>
             {cyfrUser &&
             <div className="w-full grow m-0 overflow-y-scroll scrollbar-hide relative">

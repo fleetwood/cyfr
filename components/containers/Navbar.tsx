@@ -68,7 +68,7 @@ const Navbar = ({
               <li><Link href={`/user/${userUrl}/books`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Books</Link></li>
               <li><Link href={`/user/${userUrl}/gallery`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Galleries</Link></li>
               <li><Link href={`/user/${userUrl}`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Profile</Link></li>
-              <li><Link href={`/account`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Acccount</Link></li>
+              <li><Link href={`/account`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Account</Link></li>
               <li><Link href={`#`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md' onClick={() => signOut()} >Log Out</Link></li>
             </ul>
           </div>
