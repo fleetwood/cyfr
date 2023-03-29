@@ -4,8 +4,8 @@ import GalleryPhotoswipe from "../../components/containers/Gallery/GalleryPhotos
 import PostItemFooter from "../../components/containers/Post/PostItemFooter";
 import MainLayout from "../../components/layouts/MainLayout";
 import Avatar from "../../components/ui/avatar";
-import { PrismaPost } from "../../prisma/entities/prismaPost";
-import { PostFeed } from "../../prisma/types/post.def";
+import JsonBlock from "../../components/ui/jsonBlock";
+import { PostFeed, PrismaPost } from "../../prisma/prismaContext";
 import { timeDifference } from '../../utils/helpers';
 
 type PostDetailPageProps = {
@@ -36,11 +36,12 @@ const PostDetailPage = ({ post }: InferGetServerSidePropsType<typeof getServerSi
       </div>
       <div className="bg-base-100 rounded-lg p-4 relative">
         <div className="absolute right-0 pr-4">
-          Posted {timeDifference(post.createdAt)}
+          Posted {timeDifference((post.createdat || '').toString())}
         </div>
         {post.content && 
         <div className="text-base-content m-8 font-ibarra">
           {ReactHtmlParser(post.content)}
+          <JsonBlock data={post} />
         </div>}
         {/* {post.post_comments && post.post_comments.map(c => (
           <div className="text-base-content m-8 font-ibarra" key={uniqueKey('post-comment',post,c)}>

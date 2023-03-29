@@ -1,5 +1,7 @@
-import { useId } from 'react'
 import { v4 as uid } from 'uuid'
+import useDebug from '../hooks/useDebug'
+
+const {debug} = useDebug('utils', 'DEBUG')
 
 export const URLify = (content: string) => {
   const urls = content.match(
@@ -81,12 +83,14 @@ const monthOf = (month: any) => {
 
 export const timeDifference = (from:Date|string) => {
   if (from === null) {
+    debug('timeDifference', {message: 'from is null?', from})
     return ''
   }
   const fromDate = (typeof Date === from ? from : new Date(from)) as Date
   const datetime = fromDate.getTime()
   const current = now().getTime()
   if (isNaN(datetime)) {
+    debug('timeDifference', {message: 'from is NAN?', from, fromDate, datetime, current})
     return ""
   }
   const milisec_diff = current - datetime

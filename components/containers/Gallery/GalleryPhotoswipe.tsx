@@ -7,7 +7,7 @@ import { uniqueKey, uuid } from "../../../utils/helpers";
 import { cloudinary } from "../../../utils/cloudinary";
 import useDebug from "../../../hooks/useDebug";
 
-const {debug} = useDebug('containers/Gallery/GalleryPhotoswipe', 'DEBUG')
+const {debug} = useDebug('containers/Gallery/GalleryPhotoswipe')
 
 type GalleryPhotoswipeProps = {
   items?: ItemProps[]
@@ -36,9 +36,6 @@ const GalleryPhotoswipe = ({items, images, key = uuid()}:GalleryPhotoswipeProps)
       }
     })
   }
-
-  debug('renderer', {key: uniqueKey(key,items[0]), items})
-
   return (
     <Gallery>
     <div className="min-w-full">

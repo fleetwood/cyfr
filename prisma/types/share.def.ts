@@ -6,6 +6,8 @@ export type ShareDeleteProps = {
 }
 
 export type ShareFeed = Share & {
+  createdat?: string
+  updatedat?: string
   author: User
   post?: PostFeed | null
 }

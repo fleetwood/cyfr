@@ -1,6 +1,6 @@
 import { Image, ImageFeed, Like, Post, Share, User } from "./../prismaContext";
 import { ImageFeedInclude } from "./image.def";
-import { UserFeed, UserFeedInclude } from "./user.def";
+import { UserFeed, UserFeedInclude, UserSimple } from "./user.def";
 
 export type PostCreateProps = {
   content: string;
@@ -37,11 +37,13 @@ type PostComments = Post & {
 };
 
 export type PostFeed = Post & {
+  createdat?: string
+  updatedat?: string
   author: User;
   comment?: Post | null;
   post_comments: (Post & { author: User })[];
-  likes: (Like & { author: User })[];
-  shares: (Share & { author: User })[];
+  likes: UserSimple[];
+  shares: UserSimple[];
   images: Image[];
 };
 
@@ -55,6 +57,8 @@ export const PostFeedInclude = {
 }
 
 export type PostDetail = Post & {
+  createdat?: string
+  updatedat?: string
   author: UserFeed;
   post_comments: PostFeed[];
   likes: (Like & { author: User })[];

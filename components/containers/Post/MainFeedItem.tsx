@@ -1,14 +1,13 @@
-import { timeDifference, uniqueKey, uuid } from "../../../utils/helpers"
-import Avatar from "../../ui/avatar"
-import PostItemFooter from "./PostItemFooter"
-import ReactHtmlParser from "react-html-parser"
-import { MainFeed } from "../../../prisma/types"
 import Link from "next/link"
+import ReactHtmlParser from "react-html-parser"
+import { MainFeed } from "../../../prisma/prismaContext"
+import { timeDifference, uuid } from "../../../utils/helpers"
+import Avatar from "../../ui/avatar"
 import HtmlContent from "../../ui/htmlContent"
+import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
+import PostItemFooter from "./PostItemFooter"
 
 import useDebug from "../../../hooks/useDebug"
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
-import JsonBlock from "../../ui/jsonBlock"
 const {debug} = useDebug("MainFeedItem")
 
 type MainFeedItemProps = {
@@ -39,7 +38,7 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
           sz="sm"
         />
         <div>
-            Shared {timeDifference(item.share!.createdAt)}
+            Shared {timeDifference((item.share?.createdat || '').toString())}
         </div>
       </div>
       )}
@@ -51,7 +50,7 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
         />
         <div className="">
           <Link href={`/post/${post.id}`} className="text-primary underline">
-            Posted {timeDifference(post.createdAt)}
+            Posted {timeDifference((post.createdat || '').toString())}
           </Link>
         </div>
       </div>
