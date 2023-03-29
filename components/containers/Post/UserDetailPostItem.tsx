@@ -3,6 +3,7 @@ import ReactHtmlParser from 'react-html-parser'
 import { PostFeed } from '../../../prisma/prismaContext'
 import { timeDifference, uniqueKey } from '../../../utils/helpers'
 import Avatar from '../../ui/avatar'
+import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
 import PostItemFooter from './PostItemFooter'
 
 type UserPostDetailProps = {
@@ -29,6 +30,11 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) =>
             <>{ReactHtmlParser(comment.content!)}</>
           </div>
         ))}
+        
+        {post.images?.length > 0 && post.images[0] !== null &&
+          <GalleryPhotoswipe images={post.images} />
+        }
+        
       </div>
       <div className="flex flex-row justify-around py-4">
         {post.content && <PostItemFooter post={post} feed="user" />}

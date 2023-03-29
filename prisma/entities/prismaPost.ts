@@ -2,48 +2,6 @@ import useDebug from "../../hooks/useDebug"
 import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed } from "../prismaContext"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPosts', 'DEBUG')
 
-const byId = async (id: string): Promise<PostDetail | null> => {
-  try {
-    const result = await prisma.post.findFirst({
-      where: {
-        id: id,
-        visible: true
-      },
-      include: {
-        author: { include: {
-          posts: true,
-          likes: true,
-          following: true,
-          follower: true
-        }},
-        post_comments: { include: {
-          author: true,
-          comment: true,
-          images: true,
-          post_comments: { include: { author: true } },
-          likes: { include: { author: true } },
-          shares: { include: { author: true } },
-        } },
-        likes: { include: { author: true } },
-        shares: { include: { author: true } },
-        images: { include: {
-          author: true,
-          likes: true,
-          shares: true,
-          gallery: true,
-          post: true
-        } },
-      },
-    })
-    if (result) {
-      return result as unknown as PostDetail
-    }
-    throw {code: fileMethod('byId'), message: 'Failed fetching post'}
-  } catch (error) {
-    throw { code: fileMethod("byId"), message: "No posts were returned!" }
-  }
-}
-
 const postDetail = async (id: string): Promise<PostDetail> => {
   try {
     debug('postDetail', id)
@@ -195,4 +153,4 @@ const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
   }
 }
 
-export const PrismaPost = { all, byId, postDetail, createPost, deletePost, likePost, sharePost, commentOnPost }
+export const PrismaPost = { all, postDetail, createPost, deletePost, likePost, sharePost, commentOnPost }

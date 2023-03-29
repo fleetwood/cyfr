@@ -1,3 +1,4 @@
+import MainFeedItem from "../../components/containers/Post/MainFeedItem"
 import { PostFeed } from "./post.def"
 import { ShareFeed } from "./share.def"
 
@@ -9,8 +10,8 @@ export type MainFeed = {
 }
 
 export type MainFeedMapping = {
-    posts?: PostFeed[]
-    shares?: ShareFeed[]
+    posts: any[]
+    shares: any[]
 }
 /**
  * Maps arrays to a MainFeed array, sorted by date DESC
@@ -19,33 +20,22 @@ export type MainFeedMapping = {
  * @returns MainFeed array sorted by date DESC
  */
 export const MapToMainFeed = ({shares, posts}:MainFeedMapping):MainFeed[] => {
-    let result:MainFeed[] = [];
-    if (posts) {
-       result = [
-        ...result,
+    
+    const result = [
         ...posts.map(post => {
-            const item:MainFeed = {
+            return {
                 type: "PostFeed",
                 post,
-                updatedAt: post.updatedAt
-            }
-            return item;
+                updatedAt: post.updatedat
+            } as MainFeed
         }),
-       ] 
-    }
-
-    if (shares) {
-        result = [
-         ...result,
-         ...shares.map(share => {
-             const item:MainFeed = {
-                 type: "ShareFeed",
-                 share,
-                 updatedAt: share.updatedAt
-             }
-             return item;
-         }),
-        ] 
-     }
+        ...shares.map(share => {
+            return {
+                type: "ShareFeed",
+                share,
+                updatedAt: share.updatedat
+            } as MainFeed
+        }),
+    ]
      return result.sort((a,b) => a.updatedAt > b.updatedAt ? -1 : 1)
 }

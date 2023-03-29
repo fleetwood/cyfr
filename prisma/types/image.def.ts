@@ -1,4 +1,4 @@
-import { Image, User, Like, Share, Gallery, Post } from "../prismaContext"
+import { Image, User, Like, Share, Gallery, Post, UserSimple } from "../prismaContext"
 
 export type ImageCreateProps = {
   authorId: string
@@ -26,11 +26,11 @@ export type ImageViewProps = {
 }
 
 export type ImageFeed = Image & {
-  author: User
-  likes: Like[]
-  shares: Share[]
-  gallery?: Gallery|null
-  post?: Post|null
+  author: UserSimple
+  likes: UserSimple[]
+  shares: UserSimple[]
+  galleryId?: string
+  postId?: string
 }
 
 export const ImageFeedInclude = {

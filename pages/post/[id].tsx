@@ -1,5 +1,6 @@
 import { InferGetServerSidePropsType } from "next";
 import ReactHtmlParser from "react-html-parser";
+import GalleryPhotoswipe from "../../components/containers/Gallery/GalleryPhotoswipe";
 import PostItemFooter from "../../components/containers/Post/PostItemFooter";
 import MainLayout from "../../components/layouts/MainLayout";
 import Avatar from "../../components/ui/avatar";
@@ -46,6 +47,11 @@ const PostDetailPage = ({ post }: InferGetServerSidePropsType<typeof getServerSi
             {ReactHtmlParser(c.content!)}
           </div>
           ))} */}
+          
+        {post.images?.length > 0 && post.images[0] !== null &&
+          <GalleryPhotoswipe images={post.images} />
+        }
+
         <div className="flex flex-row justify-around">
           <PostItemFooter post={post} feed="post" />
         </div>
