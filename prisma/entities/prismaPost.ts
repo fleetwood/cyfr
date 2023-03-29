@@ -1,5 +1,5 @@
 import useDebug from "../../hooks/useDebug"
-import { Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed } from "../prismaContext"
+import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed } from "../prismaContext"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPosts', 'DEBUG')
 
 const byId = async (id: string): Promise<PostDetail | null> => {
@@ -41,6 +41,24 @@ const byId = async (id: string): Promise<PostDetail | null> => {
     throw {code: fileMethod('byId'), message: 'Failed fetching post'}
   } catch (error) {
     throw { code: fileMethod("byId"), message: "No posts were returned!" }
+  }
+}
+
+const postDetail = async (id: string): Promise<PostDetail> => {
+  try {
+    debug('postDetail', id)
+    const result:any[] = await prisma.$queryRaw`select * from f_post_detail(${id})`
+    if (result) {
+      return result[0] as PostDetail
+    }
+    else {
+      debug('postDetail NAWP', {result})
+    }
+    // throw {code: fileMethod('postDetail'), message: 'No post was returned'}
+    return {} as PostDetail
+  } catch (error) {
+    err('postDetail error', {error})
+    throw { code: fileMethod('postDetail'), message: "Failed fetching post" }
   }
 }
 
@@ -177,4 +195,4 @@ const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
   }
 }
 
-export const PrismaPost = { all, byId, createPost, deletePost, likePost, sharePost, commentOnPost }
+export const PrismaPost = { all, byId, postDetail, createPost, deletePost, likePost, sharePost, commentOnPost }

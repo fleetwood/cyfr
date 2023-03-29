@@ -6,7 +6,7 @@ const {err, stringify} = useDebug('api/post/[id]')
 const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
   try {
-    const result = await PrismaPost.byId(id?.toString() || "");
+    const result = await PrismaPost.postDetail(id?.toString() || "");
     if (result) {
       res.status(200).json({ result });
     } else {

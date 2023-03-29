@@ -1,12 +1,11 @@
-import React from "react"
-import PostItemFooter from "../../components/containers/Post/PostItemFooter"
-import MainLayout from "../../components/layouts/MainLayout"
-import Avatar from "../../components/ui/avatar"
-import { timeDifference, uuid, uniqueKey } from '../../utils/helpers';
-import ReactHtmlParser from "react-html-parser"
-import { PrismaPost } from "../../prisma/entities/prismaPost"
-import { PostDetail, PostFeed } from "../../prisma/types/post.def"
 import { InferGetServerSidePropsType } from "next";
+import ReactHtmlParser from "react-html-parser";
+import PostItemFooter from "../../components/containers/Post/PostItemFooter";
+import MainLayout from "../../components/layouts/MainLayout";
+import Avatar from "../../components/ui/avatar";
+import { PrismaPost } from "../../prisma/entities/prismaPost";
+import { PostFeed } from "../../prisma/types/post.def";
+import { timeDifference } from '../../utils/helpers';
 
 type PostDetailPageProps = {
   post: PostFeed
@@ -14,7 +13,7 @@ type PostDetailPageProps = {
 
 export async function getServerSideProps(context: any) {
   const postid = context.params.id
-  const post = await PrismaPost.byId(postid)
+  const post = await PrismaPost.postDetail(postid)
 
   return {
     props: {
@@ -42,11 +41,11 @@ const PostDetailPage = ({ post }: InferGetServerSidePropsType<typeof getServerSi
         <div className="text-base-content m-8 font-ibarra">
           {ReactHtmlParser(post.content)}
         </div>}
-        {post.post_comments && post.post_comments.map(c => (
+        {/* {post.post_comments && post.post_comments.map(c => (
           <div className="text-base-content m-8 font-ibarra" key={uniqueKey('post-comment',post,c)}>
             {ReactHtmlParser(c.content!)}
           </div>
-          ))}
+          ))} */}
         <div className="flex flex-row justify-around">
           <PostItemFooter post={post} feed="post" />
         </div>

@@ -1,6 +1,6 @@
 import StaticLayout from "../components/layouts/StaticLayout";
 
-const TosPage = () => {
+const TosPage = ({}) => {
   return (
     <StaticLayout pageTitle="Terms of Service" sectionTitle="Terms of Service" subTitle="Egregious but Necessary Legal Jargon. Meh.">
       <>

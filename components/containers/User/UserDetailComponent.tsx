@@ -66,7 +66,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
   return (
     <div>
       {currentUser &&
-        <img src={currentUser.image||''} className="-mt-2 mb-2 rounded-lg min-w-full" />
+        <img src={currentUser.image||''} className="-mt-2 mb-2 rounded-md min-w-full" />
       }
       <div
         className="
@@ -74,7 +74,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
         mx-2 mb-4
         md:mx-4 md:mb-8
         md:p-4
-        rounded-lg p-2 
+        rounded-md p-2 
         bg-base-100 bg-opacity-20 
         text-neutral-content
         "
@@ -142,25 +142,31 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
       {/* TAB BUTTONS */}
       <div className="border-b-8 border-secondary flex justify-between space-x-2">
         <button
-          className={`btn ${activeTabClass("Posts")} w-[20%]`}
+          className={`btn ${activeTabClass("Posts")} w-[15%]`}
           onClick={() => setActiveTab("Posts")}
         >
           Posts
         </button>
         <button
-          className={`btn ${activeTabClass("Galleries")} w-[20%]`}
+          className={`btn ${activeTabClass("Galleries")} w-[15%]`}
           onClick={() => setActiveTab("Galleries")}
         >
           Galleries
         </button>
         <button
-          className={`btn ${activeTabClass("Follow")} w-[20%]`}
+          className={`btn ${activeTabClass("Books")} w-[15%]`}
+          onClick={() => setActiveTab("Books")}
+        >
+          Books
+        </button>
+        <button
+          className={`btn ${activeTabClass("Follow")} w-[15%]`}
           onClick={() => setActiveTab("Follow")}
         >
           Follow
         </button>
         <button
-          className={`btn ${activeTabClass("Fan")} w-[20%]`}
+          className={`btn ${activeTabClass("Fan")} w-[15%]`}
           onClick={() => setActiveTab("Fan")}
         >
           Fan
@@ -169,32 +175,46 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
 
       {/* GALLERIES */}
       {activeTab === "Galleries" && (
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4 my-4">
           {currentUser?.id === cyfrUser.id &&
             <GalleryCreateView />
           }
-          {currentUser?.galleries && 
-            currentUser.galleries.map(gallery => 
-            <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
-              {/* <JsonBlock data={gallery} /> */}
-              <GalleryItemView gallery={gallery}/>
-            </div>
-        )}
+
+          <div className="bg-base-100 my-4 p-4 rounded-md">
+            {currentUser?.galleries && 
+              currentUser.galleries.map(gallery => 
+              <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
+                {/* <JsonBlock data={gallery} /> */}
+                <GalleryItemView gallery={gallery}/>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      {/* BOOKS */}
+      {activeTab === "Books" && (
+        <div>
+          <h2 className="subtitle">Books</h2>
+          <div className="bg-base-100 my-4 p-4 rounded-md">
+            TBD
+          </div>
         </div>
       )}
       {/* POSTS */}
       {activeTab === "Posts" && (
         <>
           <h2 className="subtitle">Posts</h2>
+          <div className="my-4">
           {currentUser?.posts &&
             currentUser?.posts.map((post) => (
               <UserDetailPostItem post={post} key={uniqueKey('user-post',currentUser, post)} />
             ))}
+          </div>
         </>
       )}
       {/* FOLLOWERS */}
       {activeTab === "Follow" && (
-        <div className="bg-base-300 rounded-md p-4 mt-4 grid grid-cols-2 gap-2">
+        <div className="bg-base-300 rounded-md p-4 my-4 grid grid-cols-2 gap-2">
         <div className="col-span-1">
           <h2 className="h-subtitle">Followers</h2>
           <div className="flex space-x-2 space-y-2">
@@ -215,7 +235,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
       )}
       {/* FANS */}
       {activeTab === "Fan" && (
-        <div className="bg-base-300 rounded-md p-4 mt-4 grid grid-cols-2 gap-2">
+        <div className="bg-base-300 rounded-md p-4 my-4 grid grid-cols-2 gap-2">
         <div className="col-span-1">
           <h2 className="h-subtitle">Fans</h2>
           <div className="flex space-x-2 space-y-2">
