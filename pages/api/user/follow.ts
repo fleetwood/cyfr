@@ -1,4 +1,4 @@
-import { Fan, Follow, PrismaUser } from "../../../prisma/prismaContext"
+import { Follow, PrismaUser } from "../../../prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from "next"
 
 import {
@@ -14,9 +14,10 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<Follow>>
 ) {
   todo('handle',"Why is this posting req.body.body????")
-  const { following, follower } = req.body.body
+  todo('handle', 'Unfollow/Unfan use cases...')
+  const { followingId, followerId, isFan = false } = req.body.body
   try {
-    const result = await PrismaUser.follow(following, follower)
+    const result = await PrismaUser.follow({followingId, followerId, isFan})
     if (result) {
       res.status(200).json({ result })
     } else {

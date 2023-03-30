@@ -1,28 +1,19 @@
-import { useEffect, useState } from "react"
-import useCyfrUser from "../../../hooks/useCyfrUser"
+import { useState } from "react"
 import useDebug from "../../../hooks/useDebug"
-import { User, UserFeed } from "../../../prisma/prismaContext"
-import { getApi } from "../../../utils/api"
-import { now, uniqueKey, uuid } from "../../../utils/helpers"
+import { User, UserSimple } from "../../../prisma/prismaContext"
+import { now, uniqueKey } from "../../../utils/helpers"
+import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import Avatar from "../../ui/avatar"
 import ChatRoom, { ChatRoomProps } from "./ChatRoom"
 
 const {debug} = useDebug("components/containers/ChatList.tpx")
 
 const ChatList = () => {
-    const [cyfrUser] = useCyfrUser()
+    const [cyfrUser] = useCyfrUserContext()
     const [show, setShow] = useState<boolean>(false)
-    const [chatList, setChatList] = useState<UserFeed[]>([])
     const [chatRooms, setChatRooms] = useState<ChatRoomProps[]>([])
 
-    const getMentions = async () => {
-        const list= await (await getApi('user/mentions')).result
-        if (list) {
-            setChatList((c) => list)
-        }
-    }
-
-    const addRoom = (secondPerson:User) => {
+    const addRoom = (secondPerson:UserSimple) => {
         const room:ChatRoomProps = {
             firstPerson: cyfrUser,
             secondPerson,
@@ -51,13 +42,10 @@ const ChatList = () => {
         setShow(() => false)
     }
 
-    useEffect(() => {
-        getMentions()
-    }, [])
-  return (
+  return cyfrUser ? (
     <div className={`flex flex-col space-y-2`}>
         <h2 className="h-subtitle">Chat</h2>
-        {chatList && chatList.map(u => 
+        {cyfrUser.messagable && cyfrUser.messagable.map(u => 
             <div key={uniqueKey('chatList',cyfrUser,u)}
                 className="btn bg-opacity-10 hover:bg-opacity-25 bg-primary border-0 text-start"
                 onClick={() => addRoom(u)}
@@ -75,6 +63,6 @@ const ChatList = () => {
             )}
         </div>
     </div>
-  )
+  ) : <></>
 }
 export default ChatList

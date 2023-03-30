@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { getApi, sendApi } from "../utils/api"
-import { FollowProps, FanProps } from "../prisma/types/follow.def"
+import { FollowProps } from "../prisma/types/follow.def"
 import { UserDetail } from "../prisma/prismaContext"
 import useDebug from "./useDebug"
 const {debug, info} = useDebug('useUserDetails')
@@ -29,6 +29,12 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
   const userId = user?.id||id
   const queryTag = `userQuery.${userId}`
 
+  const followers = currentUser?.followers || []
+  const fans = followers.filter(f => f.isFan)
+  const follows = currentUser?.follows || []
+  const stans = follows.filter(f => f.isFan)
+  
+
   const query = useQuery(
     [queryTag],
     () => getUser(userId!),
@@ -54,9 +60,9 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
     return null
   }
 
-  const follow = async (props:FollowProps) => await send(`user/follow`, props)
+  const followUser = async (props:FollowProps) => await send(`user/follow`, props)
   
-  const stan = async (props:FanProps) => await send(`user/stan`, props)
+  const stanUser = async (props:FollowProps) => await send(`user/follow`, {...props, isFan: true})
 
   const invalidateUser = () => {
     const queryKey = queryTag
@@ -65,7 +71,7 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
     return qc.invalidateQueries(q)
   }
   
-  return {currentUser, follow, stan, invalidateUser}
+  return {currentUser, fans, followers, follows, stans, followUser, stanUser, invalidateUser}
 }
 
 export default useUserDetail

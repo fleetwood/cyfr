@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import useCyfrUser from '../../hooks/useCyfrUser';
-import Avatar from '../ui/avatar';
-import { CyfrLogo, HouseIcon, UserIcon } from '../ui/icons';
-import ShrinkableIconLink from '../ui/shrinkableIconLink';
-import ShrinkableLink from '../ui/shrinkableLink';
-import Link from 'next/link';
-import { signOut } from 'next-auth/react';
+import { signOut } from "next-auth/react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useCyfrUserContext } from "../context/CyfrUserProvider";
+import Avatar from "../ui/avatar";
+import { BookIcon, CyfrLogo, HouseIcon, UserIcon } from "../ui/icons";
+import ShrinkableIconLink from "../ui/shrinkableIconLink";
+import ShrinkableLink from "../ui/shrinkableLink";
 
 type NavbarProps = {
   className?: string;
@@ -18,7 +18,7 @@ const Navbar = ({
   iconClassName,
   pageScrolled: active,
 }: NavbarProps) => {
-  const [cyfrUser] = useCyfrUser();
+  const [cyfrUser] = useCyfrUserContext();
   const [isPageScrolled, setIsPageScrolled] = useState(false);
 
   const userUrl = cyfrUser ? cyfrUser.name : ''
@@ -57,6 +57,12 @@ const Navbar = ({
             icon={HouseIcon}
             className={iconClassName}
           />
+          <ShrinkableIconLink
+            href="/books"
+            label="Books"
+            icon={BookIcon}
+            className={iconClassName}
+          />
           {cyfrUser ? (
             <div className="dropdown dropdown-end text-secondary-content">
             <label tabIndex={0} className="btn btn-ghost rounded-btn space-x-2">
@@ -68,7 +74,7 @@ const Navbar = ({
               <li><Link href={`/user/${userUrl}/books`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Books</Link></li>
               <li><Link href={`/user/${userUrl}/gallery`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Galleries</Link></li>
               <li><Link href={`/user/${userUrl}`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Profile</Link></li>
-              <li><Link href={`/account`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Acccount</Link></li>
+              <li><Link href={`/account`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Account</Link></li>
               <li><Link href={`#`} className='hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md' onClick={() => signOut()} >Log Out</Link></li>
             </ul>
           </div>

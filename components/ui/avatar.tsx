@@ -1,8 +1,8 @@
-import { UserDetail, UserFeed, User, CyfrUser } from "../../prisma/prismaContext"
+import { UserDetail, UserFeed, User, CyfrUser, UserSimple } from "../../prisma/prismaContext"
 import { AvatarSizeProps, cloudinary } from "../../utils/cloudinary"
 
 type AvatarProps = AvatarSizeProps & {
-  user?: CyfrUser | UserDetail | UserFeed | User
+  user?: CyfrUser | UserDetail | UserFeed | User | UserSimple
   link?: boolean
   shadow?: boolean
   className?: string
@@ -25,7 +25,7 @@ const Avatar = ({user,placeholder,className,shadow,sz,link = true}: AvatarProps)
       <div className={`mask mask-squircle`}>
 
         {link && user 
-        ? (<a href={`/user/${user.id}`}>{content}</a>) 
+        ? (<a href={`/user/${user.name}`}>{content}</a>) 
         : (content)
         }
       </div>

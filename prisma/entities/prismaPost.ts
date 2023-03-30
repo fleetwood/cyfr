@@ -1,48 +1,22 @@
-import { Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed, PostFeedInclude } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
-const {debug, info, fileMethod} = useDebug('entities/prismaPosts')
+import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed } from "../prismaContext"
+const {debug, err, info, fileMethod} = useDebug('entities/prismaPosts')
 
-const byId = async (id: string): Promise<PostDetail | null> => {
+const postDetail = async (id: string): Promise<PostDetail> => {
   try {
-    const result = await prisma.post.findFirst({
-      where: {
-        id: id,
-        visible: true
-      },
-      include: {
-        author: { include: {
-          posts: true,
-          likes: true,
-          following: true,
-          follower: true,
-          fans: true,
-          fanOf: true,
-        }},
-        post_comments: { include: {
-          author: true,
-          comment: true,
-          images: true,
-          post_comments: { include: { author: true } },
-          likes: { include: { author: true } },
-          shares: { include: { author: true } },
-        } },
-        likes: { include: { author: true } },
-        shares: { include: { author: true } },
-        images: { include: {
-          author: true,
-          likes: true,
-          shares: true,
-          gallery: true,
-          post: true
-        } },
-      },
-    })
+    debug('postDetail', id)
+    const result:any[] = await prisma.$queryRaw`select * from f_post_detail(${id})`
     if (result) {
-      return result as unknown as PostDetail
+      return result[0] as PostDetail
     }
-    throw {code: fileMethod('byId'), message: 'Failed fetching post'}
+    else {
+      debug('postDetail NAWP', {result})
+    }
+    // throw {code: fileMethod('postDetail'), message: 'No post was returned'}
+    return {} as PostDetail
   } catch (error) {
-    throw { code: fileMethod("byId"), message: "No posts were returned!" }
+    err('postDetail error', {error})
+    throw { code: fileMethod('postDetail'), message: "Failed fetching post" }
   }
 }
 
@@ -51,21 +25,11 @@ const byId = async (id: string): Promise<PostDetail | null> => {
  * @satisfies commentId:null //don't include Shares
  * @returns PostFeed[]
  */
-const all = async (): Promise<PostFeed[] | []> => {
+const all = async (): Promise<any> => {
   debug('all')
   try {
-    return await prisma.post.findMany({
-      where: {
-        visible: true,
-        commentId: null
-      },
-      include: PostFeedInclude,
-      orderBy: [
-        {
-          updatedAt: "desc",
-        },
-      ],
-    }) as unknown as PostFeed[]
+    const posts =  await prisma.$queryRaw`select * from f_post_feed()`;
+    return posts as unknown as PostFeed[]
   } catch (error) {
     throw { code: fileMethod('all'), message: "No posts were returned!" }
   }
@@ -189,4 +153,4 @@ const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
   }
 }
 
-export const PrismaPost = { all, byId, createPost, deletePost, likePost, sharePost, commentOnPost }
+export const PrismaPost = { all, postDetail, createPost, deletePost, likePost, sharePost, commentOnPost }

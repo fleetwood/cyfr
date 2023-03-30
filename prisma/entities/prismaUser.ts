@@ -1,308 +1,176 @@
-import { GetSessionParams, getSession } from "next-auth/react"
-import { 
-  Audience,
-  CyfrUser, 
-  CyfrUserInclude, 
-  Fan, 
-  FanProps, 
-  Follow, 
-  prisma, 
-  UpdatePreferencesProps, 
-  User, 
-  UserDetail,
-  UserDetailInclude,
-  UserFeed,
-  UserFeedInclude, 
-} from "../prismaContext"
+import { NextApiRequest } from "next";
+import { getSession, GetSessionParams } from "next-auth/react";
+import useDebug from "../../hooks/useDebug";
 import {
   GenericResponseError,
-  ResponseError,
-  GetResponseError,
-} from "../../types/response"
-import { dedupe } from "../../utils/helpers"
-import useDebug from "../../hooks/useDebug"
-import { NextApiRequest } from "next"
-import { Session } from "next-auth"
-const {fileMethod, debug, info} = useDebug('entities/prismaUser')
+  ResponseError
+} from "../../types/response";
+import {
+  Audience,
+  CyfrUser, Follow,
+  FollowProps,
+  prisma, User, UserFeed,
+  UserFeedInclude, UserSimple
+} from "../prismaContext";
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser");
 
-const follow = async (follows: string, follower: string): Promise<Follow> => {
-  const data = {
-    followerId: follower,
-    followingId: follows,
-  }
+type AllPostQueryParams = {
+  limit?: Number;
+  offset?: Number;
+};
+
+const allUsersQuery = async ({
+  limit = 100,
+  offset = 0,
+}: AllPostQueryParams): Promise<any[] | []> => {
+  debug("allUsersQuery");
+
   try {
-    if (follows === follower) {
+    return await prisma.$queryRaw`
+    select * from userInfoAll() as "user"
+    `;
+  } catch (error) {
+    err("allUsersQuery", { error, limit, offset });
+    throw { code: fileMethod("allUsersQuery"), message: "No posts were returned!" };
+  }
+};
+
+const follow = async (props:FollowProps): Promise<Follow> => {
+  const {followerId, followingId, isFan} = props;
+  try {
+    if (followerId === followingId) {
       throw {
         code: "user/error",
         message: `Sorry you can't follow yourself. That would be weird, and probably break physics.`,
-      }
+      };
     }
-    const exists = await prisma.follow.findFirst({ where: data })
-    if (exists) return exists
-    const follow = await prisma.follow.create({ data })
+    // we have to do this crazy little dance because composites in Follow model
+    const exists = await prisma.follow.findFirst({
+      where: {
+        followerId,
+        followingId
+      }
+    })
+    const data = {followerId,followingId,isFan}
+    const include = {follower: true,following: true}
+
+    const follow = exists 
+      ? await prisma.follow.update({
+        where: {id: exists.id},
+        data,
+        include
+      })
+      : await prisma.follow.create({
+        data,
+        include
+      })
     if (!follow) {
-      throw {
-        code: "users/follow",
-        message: `Unable to follow (follows:${follows}, follower: ${follower})`,
-      }
+      throw({code: fileMethod('follow'), message: 'Unable to follow user'})
     }
-    return follow
+    return follow;
   } catch (error) {
     debug(`follow ERROR`, {
-      ...{follows, follower},
-      ...{data},
-      ...{error}
-    })
-    throw GenericResponseError(error as unknown as ResponseError)
+      ...{ props },
+      ...{ error },
+    });
+    throw GenericResponseError(error as unknown as ResponseError);
   }
-}
+};
 
-const stan = async (props: FanProps): Promise<Fan> => {
-  if (props.fanOfId === props.fanId) {
-    throw {
-      code: fileMethod("stan"),
-      message: `We are fans of loving yourself, but cmon now...`,
-    }
-  }
+const getCyfrUser = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => {
+  debug('getCyfrUser', {idOrNameOrEmail})
   try {
-    const exists = await prisma.fan.findFirst({
-      where: props,
-    })
-    if (exists) {
-      return exists
+    if (!idOrNameOrEmail) {
+      return null;
     }
-
-    const follow = await prisma.fan.create({
-      data: props,
-    })
-    if (!follow) {
-      throw {
-        code: fileMethod("stab"),
-        message: `Unable to stan (stan:${props.fanOfId}, fan: ${props.fanId})`,
-      }
-    }
-    return follow
-  } catch (error) {
-    throw GenericResponseError(error as unknown as ResponseError)
-  }
-}
-
-const byId = async (id: string): Promise<UserDetail|undefined> => {
-  try {
-    debug('byId', {id})
-    const user = await prisma.user.findUnique({
-      where: {
-        id: id?.toString(),
-      },
-      include: UserDetailInclude,
-    })
-    return user
-      ? user as unknown as UserDetail
-      : undefined
-
-  } catch (error) {
-    throw GetResponseError(error)
-  }
-}
-
-const byName = async (name: string): Promise<UserDetail|undefined> => {
-  try {
-    debug('byName', {name})
-    const user = await prisma.user.findMany({
-      where: {
-        name: {
-          equals: name,
-          mode: 'insensitive'
-        }
-      },
-      include: UserDetailInclude,
-    })
-    
-    return user[0]
-      ? user[0] as unknown as UserDetail
-      : undefined
-
-  } catch (error) {
-    throw GetResponseError(error)
-  }
-}
-
-const byEmail = async (email: string): Promise<CyfrUser|null> => {
-  try {
-    if (!email) {
-      return null
-    }
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-      include: CyfrUserInclude
-    })
+    const user:any[] = await prisma.$queryRaw`SELECT f_cyfrUser(${idOrNameOrEmail}) as "cyfrUser"`;
     if (!user) {
-      throw {
-        code: fileMethod("byEmail"),
-        message: `Did not find user for ${email}`,
-      }
-    }
-    // log(`user.entity.byEmail found ${user.name}`)
-    return user as CyfrUser
-  } catch (error) {
-    info(`byEmail FAIL`,error)
-    throw error
-  }
-}
-
-const byNameOrId = async (idOrName:string):Promise<UserDetail|undefined> => {
-try {
-  debug("byNameOrId", {idOrName})
-  const userById = await byId(idOrName)
-  if (userById) {
-    return userById
-  }
-  const userByName = await byName(idOrName)
-  if (userByName) {
-    return userByName
-  }
-  throw {code: fileMethod('byNameOrId'), message: 'Unable to obtain a user by name or id'}
-} catch (error) {
-  debug('userById', {error})
-  return undefined
-}
-}
-
-const canMention = async (id: string, search?:string) => {
-  try {
-    // log(`prismaUser.canMention`, {id, search})
-    const followers = await prisma.follow.findMany({
-      where: {
-        followingId: id,
-        follower: {
-          name: {
-            contains: search,
-            mode: 'insensitive'
-          }
+        throw {
+          code: fileMethod("getCyfrUser"),
+          message: `Did not find user for ${idOrNameOrEmail}`,
         }
-      },
-      select: {
-        follower: {
-          include: {
-            _count: {
-              select: {
-                sessions: true
-              }
-            }}
-        },
-      },
-      take: 10
-    })
-    const fans = await prisma.fan.findMany({
-      where: {
-        fanOfId: id,
-        fan: {
-          name: {
-            contains: search,
-            mode: 'insensitive'
-          }
-        }
-      },
-      select: {
-        fan: {
-          include: {
-            _count: {
-              select: {
-                sessions: true
-              }
-            }}
-        },
-      },
-      take: 10
-    })
-    return dedupe([
-        ...followers.map(f => f.follower), 
-        ...fans.map(f => f.fan)
-      ], 'id')
-      .slice(0,10) as unknown as User[]
-  } catch (error) {
-    info(`canMention broke`, error)
-    throw error
-  }
-}
-
-const userBySessionEmail = async (session:Session|null|undefined):Promise<UserDetail|null> => {
-  if (session === undefined || session === null || session?.user === null || session?.user?.email === null) {
-    return null
-  } else {
-    const email = session?.user?.email
-    const currentUser = await PrismaUser.byEmail(email!)
-    const user = await prisma.user.findUnique({
-      where: {
-        id: currentUser?.id?.toString(),
-      },
-      include: UserDetailInclude
-    })
-    if (!user) {
-      throw {
-        code: fileMethod('userBySessionEmail'),
-        message: currentUser
-          ? `Did not find user for ${currentUser?.id}`
-          : "No user in session",
-      }
     }
-    return user as unknown as UserDetail || null
+    return user[0].cyfrUser as CyfrUser;
+  } catch (error) {
+    info(`getCyfrUser FAIL`, error);
+    throw error;
   }
 }
 
-const userInSessionReq = async (req:NextApiRequest):Promise<UserDetail|null> => {
+const canMention = async (id: string, search?: string):Promise<any> => {
   try {
-    const session = await getSession({req})
-    return userBySessionEmail(session)
+    todo(
+      "canMention",
+      "Remove this in favor of a property in cyrUserContext...."
+    );
+    const mentions = await prisma.$queryRaw`SELECT * from f_can_Mention(${id})`
+    debug('mentions', {mentions})
+    return mentions || []
+  } catch (error) {
+    info(`canMention broke`, error);
+    throw error;
+  }
+};
+
+const userInSessionReq = async (
+  req: NextApiRequest
+): Promise<any | null> => {
+  try {
+    const session = await getSession({ req });
+    debug('userInSessionReq', session)
+    return getCyfrUser(session?.user?.email||'')
   } catch (e) {
-    return null
+    debug('userInSessionReq FAIL', e)
+    return null;
   }
-}
+};
 
-const userInSessionContext = async (context: GetSessionParams | undefined):Promise<UserDetail|null> => {
+const userInSessionContext = async (context: GetSessionParams | undefined): Promise<CyfrUser | null> => {
   try {
-    const session = await getSession(context)
-    return userBySessionEmail(session)
+    const session = await getSession(context);
+    return getCyfrUser(session?.user?.email||'')
   } catch (error) {
-    info(fileMethod('userInSessionContext'), {error})
-    return null
+    info(fileMethod("userInSessionContext"), { error });
+    return null;
   }
-}
+};
 
-const setMembership = async (userId: string, audience:Audience, cadence:string):Promise<UserFeed|null> => {
+const setMembership = async (
+  userId: string,
+  audience: Audience,
+  cadence: string
+): Promise<UserFeed | null> => {
   try {
-    debug('setMembership', {userId, audience: audience, cadence})
+    debug("setMembership", { userId, audience: audience, cadence });
     const user = await prisma.user.update({
       where: {
-        id: userId
+        id: userId,
       },
       data: {
         membership: {
           upsert: {
             create: {
-              level: audience
+              level: audience,
             },
             update: {
-              level: audience
-            }
-          }
-        }
+              level: audience,
+            },
+          },
+        },
       },
-      include: UserFeedInclude
-    })
+      include: UserFeedInclude,
+    });
     if (user) {
-      return user as unknown as UserFeed || null
+      return (user as unknown as UserFeed) || null;
     }
-    debug('setMembership', 'Null response when updating')
-    return null
+    debug("setMembership", "Null response when updating");
+    return null;
   } catch (e) {
-    throw(e)
+    throw e;
   }
-}
+};
 
-const userCurrentlyOnline = async (id:string) => {
+const userCurrentlyOnline = async (id: string) => {
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -311,54 +179,53 @@ const userCurrentlyOnline = async (id:string) => {
       select: {
         _count: {
           select: {
-            sessions: true
-          }
-        }
-      }
-    })
+            sessions: true,
+          },
+        },
+      },
+    });
     if (!user) {
       throw {
-        code: fileMethod('userCurrentlyOnline'),
-        message: `Did not find user for ${id}`
-      }
+        code: fileMethod("userCurrentlyOnline"),
+        message: `Did not find user for ${id}`,
+      };
     }
-    return user._count.sessions > 0
+    return user._count.sessions > 0;
   } catch (error) {
-    info(`userCurrentlyOnline error`)
-    return null
+    info(`userCurrentlyOnline error`);
+    return null;
   }
-}
+};
 
 const updatePreferences = async ({
   id,
   name,
   image,
-}: UpdatePreferencesProps): Promise<User> => {
+}: UserSimple): Promise<User> => {
   try {
     const user = await prisma.user.update({
       where: { id },
       data: { name, image },
-    })
+    });
     if (user) {
-      return user
+      return user;
     }
-    throw { code: "Users.updatePreferences", message: "Error updating record" }
+    throw { code: "Users.updatePreferences", message: "Error updating record" };
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
 
 export const PrismaUser = {
+  allUsersQuery,
+  getCyfrUser,
   userInSessionContext,
   userInSessionReq,
   userCurrentlyOnline,
-  byEmail,
-  byName,
-  byId,
-  byNameOrId,
   follow,
-  stan,
   setMembership,
   updatePreferences,
-  canMention
-}
+  canMention,
+};
+
+

@@ -1,17 +1,17 @@
 import { FormEvent, useState } from "react"
-import useCyfrUser from "../../../hooks/useCyfrUser"
-import { useToast } from "../../context/ToastContextProvider"
-import { LoggedIn } from "../../ui/toasty"
+import useDebug from "../../../hooks/useDebug"
 import useFeed from "../../../hooks/useFeed"
+import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import { useToast } from "../../context/ToastContextProvider"
 import Dropzone, { CompleteFile } from "../../forms/Dropzone"
 import RemirrorEditor from "../../ui/RemirrorEditor"
-import useDebug from "../../../hooks/useDebug"
+import { LoggedIn } from "../../ui/toasty"
 
-const {debug} = useDebug("components/containers/Post/CreatePost", 'DEBUG')
+const {debug} = useDebug("components/containers/Post/CreatePost")
 
 const CreatePostModal = (): JSX.Element => { 
   const createPostModal = 'createPostModal'
-  const [cyfrUser] = useCyfrUser()
+  const [cyfrUser] = useCyfrUserContext()
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [valid, setIsValid] = useState<boolean>(false)

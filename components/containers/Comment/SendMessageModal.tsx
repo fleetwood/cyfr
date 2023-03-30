@@ -1,9 +1,9 @@
-import React, { createContext, Dispatch, FormEvent, ReactNode, SetStateAction, useContext, useEffect, useRef, useState } from "react"
-import useCyfrUser from "../../../hooks/useCyfrUser"
-import { useToast } from "../../context/ToastContextProvider"
+import { Dispatch, FormEvent, ReactNode, SetStateAction, useEffect, useRef, useState } from "react"
 import useFeed from "../../../hooks/useFeed"
+import { useToast } from "../../context/ToastContextProvider"
 
 import useDebug from "../../../hooks/useDebug"
+import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 const {debug} = useDebug("components/containers/Comment/InboxContextProvider")
 
 type InboxProviderProps = {
@@ -13,7 +13,7 @@ type InboxProviderProps = {
 }
 
 const SendMessageModal = ({checked, setChecked, children }: InboxProviderProps) => {
-  const [cyfrUser] = useCyfrUser()
+  const [cyfrUser] = useCyfrUserContext()
   const {sendMessage, invalidateFeed} = useFeed({type: 'inbox'})
   const {notify} = useToast()
   

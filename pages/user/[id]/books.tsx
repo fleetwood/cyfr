@@ -1,15 +1,13 @@
-import MainLayout from "../../../components/layouts/MainLayout"
-import { Book, BookDetail, PrismaBook, PrismaUser, UserDetail } from "../../../prisma/prismaContext";
 import { InferGetServerSidePropsType } from "next";
-import { uniqueKey } from "../../../utils/helpers";
-import { cloudinary } from "../../../utils/cloudinary";
-import useCyfrUser from "../../../hooks/useCyfrUser";
-import UpsertBook from "../../../components/containers/Books/UpsertBook";
 import { useEffect, useState } from "react";
+import UpsertBook from "../../../components/containers/Books/UpsertBook";
+import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
+import MainLayout from "../../../components/layouts/MainLayout";
+import { PrismaBook, PrismaUser } from "../../../prisma/prismaContext";
+import { uniqueKey } from "../../../utils/helpers";
 
 export async function getServerSideProps(context: any) {
-  const authorId = context.params.id;
-  const user = await PrismaUser.byNameOrId(authorId);
+  const user = await PrismaUser.userInSessionContext(context)
   const books = user ? await PrismaBook.byUser(user.id) : []
 
   return {
@@ -21,12 +19,12 @@ export async function getServerSideProps(context: any) {
 }
 
 const UserBooksPage = ({ user, books }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [cyfrUser] = useCyfrUser()
+  const [cyfrUser] = useCyfrUserContext()
   const title = `Books by ${user ? user.name : 'Nobody'}`
   const [canEdit, setCanEdit] = useState<boolean>(false)
 
   useEffect(() => {
-    setCanEdit(() => cyfrUser !== undefined && user !== undefined && cyfrUser.id === user.id)
+    setCanEdit(() => cyfrUser !== undefined && user !== undefined && user !== null && cyfrUser.id === user!.id)
   }, [cyfrUser, user])
 
 

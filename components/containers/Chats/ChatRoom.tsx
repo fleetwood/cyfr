@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useChatRoomFeed } from "../../../hooks/useChatQuery"
 import useDebug from "../../../hooks/useDebug"
-import { ChatMessage, User } from "../../../prisma/prismaContext"
+import { ChatMessage, User, UserSimple } from "../../../prisma/prismaContext"
 import { now, timeDifference, uniqueKey } from "../../../utils/helpers"
 import TailwindInput from "../../forms/TailwindInput"
 import Avatar from "../../ui/avatar"
@@ -12,7 +12,7 @@ const {debug} = useDebug('components/containers/ChatRoom')
 
 export type ChatRoomProps = {
     firstPerson: User
-    secondPerson: User
+    secondPerson: UserSimple
     lastUpdated?: Date
     onCloseRoom: Function
 }

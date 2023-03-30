@@ -1,9 +1,10 @@
 import { Audience } from "@prisma/client";
 import { useState } from "react";
-import useCyfrUser, { useCyfrUserApi } from "../../../hooks/useCyfrUser";
+import { useCyfrUserApi } from "../../../hooks/useCyfrUser";
 import useDebug from "../../../hooks/useDebug";
 import { sendApi } from "../../../utils/api";
 import { uniqueKey } from "../../../utils/helpers";
+import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import { CheckBadge } from "../../ui/icons";
 
 const {debug} = useDebug("UserBillingDetail")
@@ -67,7 +68,7 @@ const plans:PlanType[] = [
 ]
 
 const UserBillingDetail = () => {
-    const [cyfrUser] = useCyfrUser()
+    const [cyfrUser] = useCyfrUserContext()
     const {invalidateUser} = useCyfrUserApi()
     const initialPlan = cyfrUser.membership ? plans.find(p => p.audience === cyfrUser.membership!.level) : plans[0]
     const [plan, setPlan] = useState<PlanType>(initialPlan || plans[0])

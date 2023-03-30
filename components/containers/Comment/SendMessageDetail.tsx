@@ -58,8 +58,10 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
     <div className="min-w-fit m-0 overflow-y-scroll scrollbar-hide relative">
       <div className="grow flex justify-between place-items-end border-2 p-4">
         <span><Avatar user={cyfrUser} sz="md" link={false} />{cyfrUser.name}</span>
-        <MentionsMenu show={true} searchTerm={search} onSelect={onSelectParty} />
-        {party && <span>{party.name}<Avatar user={party} sz="md" link={false} /></span>}
+        {party 
+          ? <span>{party.name}<Avatar user={party} sz="md" link={false} /></span> 
+          : <MentionsMenu show={true} searchTerm={search} onSelect={onSelectParty} type='MESSAGABLE' />
+        }
       </div>
       <div className="flex flex-col">
         {/* <div>{thread.id}</div> */}

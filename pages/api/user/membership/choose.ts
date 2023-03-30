@@ -1,8 +1,8 @@
-import { Fan, Follow,PrismaUser, User, UserFeed } from "../../../../prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from "next"
+import { PrismaUser, UserFeed } from "../../../../prisma/prismaContext"
 
-import { GetResponseError, ResponseError, ResponseResult } from "../../../../types/response"
 import useDebug from "../../../../hooks/useDebug"
+import { GetResponseError, ResponseError, ResponseResult } from "../../../../types/response"
 
 const {debug, todo, err, fileMethod} = useDebug('api/user/membership/choose')
 
@@ -15,9 +15,10 @@ export default async function handle(
   const { audience, cadence } = req.body.body
   try {
     const user = await PrismaUser.userInSessionReq(req)
-    debug('api/user/membership/choose', {user: user?.name, plan: audience, cadence})
+    debug('choose', {user: user?.name, plan: audience, cadence})
     const result = user ? await PrismaUser.setMembership(user?.id, audience, cadence) : null
     if (result !== null) {
+      debug('choose.result', 'null result')
       res.status(200).json({ result })
     } else if (result) {
       res.status(200).json({ result: result as unknown as UserFeed | null })

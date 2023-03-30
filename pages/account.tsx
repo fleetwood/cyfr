@@ -1,19 +1,21 @@
 import { GetSessionParams, signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 
+import { InferGetServerSidePropsType } from "next"
+import UserBillingDetail from "../components/containers/User/UserBillingDetail"
+import { useCyfrUserContext } from "../components/context/CyfrUserProvider"
+import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
 import TailwindInput from "../components/forms/TailwindInput"
 import MainLayout from "../components/layouts/MainLayout"
 import { SaveIcon } from "../components/ui/icons"
-import useCyfrUser, { useCyfrUserApi } from "../hooks/useCyfrUser"
+import { useCyfrUserApi } from "../hooks/useCyfrUser"
+import useDebug from "../hooks/useDebug"
 import { useSession } from "../lib/next-auth-react-query"
 import { PrismaUser } from "../prisma/entities/prismaUser"
 import { CyfrUser } from "../prisma/types/user.def"
 import { cloudinary } from "../utils/cloudinary"
-import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
-import { InferGetServerSidePropsType } from "next";
-import useDebug from "../hooks/useDebug"
-import UserBillingDetail from "../components/containers/User/UserBillingDetail"
 import UserDetailPage from "./user/[id]"
+import { User } from "../prisma/prismaContext"
 const {debug, info} = useDebug('pages/account')
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
@@ -23,12 +25,12 @@ export async function getServerSideProps(context: GetSessionParams | undefined) 
 }
 
 type AccountProps = {
-  user?: CyfrUser | undefined
+  user?: User | undefined
 }
 
-const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [session] = useSession({required: true, redirectTo: '/login'})
-  const [cyfrUser] = useCyfrUser()
+const Account = ({user}:AccountProps) => {
+  const [session] = useSession({required: true, redirectTo: '/login'})  
+  const [cyfrUser] = useCyfrUserContext()
   const {updateUser, invalidateUser}=useCyfrUserApi()
   const [activeTab, setActiveTab] = useState('Preferences')
   const [cyfrName, setCyfrName] = useState<string|null>(null)

@@ -57,7 +57,7 @@ const Login: FC = (props: InferGetServerSidePropsType<typeof getServerSideProps>
       sectionTitle="Login"
       subTitle={user ? user.name || user.email || undefined : "Please login"}
     >
-      <div className="m-0">
+      <div className="p-4 bg-base-100 rounded-xl">
         {session && (
           <>
             Signed in as {session.user?.email} <br />

@@ -1,12 +1,12 @@
-import React from "react"
-import PostItemFooter from "../../components/containers/Post/PostItemFooter"
-import MainLayout from "../../components/layouts/MainLayout"
-import Avatar from "../../components/ui/avatar"
-import { timeDifference, uuid, uniqueKey } from '../../utils/helpers';
-import ReactHtmlParser from "react-html-parser"
-import { PrismaPost } from "../../prisma/entities/prismaPost"
-import { PostDetail, PostFeed } from "../../prisma/types/post.def"
 import { InferGetServerSidePropsType } from "next";
+import ReactHtmlParser from "react-html-parser";
+import GalleryPhotoswipe from "../../components/containers/Gallery/GalleryPhotoswipe";
+import PostItemFooter from "../../components/containers/Post/PostItemFooter";
+import MainLayout from "../../components/layouts/MainLayout";
+import Avatar from "../../components/ui/avatar";
+import JsonBlock from "../../components/ui/jsonBlock";
+import { PostFeed, PrismaPost } from "../../prisma/prismaContext";
+import { timeDifference } from '../../utils/helpers';
 
 type PostDetailPageProps = {
   post: PostFeed
@@ -14,7 +14,7 @@ type PostDetailPageProps = {
 
 export async function getServerSideProps(context: any) {
   const postid = context.params.id
-  const post = await PrismaPost.byId(postid)
+  const post = await PrismaPost.postDetail(postid)
 
   return {
     props: {
@@ -36,17 +36,23 @@ const PostDetailPage = ({ post }: InferGetServerSidePropsType<typeof getServerSi
       </div>
       <div className="bg-base-100 rounded-lg p-4 relative">
         <div className="absolute right-0 pr-4">
-          Posted {timeDifference(post.createdAt)}
+          Posted {timeDifference((post.createdat || '').toString())}
         </div>
         {post.content && 
         <div className="text-base-content m-8 font-ibarra">
           {ReactHtmlParser(post.content)}
+          <JsonBlock data={post} />
         </div>}
-        {post.post_comments && post.post_comments.map(c => (
+        {/* {post.post_comments && post.post_comments.map(c => (
           <div className="text-base-content m-8 font-ibarra" key={uniqueKey('post-comment',post,c)}>
             {ReactHtmlParser(c.content!)}
           </div>
-          ))}
+          ))} */}
+          
+        {post.images?.length > 0 && post.images[0] !== null &&
+          <GalleryPhotoswipe images={post.images} />
+        }
+
         <div className="flex flex-row justify-around">
           <PostItemFooter post={post} feed="post" />
         </div>

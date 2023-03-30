@@ -1,9 +1,9 @@
-import React, { createContext, FormEvent, ReactNode, useContext, useEffect, useRef, useState } from "react"
-import useCyfrUser from "../../hooks/useCyfrUser"
-import { useToast } from "./ToastContextProvider"
+import { createContext, FormEvent, ReactNode, useContext, useEffect, useRef, useState } from "react"
 import useFeed from "../../hooks/useFeed"
+import { useToast } from "./ToastContextProvider"
 
 import useDebug from "../../hooks/useDebug"
+import { useCyfrUserContext } from "./CyfrUserProvider"
 const {debug} = useDebug("CommentContextProvider")
 
 type CommentProviderProps = {
@@ -21,7 +21,7 @@ export const CommentContext = createContext({} as CommentProviderType)
 export const useCommentContext = () => useContext(CommentContext)
 
 const CommentProvider = ({ children }: CommentProviderProps) => {
-  const [cyfrUser] = useCyfrUser()
+  const [cyfrUser] = useCyfrUserContext()
   const {commentOnPost, invalidateFeed} = useFeed({type: 'post'})
   const {notify} = useToast()
   

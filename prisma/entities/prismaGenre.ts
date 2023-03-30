@@ -3,6 +3,11 @@ import useDebug from "../../hooks/useDebug"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGenre')
 
+const insertDefaults = async():Promise<any> => {
+  // const genres = require('./../db.bak/genre.json')
+  return prisma.genre.createMany({data: []})
+}
+
 const byId = async (id: string): Promise<GenreFeed|null> => {
   try {
     return await prisma.genre.findUnique({
@@ -90,7 +95,11 @@ const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
   try {
     const {title, description, fiction} = props
     debug(method, {title, description})
-    const data = {
+    
+    return await prisma.genre.upsert({ 
+      where: {
+        title
+      },
       update: {
         title,
         description,
@@ -100,15 +109,12 @@ const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
         title,
         description,
         fiction
-      }
-    }
-    
-    return await prisma.genre.upsert({ 
-      where: {
-        title
       },
-      ...data,
-      include: GenreFeedInclude
+      select: {
+        title: true,
+        description: true,
+        fiction: true
+      }
     }) as unknown as GenreFeed
   } catch (error) {
     info(method, error)
@@ -130,4 +136,4 @@ const deleteGenre = async ({id, title}: GenreDeleteProps): Promise<Genre|null> =
   }
 }
 
-export const PrismaGenre = { all, list, byId, byTitle, covers, upsertGenre, deleteGenre }
+export const PrismaGenre = { all, list, byId, byTitle, covers, upsertGenre, deleteGenre, insertDefaults }

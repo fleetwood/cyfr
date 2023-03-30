@@ -21,8 +21,6 @@ model User {
   comments      Comment[]     @relation("user_comments")
   ownedCommunes Commune[]     @relation("commune_owner")
   communes      CommuneUser[] @relation("user_in_commune")
-  fanOf         Fan[]         @relation("user_fans")
-  fans          Fan[]         @relation("user_fan_of")
   follower      Follow[]      @relation("user_followed_by")
   following     Follow[]      @relation("user_following")
   galleries     Gallery[]     @relation("user_galleries")
@@ -148,26 +146,17 @@ model Share {
 
 model Follow {
   id          String     @id @default(cuid())
-  followerId  String
-  followingId String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @default(now())
+  isFan       Boolean   @default(false)
+  followerId  String
+  followingId String?
   follower    User       @relation("user_followed_by", fields: [followerId], references: [id])
   following   User?      @relation("user_following", fields: [followingId], references: [id])
   characterId String?
-  character   Character? @relation("character_fans", fields: [characterId], references: [id])
+  character   Character? @relation("character_follows", fields: [characterId], references: [id])
   bookId      String?
-  book        Book?      @relation("book_fans", fields: [bookId], references: [id])
-}
-
-model Fan {
-  id        String   @id @default(cuid())
-  fanId     String
-  fanOfId   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  fan       User     @relation("user_fans", fields: [fanId], references: [id])
-  fanOf     User     @relation("user_fan_of", fields: [fanOfId], references: [id])
+  book        Book?      @relation("book_follows", fields: [bookId], references: [id])
 }
 
 model ChatRoom {
@@ -302,7 +291,7 @@ model Book {
   characters Character[]    @relation("book_characters")
   galleryId  String?        @unique
   gallery    Gallery?       @relation("book_gallery", fields: [galleryId], references: [id])
-  fans       Follow[]       @relation("book_fans")
+  follows    Follow[]       @relation("book_follows")
   likes      Like[]         @relation("book_likes")
 }
 
@@ -323,7 +312,7 @@ model Character {
   title       String
   archetype   String
   likes       Like[]    @relation("character_likes")
-  fans        Follow[]  @relation("character_fans")
+  follows     Follow[]  @relation("character_follows")
   books       Book[]    @relation("book_characters")
   chapters    Chapter[] @relation("chapter_characters")
   galleryId   String?   @unique

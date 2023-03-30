@@ -1,4 +1,4 @@
-import { Fan, Follow, Like, Post, PostFeed, User, Image, Membership, Book, GalleryFeed } from "./../prismaContext"
+import { Book, Follow, GalleryFeed, Image, Like, Membership, Post, PostFeed, User } from "./../prismaContext"
 
 /**
  * This is complaining if imported from Post.defs that it can't be
@@ -18,11 +18,8 @@ export type UserFeed = User & {
   _count:       { sessions: number }
   membership?:  Membership
   posts:        Post[]
-  likes:        Like[]
-  following:    Follow[]
-  follower:     Follow[]
-  fans:         Fan[]
-  fanOf:        Fan[]
+  follows:      Follow[]
+  followers:    Follow[]
 }
 
 export const UserFeedInclude = {
@@ -31,8 +28,6 @@ export const UserFeedInclude = {
   likes: true,
   following: true,
   follower: true,
-  fans: true,
-  fanOf: true,
   _count: {
     select: {
       sessions: true
@@ -49,10 +44,8 @@ export type UserDetail = User & {
   membership?:  Membership,
   posts:        PostFeed[]
   books:        Book[]
-  following:    { follower: User }[]
-  follower:     { following: User }[]
-  fanOf:        { fanOf: User }[]
-  fans:         { fan: User }[]
+  follows:      UserFollow[]
+  followers:    UserFollow[]
   images:       (Image & { _count: { likes: number, shares: number}})[]
   galleries:    GalleryFeed[]
 }
@@ -103,16 +96,6 @@ export const UserDetailInclude = {
       select: {
         following: true
       }
-    },
-    fanOf: {
-      select: {
-        fanOf: true
-      }
-    },
-    fans:  {
-      select: {
-        fan: true
-      }
     }
 }
 
@@ -125,10 +108,10 @@ export type CyfrUser = User & {
   membership?:  Membership,
   posts:        PostFeed[]
   // books: Book[]
-  following:    { follower: User }[]
-  follower:     { following: User }[]
-  fanOf:        { fanOf: User }[]
-  fans:         { fan: User }[]
+  messagable:   UserSimple[]
+  canMention:   UserSimple[]
+  follows:      UserFollow[]
+  followers:    UserFollow[]
   images:       (Image & { _count: { likes: number, shares: number}})[]
   galleries:    GalleryFeed[]
 }
@@ -191,8 +174,12 @@ export const CyfrUserInclude = {
     }
 }
 
-export type UpdatePreferencesProps = {
+export type UserSimple = {
   id:     string
   name:   string
   image:  string
+}
+
+export type UserFollow = UserSimple & {
+  isFan?: boolean
 }

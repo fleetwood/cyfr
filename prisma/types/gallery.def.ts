@@ -1,6 +1,5 @@
 import { ImageCreateProps, ImageFeed, ImageFeedInclude } from './image.def';
 import {
-  Fan,
   Follow,
   Gallery,
   Image,
@@ -50,9 +49,6 @@ export type GalleryDetail = Gallery & {
   author: User & {
     galleries: Gallery[]
     follower: Follow[]
-    following: Follow[]
-    fans: Fan[]
-    fanOf: Fan[]
     _count: {
       select: {
         posts: number
@@ -75,9 +71,6 @@ export const GalleryDetailInclude = {
     include: {
       galleries: true,
       follower: true,
-      following: true,
-      fans: true,
-      fanOf: true,
       _count: {
         select: {
           posts: true,

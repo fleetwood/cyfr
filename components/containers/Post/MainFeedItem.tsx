@@ -1,10 +1,11 @@
-import { timeDifference, uniqueKey, uuid } from "../../../utils/helpers"
-import Avatar from "../../ui/avatar"
-import PostItemFooter from "./PostItemFooter"
-import ReactHtmlParser from "react-html-parser"
-import { MainFeed } from "../../../prisma/types"
 import Link from "next/link"
+import ReactHtmlParser from "react-html-parser"
+import { MainFeed } from "../../../prisma/prismaContext"
+import { timeDifference, uuid } from "../../../utils/helpers"
+import Avatar from "../../ui/avatar"
 import HtmlContent from "../../ui/htmlContent"
+import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
+import PostItemFooter from "./PostItemFooter"
 
 import useDebug from "../../../hooks/useDebug"
 const {debug} = useDebug("MainFeedItem")
@@ -16,7 +17,6 @@ type MainFeedItemProps = {
 const MainFeedItem = ({item}:MainFeedItemProps) => {
   const {post} = item.share || item
   const comments = post?.post_comments || []
-  const images = post?.images || []
   const isShare = item.type === "ShareFeed"
 
   return post ? (
@@ -38,7 +38,7 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
           sz="sm"
         />
         <div>
-            {timeDifference(item.share!.createdAt)}
+            Shared {timeDifference((item.share?.createdat || '').toString())}
         </div>
       </div>
       )}
@@ -50,7 +50,7 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
         />
         <div className="">
           <Link href={`/post/${post.id}`} className="text-primary underline">
-            {timeDifference(post.createdAt)}
+            Posted {timeDifference((post.createdat || '').toString())}
           </Link>
         </div>
       </div>
@@ -58,13 +58,10 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
         
         {post.content && <HtmlContent content={post.content}/>}
 
-        {images.length > 0 && 
-          <div className="columns-2 md:columns-4 lg:columns-6">
-            {images.map((image) => (
-              <img className="mb-4" src={image.url} key={uniqueKey('post-images',post,image)} />
-            ))}
-          </div>
+        {post.images?.length > 0 && post.images[0] !== null &&
+          <GalleryPhotoswipe images={post.images} />
         }
+
         {comments && comments.length > 0 && <div className="mt-4 text-sm font-semibold">⤵ Replies</div>}
         {comments && comments.slice(0, 5).map((comment) => (
           <div className="font-feed even:bg-base-300 odd:bg-base-200 bg-opacity-50 p-4 rounded-lg text-base-content mt-2 flex space-x-4" key={`item:${item.post?.id||item.share?.id||uuid()}-comment:${comment.id}`}>
@@ -90,7 +87,7 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
         )}
       </div>
       <div className="flex flex-row justify-around py-4">
-        {post.content && <PostItemFooter post={post} feed="main" />}
+        <PostItemFooter post={post} feed="main" />
       </div>
     </div>
   ) : <></>

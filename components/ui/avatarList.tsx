@@ -1,11 +1,9 @@
-import { User } from ".prisma/client";
-import Link from "next/link";
+import { AvatarSizeProps } from "../../utils/cloudinary";
 import { uuid } from "../../utils/helpers";
 import Avatar from "./avatar";
-import { AvatarSizeProps } from "../../utils/cloudinary";
 
 type AvatarListProps = AvatarSizeProps & {
-  users: User[]
+  users: any[]
   limit?: number
 }
 
@@ -15,9 +13,11 @@ const AvatarList = ({ users, sz = "sm", limit = 4 }: AvatarListProps) => {
   
   return (
     <div className={`avatar-group`}>
-      {users && users.slice(0,total).map(user => (
-        <Avatar user={user} sz={sz} key={uuid()} />
-      ))}
+      {users && users.slice(0,total).map(user => {
+        // @ts-ignore, mapping that has to happen bc sql fncs return the user as json, not typed. Meh.
+        const {id, name, image} = user.author || user
+        return <Avatar user={{id, name, image}} sz={sz} key={uuid()} />
+      })}
       {extra > 0 &&
         <div className="avatar placeholder p-2 border-2 bg-base-100 text-base-content text-center align-middle text-xs">+{extra.toString()}</div>
       }

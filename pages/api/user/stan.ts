@@ -1,17 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { Fan, PrismaUser } from "../../../prisma/prismaContext"
+import { Follow, PrismaUser } from "../../../prisma/prismaContext"
 
 import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response"
 import { logError, todo } from "../../../utils/log"
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Fan>>
+  res: NextApiResponse<ResponseResult<Follow>>
 ) {
   todo('Why is this posting req.body.body????')
-  const { fanId, fanOfId } = req.body.body
+  const { followerId, followingId, isFan = true } = req.body.body
   try {
-    const result = await PrismaUser.stan({fanId, fanOfId})
+    const result = await PrismaUser.follow({followerId, followingId, isFan})
     if (result) {
       res.status(200).json({ result })
     } else {

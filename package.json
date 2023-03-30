@@ -66,7 +66,7 @@
     "remirror": "^2.0.24",
     "socket.io": "^4.6.0",
     "socket.io-client": "^4.6.0",
-    "superjson": "^1.12.1",
+    "superjson": "^1.12.2",
     "tailwind-scrollbar-hide": "^1.1.7",
     "theme-change": "^2.2.0",
     "ts-node": "^10.9.1",
