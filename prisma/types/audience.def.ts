@@ -1,7 +1,7 @@
 import useDebug from "../../hooks/useDebug"
 import { CyfrUser, User } from "../prismaContext"
 
-const { debug } = useDebug("audience.def.ts", 'DEBUG')
+const { debug } = useDebug("audience.def.ts")
 
 export const AudienceType = {
   PUBLIC:     "PUBLIC",
@@ -54,6 +54,6 @@ export const canAccess = ({required, cyfrUser}:AccessProps) => {
         cyfrUser ? cyfrUser.membership?.level || AudienceType.PUBLIC
         : AudienceType.PUBLIC
     ) >= GetAudienceLevel(required)
-    debug(`canAccess`, {required, cyfrUser, allow})
+    debug(`canAccess`, {required, level: cyfrUser?.membership?.level, allow})
     return allow
 }

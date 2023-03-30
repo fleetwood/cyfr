@@ -3,7 +3,7 @@ import useDebug from "../../hooks/useDebug"
 import { PrismaUser } from "../../prisma/prismaContext"
 import { ResponseResult } from "../../types/response"
 
-const {debug, err, stringify, todo, fileMethod} = useDebug('api/users', 'DEBUG')
+const {debug, err, stringify, todo, fileMethod} = useDebug('api/users')
 const file = fileMethod("handle")
 
 export default async function handle(

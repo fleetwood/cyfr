@@ -6,7 +6,7 @@ import { useCyfrUserContext } from "../context/CyfrUserProvider"
 import Avatar from "./avatar"
 import Spinner from "./spinner"
 
-const {debug} = useDebug('components/ui/mentionsMenu', 'DEBUG')
+const {debug} = useDebug('components/ui/mentionsMenu')
 
 type MentionsMenuProps = {
     onSelect: Function

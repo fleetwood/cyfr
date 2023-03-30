@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useCyfrUserContext } from "../context/CyfrUserProvider";
 import Avatar from "../ui/avatar";
-import { CyfrLogo, HouseIcon, UserIcon } from "../ui/icons";
+import { BookIcon, CyfrLogo, HouseIcon, UserIcon } from "../ui/icons";
 import ShrinkableIconLink from "../ui/shrinkableIconLink";
 import ShrinkableLink from "../ui/shrinkableLink";
 
@@ -55,6 +55,12 @@ const Navbar = ({
             href="/"
             label="Home"
             icon={HouseIcon}
+            className={iconClassName}
+          />
+          <ShrinkableIconLink
+            href="/books"
+            label="Books"
+            icon={BookIcon}
             className={iconClassName}
           />
           {cyfrUser ? (

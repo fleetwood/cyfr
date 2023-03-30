@@ -26,7 +26,7 @@ import {
 import data from "svgmoji/emoji.json"
 import useDebug from "../../hooks/useDebug"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
-const {debug, todo} = useDebug("RemirrorEditor", 'DEBUG')
+const {debug, todo} = useDebug("RemirrorEditor")
 
 type MentionItem = { id: string, label: string }
 

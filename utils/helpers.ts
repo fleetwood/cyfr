@@ -1,7 +1,7 @@
 import { v4 as uid } from 'uuid'
 import useDebug from '../hooks/useDebug'
 
-const {debug} = useDebug('utils', 'DEBUG')
+const {debug} = useDebug('utils')
 
 export const URLify = (content: string) => {
   const urls = content.match(

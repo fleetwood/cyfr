@@ -27,12 +27,12 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
   }
 
   return (
-    <div className="grad-1">
-      <div className="grad-2">
-        <div className="grad-3">
-          <div className="grad-4">
+    // <div className="grad-1">
+    //   <div className="grad-2">
+    //     <div className="grad-3">
+    //       <div className="grad-4">
             <div className="w-full min-h-screen max-h-screen flex flex-col sm:flex-row flex-wrap sm:flex-nowrap flex-grow">
-              <div className="w-fixed w-full flex-shrink flex-grow-0">
+              <div className="w-fixed w-full flex-shrink flex-grow-0 bg-gradient-to-b from-secondary to-neutral">
                 <LeftColumn />
               </div>
               <main
@@ -58,14 +58,12 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
               <div className="w-fixed w-full flex-shrink flex-grow-0 px-2">
                 <RightColumn />
               </div>
+              <CreatePostModal />
             </div>
-          </div>
-        </div>
-      </div>
-
-      <CreatePostModal />
-      
-    </div>
+      //     </div>
+      //   </div>
+      // </div>
+    // </div>
   )
 }
 export default MainLayout

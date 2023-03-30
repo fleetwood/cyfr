@@ -7,7 +7,7 @@ import Dropzone, { CompleteFile } from "../../forms/Dropzone"
 import RemirrorEditor from "../../ui/RemirrorEditor"
 import { LoggedIn } from "../../ui/toasty"
 
-const {debug} = useDebug("components/containers/Post/CreatePost", 'DEBUG')
+const {debug} = useDebug("components/containers/Post/CreatePost")
 
 const CreatePostModal = (): JSX.Element => { 
   const createPostModal = 'createPostModal'

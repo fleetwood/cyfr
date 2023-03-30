@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import useDebug from "../../hooks/useDebug"
 import Emoji from "../../utils/emoji"
-const {todo, debug} = useDebug('api/emoji', 'DEBUG')
+const {todo, debug} = useDebug('api/emoji')
 
 export default async function handle(
   req: NextApiRequest,
