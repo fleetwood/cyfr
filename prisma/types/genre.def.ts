@@ -1,4 +1,4 @@
-import { Book, BookCategory, Chapter, Character, Covers, Follow, Gallery, Genre, Like, User, UserFeed } from "../prismaContext"
+import { Book, BookCategory, Chapter, Character, Follow, Gallery, Genre, Like, User, UserFeed } from "../prismaContext"
 
 export type GenreDeleteProps = {
     id?: string
@@ -17,7 +17,7 @@ export type GenreAddBookProps = {
 }
 
 export type GenreListItem = Genre & {
-    covers: Covers[]
+    gallery?: Gallery
 }
 
 export type GenreFeed = Genre & {

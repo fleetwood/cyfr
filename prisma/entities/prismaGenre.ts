@@ -1,5 +1,5 @@
 import useDebug from "../../hooks/useDebug"
-import { Genre, GenreDeleteProps, GenreFeed, GenreFeedInclude, GenreListItem, GenreUpsertProps, prisma } from "../prismaContext"
+import { Gallery, Genre, GenreDeleteProps, GenreFeed, GenreFeedInclude, GenreListItem, GenreUpsertProps, prisma } from "../prismaContext"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGenre')
 
@@ -44,21 +44,15 @@ const all = async (): Promise<GenreListItem[]> => {
   }
 }
 
-const covers = async(byGenre?:string): Promise<any> => {
+const gallery = async(byGenre?:string): Promise<Gallery|null> => {
   try {
-    const results = prisma.genre.findMany({
-      select: {
-        title: true,
-        id: true,
-        covers: {
-          select: {
-            url: true
-          }
-        }
+    const results:(Genre & { gallery: Gallery | null; })|null = await prisma.genre.findFirst({
+      include: {
+        gallery: true
       }
     })
     if (results) {
-      return results
+      return results.gallery
     }
     throw({ code: fileMethod('covers'), message: `Unable to obtain genre covers (${byGenre})`})
   } catch (error) {
@@ -70,7 +64,8 @@ const covers = async(byGenre?:string): Promise<any> => {
 const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
   const method = "upsertGenre"
   try {
-    const {title, description, fiction} = props
+    const {title, description } = props
+    const slug = title.replace(' ','-').toLowerCase().trim()
     debug(method, {title, description})
     
     return await prisma.genre.upsert({ 
@@ -80,17 +75,17 @@ const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
       update: {
         title,
         description,
-        fiction
+        slug
       },
       create: {
         title,
         description,
-        fiction
+        slug
       },
       select: {
         title: true,
         description: true,
-        fiction: true
+        slug: true
       }
     }) as unknown as GenreFeed
   } catch (error) {
@@ -113,4 +108,4 @@ const deleteGenre = async ({id, title}: GenreDeleteProps): Promise<Genre|null> =
   }
 }
 
-export const PrismaGenre = { all, byId, byTitle, covers, upsertGenre, deleteGenre, insertDefaults }
+export const PrismaGenre = { all, byId, byTitle, gallery, upsertGenre, deleteGenre, insertDefaults }

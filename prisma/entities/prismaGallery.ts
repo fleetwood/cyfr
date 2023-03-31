@@ -7,27 +7,20 @@ import {
   GalleryFeed,
   GalleryFeedInclude,
 } from "../types/gallery.def";
-const {debug, info, fileMethod} = useDebug('entities/prismaGallery')
+const {debug, info, fileMethod} = useDebug('entities/prismaGallery', 'DEBUG')
 
 export type GalleryAddImageProps = {
   id: string;
   images: ImageCreateProps[];
 };
 
-const userGalleries = async (authorId: string): Promise<GalleryDetail[]> => {
+const userGalleries = async (authorId: string): Promise<any> => {
   try {
-    const result = await prisma.gallery.findMany({
-      where: {
-        authorId,
-        visible:true
-      },
-      include: GalleryDetailInclude,
-      orderBy: {
-        updatedAt: 'desc'
-      }
-    })
+    debug('userGalleries', {authorId})
+    const result = await prisma.$queryRaw`select * from f_user_galleries(${authorId})`
     if (result) {
-      return result as unknown as GalleryDetail[]
+      debug('got some gallerieesesses', {result})
+      return result
     }
     throw {code: fileMethod, message: 'Could not find galleries for that user id'}
   } catch (error) {

@@ -29,7 +29,7 @@ const UpsertBook = ({book}:UpsertBookProps) => {
     const [active, setActive] = useState<boolean>(book?.active || false)
     const [prospect, setProspect] = useState<boolean>(book?.prospect || false)
     const [status, setStatus] = useState<BookStatus>(book?.status || 'DRAFT')
-    const [cover, setCover] = useState<string|null>(book?.cover || null)
+    // const [cover, setCover] = useState<string|null>(book?.cover || null)
     const [genreId, setGenreId] = useState<string|null>(book?.genreId || null)
     const [categories, setCategories] = useState<BookCategory[]>(book?.categories || [])
     const [hook, setHook] = useState<string|null>(book?.hook || null)
@@ -48,7 +48,7 @@ const UpsertBook = ({book}:UpsertBookProps) => {
 
     const saveBook = () => {
         debug('saveBook', {
-            title, active, prospect, status, cover, genreId ,categories, hook, synopsis, back, words, authors, chapters, characters, gallery
+            title, active, prospect, status, genreId ,categories, hook, synopsis, back, words, authors, chapters, characters, gallery
         })
     }
 
@@ -66,23 +66,25 @@ const UpsertBook = ({book}:UpsertBookProps) => {
             if (genres && genres.result) {
                 const g = genres.result
                 setGenreList(() => g)
-                setCoverList(() => g.map((g:GenreListItem):Image => {
-                    //todo: this is hard-coded for now, but Covers should probably tie to an Image, or Image should have type: 'cover'
-                    return {
-                        url: g.covers[0].url,
-                        height: 675,
-                        width: 426,
-                        id: uuid(),
-                        createdAt: now(),
-                        updatedAt: now(),
-                        visible: true,
-                        title: g.title,
-                        galleryId: null,
-                        postId: null,
-                        shareId: null,
-                        authorId: '',
-                    }
-                })) 
+                // todo: this should be a gallery now
+                // there should be a GalleryPhotoswip that just accepts a Gallery
+                // setCoverList(() => g.map((g:GenreListItem):Image => {
+                //     //todo: this is hard-coded for now, but Covers should probably tie to an Image, or Image should have type: 'cover'
+                //     return {
+                //         url: g.covers[0].url,
+                //         height: 675,
+                //         width: 426,
+                //         id: uuid(),
+                //         createdAt: now(),
+                //         updatedAt: now(),
+                //         visible: true,
+                //         title: g.title,
+                //         galleryId: null,
+                //         postId: null,
+                //         shareId: null,
+                //         authorId: '',
+                //     }
+                // })) 
             }
         }
         getGenres()

@@ -47,7 +47,7 @@ const GalleryPhotoswipe = ({items, images, onClick, key = uuid()}:GalleryPhotosw
                 <img className="cursor-pointer rounded-md transition-all duration-200 ease-out opacity-80 scale-90 hover:opacity-100 hover:scale-100"
                     src={item.thumbnail}
                     ref={ref as React.MutableRefObject<HTMLImageElement>}
-                    onClickCapture={() => onClick(item)}
+                    onClickCapture={() => onClick ? onClick(item) : {}}
                     onClick={open}
                 />
             )}

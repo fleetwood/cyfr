@@ -10,10 +10,11 @@ datasource db {
 
 model User {
   id            String        @id @default(cuid())
-  name          String?
+  name          String?       @unique
   email         String?       @unique
   emailVerified DateTime?
   image         String?
+  slug          String?       @unique
   accounts      Account[]
   blocking      Block[]       @relation("blocked_from_user")
   blocked       Block[]       @relation("user_is_blocked")
@@ -58,7 +59,8 @@ model News {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
   visible   Boolean   @default(true)
-  title     String
+  slug          String        @unique
+  title     String  @unique
   banner    String?
   startDate DateTime?
   endDate   DateTime?
@@ -87,6 +89,7 @@ model Gallery {
   book_gallery      Book?      @relation("book_gallery")
   character_gallery Character? @relation("character_gallery")
   chapter_gallery   Chapter?   @relation("chapter_gallery")
+  genre_gallery     Genre?     @relation("genre_gallery")
 }
 
 model Image {
@@ -107,6 +110,7 @@ model Image {
   post      Post?    @relation("post_images", fields: [postId], references: [id])
   likes     Like[]   @relation("image_likes")
   shares    Share[]  @relation("image_shares")
+  cover     Book?    @relation("book_cover")
 }
 
 model Like {
@@ -245,20 +249,12 @@ model Genre {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
+  slug          String @unique
   title       String   @unique
   description String
-  fiction     Boolean  @default(true)
   books       Book[]   @relation("book_genre")
-  covers      Covers[]  @relation("genre_covers")
-}
-
-model Covers {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  url         String
-  genreId     String
-  genre       Genre @relation("genre_covers", fields: [genreId], references: [id])
+  galleryId   String?  @unique
+  gallery     Gallery? @relation("genre_gallery", fields: [galleryId], references: [id])
 }
 
 model BookCategory {
@@ -274,11 +270,16 @@ model Book {
   id         String         @id @default(cuid())
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @default(now())
+  startedAt  DateTime?      
+  completeAt DateTime?      
   active     Boolean        @default(true)
   status     BookStatus?    @default(PRIVATE)
   prospect   Boolean        @default(false)
-  title      String
-  cover      String
+  fiction    Boolean        @default(true)
+  title      String         @unique
+  slug          String      @unique
+  coverId    String?        @unique
+  cover      Image?         @relation("book_cover", fields: [coverId], references: [id])
   genreId    String
   genre      Genre          @relation("book_genre", fields: [genreId], references: [id])
   categories BookCategory[] @relation("book_categories")

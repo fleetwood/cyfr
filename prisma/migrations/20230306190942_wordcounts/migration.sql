@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE "Book" ADD COLUMN     "words" INTEGER NOT NULL DEFAULT 0;
-
--- AlterTable
-ALTER TABLE "Chapter" ADD COLUMN     "words" INTEGER NOT NULL DEFAULT 0;

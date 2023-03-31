@@ -46,24 +46,14 @@ export const GalleryFeedInclude = {
 }
 
 export type GalleryDetail = Gallery & {
-  author: User & {
-    galleries: Gallery[]
-    follower: Follow[]
-    _count: {
-      select: {
-        posts: number
-        images: number
-        galleries: number
-      }
-    }
-  }
-  shares: (Share & {
-    author: User
-  })[]
-  likes: (Like & {
-    author: User
-  })[]
-  images: ImageFeed[]
+  // todo: add shares and likes back in to the gallery
+  // shares: (Share & {
+  //   author: User
+  // })[]
+  // likes: (Like & {
+  //   author: User
+  // })[]
+  images: any[]
 }
 
 export const GalleryDetailInclude = {

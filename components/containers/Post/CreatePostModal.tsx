@@ -73,7 +73,7 @@ const CreatePostModal = (): JSX.Element => {
                 <RemirrorEditor
                   content={content}
                   setContent={setContent}
-                  maxChar={128}
+                  maxChar={512}
                   setValid={setIsValid}
                 />
 
