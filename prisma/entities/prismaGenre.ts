@@ -1,5 +1,5 @@
-import { Genre, GenreDeleteProps, GenreFeed, GenreFeedInclude, GenreList, GenreUpsertProps, Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
+import { Genre, GenreDeleteProps, GenreFeed, GenreFeedInclude, GenreListItem, GenreUpsertProps, prisma } from "../prismaContext"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGenre')
 
@@ -32,38 +32,15 @@ const byTitle = async (title:string):Promise<Genre[]> => {
   }
 }
 
-/**
- * This is a hella heavy query and should be avoided! 
- * Use list() if possible instead
- * @returns GenreFeed[]
- */
-const all = async (): Promise<GenreFeed[]> => {
+const all = async (): Promise<GenreListItem[]> => {
   try {
-    return await prisma.genre.findMany({
-      include: GenreFeedInclude,
-      orderBy: [
-        {
-          updatedAt: "desc",
-        },
-      ],
-    }) as unknown as GenreFeed[]
+    const result =  await prisma.$queryRaw`select * FROM f_genre_all()`
+    if (result) {
+      return result as GenreListItem[]
+    }
+    throw({code: fileMethod('all'), message: 'No results returned'})
   } catch (error) {
     throw { code: fileMethod("all"), message: "No genres were returned!" }
-  }
-}
-
-const list = async (): Promise<GenreList[]> => {
-  try {
-    return await prisma.genre.findMany({
-      include: {
-        books: true
-      },
-      orderBy: {
-        title: 'asc'
-      }
-    }) as unknown as GenreList[]
-  } catch (error) {
-    throw { code: fileMethod('list'), message: 'Weird, unable to get a list of genres...'}
   }
 }
 
@@ -136,4 +113,4 @@ const deleteGenre = async ({id, title}: GenreDeleteProps): Promise<Genre|null> =
   }
 }
 
-export const PrismaGenre = { all, list, byId, byTitle, covers, upsertGenre, deleteGenre, insertDefaults }
+export const PrismaGenre = { all, byId, byTitle, covers, upsertGenre, deleteGenre, insertDefaults }

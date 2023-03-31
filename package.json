@@ -4,7 +4,7 @@
     "clean": "rm -rf .next",
     "watch": "tsc -w",
     "rebuild": "yarn clean && yarn watch",
-    "dev": "next dev",
+    "dev": "clear && next dev",
     "dev:debug": "next dev --inspect-brk=5858",
     "pr-studio": "npx prisma studio",
     "pr-migrate": "npx prisma migrate dev",

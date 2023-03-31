@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import useDebug from "../../../hooks/useDebug"
-import { Genre, GenreFeed, GenreList } from "../../../prisma/prismaContext"
+import { Genre, GenreFeed, GenreListItem } from "../../../prisma/prismaContext"
 import { sendApi } from "../../../utils/api"
 import { useToast } from "../../context/ToastContextProvider"
 import TailwindInput from "../../forms/TailwindInput"
@@ -8,7 +8,7 @@ import Toggler from "../../ui/toggler"
 const {debug } = useDebug('components/containers/Genre/AddGenre')
 
 type GenreAdminProps = {
-    editGenre: GenreList|GenreFeed|Genre|null
+    editGenre: GenreListItem|GenreFeed|Genre|null
 }
 
 const GenreAdmin = ({editGenre}:GenreAdminProps) => {

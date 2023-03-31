@@ -9,7 +9,7 @@ const TailwindInput = ({label, type, value, setValue, cardClassName, labelClassN
   return (
     <label className={`block ${cardClassName}`}>
       {label &&
-        <span className={labelClassName}>{label}</span>
+        <span className={labelClassName+' text-primary font-bold'}>{label}</span>
       }
       <input
         type={type}
@@ -18,8 +18,11 @@ const TailwindInput = ({label, type, value, setValue, cardClassName, labelClassN
           block
           w-full
           rounded-md
-          border-none
           shadow-sm
+          font-ibarra
+          border-none
+          bg-base-200
+          text-base-content
           focus:border-base-content 
           focus:ring 
           focus:ring-accent-focus 
