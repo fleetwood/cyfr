@@ -3,7 +3,7 @@ import AdminLayout from "../components/layouts/AdminLayout";
 import { CyfrLogo } from "../components/ui/icons";
 import { useSession } from "../lib/next-auth-react-query";
 import { PrismaGenre, PrismaUser } from "../prisma/prismaContext";
-import { canAccess, GenreList } from "../prisma/types";
+import { canAccess, GenreListItem } from "../prisma/types";
 import { useState } from "react";
 import useDebug from "../hooks/useDebug";
 import GenreAdmin from "../components/containers/Genre/GenreAdmin";
@@ -21,18 +21,18 @@ export async function getServerSideProps(
     required: "owner",
     cyfrUser,
   })
-  const genres = await PrismaGenre.list()
+  const genres = await PrismaGenre.all()
   return { props: { allow, genres } };
 }
 
 type AdminPageProps = {
   allow: boolean;
-  genres: GenreList[]
+  genres: GenreListItem[]
 };
 
 const AdminPage = ({allow, genres}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   useSession({ required: true, redirectTo: "/" })
-  const [editGenre, setEditGenre] = useState<GenreList|null>(null)
+  const [editGenre, setEditGenre] = useState<GenreListItem|null>(null)
   
   const CyfrHome = (
     <div className="flex">
@@ -53,7 +53,11 @@ const AdminPage = ({allow, genres}: InferGetServerSidePropsType<typeof getServer
           <h2 className="h-subtitle">Genres</h2>
           <div className="flex flex-wrap justify-items-center">
             {genres?.map(genre => 
-              <div key={uniqueKey(genre)} className='btn btn-primary text-primary-content rounded-md px-2 mr-2 mb-2 sm:w-1/3 md:w-1/6' onClick={() => setEditGenre(genre)}>
+              <div 
+                key={uniqueKey(genre)} 
+                className='btn btn-primary text-primary-content rounded-md px-2 mr-2 mb-2 sm:w-1/3 md:w-1/6' 
+                // @ts-ignore bc of stupid auto-replace InferServersideProps
+                onClick={() => setEditGenre(genre)}>
                 {genre.title}
               </div>)}
           </div>

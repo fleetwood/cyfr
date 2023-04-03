@@ -2,6 +2,7 @@ import GalleryCreateView from "../../../components/containers/Gallery/GalleryCre
 import GalleryDetailView from "../../../components/containers/Gallery/GalleryDetailView";
 import MainLayout from "../../../components/layouts/MainLayout";
 import {
+  GalleryDetail,
   PrismaGallery, PrismaUser
 } from "../../../prisma/prismaContext";
 
@@ -29,7 +30,7 @@ const UserGalleryPage = ({ user, galleries }: InferGetServerSidePropsType<typeof
       {cyfrUser && cyfrUser.id === user?.id && 
         <GalleryCreateView  />
       }
-      {galleries.map((gallery) => (
+      {galleries.map((gallery:GalleryDetail) => (
         <div className="relative" key={`user:${user?.id}-gallery:${gallery.id}`}>
           <GalleryDetailView gallery={gallery} />
         </div>

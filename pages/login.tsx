@@ -1,25 +1,22 @@
-import React, { FC, useState, useEffect } from "react"
-import {
-  getProviders,
-  signOut,
-  signIn,
-  ClientSafeProvider,
-  LiteralUnion,
-  getCsrfToken,
-} from "next-auth/react"
+import { InferGetServerSidePropsType } from "next"
+import { DefaultSession } from "next-auth"
 import { BuiltInProviderType } from "next-auth/providers"
-import { useSession } from "../lib/next-auth-react-query"
+import {
+  ClientSafeProvider, getCsrfToken, getProviders, LiteralUnion, signIn, signOut
+} from "next-auth/react"
+import { useRouter } from "next/router"
+import { FC, useEffect, useState } from "react"
+import { useCyfrUserContext } from "../components/context/CyfrUserProvider"
 import MainLayout from "../components/layouts/MainLayout"
 import {
   FacebookSVG,
   GoogleSVG,
   TwitterSVG,
-  WordpressSVG,
+  WordpressSVG
 } from "../components/ui/svgs"
-import { DefaultSession } from "next-auth"
-import { apiUrl } from "../utils/api"
 import useDebug from "../hooks/useDebug"
-import { InferGetServerSidePropsType } from "next";
+import { useSession } from "../lib/next-auth-react-query"
+import { apiUrl } from "../utils/api"
 
 const {debug} = useDebug('pages/login')
 
@@ -29,7 +26,10 @@ const Login: FC = (props: InferGetServerSidePropsType<typeof getServerSideProps>
     LiteralUnion<BuiltInProviderType, string>,
     ClientSafeProvider
   > | null>()
+
+  const Router = useRouter()
   const [user, setUser] = useState<DefaultSession["user"]>()
+  const [cyfrUser] = useCyfrUserContext()
   const [session, loading] = useSession({
     required: false,
     queryConfig: {
@@ -49,6 +49,10 @@ const Login: FC = (props: InferGetServerSidePropsType<typeof getServerSideProps>
   useEffect(() => {
     if (session?.user) {
       setUser(session.user)
+    }
+
+    if (session?.user && (!cyfrUser || cyfrUser.membership === null)) { 
+        Router.replace('/account')
     }
   }, [session])
 

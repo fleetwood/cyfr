@@ -13,9 +13,10 @@ type GalleryPhotoswipeProps = {
   items?: ItemProps[]
   images?: ImageFeed[] | Image[]
   key?: string
+  onClick?: (e: MouseEvent<Element, MouseEvent>) => void
 };
 
-const GalleryPhotoswipe = ({items, images, key = uuid()}:GalleryPhotoswipeProps) => {
+const GalleryPhotoswipe = ({items, images, onClick, key = uuid()}:GalleryPhotoswipeProps) => {
 //   const smallItemStyles: React.CSSProperties = {
 //     cursor: "pointer",
 //     objectFit: "cover",
@@ -46,6 +47,7 @@ const GalleryPhotoswipe = ({items, images, key = uuid()}:GalleryPhotoswipeProps)
                 <img className="cursor-pointer rounded-md transition-all duration-200 ease-out opacity-80 scale-90 hover:opacity-100 hover:scale-100"
                     src={item.thumbnail}
                     ref={ref as React.MutableRefObject<HTMLImageElement>}
+                    onClickCapture={() => onClick ? onClick(item) : {}}
                     onClick={open}
                 />
             )}

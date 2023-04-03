@@ -13,8 +13,7 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<Follow>>
 ) {
-  todo('handle',"Why is this posting req.body.body????")
-  todo('handle', 'Unfollow/Unfan use cases...')
+  // TODO Unfollow/Unfan
   const { followingId, followerId, isFan = false } = req.body.body
   try {
     const result = await PrismaUser.follow({followingId, followerId, isFan})
@@ -22,11 +21,6 @@ export default async function handle(
       res.status(200).json({ result })
     } else {
       throw { code: "api/user/follow", message: `No results from Follow` }
-    }
-    if (result) {
-      res.status(200).json({ result })
-    } else {
-      throw { code: "api/user/follow", message: "Failed to create Follower" }
     }
   } catch (e: Error | ResponseError | any) {
     err("FAIL", e)

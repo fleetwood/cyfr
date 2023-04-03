@@ -6,10 +6,11 @@ type AutoOptionProps =  InputHTMLAttributes<HTMLInputElement> & {
   options: KeyVal[]
   onUpdate: Function 
   itemClassName?: string
+  limit?: number
 }
 
 const AutoInput = (props:AutoOptionProps) => {
-  const { options, placeholder, onUpdate, itemClassName } = props;
+  const { options, placeholder, onUpdate, itemClassName, limit = -1 } = props;
   const [currentOptions, setCurrentOptions] = useState<KeyVal[]>([])
   const [showList, setShowList] = useState(false)
   const [search, setSearch] = useState('')
@@ -41,7 +42,7 @@ const AutoInput = (props:AutoOptionProps) => {
       dedupe(
         options.filter(({key}) => key.toLowerCase().indexOf(term.toLowerCase())>-1)
       ,'key')
-      .splice(0,5)
+      .splice(0,limit > 0 ? limit : options.length)
     )
     setSearch(term)
   }
@@ -49,8 +50,8 @@ const AutoInput = (props:AutoOptionProps) => {
   const optionClick = (option?:KeyVal) => {
     // log('optionClick',option)
     setSearch(option?.key||'')
-    onUpdate(option)
     clearList()
+    onUpdate(option)
   }
 
   const keyCap = (e:KeyboardEvent) => {
@@ -76,7 +77,7 @@ const AutoInput = (props:AutoOptionProps) => {
   }
 
   useEffect(() => {
-    setCurrentOptions(dedupe(options,'key').splice(0,5))
+    setCurrentOptions(dedupe(options,'key').splice(0,limit > 0 ? limit : options.length))
   },[options])
 
   useEffect(() => {

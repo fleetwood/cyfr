@@ -1,5 +1,5 @@
-import { Genre, GenreDeleteProps, GenreFeed, GenreFeedInclude, GenreList, GenreUpsertProps, Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
+import { Gallery, Genre, GenreDeleteProps, GenreFeed, GenreFeedInclude, GenreListItem, GenreUpsertProps, prisma } from "../prismaContext"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGenre')
 
@@ -32,56 +32,27 @@ const byTitle = async (title:string):Promise<Genre[]> => {
   }
 }
 
-/**
- * This is a hella heavy query and should be avoided! 
- * Use list() if possible instead
- * @returns GenreFeed[]
- */
-const all = async (): Promise<GenreFeed[]> => {
+const all = async (): Promise<GenreListItem[]> => {
   try {
-    return await prisma.genre.findMany({
-      include: GenreFeedInclude,
-      orderBy: [
-        {
-          updatedAt: "desc",
-        },
-      ],
-    }) as unknown as GenreFeed[]
+    const result =  await prisma.$queryRaw`select * FROM f_genre_all()`
+    if (result) {
+      return result as GenreListItem[]
+    }
+    throw({code: fileMethod('all'), message: 'No results returned'})
   } catch (error) {
     throw { code: fileMethod("all"), message: "No genres were returned!" }
   }
 }
 
-const list = async (): Promise<GenreList[]> => {
+const gallery = async(byGenre?:string): Promise<Gallery|null> => {
   try {
-    return await prisma.genre.findMany({
+    const results:(Genre & { gallery: Gallery | null; })|null = await prisma.genre.findFirst({
       include: {
-        books: true
-      },
-      orderBy: {
-        title: 'asc'
-      }
-    }) as unknown as GenreList[]
-  } catch (error) {
-    throw { code: fileMethod('list'), message: 'Weird, unable to get a list of genres...'}
-  }
-}
-
-const covers = async(byGenre?:string): Promise<any> => {
-  try {
-    const results = prisma.genre.findMany({
-      select: {
-        title: true,
-        id: true,
-        covers: {
-          select: {
-            url: true
-          }
-        }
+        gallery: true
       }
     })
     if (results) {
-      return results
+      return results.gallery
     }
     throw({ code: fileMethod('covers'), message: `Unable to obtain genre covers (${byGenre})`})
   } catch (error) {
@@ -93,7 +64,8 @@ const covers = async(byGenre?:string): Promise<any> => {
 const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
   const method = "upsertGenre"
   try {
-    const {title, description, fiction} = props
+    const {title, description } = props
+    const slug = title.replace(' ','-').toLowerCase().trim()
     debug(method, {title, description})
     
     return await prisma.genre.upsert({ 
@@ -103,17 +75,17 @@ const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
       update: {
         title,
         description,
-        fiction
+        slug
       },
       create: {
         title,
         description,
-        fiction
+        slug
       },
       select: {
         title: true,
         description: true,
-        fiction: true
+        slug: true
       }
     }) as unknown as GenreFeed
   } catch (error) {
@@ -136,4 +108,4 @@ const deleteGenre = async ({id, title}: GenreDeleteProps): Promise<Genre|null> =
   }
 }
 
-export const PrismaGenre = { all, list, byId, byTitle, covers, upsertGenre, deleteGenre, insertDefaults }
+export const PrismaGenre = { all, byId, byTitle, gallery, upsertGenre, deleteGenre, insertDefaults }

@@ -28,11 +28,11 @@ type AccountProps = {
   user?: User | undefined
 }
 
-const Account = ({user}:AccountProps) => {
+const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [session] = useSession({required: true, redirectTo: '/login'})  
   const [cyfrUser] = useCyfrUserContext()
   const {updateUser, invalidateUser}=useCyfrUserApi()
-  const [activeTab, setActiveTab] = useState('Preferences')
+  const [activeTab, setActiveTab] = useState('Preferences' )
   const [cyfrName, setCyfrName] = useState<string|null>(null)
 
   const onNameChange = () => {
@@ -81,7 +81,15 @@ const Account = ({user}:AccountProps) => {
       setCyfrName(cyfrUser.name)
     }
   }, [cyfrUser])
-  
+
+  useEffect(() => {
+    const tab = window.location.hash
+    if (tab && tab.length > 0) {
+      setActiveTab(tab)
+    } else {
+      debug('useEffect', {hash: `Ain't no hash ${window.location}`})
+    }
+  }, [])
 
   return (
     <MainLayout sectionTitle="Account" >

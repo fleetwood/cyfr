@@ -16,8 +16,8 @@ export type GenreAddBookProps = {
     book: Book
 }
 
-export type GenreList = Genre & {
-    books: true
+export type GenreListItem = Genre & {
+    gallery?: Gallery
 }
 
 export type GenreFeed = Genre & {

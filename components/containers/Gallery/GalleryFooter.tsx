@@ -84,7 +84,7 @@ const GalleryFooter = ({
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Like (${gallery.likes.length})`}
+          // label={`Like (${gallery.likes.length})`}
           onClick={() => handleLike()}
         />
         {/* <AvatarList users={gallery.likes.map((p) => p.author)} sz="xs" /> */}
@@ -96,7 +96,7 @@ const GalleryFooter = ({
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Share (${gallery.shares.length})`}
+          // label={`Share (${gallery.shares.length})`}
           onClick={() => handleShare()}
         />
         {/* <AvatarList users={gallery.shares.map((a) => a.author)} sz="xs" /> */}
