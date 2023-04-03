@@ -12,7 +12,7 @@ import {
   prisma, User, UserFeed,
   UserFeedInclude, UserSimple
 } from "../prismaContext";
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser");
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG');
 
 type AllPostQueryParams = {
   limit?: Number;
@@ -53,6 +53,7 @@ const follow = async (props:FollowProps): Promise<Follow> => {
     })
     const data = {followerId,followingId,isFan}
     const include = {follower: true,following: true}
+    debug('follow', {followerId, followingId, data})
 
     const follow = exists 
       ? await prisma.follow.update({
@@ -203,15 +204,21 @@ const updatePreferences = async ({
   image,
 }: UserSimple): Promise<User> => {
   try {
+    debug('updatePreferences', {id, name, image})
     const user = await prisma.user.update({
       where: { id },
-      data: { name, image },
+      data: { 
+        name, 
+        slug: name.replaceAll(/[\W_]+/g,"-"),
+        image },
     });
     if (user) {
       return user;
     }
+    debug('updatePreferences', 'no user')
     throw { code: "Users.updatePreferences", message: "Error updating record" };
   } catch (error) {
+    err('updatePreferences', {error})
     throw error;
   }
 };

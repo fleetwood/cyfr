@@ -325,6 +325,8 @@ model Chapter {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @default(now())
   active     Boolean     @default(true)
+  order      Int
+  title      String
   content    String      @default("")
   words      Int         @default(0)
   characters Character[] @relation("chapter_characters")

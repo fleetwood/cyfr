@@ -7,7 +7,7 @@ import WordpressProvider from "next-auth/providers/wordpress";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./../../../prisma/prismaContext"
 import useDebug from "../../../hooks/useDebug";
-const {debug, err} = useDebug("api/auth/nextauth")
+const {debug, err} = useDebug("api/auth/nextauth", 'DEBUG')
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -134,8 +134,10 @@ export default NextAuth({
           where: { email: user.email || undefined },
           include: { membership: true },
         });
-        if (isNewUser) {
-          debug(`We have a new user!!!!!!!!!!`, user);
+        if (isNewUser || prismaUser?.membership === null) {
+          debug(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+          This user needs to select a membership!
+          >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`, user);
         }
       } catch (e) {
         err('signIn Error',{error: e,user})
