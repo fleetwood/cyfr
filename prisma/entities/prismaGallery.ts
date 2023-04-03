@@ -31,11 +31,8 @@ const userGalleries = async (authorId: string): Promise<any> => {
 const getDetail = async (galleryId: string): Promise<GalleryDetail> => {
   debug("getDetail", { galleryId });
   try {
-    const result = await prisma.gallery.findUnique({
-      where: { id: galleryId },
-      include: GalleryDetailInclude,
-    });
-    if (result) return result as unknown as GalleryDetail;
+    const result:any[] = await prisma.$queryRaw`SELECT * FROM f_gallery_detail(${galleryId})`
+    if (result[0]) return result[0] as GalleryDetail;
     throw { code: fileMethod, message: "Unable to find a gallery by that key" };
   } catch (error) {
     info(`getDetail ERROR`, error);

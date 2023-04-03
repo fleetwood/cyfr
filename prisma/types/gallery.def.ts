@@ -6,6 +6,7 @@ import {
   Like,
   Share,
   User,
+  UserSimple,
 } from "../prismaContext"
 
 export type GalleryCreateProps = {
@@ -47,12 +48,9 @@ export const GalleryFeedInclude = {
 
 export type GalleryDetail = Gallery & {
   // todo: add shares and likes back in to the gallery
-  // shares: (Share & {
-  //   author: User
-  // })[]
-  // likes: (Like & {
-  //   author: User
-  // })[]
+  author: User
+  shares: UserSimple[]
+  likes: UserSimple[]
   images: any[]
 }
 

@@ -8,6 +8,7 @@ import useDebug from "../../../hooks/useDebug"
 import useFeed, { FeedTypes } from "../../../hooks/useFeed"
 import { GalleryDetail, GalleryFeed } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import AvatarList from "../../ui/avatarList"
 
 type GalleryFooterProps = {
   gallery: GalleryDetail | GalleryFeed
@@ -84,10 +85,10 @@ const GalleryFooter = ({
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          // label={`Like (${gallery.likes.length})`}
+          label={`Likes (${(gallery.likes||[]).length})`}
           onClick={() => handleLike()}
         />
-        {/* <AvatarList users={gallery.likes.map((p) => p.author)} sz="xs" /> */}
+        <AvatarList users={(gallery.likes||[])} sz="xs" />
       </div>
 
       <div className="font-semibold uppercase">
@@ -96,10 +97,10 @@ const GalleryFooter = ({
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          // label={`Share (${gallery.shares.length})`}
+          label={`Shares (${(gallery.shares||[]).length})`}
           onClick={() => handleShare()}
         />
-        {/* <AvatarList users={gallery.shares.map((a) => a.author)} sz="xs" /> */}
+        <AvatarList users={(gallery.shares||[])} sz="xs" />
       </div>
 
       <div className="font-semibold uppercase">

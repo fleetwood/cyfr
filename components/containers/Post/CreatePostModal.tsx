@@ -18,7 +18,6 @@ const CreatePostModal = (): JSX.Element => {
   const { createPost, invalidateFeed } = useFeed({ type: "post" })
   const [images, setImages] = useState<string[]>([])
 
-
   const onFilesComplete = async (files: CompleteFile[]) => {
     const setFiles = files.flatMap((f) => f.secure_url)
     debug(`onFilesComplete`,setFiles)

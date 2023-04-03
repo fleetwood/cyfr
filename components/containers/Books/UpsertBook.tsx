@@ -1,11 +1,13 @@
-import { MouseEventHandler, ReactNode, useEffect, useState } from "react"
-import { ItemProps, ItemRef } from "react-photoswipe-gallery"
+import { useEffect, useState } from "react"
+import { ItemProps } from "react-photoswipe-gallery"
 import useDebug from "../../../hooks/useDebug"
-import { BookCategory, BookDetail, BookStatus, canAccess, Chapter, Character, CyfrUser, Gallery, Genre, GenreFeed, GenreListItem, Image, PrismaGenre, PrismaUser, User } from "../../../prisma/prismaContext"
+import { BookCategory, BookDetail, BookStatus, Chapter, Character, Gallery, User } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import { getApi } from "../../../utils/api"
-import { now, uuid } from "../../../utils/helpers"
+import { uuid } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import Dropzone from "../../forms/Dropzone"
+import { CompleteFile } from "../../forms/Dropzone/types.defs"
 
 import TailwindInput from "../../forms/TailwindInput"
 import AutoInput from "../../ui/autoInput"
@@ -23,7 +25,7 @@ const UpsertBook = ({book}:UpsertBookProps) => {
     const [cyfrUser] = useCyfrUserContext()
 
     const [genreList , setGenreList] = useState<any[]>([])
-    const [coverList, setCoverList] = useState<Image[]>([])
+    const [coverGallery, setCoverGallery] = useState<Gallery|null>()
 
     const [title, setTitle] = useState<string|null>(book?.title || null)
     const [active, setActive] = useState<boolean>(book?.active || false)
@@ -40,6 +42,7 @@ const UpsertBook = ({book}:UpsertBookProps) => {
     const [chapters, setChapters] = useState<Chapter[]>(book?.chapters || [])
     const [characters, setCharacters] = useState<Character[]>(book?.characters || [])
     const [gallery, setGallery] = useState<Gallery|null>(book?.gallery || null)
+    const [images, setImages] = useState<string[]>([])
 
     const [showEditor, setShowEditor] = useState<boolean>(false)
     const toggle = () => {
@@ -52,8 +55,19 @@ const UpsertBook = ({book}:UpsertBookProps) => {
         })
     }
 
+    const onFilesComplete = async (files: CompleteFile[]) => {
+        const setFiles = files.flatMap((f) => f.secure_url)
+        debug(`onFilesComplete`,setFiles)
+        setImages((current) => [...current, ...setFiles])
+    }
+
     const selectGenre = async (p:KeyVal) => {
+        const genrid = p.value
+            , gal = genreList.find(g => g.id == genrid).gallery
+
+        debug('selectGenre', {p, genreList, genrid, gal})
         setGenreId(() => p.value ? p.value.toString() : null)
+        // setCoverGallery(() => genreList.find(g => g.id == p.value).gallery)
     }
 
     const selectCover = (item:ItemProps) => {
@@ -65,7 +79,7 @@ const UpsertBook = ({book}:UpsertBookProps) => {
             const genres = await getApi('/genre/list')
             if (genres && genres.result) {
                 const g = genres.result
-                setGenreList(() => g)
+                setGenreList(() => g) 
                 // todo: this should be a gallery now
                 // there should be a GalleryPhotoswip that just accepts a Gallery
                 // setCoverList(() => g.map((g:GenreListItem):Image => {
@@ -102,7 +116,14 @@ const UpsertBook = ({book}:UpsertBookProps) => {
             <div>
                 <span className=' text-primary font-bold'>Genre</span>
                 <AutoInput key={uuid()} options={genreList.map((g) => { return {key: g.title, value: g.id}})} onUpdate={selectGenre} />
-                <GalleryPhotoswipe images={coverList} onClick={selectCover} />
+                {coverGallery &&
+                    <div>
+                        <h3>Cover Gallery</h3>
+                        <GalleryPhotoswipe gallery={coverGallery} onClick={selectCover} />
+                        <p>--or upload your own--</p>
+                        <Dropzone limit={1} onUploadComplete={onFilesComplete} />
+                    </div>
+                }
             </div>
             <div className="w-1/2">
                 <Toggler checked={active} setChecked={setActive} falseLabel='Not Visible' trueLabel="Visible" />
