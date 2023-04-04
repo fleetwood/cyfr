@@ -44,7 +44,6 @@ export const GetAudienceLevel = (type: string) => {
  */
 export type AccessProps = {
     required: "public" | "reader" | "user" | "member" | "member_exp" | "agent" | "agent_exp" | "admin" | "owner",
-    user?: User
     cyfrUser: CyfrUser | null
 }
 

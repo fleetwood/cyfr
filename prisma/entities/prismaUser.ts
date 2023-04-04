@@ -12,7 +12,7 @@ import {
   prisma, User, UserFeed,
   UserFeedInclude, UserSimple
 } from "../prismaContext";
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG');
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser");
 
 type AllPostQueryParams = {
   limit?: Number;
