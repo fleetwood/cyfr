@@ -1,12 +1,6 @@
 import useDebug from "../../hooks/useDebug";
-import { Gallery, GalleryDetail, ImageCreateProps, Like } from "../types";
-import { GalleryCreateProps } from '../types/gallery.def';
-import {
-  GalleryDetailInclude,
-  GalleryEngageProps,
-  GalleryFeed,
-  GalleryFeedInclude,
-} from "../types/gallery.def";
+import { GalleryCreateProps, GalleryDetail, GalleryEngageProps, GalleryFeed, GalleryFeedInclude, ImageCreateProps, Like, Share } from "../prismaContext";
+
 const {debug, info, fileMethod} = useDebug('entities/prismaGallery', 'DEBUG')
 
 export type GalleryAddImageProps = {
@@ -51,8 +45,17 @@ const like = async ({
 const share = async ({
   galleryId,
   authorId,
-}: GalleryEngageProps): Promise<Like> => {
+}: GalleryEngageProps): Promise<Share> => {
   debug(`share`, { galleryId, authorId });
+  const share = await prisma.share.create({
+    data: {
+      authorId,
+      galleryId
+    }
+  })
+  if (share) {
+    return share
+  }
   throw { code: fileMethod, message: "Feature not implemented" };
 };
 

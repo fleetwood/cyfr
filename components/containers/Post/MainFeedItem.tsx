@@ -37,10 +37,9 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
           user={item.share!.author}
           sz="sm"
         />
-        <div>
-            Shared {timeDifference((item.share?.createdat || '').toString())}
+        <div className="ml-1">
+          Shared {timeDifference((item.updatedAt || '').toString())}</div>
         </div>
-      </div>
       )}
         <div className="w-full relative flex">
         <Avatar
@@ -48,9 +47,9 @@ const MainFeedItem = ({item}:MainFeedItemProps) => {
           user={post.author}
           sz="sm"
         />
-        <div className="">
+        <div className="ml-1">
           <Link href={`/post/${post.id}`} className="text-primary underline">
-            Posted {timeDifference((post.createdat || '').toString())}
+            Posted {timeDifference((item.updatedAt || '').toString())}
           </Link>
         </div>
       </div>

@@ -70,7 +70,7 @@ const GalleryFooter = ({
       authorId: cyfrUser!.id,
     })
     if (shared) {
-      notify({ type: "success", message: "You shared this post" })
+      notify({ type: "success", message: "You shared this gallery!!!" })
       invalidateFeed()
       return
     }

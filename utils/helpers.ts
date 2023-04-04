@@ -103,7 +103,7 @@ export const timeDifference = (from:Date|string) => {
     minutes: date_diff.getMinutes(),
   }
   if (ago.weeks > 3) {
-    return `${dayOf(fromDate.getDay())}, ${fromDate.getFullYear()} ${monthOf(fromDate.getMonth())}-${fromDate.getDate() > 9 ? fromDate.getDate() : "0" + fromDate.getDate()}`
+    return `${fromDate.getFullYear()}, ${monthOf(fromDate.getMonth())} ${fromDate.getDate() > 9 ? fromDate.getDate() : "0" + fromDate.getDate()}`
   } else if (ago.weeks > 0) {
     return isOne(ago.weeks, " week")
   } else if (ago.days > 0) {

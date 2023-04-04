@@ -16,7 +16,7 @@ import { CyfrUser } from "../prisma/types/user.def"
 import { cloudinary } from "../utils/cloudinary"
 import UserDetailPage from "./user/[id]"
 import { User } from "../prisma/prismaContext"
-const {debug, info} = useDebug('pages/account')
+const {debug, info} = useDebug('pages/account', 'DEBUG')
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await PrismaUser.userInSessionContext(context)
@@ -25,7 +25,7 @@ export async function getServerSideProps(context: GetSessionParams | undefined) 
 }
 
 type AccountProps = {
-  user?: User | undefined
+  user?: CyfrUser | undefined
 }
 
 const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -43,7 +43,7 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
       ...cyfrUser,
       name: cyfrName
     } as unknown as CyfrUser
-    updateUser({data:newCyfrUser})
+    updateUser(newCyfrUser)
       .then(r => {
         debug(`onNameChange complete`)
         invalidateUser()
@@ -61,14 +61,13 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
         ...cyfrUser,
         image: file.secure_url
       } as unknown as CyfrUser
-      updateUser({data:newCyfrUser})
-        .then(r => {
-          // setShowZone('none')
-          invalidateUser()
-        })
-        .catch(e => {
-          info(`onFileComplete error`,e)
-        })
+      const result = await updateUser(newCyfrUser)
+      if (result) {
+        invalidateUser()
+      }
+      else {
+        info(`onFileComplete error`,{file})
+      }
     }
   }
 
