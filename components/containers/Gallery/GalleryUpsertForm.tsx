@@ -1,33 +1,62 @@
 import React, { useEffect, useState } from 'react'
 import useDebug from '../../../hooks/useDebug'
-import { Gallery } from '../../../prisma/prismaContext'
+import { Gallery, GalleryCreateProps, GalleryFeed, GalleryUpsertProps, Image } from '../../../prisma/prismaContext'
+import { sendApi } from '../../../utils/api'
+import { useCyfrUserContext } from '../../context/CyfrUserProvider'
 import Dropzone, { CompleteFile } from '../../forms/Dropzone'
 import TailwindInput from '../../forms/TailwindInput'
 import GalleryPhotoswipe from './GalleryPhotoswipe'
 
-const {debug} = useDebug('GalleryNestedUpsert', 'DEBUG')
+const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm', 'DEBUG')
 
 export type GalleryNestedProps = {
-    gallery?:         Gallery|null
+    gallery?:         GalleryFeed|Gallery|null
     label?:           string
     labelClassName?:  string
     className?:       string
     variant?:         'no-title'|'no-description'|null
 }
 
+//todo Add/Remove images to/from existing gallery
 const GalleryUpsertForm = ({gallery, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
-    const [images, setImages] = useState<string[]>([])
+    const [cyfrUser] = useCyfrUserContext()
+    const [images, setImages] = useState<Image[]>([])
+    const [files, setFiles] = useState<CompleteFile[]>([])
     const [title, setTitle] = useState<string|null>(null)
     const [description, setDescription] = useState<string|null>(null)
   
     const onFilesComplete = async (files: CompleteFile[]) => {
-      const setFiles = files.flatMap((f) => f.secure_url)
-      debug(`onFilesComplete`,setFiles)
-      setImages((current) => [...current, ...setFiles])
+      debug(`onFilesComplete`,files)
+      setFiles((current) => [...current, ...files])
     }
 
-    useEffect(() => {}, [
-      // gallery && gallery.images !== null
+    const upsertGallery = async () => {
+      const newGallery:GalleryUpsertProps = {
+        ...gallery,
+        title,
+        description,
+        authorId: cyfrUser.id,
+        images: images,
+        // files: files.map((img,idx) => {return {
+        //   // @ts-ignore
+        //   id: img.id || undefined,
+        //   authorId: cyfrUser.id,
+        //   // @ts-ignore
+        //   url: img.url || img.secure_url,
+        //   height: img.height,
+        //   width: img.width,
+        //   galleryId: gallery?.id||undefined
+        // }})
+      }
+      const result = await sendApi('gallery/upsert', newGallery)
+    }
+
+    useEffect(() => {
+      if (gallery && Object.hasOwn(gallery,'images')) {
+        // @ts-ignore
+        const images = gallery.images || []
+      }
+    }, [
     ])
   return (
     <div className={className}>
@@ -41,8 +70,9 @@ const GalleryUpsertForm = ({gallery, variant=null, className='', labelClassName=
         {variant!=='no-title' && variant!=='no-description' &&
         <TailwindInput type='text' label='Description' value={description} setValue={setDescription} />
         }
-        <GalleryPhotoswipe gallery={gallery} />
-        <Dropzone limit={5} onUploadComplete={onFilesComplete} />
+        <Dropzone limit={5} onUploadComplete={onFilesComplete} >
+            <GalleryPhotoswipe gallery={gallery} />
+        </Dropzone>
       </label>
     </div>
   )

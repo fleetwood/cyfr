@@ -10,7 +10,7 @@ import {
   CyfrUser, Follow,
   FollowProps,
   prisma, User, UserFeed,
-  UserFeedInclude, UserSimple
+  UserFeedInclude, UserStub
 } from "../prismaContext";
 const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser");
 
@@ -202,7 +202,7 @@ const updatePreferences = async ({
   id,
   name,
   image,
-}: UserSimple): Promise<User> => {
+}: UserStub): Promise<User> => {
   try {
     debug('updatePreferences', {id, name, image})
     const user = await prisma.user.update({

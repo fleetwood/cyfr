@@ -1,6 +1,6 @@
-import { Image, Like, ImageDetail,ImageFeed, ImageCreateProps, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude } from "../prismaContext"
+import { Image, Like, ImageDetail,ImageFeed, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude, ImageUpsertProps } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
-const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage')
+const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage','DEBUG')
 
 const byId = async (id: string): Promise<ImageDetail | null> => {
   try {
@@ -40,14 +40,21 @@ const all = async (): Promise<ImageFeed[] | []> => {
   }
 }
 
-const createImage = async (props: ImageCreateProps): Promise<Image> => {
-  const data = { ...props }
+const upsert = async (props: ImageUpsertProps): Promise<Image> => {
+  debug('upsert', props)
   try {
-    debug('createImage', data)
-    return await prisma.image.create({ data })
+    const image = await prisma.image.upsert({ 
+        where: { url: props.url },
+        create: props,
+        update: props
+      })
+    if (image) {
+      return image
+    }
+    throw({code: fileMethod('upsert'), message: 'prisma.image.upsert did not return a value'})
   } catch (error) {
-    info("createImage ERROR: ", error)
-    throw { code: "images/create", message: "Image was not created!" }
+    info("createImage ERROR: ", {error})
+    throw error
   }
 }
 
@@ -131,4 +138,4 @@ const commentOnImage = async (props: any): Promise<Image> => {
   }
 }
 
-export const PrismaImage = { all, byId, createImage, deleteImage, likeImage, shareImage, commentOnImage }
+export const PrismaImage = { all, byId, upsert, deleteImage, likeImage, shareImage, commentOnImage }

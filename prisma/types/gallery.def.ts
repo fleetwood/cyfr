@@ -1,4 +1,4 @@
-import { ImageCreateProps, ImageFeed, ImageFeedInclude } from './image.def';
+import { ImageFeed, ImageFeedInclude, ImageUpsertProps } from './image.def';
 import {
   Follow,
   Gallery,
@@ -6,14 +6,24 @@ import {
   Like,
   Share,
   User,
-  UserSimple,
+  UserStub,
 } from "../prismaContext"
 
-export type GalleryCreateProps = {
+export type GalleryUpsertProps = {
+  galleryId?: string|null
   authorId: string
   title?: string|null
   description?: string|null
-  images?: ImageCreateProps[]|null
+  images?: ImageFeed[]|Image[]|null
+  files?: ImageUpsertProps[]|null
+}
+
+export type GalleryCreateProps = {
+  galleryId?: string|null
+  authorId: string
+  title?: string|null
+  description?: string|null
+  // images?: ImageUpsertProps[]|null
 }
 
 export type GalleryEngageProps = {
@@ -22,12 +32,7 @@ export type GalleryEngageProps = {
 }
 
 export type GalleryFeed = Gallery & {
-  images: (Image & {
-    _count: {
-      likes: number,
-      shares: number
-    }
-  })[]
+  images: Image[] // todo: include likes and shares
   likes: Like[]
   shares: Share[]
 }
@@ -49,8 +54,8 @@ export const GalleryFeedInclude = {
 export type GalleryDetail = Gallery & {
   // todo: add shares and likes back in to the gallery
   author: User
-  shares: UserSimple[]
-  likes: UserSimple[]
+  shares: UserStub[]
+  likes: UserStub[]
   images: any[]
 }
 

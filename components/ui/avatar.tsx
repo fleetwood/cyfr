@@ -1,8 +1,8 @@
-import { UserDetail, UserFeed, User, CyfrUser, UserSimple } from "../../prisma/prismaContext"
+import { UserDetail, UserFeed, User, CyfrUser, UserStub } from "../../prisma/prismaContext"
 import { AvatarSizeProps, cloudinary } from "../../utils/cloudinary"
 
 type AvatarProps = AvatarSizeProps & {
-  user?: CyfrUser | UserDetail | UserFeed | User | UserSimple
+  user?: CyfrUser | UserDetail | UserFeed | User | UserStub
   link?: boolean
   shadow?: boolean
   className?: string

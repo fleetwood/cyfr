@@ -5,7 +5,6 @@ export type BookList = Book & {
 }
 
 export const BookListInclude = {
-
 }
 
 export type BookFeed = Book & {

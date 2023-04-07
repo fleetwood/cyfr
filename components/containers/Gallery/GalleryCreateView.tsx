@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react"
 import useDebug from "../../../hooks/useDebug"
 import useFeed from "../../../hooks/useFeed"
-import { ImageCreateProps } from "../../../prisma/types"
+import { ImageUpsertProps } from "../../../prisma/types"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import Dropzone, { CompleteFile } from "../../forms/Dropzone"
@@ -20,7 +20,7 @@ const GalleryCreateView = ({limit=-1}) => {
   
   const [title, setTitle] = useState<string | null>(null)
   const [description, setDescription] = useState<string | null>(null)
-  const [images, setImages] = useState<ImageCreateProps[]>([])
+  const [images, setImages] = useState<ImageUpsertProps[]>([])
   const [createEnabled, setCreateEnabled] = useState(false)
   
   const { createGallery, invalidateFeed } = useFeed({ type: "gallery" })
@@ -31,7 +31,7 @@ const GalleryCreateView = ({limit=-1}) => {
       url: f.secure_url,
       height: f.height,
       width: f.width
-    } as unknown as ImageCreateProps })
+    } as unknown as ImageUpsertProps })
     debug('onFilesComplete',files)
     setImages((current) => [...current, ...setFiles])
   }

@@ -34,7 +34,7 @@ const UserDetailPostItem = ({ post }: UserPostDetailProps) =>
         {post.images?.length > 0 && post.images[0] !== null &&
           <GalleryPhotoswipe images={post.images} />
         }
-        
+      
       </div>
       <div className="flex flex-row justify-around py-4">
         {post.content && <PostItemFooter post={post} feed="user" />}

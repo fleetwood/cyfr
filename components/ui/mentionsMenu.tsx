@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import useDebug from "../../hooks/useDebug"
-import { UserDetail, UserSimple } from "../../prisma/prismaContext"
+import { UserDetail, UserStub } from "../../prisma/prismaContext"
 import { uniqueKey } from "../../utils/helpers"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
 import Avatar from "./avatar"
@@ -18,7 +18,7 @@ type MentionsMenuProps = {
 const MentionsMenu = ({onSelect, searchTerm, show = true, type='MENTION'}:MentionsMenuProps) => {
     const [cyfrUser] = useCyfrUserContext()
     const [showMenu, setShowMenu] = useState(show)
-    const [list, setList] = useState<Array<UserSimple>>([])
+    const [list, setList] = useState<Array<UserStub>>([])
     const [search, setSearch] = useState<string>('')
     const [isLoading, setIsLoading] = useState(true)
 
@@ -27,7 +27,7 @@ const MentionsMenu = ({onSelect, searchTerm, show = true, type='MENTION'}:Mentio
         onSelect(user)
     }
 
-    const cyfrUserList = ():UserSimple[] => type === 'MENTION'
+    const cyfrUserList = ():UserStub[] => type === 'MENTION'
         ? cyfrUser.canMention  // FOR MENTION TYPE, use the cyfrUser mentions
         : cyfrUser.messagable // FOR MESSAGE TYPE, use the cyfrUSer messagables
     || []

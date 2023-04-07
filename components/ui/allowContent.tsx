@@ -1,30 +1,22 @@
-import router, { NextRouter, useRouter } from "next/router";
 import { ReactNode } from "react";
+import { AudienceLevels, useAudience } from "../../hooks/useAudience";
 import useDebug from "../../hooks/useDebug";
-import { AccessProps, canAccess } from "../../prisma/types";
 const {debug} = useDebug('components/ui/allowContent', 'DEBUG')
 
-type AllowContentProps = AccessProps & {
+type AllowContentProps = {
   redirect?: string | undefined
   children: ReactNode
+  required: AudienceLevels
 //   router: NextRouter
-};
+}
 
 const AllowContent = ({
 //   router,
   required,
-  redirect,
-  cyfrUser,
   children
 }: AllowContentProps) => {
-  const allow = canAccess({ required, cyfrUser })
-  const router = useRouter()
-  debug('if allowed', {required, level: cyfrUser?.membership?.level, allow, redirect})
-  if (!allow && redirect !== undefined) {
-    router.push(redirect)
-  }
-
-  return <>{allow && (children)}</>
+    const {level, hasAccess} = useAudience(required)
+  return <>{hasAccess && (children)}</>
 };
 
-export default AllowContent;
+export default AllowContent

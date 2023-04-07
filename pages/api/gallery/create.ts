@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import useDebug from "../../../hooks/useDebug";
-import { Gallery, PrismaGallery } from "../../../prisma/prismaContext"
+import { Gallery, PrismaGallery, GalleryUpsertProps } from "../../../prisma/prismaContext"
 import {
   GetResponseError,
   ResponseError,
@@ -12,10 +12,10 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<Gallery>>
 ) {
-  const { authorId, title, description, images } = req.body.body
-  debug(`handle`,{ authorId, title, description, images })
+  const { galleryId, authorId, title, description, images, files } = req.body.body
+  debug(`handle`,{ galleryId, authorId, title, description, images, files })
   try {
-    const gallery = await PrismaGallery.createGallery({authorId, description, title, images})
+    const gallery = await PrismaGallery.upsertGallery({ galleryId, authorId, title, description, images, files })
     if (gallery) {
       res.status(200).json({ result: gallery })
     } else {

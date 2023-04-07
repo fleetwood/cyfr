@@ -1,22 +1,22 @@
 // @ts-nocheck
-import "photoswipe/dist/photoswipe.css";
+import "photoswipe/dist/photoswipe.css"
 
-import { Gallery as PhotoGallery, Item } from "react-photoswipe-gallery";
-import { ImageFeed, Image, Gallery  } from "../../../prisma/prismaContext";
-import { uniqueKey, uuid } from "../../../utils/helpers";
-import { cloudinary } from "../../../utils/cloudinary";
-import useDebug from "../../../hooks/useDebug";
-import { useState, useEffect } from "react";
+import { Gallery as PhotoGallery, Item } from "react-photoswipe-gallery"
+import { ImageFeed, Image, Gallery  } from "../../../prisma/prismaContext"
+import { uniqueKey, uuid } from "../../../utils/helpers"
+import { cloudinary } from "../../../utils/cloudinary"
+import useDebug from "../../../hooks/useDebug"
+import { useState, useEffect } from "react"
 
 const {debug} = useDebug('containers/Gallery/GalleryPhotoswipe')
 
 type GalleryPhotoswipeProps = {
   gallery?: Gallery | null
   items?: ItemProps[]
-  images?: ImageFeed[] | Image[]
+  images?: ImageFeed[]|Image[]
   key?: string
   onClick?: (e: MouseEvent<Element, MouseEvent>) => void
-};
+}
 
 const GalleryPhotoswipe = ({gallery, items, images, onClick, key = uuid()}:GalleryPhotoswipeProps) => {
   const [imageList, setImageList] = useState<Array<ItemProps>>([])
@@ -25,7 +25,7 @@ const GalleryPhotoswipe = ({gallery, items, images, onClick, key = uuid()}:Galle
 //     objectFit: "cover",
 //     width: "100%",
 //     maxHeight: "100%",
-//   };
+//   }
 
   const mapImages = (imageCollection:ImageFeed[]|Image[]) => {
     return imageCollection.map((img) => {
@@ -70,7 +70,7 @@ const GalleryPhotoswipe = ({gallery, items, images, onClick, key = uuid()}:Galle
         </div>
       </div>
     </PhotoGallery>
-  );
-};
+  )
+}
 
-export default GalleryPhotoswipe;
+export default GalleryPhotoswipe
