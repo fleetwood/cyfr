@@ -8,9 +8,9 @@ import { sendApi } from "../../../utils/api"
 import { ImageUpsertProps } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import Link from "next/link"
-const {debug} = useDebug("components/forms/Dropzone/UploadingFileView")
+const {debug} = useDebug("components/forms/Dropzone/UploadingFileView", 'DEBUG')
 
-const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
+const UploadFileView = ({file, onComplete, onRemove}: UploadFileViewProps) => {
   const [cyfrUser, loading] = useCyfrUserContext()
   const [fileProgress, setFileProgress] = useState<number>(0)
   const [fileErrors, setFileErrors] = useState<FileError[]>([])
@@ -50,9 +50,8 @@ const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
     }
   }
 
-  const onFileComplete = (e:any) => {
-    debug('onFileComplete', e)
-    // if (onComplete) onComplete(e)
+  const removeFile = (file:any) => {
+    debug('removeFile', file)
   }
 
   useEffect(() => {
@@ -68,12 +67,16 @@ const UploadFileView = ({file, onComplete}: UploadFileViewProps) => {
   }, [])
 
   return (
-    <div className="relative mb-2" key={file.id}>
+    <div className="relative mb-2 h-32" key={file.id}>
       {preview && 
         <div>
-            <img src={preview.secure_url} className="mask mask-squircle" />
+            <img src={preview.secure_url} className="mask mask-squircle max-h-32 h-32" />
             <div className="bg-success text-success-content overflow-hidden text-xs opacity-80 absolute bottom-6 mx-2 px-2 rounded-md">{preview.original_filename+'.'+preview.format}</div>
-        </div>}
+            {fileProgress>99 && onRemove && 
+              <label className="btn btn-sm btn-circle absolute right-0 top-0" onClick={() => onRemove(file)}>✕</label>
+            }
+        </div>
+      }
       {!preview && fileErrors.length < 1 && <Spinner />}
       <progress
         className={`progress h-2 px-2 absolute bottom-2 z-2 opacity-80 drop-shadow-md ${progressStyle(

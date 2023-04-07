@@ -11,6 +11,7 @@ const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm', 'DEB
 
 export type GalleryNestedProps = {
     gallery?:         GalleryFeed|Gallery|null
+    limit?:           number|null
     label?:           string
     labelClassName?:  string
     className?:       string
@@ -18,7 +19,7 @@ export type GalleryNestedProps = {
 }
 
 //todo Add/Remove images to/from existing gallery
-const GalleryUpsertForm = ({gallery, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
+const GalleryUpsertForm = ({gallery, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
     const [cyfrUser] = useCyfrUserContext()
     const [images, setImages] = useState<Image[]>([])
     const [files, setFiles] = useState<CompleteFile[]>([])
@@ -28,6 +29,11 @@ const GalleryUpsertForm = ({gallery, variant=null, className='', labelClassName=
     const onFilesComplete = async (files: CompleteFile[]) => {
       debug(`onFilesComplete`,files)
       setFiles((current) => [...current, ...files])
+    }
+  
+    const onFileRemove = async (file:any) => {
+      debug(`onFileRemove`,{file, files})
+      //todo: handle delete file from dropzone
     }
 
     const upsertGallery = async () => {
@@ -70,9 +76,8 @@ const GalleryUpsertForm = ({gallery, variant=null, className='', labelClassName=
         {variant!=='no-title' && variant!=='no-description' &&
         <TailwindInput type='text' label='Description' value={description} setValue={setDescription} />
         }
-        <Dropzone limit={5} onUploadComplete={onFilesComplete} >
-            <GalleryPhotoswipe gallery={gallery} />
-        </Dropzone>
+        <GalleryPhotoswipe gallery={gallery} />
+        <Dropzone limit={limit!} onUploadComplete={onFilesComplete} onUploadRemove={onFileRemove} />
       </label>
     </div>
   )

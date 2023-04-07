@@ -38,10 +38,12 @@ export interface UploadableFile {
 export type DropzoneProps = {
   limit?: number
   onUploadComplete?: Function
+  onUploadRemove?: Function
   children?: ReactNode
 }
 
 export interface UploadFileViewProps {
   file: UploadableFile
   onComplete?: Function
+  onRemove?: Function
 }
