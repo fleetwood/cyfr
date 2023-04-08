@@ -10,7 +10,7 @@ import GalleryPhotoswipe from './GalleryPhotoswipe'
 const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm', 'DEBUG')
 
 export type GalleryNestedProps = {
-    gallery?:         GalleryFeed|Gallery|null
+    gallery?:         GalleryFeed
     limit?:           number|null
     label?:           string
     labelClassName?:  string
@@ -21,19 +21,24 @@ export type GalleryNestedProps = {
 //todo Add/Remove images to/from existing gallery
 const GalleryUpsertForm = ({gallery, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
     const [cyfrUser] = useCyfrUserContext()
-    const [images, setImages] = useState<Image[]>([])
-    const [files, setFiles] = useState<CompleteFile[]>([])
-    const [title, setTitle] = useState<string|null>(null)
+    const [images, setImages] = useState<Image[]>(gallery?.images ?? [])
+    const [title, setTitle] = useState<string|null>(gallery?.title ?? null)
     const [description, setDescription] = useState<string|null>(null)
   
-    const onFilesComplete = async (files: CompleteFile[]) => {
-      debug(`onFilesComplete`,files)
-      setFiles((current) => [...current, ...files])
+    const onFilesComplete = async (images: Image[]) => {
+      debug(`onFilesComplete`,images)
+      setImages((current) => [...current, ...images])
     }
   
-    const onFileRemove = async (file:any) => {
-      debug(`onFileRemove`,{file, files})
-      //todo: handle delete file from dropzone
+    const onFileChange = async (file:Image) => { 
+      // const path = file.file.path
+      debug(`onFileRemove`,{file, images})
+      const fileChange = images.map(f => {
+        return {
+          ...f,
+          visible: file.id === f.id ? file.visible : f.visible
+        }})
+      setImages(c => [...fileChange])
     }
 
     const upsertGallery = async () => {
@@ -43,19 +48,15 @@ const GalleryUpsertForm = ({gallery, limit = 5, variant=null, className='', labe
         description,
         authorId: cyfrUser.id,
         images: images,
-        // files: files.map((img,idx) => {return {
-        //   // @ts-ignore
-        //   id: img.id || undefined,
-        //   authorId: cyfrUser.id,
-        //   // @ts-ignore
-        //   url: img.url || img.secure_url,
-        //   height: img.height,
-        //   width: img.width,
-        //   galleryId: gallery?.id||undefined
-        // }})
+        //todo: add delete button
       }
       const result = await sendApi('gallery/upsert', newGallery)
+      if (result) {
+        debug('Gallery updated!')
+      }
     }
+
+    const isValid = () => images.filter(i => i.visible).length > 0
 
     useEffect(() => {
       if (gallery && Object.hasOwn(gallery,'images')) {
@@ -77,7 +78,8 @@ const GalleryUpsertForm = ({gallery, limit = 5, variant=null, className='', labe
         <TailwindInput type='text' label='Description' value={description} setValue={setDescription} />
         }
         <GalleryPhotoswipe gallery={gallery} />
-        <Dropzone limit={limit!} onUploadComplete={onFilesComplete} onUploadRemove={onFileRemove} />
+        <Dropzone limit={limit!} onDropComplete={onFilesComplete} onDropChange={onFileChange} />
+        <button className='btn btn-primary' disabled={!isValid()} onClick={upsertGallery}>Save</button>
       </label>
     </div>
   )

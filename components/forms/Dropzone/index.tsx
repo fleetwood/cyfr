@@ -5,10 +5,9 @@ import UploadFileView from "./UploadingFileView"
 import { UploadableFile, CompleteFile, DropzoneProps } from "./types.defs"
 import {Image as PrismaImage} from './../../../prisma/prismaContext'
 import useDebug from "../../../hooks/useDebug"
-import Image from "next/image"
 const {debug, jsonBlock} = useDebug("components/forms/Dropzone/index", 'DEBUG')
 
-function Dropzone({limit=-1, onUploadComplete, onUploadRemove, children}:DropzoneProps) {
+function Dropzone({limit=-1, onDropComplete, onDropChange, children}:DropzoneProps) {
   const [files, setFiles] = useState<UploadableFile[]>([])
   const [rejected, setRejected] = useState<UploadableFile[]>([])
   const [completedFiles, setCompletedFiles] = useState<PrismaImage[]>([])
@@ -33,12 +32,12 @@ function Dropzone({limit=-1, onUploadComplete, onUploadRemove, children}:Dropzon
     setCompletedFiles((current) => [...current, e])
   }, [])
 
-  const onFileRemove = (file:any) => onUploadRemove ? onUploadRemove(file) : {}
+  const onFileChange = (file:any) => onDropChange ? onDropChange(file) : {}
 
   useEffect(() => {
     if (files.length > 0 && completedFiles.length===files.length) {
-      if (onUploadComplete) {
-        onUploadComplete(completedFiles)
+      if (onDropComplete) {
+        onDropComplete(completedFiles)
       }
     }
   }, [completedFiles])
@@ -82,7 +81,7 @@ function Dropzone({limit=-1, onUploadComplete, onUploadRemove, children}:Dropzon
             </div>
           )}
           {files.map(file => (
-            <UploadFileView {...{file}} onComplete={onFileComplete} onRemove={onFileRemove} key={file.id} />
+            <UploadFileView {...{file}} onUploadComplete={onFileComplete} onUploadChange={onFileChange} key={file.id} />
           ))}
         </div>
       </div>

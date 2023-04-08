@@ -27,6 +27,7 @@ export type CompleteFile = {
   metadata: any
   existing: boolean
   original_filename: string
+  visible: boolean
 }
 
 export interface UploadableFile {
@@ -37,13 +38,13 @@ export interface UploadableFile {
 
 export type DropzoneProps = {
   limit?: number
-  onUploadComplete?: Function
-  onUploadRemove?: Function
+  onDropComplete?: Function
+  onDropChange?: Function
   children?: ReactNode
 }
 
 export interface UploadFileViewProps {
   file: UploadableFile
-  onComplete?: Function
-  onRemove?: Function
+  onUploadComplete?: Function
+  onUploadChange?: Function
 }
