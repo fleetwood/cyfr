@@ -73,7 +73,6 @@ const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileView
 
   const RemoveButton = ({img}:{img:Image}) => {
     const {visible} = img;
-    debug('RemoveButton', {img, visible})
     return visible 
     ? <label className="btn btn-sm btn-circle bg-warning absolute right-0 top-0" onClick={() => removeFile(img)}>✕</label>
     : <label className="btn btn-sm btn-circle bg-success absolute right-0 top-0" onClick={() => unRemoveFile(img)}>+</label>

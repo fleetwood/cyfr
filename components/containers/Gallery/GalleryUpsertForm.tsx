@@ -16,10 +16,11 @@ export type GalleryNestedProps = {
     labelClassName?:  string
     className?:       string
     variant?:         'no-title'|'no-description'|null
+    onUpsert?:        Function
 }
 
 //todo Add/Remove images to/from existing gallery
-const GalleryUpsertForm = ({gallery, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
+const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
     const [cyfrUser] = useCyfrUserContext()
     const [images, setImages] = useState<Image[]>(gallery?.images ?? [])
     const [title, setTitle] = useState<string|null>(gallery?.title ?? null)
@@ -51,8 +52,10 @@ const GalleryUpsertForm = ({gallery, limit = 5, variant=null, className='', labe
         //todo: add delete button
       }
       const result = await sendApi('gallery/upsert', newGallery)
-      if (result) {
-        debug('Gallery updated!')
+      if (result?.data) {
+        const upsertGallery = result.data
+        debug('upsertGallery', {upsertGallery})
+        if (onUpsert) onUpsert(result.data)
       }
     }
 

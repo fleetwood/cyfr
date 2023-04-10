@@ -141,28 +141,35 @@ const addImages = async ({ id, images }: GalleryAddImageProps) => {
 const upsertGallery = async(props:GalleryUpsertProps) => {
   debug('upsertGallery', props)
   try {
-    if (!props.galleryId) return createGallery({
-      title: props.title,
-      authorId: props.authorId,
-      description: props.description,
-      // images: props.images?.map((img) => { return {
-      //   authorId: img.authorId,
-      //   url: img.url,
-      //   height: img.height ?? img.width,
-      //   width: img.width
-      // }})
-    })
+    if (!props.galleryId) return createGallery(props)
     else {
+      debug('upserting')
       const result = await prisma.gallery.update({
         where: {id:props.galleryId},
         data: {
           updatedAt: now(),
           title: props.title,
           description: props.description,
-          authorId: props.authorId
+          authorId: props.authorId,
+          images: {
+            connectOrCreate: [
+              props.images?.map(img => { return {
+                id: img.id,
+                authorId: img.authorId,
+                url: img.url,
+                visible: img.visible,
+                height: img.height,
+                width: img.width,
+                title: img.title
+              }}) as any
+            ]
+          }
         }
       })
-      
+      if (result) {
+        return result
+      }
+      throw({code: fileMethod('upsert'), message: 'Failed upserting (update) gallery'})
     }
   } catch (error) {
     throw { code: fileMethod, message: "Unable to create gallery" }
@@ -174,43 +181,32 @@ const upsertGallery = async(props:GalleryUpsertProps) => {
  * @param authorId :String
  * @param title :String | null
  * @param description: String | null
- * @param images: ImageCreateProps[] | null | undefined
+ * @param images: {@link ImageUpsertProps}[] | null | undefined
  * @returns: {@link Gallery}
  */
-const createGallery = async ({
-  authorId,
-  title,
-  description,
-  // images,
-}: GalleryCreateProps) => {
+const createGallery = async ({authorId,title,description,images,}: GalleryCreateProps) => {
   try {
-    // debug(`createGallery`, { authorId, title, description, images })
-    const data = false ?
-      {
+    debug(`createGallery`, {authorId, title, description, images})
+    const result = await prisma.gallery.create({
+      data: {
         authorId,
         title,
         description,
-        // images: {
-        //   createMany: {
-        //     data: images
-        //   }
-        // }
+        images: {
+          connect: images?.map(img => {
+            return {id: img.id}
+          })
+        }
       }
-      :
-      {
-        authorId,
-        title,
-        description,
-      }
-    debug(`createGallery`, data)
-    const result = await prisma.gallery.create({data})
+    })
 
     if (result) {
       return result
     }
-    throw { code: fileMethod, message: "Unable to create gallery" }
+    // throw { code: fileMethod, message: "Failed to create gallery" }
   } catch (error) {
     info(`createGallery ERROR`, error)
+    throw(error)
   }
 }
 

@@ -8,10 +8,10 @@ import { cloudinary } from "../../../utils/cloudinary"
 import useDebug from "../../../hooks/useDebug"
 import { useState, useEffect } from "react"
 
-const {debug} = useDebug('containers/Gallery/GalleryPhotoswipe')
+const {debug} = useDebug('containers/Gallery/GalleryPhotoswipe', 'DEBUG')
 
 type GalleryPhotoswipeProps = {
-  gallery?: Gallery | null
+  gallery?: GalleryDetail | null
   items?: ItemProps[]
   images?: ImageFeed[]|Image[]
   key?: string
@@ -28,7 +28,7 @@ const GalleryPhotoswipe = ({gallery, items, images, onClick, key = uuid()}:Galle
 //   }
 
   const mapImages = (imageCollection:ImageFeed[]|Image[]) => {
-    return imageCollection.map((img) => {
+    return imageCollection.filter(img => img !== null).map((img) => {
       return {
         original: img.url,
         thumbnail: cloudinary.thumb({url: img.url, width:60}),
@@ -43,12 +43,18 @@ const GalleryPhotoswipe = ({gallery, items, images, onClick, key = uuid()}:Galle
   }
 
   useEffect(() => {
-    setImageList(() => 
-      items ? items :
-      images ? mapImages(images) :
-      gallery ? mapImages(gallery.images) :
-      []
-    )
+    debug('useEffect', {...items, ...images, gallery: gallery})
+    try {
+      setImageList(() => 
+        items ? items :
+        images?.length > 0 ? mapImages(images) :
+        gallery?.images?.length > 0 ? mapImages(gallery.images) :
+        []
+      )
+    }
+    catch(e) {
+      debug('useEffect FAIL', e)
+    }
   }, [])
   
   return (

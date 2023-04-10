@@ -23,7 +23,7 @@ export type GalleryCreateProps = {
   authorId: string
   title?: string|null
   description?: string|null
-  // images?: ImageUpsertProps[]|null
+  images?: ImageUpsertProps[]|Image[]|null
 }
 
 export type GalleryEngageProps = {
