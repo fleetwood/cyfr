@@ -68,7 +68,7 @@ const GenreAdmin = ({editGenre}:GenreAdminProps) => {
             <h2>Edit Genres</h2>
             <TailwindInput type="text" label="Genre Title" placeholder="Make sure no typos! Title is used as a key" value={title} setValue={setTitle} />
             <TailwindInput type="text" label="Description" placeholder="Gotta give a description. HTMLInput forthcoming..." value={description} setValue={setDescription} />
-            <GalleryUpsertForm label="Covers" gallery={gallery} className='pt-2' labelClassName="text-primary" variant='no-title' />
+            {/* <GalleryUpsertForm label="Covers" gallery={gallery} className='pt-2' labelClassName="text-primary" variant='no-title' /> */}
             {/* <Toggler checked={fiction} setChecked={setFiction} trueLabel="Non-Fiction" falseLabel="Fiction" variant="primary" /> */}
             <div className="flex justify-between">
                 <button className="btn btn-primary rounded-lg text-primary-content px-4" onClick={upsertGenre} disabled={title===null || description === null}>Adminstrate</button>

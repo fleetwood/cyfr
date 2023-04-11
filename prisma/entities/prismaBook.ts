@@ -1,14 +1,15 @@
+import ReactHtmlParser from 'react-html-parser'
 import {
   Book,
-  BookCreateProps,
+  BookUpsertProps,
   BookDeleteProps,
   BookDetail,
   BookDetailInclude,
-  PrismaGenre,
-} from "../prismaContext";
-import useDebug from "../../hooks/useDebug";
+} from "../prismaContext"
+import useDebug from "../../hooks/useDebug"
+import { dedupe } from '../../utils/helpers'
 
-const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook");
+const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
 
 const byId = async (id: string): Promise<BookDetail | null> => {
   try {
@@ -18,11 +19,11 @@ const byId = async (id: string): Promise<BookDetail | null> => {
         active: true,
       },
       include: BookDetailInclude,
-    })) as unknown as BookDetail;
+    })) as unknown as BookDetail
   } catch (error) {
-    throw { code: fileMethod("byId"), message: "No book was returned!" };
+    throw { code: fileMethod("byId"), message: "No book was returned!" }
   }
-};
+}
 
 const byUser = async (id: string): Promise<BookDetail[]> => {
   try {
@@ -36,61 +37,68 @@ const byUser = async (id: string): Promise<BookDetail[]> => {
         active: true,
       },
       include: BookDetailInclude,
-    });
+    })
     if (books) {
-      return books as unknown as BookDetail[];
+      return books as unknown as BookDetail[]
     }
     throw {
       code: fileMethod("byUser"),
       message: `Failed to find books for ${id}`,
-    };
+    }
   } catch (error) {
-    info(fileMethod("byUser"), { id, error });
-    return [];
+    info(fileMethod("byUser"), { id, error })
+    return []
   }
-};
+}
 
-const createBook = async (props:BookCreateProps): Promise<BookDetail|null> => {
+const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
     try {
+        const {title, slug, hook, synopsis, back, status, active, prospect, words} = props
         const data =  {
-            authors: {
-              connect: {
-                id: props.authorId
-              }
-            },
-            back: props.back,
-            genre: {
-              connect: {
-                id: props.genreId
-              }
-            },
-            status: 'DRAFT',
-            words: 0,
-            ...{props}
+          title,
+          slug: encodeURIComponent(slug || title.replaceAll(' ','-')).toLowerCase(),
+          hook,
+          synopsis,
+          back,
+          status,
+          active,
+          prospect,
+          words,
+          authors: {
+            connect: dedupe(props.authors.map(a => { return {id: a.id}}),'id')
+          },
+          genre: {
+            connect: {
+              id: props.genreId
+            }
+          }
         }
-        debug('createBook', {data, props})
+
+        debug('createBook', data)
         todo('createBook',`
-            1. assure user information
             2. if a cover hasn't been uploaded, obtain the default for the genre
-            3. add default covers to Genre
             4. categories, oy
         `)
+        const result = prisma.book.create({data, include: BookDetailInclude})
+        if (result) {
+          return result as unknown as BookDetail
+        }
         throw({code: fileMethod('createBook'), message: 'Not yet implemented'})
     } catch (error) {
         info('createBook', {error})
-        return null
+        throw(error)
     }
 }
 
 const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | undefined> => {
   try {
     debug("deleteBook", { bookId, authorId })
-    todo("deleteBook", "Make sure author deleting the book is an owner.");
-    throw { code: fileMethod("deleteBook"), message: "Not implemented" };
+    todo("deleteBook", "Make sure author deleting the book is an owner.")
+    throw { code: fileMethod("deleteBook"), message: "Not implemented" }
   } catch (error) {
-    info("deleteBook ERROR: ", error);
-    throw { code: fileMethod("deleteBook"), message: "Book was not deleted!" };
+    info("deleteBook ERROR: ", error)
+    throw { code: fileMethod("deleteBook"), message: "Book was not deleted!" }
   }
-};
+}
 
-export const PrismaBook = { byId, byUser, createBook, deleteBook };
+export const PrismaBook = { byId, byUser, upsert, deleteBook }

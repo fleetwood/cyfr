@@ -108,7 +108,7 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
             <TailwindInput label="Display Name" type="text" inputClassName="input input-bordered focus:border-primary" value={cyfrName} setValue={setCyfrName} />
             <button className="btn btn-primary btn-sm" onClick={onNameChange}>{SaveIcon}</button>
             <h3 className="h-title">Avatar</h3>
-            <Dropzone onUploadComplete={onFileComplete} limit={1} >
+            <Dropzone onDropComplete={onFileComplete} limit={1} >
               <img src={cloudinary.resize({url: cyfrUser.image!, width: 200})} />
             </Dropzone>
           </div>

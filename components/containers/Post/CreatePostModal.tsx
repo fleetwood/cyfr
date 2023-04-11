@@ -76,7 +76,7 @@ const CreatePostModal = (): JSX.Element => {
                   setValid={setIsValid}
                 />
 
-                <Dropzone limit={5} onUploadComplete={onFilesComplete} />
+                <Dropzone limit={5} onDropComplete={onFilesComplete} />
 
                 <div className="w-full grid place-items-end mt-2">
                   <button

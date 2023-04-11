@@ -1,4 +1,4 @@
-import { Book, BookCategory, BookStatus, Chapter, Character, Follow, Gallery, Genre, Like, User } from "../prismaContext";
+import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, Genre, Image, Like, User } from "../prismaContext";
 
 export type BookList = Book & {
 
@@ -33,10 +33,11 @@ export type BookDetail = Book & {
   categories: BookCategory[],
   chapters: Chapter[],
   characters: Character[],
-  fans: Follow[],
+  follows: Follow[],
   gallery: Gallery,
   genre: Genre,
   likes: Like[]
+  cover: Image
 }
 
 export const BookDetailInclude = {
@@ -44,23 +45,27 @@ export const BookDetailInclude = {
   categories: true,
   chapters: true,
   characters: true,
-  fans: true,
+  follows: true,
   gallery: true,
   genre: true,
-  likes: true
+  likes: true,
+  cover: true
 }
 
-export type BookCreateProps = {
-  cover: string
-  title: string,
-  active: boolean,
-  prospect: boolean,
-  authorId: string,
-  genreId: string,
-  categories?: BookCategory[] | null,
-  back?: string,
-  status?: BookStatus|null,
-  synopsis?: string
+export type BookUpsertProps = {
+  cover:        string
+  title:        string,
+  slug?:        string,
+  active:       boolean,
+  prospect:     boolean,
+  authors:      User[]|CyfrUser[],
+  genreId:      string,
+  status?:      BookStatus|null,
+  categories?:  BookCategory[] | null,
+  back?:        string,
+  hook?:        string,
+  synopsis?:    string
+  words?:       number
 }
 
 export type BookDeleteProps = {

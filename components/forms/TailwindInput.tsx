@@ -2,14 +2,21 @@ import React from "react"
 import { TailwindFormProps } from "../../types/props"
 
 type twInputProps = TailwindFormProps & {
-  type: "text" | "email" | "date" | "checkbox";
+  type: "text" | "email" | "date" | "checkbox"
+  required?: boolean
 }
 
-const TailwindInput = ({label, type, value, setValue, cardClassName, labelClassName, inputClassName, placeholder=''}:twInputProps) => {
+const TailwindInput = ({label, type, value, setValue, cardClassName, labelClassName, inputClassName, placeholder='', required=false}:twInputProps) => {
+  const IsRequired = () => {
+    return required 
+    ? (<span className='sups' aria-label='Required'>*</span>) 
+    : (<span className='sups' aria-label='Optional'>?</span>)
+  }
+
   return (
     <label className={`block ${cardClassName||''}`}>
       {label &&
-        <span className={labelClassName+' text-primary font-bold'}>{label}</span>
+        <span className={labelClassName+' text-primary font-bold'}>{label}<IsRequired /></span>
       }
       <input
         type={type}
@@ -23,10 +30,9 @@ const TailwindInput = ({label, type, value, setValue, cardClassName, labelClassN
           border-none
           bg-base-200
           text-base-content
-          focus:border-base-content 
-          focus:ring 
-          focus:ring-accent-focus 
-          focus:ring-opacity-50
+          focus:border-2
+          focus:border-primary
+          focus:border-opacity-20
           ${inputClassName}`}
         placeholder={placeholder}
         value={value||''}
