@@ -34,10 +34,12 @@ const byTitle = async (title:string):Promise<Genre[]> => {
 
 const all = async (): Promise<GenreListItem[]> => {
   try {
-    const result =  await prisma.$queryRaw`select * FROM f_genre_all()`
+    const result =  await prisma.$queryRaw`SELECT * FROM v_genre_all`
+    
     if (result) {
       return result as GenreListItem[]
     }
+    
     throw({code: fileMethod('all'), message: 'No results returned'})
   } catch (error) {
     throw { code: fileMethod("all"), message: "No genres were returned!" }

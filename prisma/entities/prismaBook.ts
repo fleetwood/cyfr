@@ -14,7 +14,7 @@ const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook", 'DEBUG
 const details = async (idOrTitleOrSlug:string) => {
   try {
     const result:any[] = await prisma.$queryRaw`SELECT * 
-      FROM v_book_details 
+      FROM v_book_detail 
       WHERE id = ${idOrTitleOrSlug}
         OR LOWER(title) = LOWER(${idOrTitleOrSlug})
         OR LOWER(slug) = LOWER(${idOrTitleOrSlug})

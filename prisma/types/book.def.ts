@@ -1,7 +1,20 @@
 import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, Genre, Image, Like, User, UserStub } from "../prismaContext"
 
-export type BookList = Book & {
-
+export type BookStub = Book & {
+  authors: {
+    id: string
+    name: string
+    email: string
+    image: string
+    follows: UserStub[],
+    followers: UserStub[],
+    postCount: number
+  }[],
+  cover?: Image
+  genre: Genre
+  likes: UserStub[]
+  follows: UserStub[]
+  chapters: Chapter[]
 }
 
 export const BookListInclude = {
