@@ -11,6 +11,24 @@ import { dedupe } from '../../utils/helpers'
 
 const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
 
+const details = async (idOrTitleOrSlug:string) => {
+  try {
+    const result:any[] = await prisma.$queryRaw`SELECT * 
+      FROM v_book_details 
+      WHERE id = ${idOrTitleOrSlug}
+        OR LOWER(title) = LOWER(${idOrTitleOrSlug})
+        OR LOWER(slug) = LOWER(${idOrTitleOrSlug})
+      `
+    if (result.length>0) {
+      return result[0] as BookDetail
+    }
+    throw { code: fileMethod("details"), message: "No book was returned!" }
+  } catch (error) {
+    info('details FAIL', error)
+    throw(error)
+  }
+}
+
 const byId = async (id: string): Promise<BookDetail | null> => {
   try {
     return (await prisma.book.findFirst({
@@ -101,4 +119,4 @@ const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | u
   }
 }
 
-export const PrismaBook = { byId, byUser, upsert, deleteBook }
+export const PrismaBook = { details, byId, byUser, upsert, deleteBook }

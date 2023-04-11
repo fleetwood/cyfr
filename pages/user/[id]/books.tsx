@@ -34,7 +34,7 @@ const UserBooksPage = ({ user, books }: InferGetServerSidePropsType<typeof getSe
         {canEdit && (
           <UpsertBook />
         )}
-        {books && books.map(book => <UpsertBook book={book} key={uniqueKey(user,book)} />)}
+        {books && books.map(book => <UpsertBook link={true} book={book} key={uniqueKey(user,book)} />)}
       </div>
     </MainLayout>
   ) : (

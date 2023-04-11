@@ -1,4 +1,4 @@
-import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, Genre, Image, Like, User } from "../prismaContext";
+import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, Genre, Image, Like, User, UserStub } from "../prismaContext"
 
 export type BookList = Book & {
 
@@ -28,16 +28,34 @@ export const BookFeedInclude = {
   likes: true
  }
 
-export type BookDetail = Book & {
-  authors: User[],
+export type BookDetail = {
+  authors: UserStub[]
+  id: string
+  createdAt: string
+  updatedAt: string
+  startedAt: string | null
+  completeAt: string | null
+  active: boolean
+  status: BookStatus | null
+  prospect: boolean
+  fiction: boolean
+  title: string
+  slug: string
+  coverId: string | null
+  hook: string | null
+  synopsis: string | null
+  back: string | null
+  words: number
+  galleryId: string | null
   categories: BookCategory[],
-  chapters: Chapter[],
   characters: Character[],
-  follows: Follow[],
   gallery: Gallery,
-  genre: Genre,
+  genreId: string
+  genre: Genre
   likes: Like[]
+  follows: Follow[]
   cover: Image
+  chapters: Chapter[]
 }
 
 export const BookDetailInclude = {

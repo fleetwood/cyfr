@@ -10,6 +10,7 @@ import {
   Character,
   Gallery,
   User,
+  UserStub,
 } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import { getApi, sendApi } from "../../../utils/api"
@@ -26,14 +27,16 @@ import EZButton from "../../ui/ezButton"
 import Toggler from "../../ui/toggler"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import { cloudinary } from "../../../utils/cloudinary"
+import Link from "next/link"
 
 const { debug } = useDebug("components/containers/Books/UpsertBook", "DEBUG")
 
 type UpsertBookProps = {
   book?: BookDetail
+  link?: boolean
 }
 
-const UpsertBook = ({ book }: UpsertBookProps) => {
+const UpsertBook = ({ book, link = false }: UpsertBookProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const { notify } = useToast()
 
@@ -55,7 +58,7 @@ const UpsertBook = ({ book }: UpsertBookProps) => {
   )
   const [back, setBack] = useState<string | null>(book?.back || null)
   const [words, setWords] = useState<number>(book?.words || 0)
-  const [authors, setAuthors] = useState<User[]>(book?.authors || [])
+  const [authors, setAuthors] = useState<UserStub[]>(book?.authors || [])
   const [chapters, setChapters] = useState<Chapter[]>(book?.chapters || [])
   const [characters, setCharacters] = useState<Character[]>(
     book?.characters || []
@@ -125,15 +128,21 @@ const UpsertBook = ({ book }: UpsertBookProps) => {
       }
     }
     getGenres()
-    setAuthors(() => [
-        ...authors,
-        cyfrUser
-    ])
+    setAuthors(() => cyfrUser 
+      ? [
+          ...authors,
+          {id: cyfrUser.id, name: cyfrUser.name, image: cyfrUser.image} as UserStub
+        ]
+      : authors
+    )
   }, [])
 
   return (
     <div className="bg-base-100 rounded-lg p-4">
-      <h2 className="h-subtitle">{book ? book.title : "New Book"}</h2>
+      {link && book?.slug
+        ? <Link href={`/book/${book.slug}`} ><h2 className="h-subtitle">{book.title}</h2></Link>
+        : <h2 className="h-subtitle">{book?.title ?? "New Book"}</h2>
+      }
       {showEditor && (
         <div className="flex flex-col space-y-4">
           <TailwindInput
