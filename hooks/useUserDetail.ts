@@ -9,7 +9,7 @@ const {debug, info} = useDebug('useUserDetails')
 export const userDetailQuery = "userDetailQuery"
 
 async function getUser(userid:String) {
-  const data = await getApi(`user/byId/${userid}`)
+  const data = await getApi(`user/${userid}`)
   if (data.result) {
     const user = data.result
     return user
