@@ -1,5 +1,6 @@
 import useDebug from "../../../hooks/useDebug"
 import { BookStub } from "../../../prisma/prismaContext"
+import { isBookAuthor } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent', 'DEBUG')
@@ -10,7 +11,7 @@ type BookComponentProps = {
 
 const BookComponent = ({book}: BookComponentProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const isOwner = cyfrUser ? book.authors.filter(a => a.id === cyfrUser.id).length > 0 : false
+  const isOwner = isBookAuthor(book, cyfrUser)
   return (
     <div>
       <div>{book.id}</div>

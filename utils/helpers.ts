@@ -1,5 +1,6 @@
 import { v4 as uid } from 'uuid'
 import useDebug from '../hooks/useDebug'
+import { BookDetail, BookStub, CyfrUser, Follow } from '../prisma/types'
 
 const {debug} = useDebug('utils')
 
@@ -175,4 +176,14 @@ export const valToLabel = (val: number) => {
 export function hasOwnProperty<X extends {}, Y extends PropertyKey>
   (obj: X, prop: Y): obj is X & Record<Y, unknown> {
   return obj.hasOwnProperty(prop)
+}
+
+export function isBookAuthor(book:BookDetail|BookStub, cyfrUser:CyfrUser|null) {
+  const isOwner = cyfrUser && book.authors ? book.authors.filter(a => a.id === cyfrUser.id).length > 0 : false
+  debug('isBookAuthor',{title: book.title, authors: ((book.authors||[]).map(a => a.name)), user: cyfrUser?.name ?? 'No cyfrUser', isOwner})
+  return isOwner
+}
+
+export function onlyFans(follow:Follow[]) {
+  return follow.filter(f => f.isFan)
 }
