@@ -1,7 +1,7 @@
 import useDebug from "../../hooks/useDebug"
 import { now } from "../../utils/helpers"
 import {
-  Book, Chapter, GalleryCreateProps, GalleryDetail, GalleryEngageProps, GalleryFeed, GalleryFeedInclude, GalleryUpsertProps, ImageUpsertProps, Like, Share
+  Book, Chapter, GalleryCreateProps, GalleryDetail, GalleryEngageProps, GalleryStub, GalleryStubInclude, GalleryUpsertProps, ImageUpsertProps, Like, Share
 } from "../prismaContext"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGallery', 'DEBUG')
@@ -86,15 +86,15 @@ const share = async ({
 
 /**
  * Using `prisma.gallery.findMany`
- * @returns: {@link GalleryFeed}
+ * @returns: {@link GalleryStub}
  */
-const all = async (): Promise<GalleryFeed[]> => {
+const all = async (): Promise<GalleryStub[]> => {
   try {
     const g = await prisma.gallery.findMany({
       where: {
         visible: true,
       },
-      include: GalleryFeedInclude,
+      include: GalleryStubInclude,
       orderBy: {
         updatedAt: "desc",
       },

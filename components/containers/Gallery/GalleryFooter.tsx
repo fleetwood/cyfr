@@ -6,12 +6,12 @@ import { LoggedIn } from "../../ui/toasty"
 
 import useDebug from "../../../hooks/useDebug"
 import useFeed, { FeedTypes } from "../../../hooks/useFeed"
-import { GalleryDetail, GalleryFeed } from "../../../prisma/prismaContext"
+import { GalleryDetail, GalleryStub } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import AvatarList from "../../ui/avatarList"
 
 type GalleryFooterProps = {
-  gallery: GalleryDetail | GalleryFeed
+  gallery: GalleryDetail | GalleryStub
   feed: FeedTypes
 }
 

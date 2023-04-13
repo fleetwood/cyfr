@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { GalleryFeed } from "./../../../prisma/prismaContext";
+import { GalleryStub } from "./../../../prisma/prismaContext";
 import { uniqueKey } from '../../../utils/helpers';
 
 type GalleryItemViewProps = {
-  gallery: GalleryFeed;
+  gallery: GalleryStub
 };
 
 const GalleryItemView = ({ gallery }: GalleryItemViewProps) => (

@@ -1,40 +1,25 @@
 import { InferGetServerSidePropsType } from "next";
-import { useEffect, useState } from "react";
-import UpsertBook from "../../../components/containers/Books/UpsertBook";
-import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
+import BookComponent from "../../../components/containers/Books/BookComponent";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { PrismaBook, PrismaUser } from "../../../prisma/prismaContext";
-import { uniqueKey } from "../../../utils/helpers";
+import { PrismaUser } from "../../../prisma/prismaContext";
 
 export async function getServerSideProps(context: any) {
-  const user = await PrismaUser.userInSessionContext(context)
-  const books = user ? await PrismaBook.byUser(user.id) : []
+  const user = await PrismaUser.detail(context.query.id)
 
   return {
     props: {
-      books,
       user,
     },
   };
 }
 
-const UserBooksPage = ({ user, books }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [cyfrUser] = useCyfrUserContext()
+const UserBooksPage = ({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) => {  
   const title = `Books by ${user ? user.name : 'Nobody'}`
-  const [canEdit, setCanEdit] = useState<boolean>(false)
-
-  useEffect(() => {
-    setCanEdit(() => cyfrUser !== undefined && user !== undefined && user !== null && cyfrUser.id === user!.id)
-  }, [cyfrUser, user])
-
 
   return user ? (
     <MainLayout pageTitle={title} sectionTitle={title}>
       <div className="flex flex-col space-y-4">
-        {canEdit && (
-          <UpsertBook />
-        )}
-        {books && books.map(book => <UpsertBook link={true} book={book} key={uniqueKey(user,book)} />)}
+        {user.books && user.books.map(book => <BookComponent book={book} key={book.id} />)}
       </div>
     </MainLayout>
   ) : (
@@ -42,6 +27,7 @@ const UserBooksPage = ({ user, books }: InferGetServerSidePropsType<typeof getSe
       <div className="bg-error text-error-content">Failed to find that user....</div>
     </MainLayout>
   )
+  
 }
 
 export default UserBooksPage

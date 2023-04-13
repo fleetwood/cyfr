@@ -12,7 +12,7 @@ export default async function handle(
 ) {
   const id = req.query.id?.toString() || ""
   try {
-    const result = await PrismaUser.getCyfrUser(id)
+    const result = await PrismaUser.detail(id)
     if (!result)  {
       throw { code: fileMethod('handle'), message: `No results for (${id})` }
     }

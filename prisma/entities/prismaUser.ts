@@ -78,7 +78,7 @@ const follow = async (props:FollowProps): Promise<Follow> => {
   }
 };
 
-const getCyfrUser = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => {
+const detail = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => {
   debug('getCyfrUser', {idOrNameOrEmail})
   try {
     if (!idOrNameOrEmail) {
@@ -119,7 +119,7 @@ const userInSessionReq = async (
   try {
     const session = await getSession({ req });
     debug('userInSessionReq', session)
-    return getCyfrUser(session?.user?.email||'')
+    return detail(session?.user?.email||'')
   } catch (e) {
     debug('userInSessionReq FAIL', e)
     return null;
@@ -129,7 +129,7 @@ const userInSessionReq = async (
 const userInSessionContext = async (context: GetSessionParams | undefined): Promise<CyfrUser | null> => {
   try {
     const session = await getSession(context);
-    return getCyfrUser(session?.user?.email||'')
+    return detail(session?.user?.email||'')
   } catch (error) {
     info(fileMethod("userInSessionContext"), { error });
     return null;
@@ -225,7 +225,7 @@ const updatePreferences = async ({
 
 export const PrismaUser = {
   allUsersQuery,
-  getCyfrUser,
+  detail,
   userInSessionContext,
   userInSessionReq,
   userCurrentlyOnline,

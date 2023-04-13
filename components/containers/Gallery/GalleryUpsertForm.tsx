@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useDebug from '../../../hooks/useDebug'
-import { Gallery, GalleryCreateProps, GalleryFeed, GalleryUpsertProps, Image } from '../../../prisma/prismaContext'
+import { Gallery, GalleryCreateProps, GalleryStub, GalleryUpsertProps, Image } from '../../../prisma/prismaContext'
 import { sendApi } from '../../../utils/api'
 import { useCyfrUserContext } from '../../context/CyfrUserProvider'
 import Dropzone, { CompleteFile } from '../../forms/Dropzone'
@@ -10,7 +10,7 @@ import GalleryPhotoswipe from './GalleryPhotoswipe'
 const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm', 'DEBUG')
 
 export type GalleryNestedProps = {
-    gallery?:         GalleryFeed
+    gallery?:         GalleryStub
     limit?:           number|null
     label?:           string
     labelClassName?:  string

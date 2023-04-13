@@ -12,9 +12,10 @@ export type BookStub = Book & {
   }[],
   cover?: Image
   genre: Genre
-  likes: UserStub[]
-  follows: UserStub[]
-  chapters: Chapter[]
+  categories: BookCategory[]
+  likes: Number
+  follows: Number
+  chapters: Number
 }
 
 export const BookListInclude = {

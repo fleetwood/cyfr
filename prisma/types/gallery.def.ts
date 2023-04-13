@@ -31,13 +31,13 @@ export type GalleryEngageProps = {
   galleryId: string
 }
 
-export type GalleryFeed = Gallery & {
+export type GalleryStub = Gallery & {
   images: Image[] // todo: include likes and shares
   likes: Like[]
   shares: Share[]
 }
 
-export const GalleryFeedInclude = {
+export const GalleryStubInclude = {
   images: {
     include: {
       _count: {
