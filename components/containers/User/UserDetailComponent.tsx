@@ -7,7 +7,7 @@ import { useToast } from "../../context/ToastContextProvider"
 import Avatar from "../../ui/avatar"
 import { FireIcon, HeartIcon } from "../../ui/icons"
 import ShrinkableIconButton from "../../ui/shrinkableIconButton"
-import BookThumb from "../Books/BookThumb"
+import BookCover from "../Books/BookCover"
 import GalleryItemView from "../Gallery/GalleryItemView"
 import UserDetailPostItem from "../Post/UserDetailPostItem"
 
@@ -194,7 +194,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           <h2 className="subtitle">Books</h2>
           <div className="bg-base-100 my-4 p-4 rounded-md">
             {currentUser?.books.map(book => (
-              <BookThumb book={book} key={book.id} />
+              <BookCover book={book} key={book.id} />
             ))}
           </div>
         </div>

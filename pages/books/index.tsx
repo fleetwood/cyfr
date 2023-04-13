@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import BookThumb from "../../components/containers/Books/BookThumb";
+import BookCover from "../../components/containers/Books/BookCover";
 import TailwindInput from "../../components/forms/TailwindInput";
 import MainLayout from '../../components/layouts/MainLayout';
 import EZButton from "../../components/ui/ezButton";
@@ -56,7 +56,7 @@ const BooksPage = ({genres}: BooksPageProps) => {
           </div>
           <div className="grid grid-cols-3 justify-between gap-2 py-4">
             {visibleBooks.filter(b => b !== null).map((book) => (
-                <BookThumb book={book} key={uniqueKey(book)} />
+                <BookCover book={book} key={uniqueKey(book)} />
             ))}
           </div>
           {jsonBlock(visibleGenres)}
