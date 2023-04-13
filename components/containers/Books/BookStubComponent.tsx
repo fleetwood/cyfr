@@ -9,7 +9,7 @@ type BookComponentProps = {
   book: BookStub
 }
 
-const BookComponent = ({book}: BookComponentProps) => {
+const BookStubComponent = ({book}: BookComponentProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const isOwner = isBookAuthor(book, cyfrUser)
   return (
@@ -43,4 +43,4 @@ const BookComponent = ({book}: BookComponentProps) => {
   )
 }
 
-export default BookComponent
+export default BookStubComponent

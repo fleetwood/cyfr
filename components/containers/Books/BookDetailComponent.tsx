@@ -3,6 +3,8 @@ import { BookDetail } from "../../../prisma/prismaContext"
 import { isBookAuthor, onlyFans, uniqueKey, valToLabel } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import Avatar from "../../ui/avatar"
+import EZButton from "../../ui/ezButton"
+import { FeatherIcon } from "../../ui/icons"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import BookCover, { BookCoverVariant } from "./BookCover"
 
@@ -26,22 +28,26 @@ const BookDetailComponent = ({book}: BookComponentProps) => {
       }
       
       <div>
-        <div>{book.hook}</div>
+        <div>{book.words} words</div>
+        <div className="my-4 text-xl font-ibarra">{book.hook}</div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <div>{book.words} words</div>
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
+        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
           <label className="font-semibold w-[50%]">Status</label>
-          <span className="text-primary">{book.status}</span>
+          <span className="text-secondary">{book.status}</span>
         </div>
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
+        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
           <label className="font-semibold w-[50%]">Completed</label>
-          <span className="text-primary">{book.completeAt ?? 'TBD'}</span>
+          <span className="text-secondary">{book.completeAt ?? 'TBD'}</span>
         </div>
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
+        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
           <label className="font-semibold w-[50%]">Prospecting</label>
-          <span className="text-primary">{book.prospect ? 'YES' : 'NO'}</span>
+          <span className="text-secondary">{book.prospect ? 'YES' : 'NO'}</span>
+        </div>
+        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
+          <label className="font-semibold w-[50%]">Public</label>
+          <span className="text-secondary">{book.active ? 'YES' : 'NO'}</span>
         </div>
       </div>
 
@@ -79,25 +85,42 @@ const BookDetailComponent = ({book}: BookComponentProps) => {
             <span className="text-primary">(NI)</span>
           </div>
         </div>
-      
 
-      <div>
-        <h2>Back Panel</h2>
-        <div>{book.back}</div>
+      <div className="my-4">
+        <div className="flex">
+          <h3>Back Panel</h3>
+          {isAuthor && FeatherIcon}
+        </div>
+        <div className="font-ibarra">{book.back}</div>
       </div>
-      <div>
-        <h2>Synopsis</h2>
-        <div>{book.synopsis}</div>
+
+      <div className="my-4">
+        <div className="flex">
+          <h3>Synopsis</h3>
+          {isAuthor && FeatherIcon}
+        </div>
+        <div className="font-ibarra">{book.synopsis}</div>
       </div>
-      <div>
-        <h2>Characters</h2>
+      
+      <div className="my-4">
+        <div className="flex">
+          <h3>Characters</h3>
+          {isAuthor && FeatherIcon}
+        </div>
       </div>
-      <div>
-        <h2>Gallery</h2>
-        {book.gallery && <GalleryPhotoswipe gallery={book.gallery} />}
-        {!book.gallery && <>No gallery</>}
+
+      {(book.gallery || isAuthor) && 
+      <div className="my-4">
+        <div className="flex">
+          <h3>Gallery</h3>
+          {isAuthor && FeatherIcon}
+        </div>
+        <GalleryPhotoswipe gallery={book.gallery} />
       </div>
+      }
+
       {isAuthor && jsonBlock(book)}
+      
     </div>
   )
 }

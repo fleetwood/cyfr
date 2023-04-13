@@ -1,5 +1,5 @@
 import { InferGetServerSidePropsType } from "next";
-import BookComponent from "../../../components/containers/Books/BookComponent";
+import BookStubComponent from "../../../components/containers/Books/BookStubComponent";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { PrismaUser } from "../../../prisma/prismaContext";
 
@@ -19,7 +19,7 @@ const UserBooksPage = ({ user }: InferGetServerSidePropsType<typeof getServerSid
   return user ? (
     <MainLayout pageTitle={title} sectionTitle={title}>
       <div className="flex flex-col space-y-4">
-        {user.books && user.books.map(book => <BookComponent book={book} key={book.id} />)}
+        {user.books && user.books.map(book => <BookStubComponent book={book} key={book.id} />)}
       </div>
     </MainLayout>
   ) : (
