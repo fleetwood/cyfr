@@ -34,9 +34,10 @@ const { debug } = useDebug("components/containers/Books/UpsertBook", "DEBUG")
 type UpsertBookProps = {
   book?: BookDetail
   link?: boolean
+  onUpsert?: Function
 }
 
-const UpsertBook = ({ book, link = false }: UpsertBookProps) => {
+const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const { notify } = useToast()
 
@@ -92,7 +93,7 @@ const UpsertBook = ({ book, link = false }: UpsertBookProps) => {
     if (upsert.result) {
         const book = upsert.result
         notify({message: `Created ${book.title}! Happy writing!!`})
-        
+        if (onUpsert) onUpsert(book)
     }
     else {
         debug('Did not get right result?', upsert.result)
