@@ -15,7 +15,7 @@ const BookByID = (props: InferGetServerSidePropsType<typeof getServerSideProps>)
   const [cyfrUser] = useCyfrUserContext();
   const book:BookDetail = props.book as BookDetail
   const by = book.authors.flatMap((author) => author.name).join(" and ");
-  //todo: This should be handled by a commune...
+  //TODO This should be handled by a commune...
   const isAuthor = (book.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0
   return (
     <MainLayout

@@ -19,7 +19,7 @@ export type GalleryNestedProps = {
     onUpsert?:        Function
 }
 
-//todo Add/Remove images to/from existing gallery
+//TODO Add/Remove images to/from existing gallery
 const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
     const [cyfrUser] = useCyfrUserContext()
     const [images, setImages] = useState<Image[]>(gallery?.images ?? [])
@@ -49,7 +49,7 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
         description,
         authorId: cyfrUser.id,
         images: images,
-        //todo: add delete button
+        //TODO: add delete button
       }
       const result = await sendApi('gallery/upsert', newGallery)
       if (result?.data) {

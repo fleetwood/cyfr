@@ -35,6 +35,7 @@ const BookDetailComponent = ({book}: BookComponentProps) => {
         <div>{book.fiction ? 'FICTION' : 'NON-FICTION'}</div>
         <div className="flex">
           <span className="font-semibold text-primary-content mr-4">{book.genre.title}</span>
+          {/* TODO Categories view is broken in db */}
           {book.categories.filter(c => c!==null).map(cat => (<span className="italic mr-2">{cat.title}</span>))}
         </div>
         <div>{book.words} words</div>

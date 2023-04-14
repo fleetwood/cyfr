@@ -52,7 +52,7 @@ export const GalleryStubInclude = {
 }
 
 export type GalleryDetail = Gallery & {
-  // todo: add shares and likes back in to the gallery
+  // TODO add shares and likes back in to the gallery
   author: User
   shares: UserStub[]
   likes: UserStub[]

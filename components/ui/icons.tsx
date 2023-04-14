@@ -1,4 +1,4 @@
-//todo Need to add the ability to change fill, stroke and class
+// TODO Need to add the ability to change fill, stroke and class
 export type svgProps = {
   fill?: string
   stroke?: string
