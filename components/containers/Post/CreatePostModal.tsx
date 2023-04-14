@@ -4,7 +4,7 @@ import useFeed from "../../../hooks/useFeed"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import Dropzone, { CompleteFile } from "../../forms/Dropzone"
-import RemirrorEditor from "../../ui/RemirrorEditor"
+import RemirrorEditor from "../../forms/SocialTextarea"
 import { LoggedIn } from "../../ui/toasty"
 
 const {debug} = useDebug("components/containers/Post/CreatePost")

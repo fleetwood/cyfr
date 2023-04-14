@@ -30,7 +30,7 @@ const {debug, todo} = useDebug("RemirrorEditor")
 
 type MentionItem = { id: string, label: string }
 
-type RemirrorEditorProps = {
+type InlineTextareaProps = {
   placeholder?: string
   content?: string | null
   setContent?: Dispatch<SetStateAction<string | null>>
@@ -39,35 +39,21 @@ type RemirrorEditorProps = {
   maxChar?: number
 }
 
-const RemirrorEditor = ({
+const InlineTextarea = ({
   placeholder,
   content,
   setContent,
   maxChar = -1,
   setValid,
-}: RemirrorEditorProps) => {
+}: InlineTextareaProps) => {
   const [ cyfrUser ] = useCyfrUserContext()
-  const [mentions, setMentions] = useState<MentionItem[]>([])
-  const [search, setSearch] = useState("")
   const [count, setCount] = useState(-1)
   const [perc, setPerc] = useState(0)
 
   let extensions = [
     new BoldExtension(),
     new ItalicExtension(),
-    new EmojiExtension({ data }),
     new PlaceholderExtension({ placeholder }),
-    new MentionAtomExtension({
-      extraAttributes: { type: "user" },
-      matchers: [
-        {
-          name: "at",
-          char: "@",
-          matchOffset: 0,
-          mentionClassName: "user-mention",
-        },
-      ],
-    }),
     new CountExtension({ maximum: maxChar }),
   ]
 
@@ -79,10 +65,6 @@ const RemirrorEditor = ({
 
   const htmlString = (doc: Node | undefined) =>
     doc ? prosemirrorNodeToHtml(doc) : null
-
-  const mentionSelect = (
-    e: MentionAtomState<MentionAtomNodeAttributes> | null
-  ) => setSearch(() => (e ? e.query.full : ""))
 
   const onChange = (
     params: RemirrorEventListenerProps<Remirror.Extensions>
@@ -101,19 +83,6 @@ const RemirrorEditor = ({
     }
   }
 
-  const get = () => {
-    setMentions((m) => (cyfrUser?.canMention || [])
-      .map(m => {return {id: m.id, label: m.name}})
-      .filter((m) => m.label.toLowerCase().indexOf(search.toLowerCase()) >= 0))
-  }
-
-  useEffect(() => {
-    get()
-  }, [])
-  useEffect(() => {
-    get()
-  }, [search])
-
   return (
     <div className="remirror-theme bg-base-200 text-base-content rounded-md">
       <Remirror
@@ -122,8 +91,6 @@ const RemirrorEditor = ({
         onChange={(p) => onChange(p)}
         autoFocus
       >
-        <EmojiPopupComponent />
-        <MentionAtomPopupComponent items={mentions} onChange={mentionSelect} />
         <EditorComponent />
       </Remirror>
       {maxChar > 0 && (
@@ -136,4 +103,4 @@ const RemirrorEditor = ({
   )
 }
 
-export default dynamic(() => Promise.resolve(RemirrorEditor), { ssr: false })
+export default dynamic(() => Promise.resolve(InlineTextarea), { ssr: false })

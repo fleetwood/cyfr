@@ -35,6 +35,11 @@ const BookStubComponent = ({book, authorAvatars}: BookComponentProps) => {
       }
       
       <div>
+        <div className="flex">
+          <span>{book.fiction ? 'FICTION' : 'NON-FICTION'}</span>
+          <span>{book.genre.title}</span>
+          {book.categories.map(cat => (<span className="">{cat.title}</span>))}
+        </div>
         <div>{book.words} words</div>
         <div className="my-4 text-xl font-ibarra">{book.hook}</div>
       </div>

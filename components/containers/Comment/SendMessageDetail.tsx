@@ -4,7 +4,7 @@ import { uniqueKey, timeDifference } from "../../../utils/helpers";
 import TailwindInput from "../../forms/TailwindInput";
 import Avatar from "../../ui/avatar";
 import { ChatSendIcon } from "../../ui/icons";
-import RemirrorEditor from "../../ui/RemirrorEditor";
+import RemirrorEditor from "../../forms/SocialTextarea";
 import ReactHtmlParser from "react-html-parser"
 import MentionsMenu from "../../ui/mentionsMenu";
 import useDebug from "../../../hooks/useDebug";
