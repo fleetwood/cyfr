@@ -2,28 +2,44 @@ import { InferGetServerSidePropsType } from "next";
 import BookDetailComponent from "../../components/containers/Books/BookDetailComponent";
 import { useCyfrUserContext } from "../../components/context/CyfrUserProvider";
 import MainLayout from "../../components/layouts/MainLayout";
-import { BookDetail, PrismaBook } from "../../prisma/prismaContext";
+import { BookDetail, PrismaBook, UserStub } from "../../prisma/prismaContext";
+import { Router, useRouter } from "next/router";
+import { useQuery, useQueryClient } from "react-query";
+import Spinner from "../../components/ui/spinner";
+import useDebug from "../../hooks/useDebug";
+import { getApi } from "../../utils/api";
+import useBookDetail from "../../hooks/useBookDetail";
+import EZButton from "../../components/ui/ezButton";
 
-export async function getServerSideProps(context: any) {
-  const id = context.params["id"];
-  const book = await PrismaBook.details(id)
+const {debug, info} = useDebug('pages/book/[id]', 'DEBUG')
 
-  return { props: { book } }
-}
+const BookByID = ({}) => {
+  const router = useRouter()
+  const {id} = router.query
 
-const BookByID = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [cyfrUser] = useCyfrUserContext();
-  const book:BookDetail = props.book as BookDetail
-  const by = book.authors.flatMap((author) => author.name).join(" and ");
-  //TODO This should be handled by a commune...
-  const isAuthor = (book.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0
+  const {book, isLoading, error, invalidate} = useBookDetail(((id||'').toString()))
+  const by = (book?.authors||[]).flatMap((author:UserStub) => author.name).join(" and ");
+  //todo: This should be handled by a commune...
+  const isAuthor = (book?.authors||[]).filter((a:UserStub) => a.id === cyfrUser?.id).length > 0
   return (
     <MainLayout
-      pageTitle={`${book.title} by ${by}`}
-      sectionTitle={book.title}
+      pageTitle={`${book?.title} by ${by}`} 
+      sectionTitle={book?.title}
       subTitle={by}
     >
-      <BookDetailComponent book={book} />
+      <div className="book-loading"><div>
+        <div></div><div></div><div></div><div></div>  
+      </div></div>
+      {isLoading &&
+        <Spinner />
+      }
+      {book &&
+        <>
+        <EZButton label="Refresh" whenClicked={invalidate} variant="info" />
+        <BookDetailComponent book={book} />
+        </>
+      }
     </MainLayout>
   );
 };

@@ -2,7 +2,7 @@
 import ReactHtmlParser from "react-html-parser"
 import useDebug from "../../../hooks/useDebug"
 import { BookDetail } from "../../../prisma/prismaContext"
-import { isBookAuthor, onlyFans, uniqueKey, valToLabel } from "../../../utils/helpers"
+import { isBookAuthor, onlyFans, uniqueKey, valToLabel, ymd } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import InlineTextarea from "../../forms/InlineTextarea"
 import Avatar from "../../ui/avatar"
@@ -49,7 +49,7 @@ const BookDetailComponent = ({book}: BookComponentProps) => {
         </div>
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
           <label className="font-semibold w-[50%]">Completed</label>
-          <span className="text-secondary">{book.completeAt ?? 'TBD'}</span>
+          <span className="text-secondary">{book.completeAt ? ymd(new Date(book.completeAt)) : 'TBD'}</span>
         </div>
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
           <label className="font-semibold w-[50%]">Prospecting</label>
