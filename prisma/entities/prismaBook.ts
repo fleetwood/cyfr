@@ -1,16 +1,22 @@
 import useDebug from "../../hooks/useDebug"
+import { GenericResponseError, ResponseError } from "../../types/response"
 import { dedupe } from '../../utils/helpers'
 import {
   Book,
   BookDeleteProps,
   BookDetail,
   BookDetailInclude,
+  BookFollowProps,
   BookUpsertProps,
+  Follow,
+  Like,
+  LikeProps,
+  prisma
 } from "../prismaContext"
 
 const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
 
-const details = async (idOrTitleOrSlug:string) => {
+const detail = async (idOrTitleOrSlug:string) => {
   try {
     const result:any[] = await prisma.$queryRaw`SELECT * 
       FROM v_book_detail 
@@ -107,6 +113,80 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
     }
 }
 
+const follow = async (props:BookFollowProps): Promise<Follow> => {
+  const {followerId, bookId, isFan} = props;
+  try {
+    // we have to do this crazy little dance because composites in Follow model
+    const exists = await prisma.follow.findFirst({
+      where: {
+        followerId,
+        bookId
+      }
+    })
+    const data = {followerId,bookId,isFan}
+    const include = {follower: true,following: true}
+    debug('follow', {followerId, bookId, data})
+
+    const follow = exists 
+      ? await prisma.follow.update({
+        where: {id: exists.id},
+        data,
+        include
+      })
+      : await prisma.follow.create({
+        data,
+        include
+      })
+    if (!follow) {
+      throw({code: fileMethod('follow'), message: 'Unable to follow book'})
+    }
+    return follow;
+  } catch (error) {
+    debug(`follow ERROR`, {
+      ...{ props },
+      ...{ error },
+    });
+    throw GenericResponseError(error as unknown as ResponseError);
+  }
+}
+
+const like = async (props:LikeProps): Promise<Like> => {
+  const {authorId, bookId} = props;
+  try {
+    // we have to do this crazy little dance because composites in Follow model
+    const exists = await prisma.like.findFirst({
+      where: {
+        authorId: authorId.toString(),
+        bookId: authorId.toString()
+      }
+    })
+    const data = {
+      authorId: authorId.toString(),
+      bookId: authorId.toString()
+    }
+    debug('like', {authorId, bookId, data})
+
+    const like = exists 
+      ? await prisma.like.update({
+        where: {id: exists.id},
+        data
+      })
+      : await prisma.like.create({
+        data
+      })
+    if (!like) {
+      throw({code: fileMethod('like'), message: 'Unable to like book'})
+    }
+    return like;
+  } catch (error) {
+    debug(`like ERROR`, {
+      ...{ props },
+      ...{ error },
+    });
+    throw GenericResponseError(error as unknown as ResponseError);
+  }
+}
+
 const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | undefined> => {
   try {
     debug("deleteBook", { bookId, authorId })
@@ -118,4 +198,4 @@ const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | u
   }
 }
 
-export const PrismaBook = { details, byId, byUser, upsert, deleteBook }
+export const PrismaBook = { detail, byId, byUser, upsert, follow, like, deleteBook }

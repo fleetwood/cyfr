@@ -1,13 +1,14 @@
 
 import ReactHtmlParser from "react-html-parser"
+import useBookApi from "../../../hooks/useBookApi"
 import useDebug from "../../../hooks/useDebug"
 import { BookDetail } from "../../../prisma/prismaContext"
 import { isBookAuthor, onlyFans, uniqueKey, valToLabel, ymd } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import { useToast } from "../../context/ToastContextProvider"
 import InlineTextarea from "../../forms/InlineTextarea"
 import Avatar from "../../ui/avatar"
 import { FeatherIcon, FireIcon, FollowIcon, HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
-import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import BookCover, { BookCoverVariant } from "./BookCover"
@@ -15,12 +16,40 @@ import BookCover, { BookCoverVariant } from "./BookCover"
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent', 'DEBUG')
 
 type BookComponentProps = {
-  book: BookDetail
+  book:       BookDetail
+  onUpdate?:  () => void
 }
 
-const BookDetailComponent = ({book}: BookComponentProps) => {
+const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
+  const {notify, loginRequired} = useToast()
   const [cyfrUser] = useCyfrUserContext()
+  const {like,follow} = useBookApi(book)
   const isAuthor = isBookAuthor(book, cyfrUser)
+
+  const onFollow = async () => {
+    if (!cyfrUser) {
+      loginRequired()
+      return null
+    }
+    const result = await follow(cyfrUser.id)
+    if (result) {
+      notify(`You are now following ${book.title}. Nice!`)
+      if (onUpdate) { onUpdate()}
+    }
+  }
+
+  const onLike = async () => {
+    if (!cyfrUser) {
+      loginRequired()
+      return null
+    }
+    const result = await like(cyfrUser.id)
+    if (result) {
+      notify(`You liked ${book.title}.`)
+      if (onUpdate) { onUpdate()}
+    }
+  }
+
   return (
     <div>
       {book.authors?.map((author) => 
@@ -63,7 +92,7 @@ const BookDetailComponent = ({book}: BookComponentProps) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
           <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-            <ShrinkableIconLabel iconClassName="text-primary-content" labelClassName="text-primary-content font-semibold" label="Likes" icon={HeartIcon} onClick={() => {}} />
+            <ShrinkableIconLabel iconClassName="text-primary-content" labelClassName="text-primary-content font-semibold" label="Likes" icon={HeartIcon} onClick={onLike} />
             <span className="text-primary">{valToLabel(book.likes?.length??0)}</span>
           </div>
           <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
@@ -71,7 +100,7 @@ const BookDetailComponent = ({book}: BookComponentProps) => {
             <span className="text-primary">(NI)</span>
           </div>
           <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-            <ShrinkableIconLabel iconClassName="text-primary-content" labelClassName="text-primary-content font-semibold" label="Follows" icon={FollowIcon} onClick={() => {}} />
+            <ShrinkableIconLabel iconClassName="text-primary-content" labelClassName="text-primary-content font-semibold" label="Follows" icon={FollowIcon} onClick={onFollow} />
             <span className="text-primary">{valToLabel(book.follows?.length??0)}</span>
           </div>
           <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">

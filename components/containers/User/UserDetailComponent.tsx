@@ -37,10 +37,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
     })
 
     if (result) {
-      notify({
-        message: `You are now following ${currentUser.name}!`,
-        type: "success",
-      })
+      notify(`You are now following ${currentUser.name}!`,"success",)
     }
     invalidateUser()
   }
@@ -55,10 +52,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
     })
 
     if (result) {
-      notify({
-        message: `You are stanning ${currentUser.name}!!! Nice!`,
-        type: "success",
-      })
+      notify(`You are stanning ${currentUser.name}!!! Nice!`,"success")
     }
     invalidateUser()
   }

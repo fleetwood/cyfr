@@ -8,7 +8,7 @@ import {
 import {
   Audience,
   CyfrUser, Follow,
-  FollowProps,
+  UserFollowProps,
   prisma, User, UserFeed,
   UserFeedInclude, UserStub
 } from "../prismaContext";
@@ -35,7 +35,7 @@ const allUsersQuery = async ({
   }
 };
 
-const follow = async (props:FollowProps): Promise<Follow> => {
+const follow = async (props:UserFollowProps): Promise<Follow> => {
   const {followerId, followingId, isFan} = props;
   try {
     if (followerId === followingId) {

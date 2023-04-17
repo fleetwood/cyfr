@@ -36,10 +36,7 @@ const GalleryCreateView = ({limit=-1}) => {
 
     // const gallery = await createGallery(data)
     if (!gallery) {
-      notify({
-        type: "warning",
-        message: `Uh. Ya that didn't work. Weird.`,
-      })
+      notify(`Uh. Ya that didn't work. Weird.`,'warning')
     } else {
       invalidateFeed()
       setChecked(false)

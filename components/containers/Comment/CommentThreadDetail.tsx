@@ -26,7 +26,7 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
 
     const onSend = async () => {
         if (!canSend || !message) {
-            notify({type: 'warning', message: "That didn't work...."})
+            notify("That didn't work....",'warning')
         }
         
         const data = {
@@ -42,7 +42,7 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
         const send = await sendMessage(data)
         
         if (send) {
-            notify({type: 'success', message: "Message sent!"})
+            notify("Message sent!")
             setMessage(() => null)
             invalidateFeed({type: 'inbox'})
         }

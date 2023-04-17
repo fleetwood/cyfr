@@ -42,10 +42,10 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
     }
     const inbox = await (await sendMessage(inboxProps))?.data.result
     if (inbox) {
-        notify({type: 'success', message: 'Message sent!'})
+        notify('Message sent!')
         onCreate(inbox)
     } else {
-        notify({type: 'warning', message: `Well that didn't work, sorry!`})
+        notify(`Well that didn't work, sorry!`,'warning')
     }
    }
 

@@ -92,12 +92,12 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
     const upsert = await (await sendApi("book/upsert", bookProps)).data
     if (upsert.result) {
         const book = upsert.result
-        notify({message: `Created ${book.title}! Happy writing!!`})
+        notify(`Created ${book.title}! Happy writing!!`)
         if (onUpsert) onUpsert(book)
     }
     else {
         debug('Did not get right result?', upsert.result)
-        notify({type: 'warning', message: `Ya that dint work`})
+        notify(`Ya that dint work`,'warning')
     }
   }
 

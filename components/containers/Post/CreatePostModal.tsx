@@ -39,10 +39,7 @@ const CreatePostModal = (): JSX.Element => {
     const post = await createPost(postData)
 
     if (!post) {
-      notify({
-        type: "warning",
-        message: `Uh. Ya that didn't work. Weird.`,
-      })
+      notify(`Uh. Ya that didn't work. Weird.`,'warning')
     } else {
       setContent(null)
       setImages(() => [])

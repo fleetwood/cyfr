@@ -8,7 +8,7 @@ import { cloudinary } from "../../../utils/cloudinary"
 import useDebug from "../../../hooks/useDebug"
 import { useState, useEffect } from "react"
 
-const {debug} = useDebug('containers/Gallery/GalleryPhotoswipe', 'DEBUG')
+const {debug} = useDebug('containers/Gallery/GalleryPhotoswipe')
 
 type GalleryPhotoswipeProps = {
   gallery?: GalleryDetail | null

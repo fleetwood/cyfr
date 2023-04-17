@@ -8,7 +8,7 @@ import { InferGetServerSidePropsType } from "next";
 
 export async function getServerSideProps(context: any) {
     const bookSlug = context.params['book-slug']
-    const book = await PrismaBook.details(bookSlug)
+    const book = await PrismaBook.detail(bookSlug)
     
   return { props: { book } }
 }

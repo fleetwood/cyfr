@@ -5,7 +5,7 @@ import { getApi, sendApi } from "../utils/api"
 import { __cyfr_refetch__ } from "../utils/constants"
 
 import useDebug from "./useDebug"
-const {debug, info, fileMethod} = useDebug("useCyfrUser", 'DEBUG')
+const {debug, info, fileMethod} = useDebug("useCyfrUser")
 
 const cyfrUserQuery = "cyfrUserQuery"
 

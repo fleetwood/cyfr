@@ -23,16 +23,13 @@ const GalleryFooter = ({
 }: GalleryFooterProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const { shareGallery, likeGallery, invalidateFeed } = useFeed({ type })
-  const { notify } = useToast()
+  const { notify, loginRequired } = useToast()
   const { setCommentId, showComment, hideComment } = useCommentContext()
   const isMain = type === "main"
 
   const isLoggedIn = () => {
     if (!cyfrUser) {
-      notify({
-        type: "warning",
-        message: <LoggedIn />,
-      })
+      loginRequired()
       return false
     }
     return true
@@ -54,11 +51,11 @@ const GalleryFooter = ({
       authorId: cyfrUser!.id,
     })
     if (liked) {
-      notify({ type: "success", message: "You liked this gallery!" })
+      notify("You liked this gallery!")
       invalidateFeed()
       return
     }
-    notify({ type: "warning", message: "Well that didn't work..." })
+    notify(`Uh. Ya that didn't work. Weird.`,'warning')
   }
 
   const handleShare = async () => {
@@ -70,11 +67,11 @@ const GalleryFooter = ({
       authorId: cyfrUser!.id,
     })
     if (shared) {
-      notify({ type: "success", message: "You shared this gallery!!!" })
+      notify("You shared this gallery!!!")
       invalidateFeed()
       return
     }
-    notify({ type: "warning", message: "Well that didn't work..." })
+    notify(`Uh. Ya that didn't work. Weird.`,'warning')
   }
 
   return (

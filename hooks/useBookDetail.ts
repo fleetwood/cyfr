@@ -1,18 +1,11 @@
 
-import { UseQueryResult, useQuery, useQueryClient } from "react-query"
-import useDebug from "./useDebug"
+import { useState } from "react"
+import { useQuery, useQueryClient } from "react-query"
 import { BookDetail } from "../prisma/prismaContext"
 import { getApi } from "../utils/api"
-import { useState } from "react"
+import useDebug from "./useDebug"
 
 const { debug, info } = useDebug("BookDetailProvider", "DEBUG")
-
-type UseBookDetails = {
-  book:       BookDetail,
-  isLoading:  boolean, 
-  error:      any, 
-  invalidate: Function
-}
 
 const useBookDetail = (bookId:string) => {
   const qc = useQueryClient()
@@ -24,20 +17,6 @@ const useBookDetail = (bookId:string) => {
   const [book, setBook] = useState<BookDetail|null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<any>()
-
-  // @ts-ignore
-  const onSettled = (data, error) => {
-    // debug(`useBookDetail.onSettled()`)
-    setIsLoading(() => false)
-    if (error || data?.error || null) {
-      info(`onSettled ERROR`, { error, data })
-      setError(data.error)
-    }
-    if (data) {
-      debug(`onSettled SUCCESS`, { book: data.title })
-      setBook(() => data as BookDetail)
-    }
-  }
 
   const invalidate = () => {
     info('invalidate',["bookDetail", bookId])
@@ -52,6 +31,7 @@ const useBookDetail = (bookId:string) => {
         setIsLoading(false)
         if (error || data === null) {
           info(`onSettled ${["bookDetail", bookId]} ERROR`, { error, data })
+          setError(error)
         }
         if (data) {
           debug(`onSettled`, data)
