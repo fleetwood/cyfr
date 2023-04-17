@@ -1,8 +1,10 @@
+import { Router, useRouter } from "next/router"
 import useDebug from "../../../hooks/useDebug"
 import { BookStub } from "../../../prisma/prismaContext"
 import { isBookAuthor, onlyFans, uniqueKey, valToLabel } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import Avatar from "../../ui/avatar"
+import EZButton from "../../ui/ezButton"
 import { BookIcon, DollarIcon, HeartIcon, ReplyIcon, ShareIcon, StarIcon, UserIcon } from "../../ui/icons"
 import BookCover, { BookCoverVariant } from "./BookCover"
 
@@ -16,6 +18,8 @@ type BookComponentProps = {
 const BookStubComponent = ({book, authorAvatars}: BookComponentProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const isOwner = isBookAuthor(book, cyfrUser)
+  const router = useRouter()
+
   return (
     <div>
       
@@ -35,10 +39,11 @@ const BookStubComponent = ({book, authorAvatars}: BookComponentProps) => {
       }
       
       <div>
+        {isOwner && <EZButton label="EDIT" whenClicked={() => router.push(`/book/${book.title}`)} /> }
         <div className="flex">
           <span>{book.fiction ? 'FICTION' : 'NON-FICTION'}</span>
           <span>{book.genre.title}</span>
-          {book.categories.filter(m => m !== null).map(cat => (<span className="">{cat.title}</span>))}
+          {book.categories.filter(m => m !== null).map(cat => (<span className="" key={cat.id}>{cat.title}</span>))}
         </div>
         <div>{book.words} words</div>
         <div className="my-4 text-xl font-ibarra">{book.hook}</div>
@@ -51,7 +56,7 @@ const BookStubComponent = ({book, authorAvatars}: BookComponentProps) => {
           </div>
           <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
             <label className="font-semibold mr-2">{ShareIcon}</label>
-            <span className="text-primary">(NI)</span>
+            <span className="text-primary">{valToLabel(book.likes as number)}</span>
           </div>
           <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
             <label className="font-semibold mr-2">{UserIcon}</label>

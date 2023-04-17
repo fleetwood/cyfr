@@ -2,9 +2,6 @@ import { CountExtension } from "@remirror/extension-count"
 import { Node } from "@remirror/pm/dist-types/model"
 import {
   EditorComponent,
-  EmojiPopupComponent,
-  MentionAtomPopupComponent,
-  MentionAtomState,
   Remirror,
   useRemirror
 } from "@remirror/react"
@@ -13,29 +10,30 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
-  useEffect,
   useState
 } from "react"
 import {
-  prosemirrorNodeToHtml, RemirrorEventListenerProps
+  RemirrorEventListenerProps,
+  prosemirrorNodeToHtml
 } from "remirror"
 import {
-  BoldExtension, EmojiExtension, ItalicExtension,
-  MentionAtomExtension, MentionAtomNodeAttributes, PlaceholderExtension
+  BoldExtension,
+  ItalicExtension,
+  PlaceholderExtension
 } from "remirror/extensions"
-import data from "svgmoji/emoji.json"
 import useDebug from "../../hooks/useDebug"
-import { useCyfrUserContext } from "../context/CyfrUserProvider"
-const {debug, todo} = useDebug("RemirrorEditor")
+import EZButton from "../ui/ezButton"
+const {debug, todo} = useDebug("InlineTextArea")
 
 type MentionItem = { id: string, label: string }
 
 type InlineTextareaProps = {
   placeholder?: string
   content?: string | null
-  setContent?: Dispatch<SetStateAction<string | null>>
+  setContent?: (Dispatch<SetStateAction<string | null>>) | ((html?:string | null) => void)
   setValid?: Dispatch<SetStateAction<boolean>>
   setCounter?: Dispatch<SetStateAction<number>>
+  onSave?: () => void
   maxChar?: number
 }
 
@@ -45,10 +43,12 @@ const InlineTextarea = ({
   setContent,
   maxChar = -1,
   setValid,
+  onSave
 }: InlineTextareaProps) => {
-  const [ cyfrUser ] = useCyfrUserContext()
   const [count, setCount] = useState(-1)
   const [perc, setPerc] = useState(0)
+  const [showSave, setShowSave] = useState(false)
+  const [isValid, setIsValid] = useState(false)
 
   let extensions = [
     new BoldExtension(),
@@ -63,24 +63,41 @@ const InlineTextarea = ({
     content: content || "",
   })
 
+  const validate = (b:boolean) => {
+    setIsValid(() => b)
+    if (setValid) {
+      setValid(() => b)
+    }
+  }
+
   const htmlString = (doc: Node | undefined) =>
     doc ? prosemirrorNodeToHtml(doc) : null
 
-  const onChange = (
-    params: RemirrorEventListenerProps<Remirror.Extensions>
-  ) => {
+  const onChange = (params: RemirrorEventListenerProps<Remirror.Extensions>) => {
+    const newContent = htmlString(params.tr?.doc)
+    const didChange = content && newContent && content?.indexOf(newContent) < 0
+    debug('onChange', didChange)
+    if (!didChange) {
+      return
+    }
+
     if (setContent) {
       setContent(htmlString(params.tr?.doc))
     }
+    setShowSave(() => true)
     const current = manager.getExtension(CountExtension).getCharacterCount()
     const isValid = manager.getExtension(CountExtension).isCountValid()
     if (maxChar>0) {
         setCount(() => current)
         setPerc(() => Math.floor((current/maxChar)*100))
     }
-    if (setValid) {
-        setValid(() => current >= 1 && isValid)
-    }
+    debug('isValid?',{current,isValid})
+    validate(current >= 1 && isValid)
+  }
+
+  const onClickSave = () => {
+    if (onSave) onSave()
+    setShowSave(() => false)
   }
 
   return (
@@ -99,6 +116,9 @@ const InlineTextarea = ({
             <progress className={`w-full -my-1 h-1 ${count >= maxChar ? 'progress-error' : perc > 90 ? 'progress-warning' : 'progress-primary'}`} value={perc} max={100} />
         </div>
       )}
+      {onSave && showSave &&
+        <EZButton disabled={!isValid} label="Save" whenClicked={onClickSave} />
+      }
     </div>
   )
 }

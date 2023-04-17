@@ -78,7 +78,7 @@ const byUser = async (id: string): Promise<BookDetail[]> => {
 
 const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
     try {
-        const {title, slug, hook, synopsis, back, status, active, prospect, words} = props
+        const {id, title, slug, hook, synopsis, back, status, active, prospect, words} = props
         const data =  {
           title,
           slug: encodeURIComponent(slug || title.replaceAll(' ','-')).toLowerCase(),
@@ -104,7 +104,13 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
             2. if a cover hasn't been uploaded, obtain the default for the genre
             4. categories, oy
         `)
-        const result = prisma.book.create({data, include: BookDetailInclude})
+        const result = id 
+          ? prisma.book.update({
+            where: {id}, 
+            data, 
+            include: BookDetailInclude
+          })
+          : prisma.book.create({data, include: BookDetailInclude})
         if (result) {
           return result as unknown as BookDetail
         }
@@ -116,6 +122,7 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
 }
 
 const follow = async (props:BookFollowProps): Promise<Follow> => {
+  // TODO cannot follow your own stuff
   const {followerId, bookId, isFan} = props;
   try {
     // we have to do this crazy little dance because composites in Follow model
@@ -153,6 +160,7 @@ const follow = async (props:BookFollowProps): Promise<Follow> => {
 }
 
 const like = async (props:LikeProps): Promise<Like> => {
+  // TODO cannot like your own stuff
   const {authorId, bookId} = props;
   try {
     // we have to do this crazy little dance because composites in Follow model
@@ -201,6 +209,7 @@ const like = async (props:LikeProps): Promise<Like> => {
 }
 
 const share = async (props:ShareProps): Promise<Share> => {
+  // TODO cannot share more than once
   const {authorId, bookId} = props;
   try {
     // we have to do this crazy little dance because composites in Follow model

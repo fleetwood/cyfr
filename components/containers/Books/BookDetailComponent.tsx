@@ -16,15 +16,15 @@ import BookCover, { BookCoverVariant } from "./BookCover"
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent', 'DEBUG')
 
 type BookComponentProps = {
-  book:       BookDetail
+  bookDetail: BookDetail
   onUpdate?:  () => void
 }
 
-const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
+const BookDetailComponent = ({bookDetail, onUpdate}: BookComponentProps) => {
   const {notify, loginRequired} = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {like,follow,share} = useBookApi(book)
-  const isAuthor = isBookAuthor(book, cyfrUser)
+  const {like,follow,share, book, update, save} = useBookApi(bookDetail)
+  const isAuthor = isBookAuthor(bookDetail, cyfrUser)
 
   const onFollow = async () => {
     if (!cyfrUser) {
@@ -34,7 +34,6 @@ const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
     const result = await follow(cyfrUser.id)
     if (result) {
       notify(`You are now following ${book.title}. Nice!`)
-      if (onUpdate) { onUpdate()}
     }
   }
 
@@ -46,7 +45,6 @@ const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
     const result = await share(cyfrUser.id)
     if (result) {
       notify(`You shared ${book.title}!`)
-      if (onUpdate) { onUpdate()}
     }
   }
 
@@ -58,8 +56,19 @@ const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
     const result = await like(cyfrUser.id)
     if (result) {
       notify(`You liked ${book.title}.`)
-      if (onUpdate) { onUpdate()}
     }
+  }
+
+  const updatePanel = (html?:string|null) => {
+    update({back: html?.toString()})
+  }
+
+  const updateSynopsis = (html?:string|null) => {
+    update({synopsis: html?.toString()})
+  }
+
+  const updateHook = (html?:string|null) => {
+    update({hook: html?.toString()})
   }
 
   return (
@@ -80,7 +89,10 @@ const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
           {book.categories.filter(c => c!==null).map(cat => (<span className="italic mr-2" key={uuid()}>{cat.title}</span>))}
         </div>
         <div>{book.words} words</div>
-        <div className="my-4 text-xl font-ibarra">{book.hook}</div>
+        <div className="font-ibarra">{isAuthor 
+          ? <InlineTextarea content={book.hook} setContent={updateHook} onSave={save} />
+          : ReactHtmlParser(book.hook!)
+        }</div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
@@ -143,7 +155,7 @@ const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
           {isAuthor && FeatherIcon}
         </div>
         <div className="font-ibarra">{isAuthor 
-          ? <InlineTextarea content={book.back} setContent={() => {}} />
+          ? <InlineTextarea content={book.back} setContent={updatePanel} onSave={save} />
           : ReactHtmlParser(book.back!)
         }</div>
       </div>
@@ -154,7 +166,7 @@ const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
           {isAuthor && FeatherIcon}
         </div>
         <div className="font-ibarra">{isAuthor 
-          ? <InlineTextarea content={book.synopsis} setContent={() => {}} />
+          ? <InlineTextarea content={book.synopsis} setContent={updateSynopsis} onSave={save} />
           : ReactHtmlParser(book.synopsis!)
         }</div>
       </div>

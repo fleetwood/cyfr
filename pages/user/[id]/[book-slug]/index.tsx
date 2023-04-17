@@ -27,7 +27,7 @@ const BookByID = (props: InferGetServerSidePropsType<typeof getServerSideProps>)
         >
         {isAuthor 
             ? <UpsertBook book={book} />
-            : <BookDetailComponent book={book} />
+            : <BookDetailComponent bookDetail={book} />
         }
     </MainLayout>
   )

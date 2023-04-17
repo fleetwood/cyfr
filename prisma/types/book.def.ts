@@ -86,7 +86,8 @@ export const BookDetailInclude = {
 }
 
 export type BookUpsertProps = {
-  cover:        string
+  id?:          string|null
+  cover?:       string
   title:        string,
   slug?:        string,
   active:       boolean,

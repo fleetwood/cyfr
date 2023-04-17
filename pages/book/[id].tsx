@@ -34,7 +34,7 @@ const BookByID = ({}) => {
       {book &&
         <>
         <EZButton label="Refresh" whenClicked={invalidate} variant="info" />
-        <BookDetailComponent book={book} onUpdate={invalidate} />
+        <BookDetailComponent bookDetail={book} onUpdate={invalidate} />
         </>
       }
     </MainLayout>
