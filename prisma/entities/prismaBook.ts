@@ -172,7 +172,18 @@ const like = async (props:LikeProps): Promise<Like> => {
         data
       })
       : await prisma.like.create({
-        data
+        data: {
+          author: {
+            connect: {
+              id: authorId.toString()
+            }
+          },
+          book: {
+            connect: {
+              id: bookId!.toString()
+            }
+          }
+        }
       })
     if (!like) {
       throw({code: fileMethod('like'), message: 'Unable to like book'})
