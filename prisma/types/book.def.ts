@@ -1,4 +1,4 @@
-import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, Genre, Image, Like, User, UserStub } from "../prismaContext"
+import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, Genre, Image, Like, Share, User, UserStub } from "../prismaContext"
 
 export type BookStub = Book & {
   authors: {
@@ -68,6 +68,7 @@ export type BookDetail = {
   genre: Genre
   likes: Like[]
   follows: Follow[]
+  shares: Share[]
   cover: Image
   chapters: Chapter[]
 }

@@ -3,7 +3,7 @@ import ReactHtmlParser from "react-html-parser"
 import useBookApi from "../../../hooks/useBookApi"
 import useDebug from "../../../hooks/useDebug"
 import { BookDetail } from "../../../prisma/prismaContext"
-import { isBookAuthor, onlyFans, uniqueKey, valToLabel, ymd } from "../../../utils/helpers"
+import { isBookAuthor, onlyFans, uniqueKey, uuid, valToLabel, ymd } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import InlineTextarea from "../../forms/InlineTextarea"
@@ -23,7 +23,7 @@ type BookComponentProps = {
 const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
   const {notify, loginRequired} = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {like,follow} = useBookApi(book)
+  const {like,follow,share} = useBookApi(book)
   const isAuthor = isBookAuthor(book, cyfrUser)
 
   const onFollow = async () => {
@@ -34,6 +34,18 @@ const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
     const result = await follow(cyfrUser.id)
     if (result) {
       notify(`You are now following ${book.title}. Nice!`)
+      if (onUpdate) { onUpdate()}
+    }
+  }
+
+  const onShare = async () => {
+    if (!cyfrUser) {
+      loginRequired()
+      return null
+    }
+    const result = await share(cyfrUser.id)
+    if (result) {
+      notify(`You shared ${book.title}!`)
       if (onUpdate) { onUpdate()}
     }
   }
@@ -65,7 +77,7 @@ const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
         <div className="flex">
           <span className="font-semibold text-primary-content mr-4">{book.genre.title}</span>
           {/* TODO Categories view is broken in db */}
-          {book.categories.filter(c => c!==null).map(cat => (<span className="italic mr-2">{cat.title}</span>))}
+          {book.categories.filter(c => c!==null).map(cat => (<span className="italic mr-2" key={uuid()}>{cat.title}</span>))}
         </div>
         <div>{book.words} words</div>
         <div className="my-4 text-xl font-ibarra">{book.hook}</div>
@@ -96,8 +108,8 @@ const BookDetailComponent = ({book, onUpdate}: BookComponentProps) => {
             <span className="text-primary">{valToLabel(book.likes?.length??0)}</span>
           </div>
           <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-            <ShrinkableIconLabel iconClassName="text-primary-content" labelClassName="text-primary-content font-semibold" label="Shares" icon={ShareIcon} onClick={() => {}} />
-            <span className="text-primary">(NI)</span>
+            <ShrinkableIconLabel iconClassName="text-primary-content" labelClassName="text-primary-content font-semibold" label="Shares" icon={ShareIcon} onClick={onShare} />
+            <span className="text-primary">{valToLabel(book.shares?.length??0)}</span>
           </div>
           <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
             <ShrinkableIconLabel iconClassName="text-primary-content" labelClassName="text-primary-content font-semibold" label="Follows" icon={FollowIcon} onClick={onFollow} />

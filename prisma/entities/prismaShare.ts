@@ -69,23 +69,6 @@ const all = async (): Promise<ShareFeed[] | []> => {
 //   }
 // }
 
-const deleteShare = async ({id, authorId}: ShareDeleteProps): Promise<Share> => {
-  try {
-    debug("deleteShare", {id, authorId})
-    return await prisma.share.update({ 
-      where: {
-        id,
-      },
-      data: {
-        visible: false
-      }
-    })
-  } catch (error) {
-    info("deleteShare ERROR: ", error)
-    throw { code: fileMethod("deleteShare"), message: "Share was not deleted!" }
-  }
-}
-
 // const likePost = async (props: PostEngageProps): Promise<Post> => {
 //   const data = { ...props }
 //   try {
@@ -168,4 +151,4 @@ const deleteShare = async ({id, authorId}: ShareDeleteProps): Promise<Share> => 
 //   }
 // }
 
-export const PrismaShare = { all, byId, deleteShare }
+export const PrismaShare = { all, byId }

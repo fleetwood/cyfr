@@ -1,26 +1,26 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { Follow, Like, PrismaBook } from "../../../prisma/prismaContext"
+import { PrismaBook, Share } from "../../../prisma/prismaContext"
 
 import useDebug from "../../../hooks/useDebug"
 import {
-    GetResponseError,
-    ResponseError,
-    ResponseResult,
+  GetResponseError,
+  ResponseError,
+  ResponseResult,
 } from "../../../types/response"
-const { todo, err } = useDebug("api/book/like")
+const { todo, err } = useDebug("api/book/share")
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Like>>
+  res: NextApiResponse<ResponseResult<Share>>
 ) {
-  // TODO Unlike/Unfan
+  // TODO Unshare
   const { bookId, authorId } = req.body.body
   try {
-    const result = await PrismaBook.like({bookId, authorId})
+    const result = await PrismaBook.share({bookId, authorId})
     if (result) {
       res.status(200).json({ result })
     } else {
-      throw { code: "api/book/like", message: `No results from Like` }
+      throw { code: "api/book/share", message: `No results from Share` }
     }
   } catch (e: Error | ResponseError | any) {
     err("FAIL", e)

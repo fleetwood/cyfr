@@ -1,13 +1,24 @@
 import { PostFeed, Share, User } from "./../prismaContext"
 
 export type ShareDeleteProps = {
-  id: string
-  authorId: string
+  id:         String
+  authorId:   String
+}
+
+export type ShareProps = {
+  id?:            String
+  authorId:       String
+  visible?:       boolean
+  postId?:        String
+  galleryId?:     String
+  imageId?:       String
+  characterId?:   String
+  bookId?:        String
 }
 
 export type ShareFeed = Share & {
-  createdat?: string
-  updatedat?: string
-  author: User
-  post?: PostFeed | null
+  createdat?: String
+  updatedat?: String
+  author:     User
+  post?:      PostFeed | null
 }

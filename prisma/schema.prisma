@@ -140,18 +140,22 @@ model Like {
 }
 
 model Share {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  visible   Boolean  @default(true)
-  authorId  String
-  postId    String?
-  galleryId String?
-  imageId   String?
-  author    User     @relation("user_shares", fields: [authorId], references: [id])
-  gallery   Gallery? @relation("gallery_shares", fields: [galleryId], references: [id])
-  image     Image?   @relation("image_shares", fields: [imageId], references: [id])
-  post      Post?    @relation("post_shares", fields: [postId], references: [id])
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+  visible       Boolean  @default(true)
+  authorId      String
+  postId        String?
+  galleryId     String?
+  imageId       String?
+  characterId   String?
+  bookId        String?
+  author        User        @relation("user_shares", fields: [authorId], references: [id])
+  gallery       Gallery?    @relation("gallery_shares", fields: [galleryId], references: [id])
+  image         Image?      @relation("image_shares", fields: [imageId], references: [id])
+  post          Post?       @relation("post_shares", fields: [postId], references: [id])
+  character     Character?  @relation("character_shares", fields: [characterId], references: [id])
+  book          Book?       @relation("book_shares", fields: [bookId], references: [id])
 
   @@index(fields: [id, authorId, postId])
 }
@@ -290,7 +294,7 @@ model Book {
   prospect   Boolean        @default(false)
   fiction    Boolean        @default(true)
   title      String         @unique
-  slug          String      @unique
+  slug       String         @unique
   coverId    String?        @unique
   cover      Image?         @relation("book_cover", fields: [coverId], references: [id])
   genreId    String
@@ -307,6 +311,7 @@ model Book {
   gallery    Gallery?       @relation("book_gallery", fields: [galleryId], references: [id])
   follows    Follow[]       @relation("book_follows")
   likes      Like[]         @relation("book_likes")
+  shares     Share[]        @relation("book_shares")
 }
 
 model Character {
@@ -327,6 +332,7 @@ model Character {
   archetype   String
   likes       Like[]    @relation("character_likes")
   follows     Follow[]  @relation("character_follows")
+  shares      Share[]   @relation("character_shares")
   books       Book[]    @relation("book_characters")
   chapters    Chapter[] @relation("chapter_characters")
   galleryId   String?   @unique

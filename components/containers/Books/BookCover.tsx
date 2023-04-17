@@ -1,14 +1,13 @@
 import Link from "next/link";
-import { Image, BookStub, BookDetail } from "../../../prisma/prismaContext";
-import { cloudinary } from "../../../utils/cloudinary";
-import { useCyfrUserContext } from "../../context/CyfrUserProvider";
-import { isBookAuthor } from "../../../utils/helpers";
-import { CheckBadge } from "../../ui/icons";
 import useDebug from "../../../hooks/useDebug";
+import { BookDetail, BookStub, Image } from "../../../prisma/prismaContext";
+import { cloudinary } from "../../../utils/cloudinary";
+import { isBookAuthor } from "../../../utils/helpers";
+import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import Avatar from "../../ui/avatar";
-import JsonBlock from "../../ui/jsonBlock";
+import { CheckBadge } from "../../ui/icons";
 
-const {debug} = useDebug('BookCover', 'DEBUG')
+const {debug} = useDebug('BookCover')
 
 export enum BookCoverVariant {
   THUMB = 100,

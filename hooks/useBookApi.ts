@@ -35,8 +35,18 @@ const useBookApi = (book:BookDetail) => {
     }
   }
   
-  const share = (userId:string) => {
-    throw new Error('Not implemented')
+  const share = async (userId:string) => {
+    const upsert = await (await sendApi("book/share", {
+        bookId: book.id,
+        authorId: userId
+    })).data
+    if (upsert.result) {
+        return true
+    }
+    else {
+        debug('Did not get right result?', upsert.result)
+        return false
+    }
   }
   
   const upsert = async (book:BookDetail) => {

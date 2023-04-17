@@ -11,6 +11,8 @@ import {
   Follow,
   Like,
   LikeProps,
+  Share,
+  ShareProps,
   prisma
 } from "../prismaContext"
 
@@ -198,6 +200,57 @@ const like = async (props:LikeProps): Promise<Like> => {
   }
 }
 
+const share = async (props:ShareProps): Promise<Share> => {
+  const {authorId, bookId} = props;
+  try {
+    // we have to do this crazy little dance because composites in Follow model
+    const exists = await prisma.share.findFirst({
+      where: {
+        authorId: authorId.toString(),
+        bookId: authorId.toString()
+      }
+    })
+    const data = {
+      authorId: authorId.toString(),
+      bookId: authorId.toString(),
+      // Yo, this might handle unshare!!!
+      visible: exists ? !exists.visible : true
+    }
+
+    debug('Share', {authorId, bookId, data})
+
+    const share = exists 
+      ? await prisma.share.update({
+        where: {id: exists.id},
+        data
+      })
+      : await prisma.share.create({
+        data: {
+          author: {
+            connect: {
+              id: authorId.toString()
+            }
+          },
+          book: {
+            connect: {
+              id: bookId!.toString()
+            }
+          }
+        }
+      })
+    if (!share) {
+      throw({code: fileMethod('Share'), message: 'Unable to share book'})
+    }
+    return share;
+  } catch (error) {
+    debug(`share ERROR`, {
+      ...{ props },
+      ...{ error },
+    });
+    throw GenericResponseError(error as unknown as ResponseError);
+  }
+}
+
 const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | undefined> => {
   try {
     debug("deleteBook", { bookId, authorId })
@@ -209,4 +262,4 @@ const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | u
   }
 }
 
-export const PrismaBook = { detail, byId, byUser, upsert, follow, like, deleteBook }
+export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, deleteBook }

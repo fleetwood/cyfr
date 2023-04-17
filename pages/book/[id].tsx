@@ -1,15 +1,12 @@
-import { InferGetServerSidePropsType } from "next";
+import { useRouter } from "next/router";
 import BookDetailComponent from "../../components/containers/Books/BookDetailComponent";
 import { useCyfrUserContext } from "../../components/context/CyfrUserProvider";
 import MainLayout from "../../components/layouts/MainLayout";
-import { BookDetail, PrismaBook, UserStub } from "../../prisma/prismaContext";
-import { Router, useRouter } from "next/router";
-import { useQuery, useQueryClient } from "react-query";
-import Spinner from "../../components/ui/spinner";
-import useDebug from "../../hooks/useDebug";
-import { getApi } from "../../utils/api";
-import useBookDetail from "../../hooks/useBookDetail";
 import EZButton from "../../components/ui/ezButton";
+import Spinner from "../../components/ui/spinner";
+import useBookDetail from "../../hooks/useBookDetail";
+import useDebug from "../../hooks/useDebug";
+import { UserStub } from "../../prisma/prismaContext";
 
 const {debug, info} = useDebug('pages/book/[id]', 'DEBUG')
 

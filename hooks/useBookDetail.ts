@@ -5,11 +5,12 @@ import { BookDetail } from "../prisma/prismaContext"
 import { getApi } from "../utils/api"
 import useDebug from "./useDebug"
 
-const { debug, info } = useDebug("BookDetailProvider", "DEBUG")
+const { debug, info } = useDebug("BookDetailProvider")
 
 const useBookDetail = (bookId:string) => {
   const qc = useQueryClient()
   const getBookDetail = async () => {
+    if (!bookId) return null
     const bookDetail = await getApi(`/book/${bookId}`)
     return (bookDetail.result as BookDetail) || bookDetail.error || null
   }
