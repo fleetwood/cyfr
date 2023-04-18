@@ -44,7 +44,7 @@ const TailwindSelectInput = (props:TailwindDropdownProps) => {
         onChange={optionClick}
         >
           {options.map(opt => (
-            <option value={opt.value??opt.key} selected={opt.key===value}>{opt.key}</option>
+            <option value={opt.value??opt.key} selected={opt.key===value} key={opt.key} >{opt.key}</option>
           ))}
       </select>
     </div>

@@ -261,6 +261,34 @@ const share = async (props:ShareProps): Promise<Share> => {
   }
 }
 
+const addChapter = async(props:{bookId:string, title:string, order: number}):Promise<BookDetail> => {
+  try {
+    const {bookId:id, title, order} = props
+    debug('addChapter',{id, title, order})
+    const result = await prisma.book.update({
+      where: {id},
+      data: {
+        chapters: {
+          create: {
+            title,
+            order
+          }
+        }
+      }
+    })
+    if (result) {
+      return detail(id)
+    }
+    throw new Error('Failed to obtain a result')
+  } catch (error) {
+    debug(`addChapter ERROR`, {
+      ...{ props },
+      ...{ error },
+    });
+    throw GenericResponseError(error as unknown as ResponseError);
+  }
+}
+
 const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | undefined> => {
   try {
     debug("deleteBook", { bookId, authorId })
@@ -272,4 +300,4 @@ const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | u
   }
 }
 
-export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, deleteBook }
+export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, addChapter, deleteBook }

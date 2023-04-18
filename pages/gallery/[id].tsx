@@ -2,7 +2,6 @@ import GalleryDetailView from "../../components/containers/Gallery/GalleryDetail
 import MainLayout from "../../components/layouts/MainLayout";
 import { PrismaGallery } from "../../prisma/entities/prismaGallery";
 import { GalleryDetail } from "../../prisma/types";
-import { InferGetServerSidePropsType } from "next";
 
 export async function getServerSideProps(context: any) {
     const galleryId = context.params.id
@@ -19,7 +18,7 @@ type GalleryDetailPageProps= {
     gallery: GalleryDetail
 }
 
-const GalleryDetailPage = ({gallery}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const GalleryDetailPage = ({gallery}: GalleryDetailPageProps) => {
     return (
         <MainLayout 
             subTitle={gallery.title||'Gallery'}

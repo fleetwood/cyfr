@@ -1,3 +1,4 @@
+import { CreatePostModalButton } from "../components/containers/Post/CreatePostModal"
 import MainFeedItem from "../components/containers/Post/MainFeedItem"
 import MainLayout from "../components/layouts/MainLayout"
 import { CyfrLogo } from "../components/ui/icons"
@@ -16,10 +17,7 @@ const HomePage = (props:HomePageProps) => {
 
   return (
     <MainLayout sectionTitle={CyfrHome} subTitle="The Creative Site">
-      <label htmlFor={'createPostModal'} className="btn btn-info space-x-2">
-        <CyfrLogo className="animate-pulse text-info-content w-[1.25rem]" />
-        <span className="text-info-content">New Post</span>
-      </label>
+      <CreatePostModalButton />
       {feed && feed.map((item) => <MainFeedItem item={item} key={uuid()} />)}
     </MainLayout>
   )

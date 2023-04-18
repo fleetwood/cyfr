@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReactHtmlParser from "react-html-parser";
-import useBookApi from "../../../hooks/useBookApi";
+import useBookApi, { BookApi } from "../../../hooks/useBookApi";
 import useDebug from "../../../hooks/useDebug";
 import { BookDetail, BookStatus } from "../../../prisma/prismaContext";
 import {
@@ -30,41 +30,40 @@ import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe";
 import BookCover, { BookCoverVariant } from "./BookCover";
 import { KeyVal } from "../../../types/props";
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/CreateChapterModal";
+import Spinner from "../../ui/spinner";
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
   "DEBUG"
 );
 
-type BookComponentProps = {
-  bookDetail: BookDetail;
-  onUpdate?: () => void;
-};
+const ErrorPage = () => (
+  <div>
+    <h3>404 or smth</h3>
+    <p>Weird. That Didn't Work.</p>
+  </div>
+)
 
-const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
+type BookDetailComponentProps = {
+  bookApi: BookApi
+}
+
+const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
   const { notify, loginRequired } = useToast();
   const [cyfrUser] = useCyfrUserContext();
-  const {
-    like,
-    follow,
-    share,
-    invalidate,
-    book,
-    update,
-    save,
-    genresToOptions,
-  } = useBookApi(bookDetail);
-  const isAuthor = isBookAuthor(bookDetail, cyfrUser);
+  const {bookDetail, isLoading, error, notEmpty, cleanArray, follow, share, like, update, save, invalidate, by, isAuthor, genresToOptions} = bookApi
   const [saveReady, setSaveReady] = useState(false);
   const statusOptions: KeyVal[] = [
     { key: "DRAFT" },
     { key: "MANUSCRIPT" },
     { key: "PRIVATE" },
     { key: "PUBLISHED" },
-  ];
+  ]
 
-  const bookHas = (arr: Array<any> | undefined | null) =>
-    arr !== undefined && arr !== null && arr.length > 0;
+  if (isLoading) return <Spinner />
+
+  //TODO create an error page
+  if (error) return <ErrorPage />
 
   const onFollow = async () => {
     if (!cyfrUser) {
@@ -73,7 +72,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
     }
     const result = await follow(cyfrUser.id);
     if (result) {
-      notify(`You are now following ${book.title}. Nice!`);
+      notify(`You are now following ${bookDetail?.title}. Nice!`);
     }
   };
 
@@ -84,7 +83,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
     }
     const result = await share(cyfrUser.id);
     if (result) {
-      notify(`You shared ${book.title}!`);
+      notify(`You shared ${bookDetail?.title}!`);
     }
   };
 
@@ -95,7 +94,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
     }
     const result = await like(cyfrUser.id);
     if (result) {
-      notify(`You liked ${book.title}.`);
+      notify(`You liked ${bookDetail?.title}.`);
     }
   };
 
@@ -144,7 +143,8 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
     setSaveReady(false);
   };
 
-  return (
+  return bookDetail ? (
+
     <div>
       {isAuthor && (
         <div className="fixed top-10 right-[232px] z-20 space-x-4 transition-all duration-200 ease-out">
@@ -154,18 +154,18 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
           }
         </div>
       )}
-      {book.authors && book.authors.length > 1 && (
+      {bookDetail.authors && bookDetail.authors.length > 1 && (
         <div>
           <h3>Authors</h3>
-          {book.authors.map((author) => (
-            <Avatar user={author} sz="lg" key={uniqueKey(book, author)} />
+          {bookDetail.authors.map((author) => (
+            <Avatar user={author} sz="lg" key={uniqueKey(bookDetail, author)} />
           ))}
         </div>
       )}
 
-      {book.cover && (
+      {bookDetail.cover && (
         <BookCover
-          book={book}
+          book={bookDetail}
           variant={BookCoverVariant.COVER}
           link={false}
           authorAvatars={false}
@@ -189,28 +189,28 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
           <div>
             <label className="font-semibold w-[50%]">Fiction/Nonfiction</label>
             <Toggler
-              checked={book.fiction}
+              checked={bookDetail?.fiction??false}
               setChecked={updateFiction}
               trueLabel="FICTION"
               falseLabel="NON-FICTION"
             />
           </div>
         ) : (
-          <div>{book.fiction ? "FICTION" : "NON-FICTION"}</div>
+          <div>{bookDetail?.fiction ? "FICTION" : "NON-FICTION"}</div>
         )}
         <div className="flex">
           {isAuthor ? (
             <div>
               <label className="font-semibold w-[50%]">Genre</label>
               <TailwindSelectInput
-                value={book.genre.title}
+                value={bookDetail?.genre.title}
                 setValue={updateGenre}
                 options={genresToOptions()}
               />
             </div>
           ) : (
             <span className="font-semibold text-primary-content mr-4">
-              {book.genre.title}
+              {bookDetail.genre.title}
             </span>
           )}
           {/* TODO Categories view is broken in db */}
@@ -222,8 +222,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
                   TODO: Create categories upsert. Don't forget to include
                   existing categories, and the ability to create new ones.
                 </p>
-                {book.categories
-                  .filter((c) => c !== null)
+                {cleanArray(bookDetail.categories)
                   .map((cat) => (
                     <span className="italic mr-2" key={uuid()}>
                       {cat.title}
@@ -232,8 +231,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
               </div>
             </div>
           ) : (
-            book.categories
-              .filter((c) => c !== null)
+            cleanArray(bookDetail.categories)
               .map((cat) => (
                 <span className="italic mr-2" key={uuid()}>
                   {cat.title}
@@ -241,16 +239,16 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
               ))
           )}
         </div>
-        <div>{book.words} words</div>
+        <div>{bookDetail.words} words</div>
         <div className="font-ibarra">
           {isAuthor ? (
             <InlineTextarea
-              content={book.hook}
+              content={bookDetail.hook}
               setContent={updateHook}
               onSave={save}
             />
           ) : (
-            ReactHtmlParser(book.hook!)
+            ReactHtmlParser(bookDetail.hook!)
           )}
         </div>
       </div>
@@ -262,14 +260,14 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
               <label className="font-semibold w-[50%]">Status</label>
               <TailwindSelectInput
                 options={statusOptions}
-                value={book.status?.toString()}
+                value={bookDetail.status?.toString()}
                 setValue={updateStatus}
               />
             </div>
           ) : (
             <div className="flex justify-between">
               <label className="font-semibold w-[50%]">Status</label>
-              <span className="text-secondary">{book.status}</span>
+              <span className="text-secondary">{bookDetail.status}</span>
             </div>
           )}
         </div>
@@ -277,7 +275,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
           <label className="font-semibold w-[50%]">Completed</label>
           <span className="text-secondary">
-            {book.completeAt ? ymd(new Date(book.completeAt)) : "TBD"}
+            {bookDetail.completeAt ? ymd(new Date(bookDetail.completeAt)) : "TBD"}
           </span>
         </div>
         <div
@@ -289,7 +287,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
           {isAuthor ? (
             <div>
               <Toggler
-                checked={book.prospect}
+                checked={bookDetail.prospect}
                 setChecked={updateProspect}
                 falseLabel="No Agents"
                 trueLabel="Allow Agents"
@@ -297,7 +295,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
             </div>
           ) : (
             <span className="text-secondary">
-              {book.prospect ? "YES" : "NO"}
+              {bookDetail.prospect ? "YES" : "NO"}
             </span>
           )}
         </div>
@@ -309,14 +307,14 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
           <label className="font-semibold w-[50%]">Public</label>
           {isAuthor ? (
             <Toggler
-              checked={book.active}
+              checked={bookDetail.active}
               setChecked={updateActive}
               falseLabel="Not Visible"
               trueLabel="Visible"
             />
           ) : (
             <span className="text-secondary">
-              {book.active ? "PUBLIC" : "HIDDEN"}
+              {bookDetail.active ? "PUBLIC" : "HIDDEN"}
             </span>
           )}
         </div>
@@ -332,7 +330,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
             onClick={onLike}
           />
           <span className="text-primary">
-            {valToLabel(book.likes?.length ?? 0)}
+            {valToLabel(bookDetail.likes?.length ?? 0)}
           </span>
         </div>
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
@@ -344,7 +342,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
             onClick={onShare}
           />
           <span className="text-primary">
-            {valToLabel(book.shares?.length ?? 0)}
+            {valToLabel(bookDetail.shares?.length ?? 0)}
           </span>
         </div>
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
@@ -356,7 +354,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
             onClick={onFollow}
           />
           <span className="text-primary">
-            {valToLabel(book.follows?.length ?? 0)}
+            {valToLabel(bookDetail.follows?.length ?? 0)}
           </span>
         </div>
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
@@ -368,7 +366,7 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
             onClick={() => {}}
           />
           <span className="text-primary">
-            {valToLabel(onlyFans(book.follows ?? []).length)}
+            {valToLabel(onlyFans(bookDetail.follows ?? []).length)}
           </span>
         </div>
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
@@ -400,12 +398,12 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
         <div className="font-ibarra">
           {isAuthor ? (
             <InlineTextarea
-              content={book.back}
+              content={bookDetail.back}
               setContent={updatePanel}
               onSave={save}
             />
           ) : (
-            ReactHtmlParser(book.back!)
+            ReactHtmlParser(bookDetail.back!)
           )}
         </div>
       </div>
@@ -415,35 +413,35 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
         <div className="font-ibarra">
           {isAuthor ? (
             <InlineTextarea
-              content={book.synopsis}
+              content={bookDetail.synopsis}
               setContent={updateSynopsis}
               onSave={save}
             />
           ) : (
-            ReactHtmlParser(book.synopsis!)
+            ReactHtmlParser(bookDetail.synopsis!)
           )}
         </div>
       </div>
 
-      {bookHas(book.chapters) ||
+      {notEmpty(bookDetail.chapters) ||
         (isAuthor && (
           <div className="my-4">
             <h3>Chapters</h3>
             <div>
-              <CreateChapterModal />
+              <CreateChapterModal forBook={bookApi} />
               <OpenChapterModalButton />
               <p className="text-xs">
                 <strong>TODO: Create Chapters upsert.</strong>
                 This should be a modal to create a new chapter, or edit/delete
                 an existing chapter. When complete, update{" "}
-                <pre>bookHas(book.chapters) || isAuthor</pre> so chapters
+                <code>bookHas(bookDetail.chapters) || isAuthor</code> so chapters
                 display for all users, but forms only show for authors.
               </p>
             </div>
           </div>
         ))}
 
-      {bookHas(book.characters) ||
+      {notEmpty(bookDetail.characters) ||
         (isAuthor && (
           <div className="my-4">
             <h3>Characters</h3>
@@ -452,14 +450,14 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
                 <strong>TODO: Create Characters upsert.</strong>
                 This should be a modal to create a new character, or edit/delete
                 an existing character. When complete, update{" "}
-                <pre>bookHas(book.characters) || isAuthor</pre> so characters
+                <code>bookHas(bookDetail.characters) || isAuthor</code> so characters
                 display for all users, but forms only show for authors.
               </p>
             </div>
           </div>
         ))}
 
-      {(book.gallery || isAuthor) && (
+      {(bookDetail.gallery || isAuthor) && (
         <div className="my-4">
           <h3>Gallery</h3>
           <div>
@@ -467,17 +465,18 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
               <strong>TODO: Create chapters upsert.</strong>
               This should be a modal to create a new gallery, or edit/delete an
               existing gallery. When complete, update{" "}
-              <pre>book.gallery || isAuthor</pre> so gallery displays for all
+              <code>bookDetail.gallery || isAuthor</code> so gallery displays for all
               users, but forms only show for authors.
             </p>
           </div>
-          <GalleryPhotoswipe gallery={book.gallery} />
+          <GalleryPhotoswipe gallery={bookDetail.gallery} />
         </div>
       )}
 
-      {isAuthor && jsonBlock(book)}
+      {isAuthor && jsonBlock(bookDetail)}
     </div>
-  );
+  )
+  : <ErrorPage />
 };
 
 export default BookDetailComponent;
