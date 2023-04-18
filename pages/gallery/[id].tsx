@@ -23,7 +23,7 @@ const GalleryDetailPage = ({gallery}: InferGetServerSidePropsType<typeof getServ
     return (
         <MainLayout 
             subTitle={gallery.title||'Gallery'}
-            sectionTitle={'gallery.author.name'}
+            sectionTitle={gallery.author?.name||'Gallery'}
             >
             <GalleryDetailView gallery={gallery} />
         </MainLayout>

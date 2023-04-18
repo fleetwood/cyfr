@@ -1,12 +1,16 @@
-import { Image, User, Like, Share, Gallery, Post, UserSimple } from "../prismaContext"
+import { Image, User, Like, Share, Gallery, Post, UserStub, UserStubSelect } from "../prismaContext"
 
-export type ImageCreateProps = {
-  authorId: string
-  url: string
-  height: number
-  width: number
-  title?: string
-  galleryId?: string
+export type ImageUpsertProps = {
+  id?:          string
+  authorId:     string
+  url:          string
+  visible:      boolean
+  height:       number
+  width:        number
+  title?:       string | null
+  galleryId?:   string | null
+  shareId:      string | null
+  postId:       string | null
 }
 
 export type ImageDeleteProps = {
@@ -26,19 +30,30 @@ export type ImageViewProps = {
 }
 
 export type ImageFeed = Image & {
-  author: UserSimple
-  likes: UserSimple[]
-  shares: UserSimple[]
+  author: UserStub
+  likes: UserStub[]
+  shares: UserStub[]
   galleryId?: string
   postId?: string
 }
 
 export const ImageFeedInclude = {
-  author: true,
+  author: {
+    select: UserStubSelect
+  },
   likes: true,
   shares: true,
   gallery: true,
   post: true
+}
+
+export type ImageStub = {
+  id: string
+  visible: boolean
+  title: string | null
+  url: string
+  height: number | null
+  width: number | null
 }
 
 export type ImageDetail = Image & {

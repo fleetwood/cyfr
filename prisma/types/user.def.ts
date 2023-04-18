@@ -1,4 +1,4 @@
-import { Book, Follow, GalleryFeed, Image, Like, Membership, Post, PostFeed, User } from "./../prismaContext"
+import { BookStub, Follow, Gallery, GalleryStub, Image, Membership, Post, PostFeed, User } from "./../prismaContext"
 
 /**
  * This is complaining if imported from Post.defs that it can't be
@@ -36,18 +36,15 @@ export const UserFeedInclude = {
 }
 
 export type UserDetail = User & {
-  _count: {
-    likes:    number
-    shares:   number
-    sessions: number
-  }
   membership?:  Membership,
   posts:        PostFeed[]
-  books:        Book[]
+  messagable:   UserStub[]
+  canMention:   UserStub[]
   follows:      UserFollow[]
   followers:    UserFollow[]
   images:       (Image & { _count: { likes: number, shares: number}})[]
-  galleries:    GalleryFeed[]
+  galleries:    GalleryStub[]
+  books:        BookStub[]
 }
 
 export const UserDetailInclude = {
@@ -99,21 +96,8 @@ export const UserDetailInclude = {
     }
 }
 
-export type CyfrUser = User & {
-  _count: {
-    likes:    number
-    shares:   number
-    sessions: number
-  }
-  membership?:  Membership,
-  posts:        PostFeed[]
-  // books: Book[]
-  messagable:   UserSimple[]
-  canMention:   UserSimple[]
-  follows:      UserFollow[]
-  followers:    UserFollow[]
-  images:       (Image & { _count: { likes: number, shares: number}})[]
-  galleries:    GalleryFeed[]
+export type CyfrUser = UserDetail & {
+  
 }
 
 export const CyfrUserInclude = {
@@ -174,12 +158,41 @@ export const CyfrUserInclude = {
     }
 }
 
-export type UserSimple = {
+export type UserStub = {
   id:     string
   name:   string
   image:  string
 }
 
-export type UserFollow = UserSimple & {
+/**
+ * NOTE! Use a `select` instead of `include`
+ * @returns {
+ *  id: String
+ *  name: String
+ *  email: String
+ *  image: String (url)
+ * }
+ */
+export const UserStubSelect = {
+  id: true,
+  name: true,
+  email: true,
+  image: true
+}
+
+/**
+ * NOTE! Use a `select` instead of `include`
+ * @property id: String
+ * @property name: String
+ * @property email: String
+ * @property image: String (url)
+ * @property isFan: Boolean | null
+ */
+export type UserFollow = UserStub & {
   isFan?: boolean
+}
+
+export const UserFollowSelect = {
+  ...UserStubSelect,
+  isFan: true
 }

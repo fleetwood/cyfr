@@ -107,8 +107,8 @@ const SendLink = ({url, label, body}:{url:string, label: string, body:any}) => (
                     <div className="my-4 border-t-2 border-accent w-[100%]">
                       <h3 className="h-title">User</h3>
                       <ul>
-                        <li><GetLink label="byEmail" url="user/byEmail/wizening@gmail.com" /></li>
-                        <li><GetLink label="byId" url="user/byId/cldjgz3zo0000qn0h24j2uwjg" /></li>
+                        <li><GetLink label="byEmail" url="user/wizening@gmail.com" /></li>
+                        <li><GetLink label="byName" url="user/fleetwood" /></li>
                         <li><GetLink label="me" url="/me" /></li>
                       </ul>
                     </div>

@@ -52,10 +52,7 @@ const SendMessageModal = ({checked, setChecked, children }: InboxProviderProps) 
       debug(`handleSubmit success`)
       invalidateFeed()
     } else {
-      notify({
-        type: 'warning',
-        message: `Hm. That didn't work....`
-      })
+      notify(`Hm. That didn't work....`,'warning')
     }
   }
 

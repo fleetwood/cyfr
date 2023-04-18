@@ -8,11 +8,11 @@ import {
 import {
   Audience,
   CyfrUser, Follow,
-  FollowProps,
+  UserFollowProps,
   prisma, User, UserFeed,
-  UserFeedInclude, UserSimple
+  UserFeedInclude, UserStub
 } from "../prismaContext";
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG');
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser");
 
 type AllPostQueryParams = {
   limit?: Number;
@@ -35,7 +35,7 @@ const allUsersQuery = async ({
   }
 };
 
-const follow = async (props:FollowProps): Promise<Follow> => {
+const follow = async (props:UserFollowProps): Promise<Follow> => {
   const {followerId, followingId, isFan} = props;
   try {
     if (followerId === followingId) {
@@ -78,7 +78,7 @@ const follow = async (props:FollowProps): Promise<Follow> => {
   }
 };
 
-const getCyfrUser = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => {
+const detail = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => {
   debug('getCyfrUser', {idOrNameOrEmail})
   try {
     if (!idOrNameOrEmail) {
@@ -119,7 +119,7 @@ const userInSessionReq = async (
   try {
     const session = await getSession({ req });
     debug('userInSessionReq', session)
-    return getCyfrUser(session?.user?.email||'')
+    return detail(session?.user?.email||'')
   } catch (e) {
     debug('userInSessionReq FAIL', e)
     return null;
@@ -129,7 +129,7 @@ const userInSessionReq = async (
 const userInSessionContext = async (context: GetSessionParams | undefined): Promise<CyfrUser | null> => {
   try {
     const session = await getSession(context);
-    return getCyfrUser(session?.user?.email||'')
+    return detail(session?.user?.email||'')
   } catch (error) {
     info(fileMethod("userInSessionContext"), { error });
     return null;
@@ -202,7 +202,7 @@ const updatePreferences = async ({
   id,
   name,
   image,
-}: UserSimple): Promise<User> => {
+}: UserStub): Promise<User> => {
   try {
     debug('updatePreferences', {id, name, image})
     const user = await prisma.user.update({
@@ -225,7 +225,7 @@ const updatePreferences = async ({
 
 export const PrismaUser = {
   allUsersQuery,
-  getCyfrUser,
+  detail,
   userInSessionContext,
   userInSessionReq,
   userCurrentlyOnline,

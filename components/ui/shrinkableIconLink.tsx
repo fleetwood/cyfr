@@ -41,9 +41,9 @@ const ShrinkableIconLink = (props: ShrinkableIconLinkProps) => {
     >
       <>
         {dir === 'left' && label && (
-            <span className={`hidden lg:inline-block ${titleClassName || ""}`}>
-              {label}
-            </span>
+          <span className={`hidden lg:inline-block ${titleClassName || ""}`}>
+            {label}
+          </span>
         )}
         {icon}
         {dir !== 'left' && label && (

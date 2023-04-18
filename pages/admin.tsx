@@ -1,37 +1,23 @@
-import { GetSessionParams } from "next-auth/react";
-import AdminLayout from "../components/layouts/AdminLayout";
-import { CyfrLogo } from "../components/ui/icons";
-import { useSession } from "../lib/next-auth-react-query";
-import { PrismaGenre, PrismaUser } from "../prisma/prismaContext";
-import { canAccess, GenreListItem } from "../prisma/types";
-import { useState } from "react";
-import useDebug from "../hooks/useDebug";
-import GenreAdmin from "../components/containers/Genre/GenreAdmin";
-import { uniqueKey } from "../utils/helpers";
-import { InferGetServerSidePropsType } from "next";
-import Link from "next/link";
+import Link from "next/link"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
+import GenreAdmin from "../components/containers/Genre/GenreAdmin"
+import AdminLayout from "../components/layouts/AdminLayout"
+import { CyfrLogo } from "../components/ui/icons"
+import { AudienceLevels, useAudience } from "../hooks/useAudience"
+import useDebug from "../hooks/useDebug"
+import { useSession } from "../lib/next-auth-react-query"
+import { GenreListItem } from "../prisma/prismaContext"
+import { getApi } from "../utils/api"
+import { uniqueKey } from "../utils/helpers"
 
-const { debug } = useDebug("admin page", "DEBUG");
+const { debug, jsonBlock } = useDebug("admin page", "DEBUG")
 
-export async function getServerSideProps(
-  context: GetSessionParams | undefined
-) {
-  const cyfrUser = await PrismaUser.userInSessionContext(context);
-  const allow = canAccess({
-    required: "owner",
-    cyfrUser,
-  })
-  const genres = await PrismaGenre.all()
-  return { props: { allow, genres } };
-}
-
-type AdminPageProps = {
-  allow: boolean;
-  genres: GenreListItem[]
-};
-
-const AdminPage = ({allow, genres}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const AdminPage = ({}) => {
   useSession({ required: true, redirectTo: "/" })
+  const router = useRouter()
+  const {hasAccess} = useAudience(AudienceLevels.OWNER)
+  const [genres, setGenres] = useState<Array<GenreListItem>>([])
   const [editGenre, setEditGenre] = useState<GenreListItem|null>(null)
   
   const CyfrHome = (
@@ -39,33 +25,46 @@ const AdminPage = ({allow, genres}: InferGetServerSidePropsType<typeof getServer
       <CyfrLogo className="animate-pulse text-primary w-[3.75rem] mt-2" />
       <div>Cyfr Admin</div>
     </div>
-  );
-  return (
-    allow && (
-      <AdminLayout sectionTitle={CyfrHome}>
-        <div>
-          <Link href="/"><h2 className="h-subtitle">Home</h2></Link>
-        </div>
-        <div>
-          <h2 className="h-title">Dashboard</h2>
-        </div>
-        <div>
-          <h2 className="h-subtitle">Genres</h2>
-          <div className="flex flex-wrap justify-items-center">
-            {genres?.map(genre => 
-              <div 
-                key={uniqueKey(genre)} 
-                className='btn btn-primary text-primary-content rounded-md px-2 mr-2 mb-2 sm:w-1/3 md:w-1/6' 
-                // @ts-ignore bc of stupid auto-replace InferServersideProps
-                onClick={() => setEditGenre(genre)}>
-                {genre.title}
-              </div>)}
-          </div>
-          <GenreAdmin editGenre={editGenre} />
-        </div>
-      </AdminLayout>
-    )
-  );
-};
+  )
 
-export default AdminPage;
+  useEffect(() => {
+    if (!hasAccess) {
+      router.push('/')
+    }
+
+    const getGenres = async () => {
+      const genreList = await getApi('genre/list')
+      if (genreList.result) {
+        setGenres(() => genreList.result)
+      }
+    }
+    getGenres()
+  }, [])
+
+  return (
+    <AdminLayout sectionTitle={CyfrHome}>
+      <div>
+        <Link href="/"><h2 className="h-subtitle">Home</h2></Link>
+      </div>
+      <div>
+        <h2 className="h-title">Dashboard</h2>
+      </div>
+      <div>
+        <h2 className="h-subtitle">Genres</h2>
+        <div className="flex flex-wrap justify-items-center">
+          {genres.length>0 && genres.map(genre => 
+            <div 
+              key={uniqueKey(genre)} 
+              className='btn btn-primary text-primary-content rounded-md px-2 mr-2 mb-2 sm:w-1/3 md:w-1/6' 
+              onClick={() => setEditGenre(genre)}>
+              {genre.title}
+            </div>)}
+            {jsonBlock(genres)}
+        </div>
+        <GenreAdmin editGenre={editGenre} />
+      </div>
+    </AdminLayout>
+  )
+}
+
+export default AdminPage

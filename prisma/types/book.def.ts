@@ -1,11 +1,24 @@
-import { Book, BookCategory, BookStatus, Chapter, Character, Follow, Gallery, Genre, Like, User } from "../prismaContext";
+import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, Genre, Image, Like, Share, User, UserStub } from "../prismaContext"
 
-export type BookList = Book & {
-
+export type BookStub = Book & {
+  authors: {
+    id: string
+    name: string
+    email: string
+    image: string
+    follows: UserStub[],
+    followers: UserStub[],
+    postCount: number
+  }[],
+  cover?: Image
+  genre: Genre
+  categories: BookCategory[]
+  likes: Number
+  follows: Number
+  chapters: Number
 }
 
 export const BookListInclude = {
-
 }
 
 export type BookFeed = Book & {
@@ -29,15 +42,35 @@ export const BookFeedInclude = {
   likes: true
  }
 
-export type BookDetail = Book & {
-  authors: User[],
+export type BookDetail = {
+  authors: UserStub[]
+  id: string
+  createdAt: string
+  updatedAt: string
+  startedAt: string | null
+  completeAt: string | null
+  active: boolean
+  status: BookStatus | null
+  prospect: boolean
+  fiction: boolean
+  title: string
+  slug: string
+  coverId: string | null
+  hook: string | null
+  synopsis: string | null
+  back: string | null
+  words: number
+  galleryId: string | null
   categories: BookCategory[],
-  chapters: Chapter[],
   characters: Character[],
-  fans: Follow[],
   gallery: Gallery,
-  genre: Genre,
+  genreId: string
+  genre: Genre
   likes: Like[]
+  follows: Follow[]
+  shares: Share[]
+  cover: Image
+  chapters: Chapter[]
 }
 
 export const BookDetailInclude = {
@@ -45,23 +78,29 @@ export const BookDetailInclude = {
   categories: true,
   chapters: true,
   characters: true,
-  fans: true,
+  follows: true,
   gallery: true,
   genre: true,
-  likes: true
+  likes: true,
+  cover: true
 }
 
-export type BookCreateProps = {
-  cover: string
-  title: string,
-  active: boolean,
-  prospect: boolean,
-  authorId: string,
-  genreId: string,
-  categories?: BookCategory[] | null,
-  back?: string,
-  status?: BookStatus|null,
-  synopsis?: string
+export type BookUpsertProps = {
+  id?:          string|null
+  cover?:       string
+  title:        string,
+  slug?:        string,
+  active:       boolean,
+  fiction:      boolean,
+  prospect:     boolean,
+  authors:      User[]|CyfrUser[],
+  genreId:      string,
+  status?:      BookStatus|null,
+  categories?:  BookCategory[] | null,
+  back?:        string,
+  hook?:        string,
+  synopsis?:    string
+  words?:       number
 }
 
 export type BookDeleteProps = {

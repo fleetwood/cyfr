@@ -5,7 +5,7 @@ import { getApi, sendApi } from "../utils/api"
 import { __cyfr_refetch__ } from "../utils/constants"
 
 import useDebug from "./useDebug"
-const {debug, info} = useDebug("useCyfrUser")
+const {debug, info, fileMethod} = useDebug("useCyfrUser")
 
 const cyfrUserQuery = "cyfrUserQuery"
 
@@ -50,31 +50,35 @@ const useCyfrUser = ():[CyfrUser,boolean,unknown] => {
     }
   }
 
-  const query = useQuery([cyfrUserQuery], getCyfrUser, {onSettled})
+  const query = useQuery(cyfrUserQuery, getCyfrUser, {onSettled})
 
   return [query.data, query.status === "loading", query.error]
 }
 
 export const useCyfrUserApi = () => {
   const qc = useQueryClient()
-  const invalidateUser = () => qc.invalidateQueries([cyfrUserQuery])
-
-  type updateUserType = {
-    data: User | CyfrUser | UserDetail
+  const invalidateUser = () => {
+    debug('invalidateUser')
+    qc.invalidateQueries([cyfrUserQuery])
   }
   
-  const updateUser = async ({data}:updateUserType) => {
+  const updateUser = async (data:CyfrUser) => {
+    debug('updateUser', data)
     try {
       const {id, name, image} = data
-      const update = await sendApi('/user/preferences', {id,name,image})
-      if (update) {
+      const result = await sendApi('/user/preferences', {id,name,image})
+      if (result.status === 200) {
+        const data = result.data
+        debug('updateUser', {message: 'Success. This should be invalidating the user at this point.', result: {...data.id, ...data.name, ...data.image}})
         invalidateUser()
+        return result
       }
       else {
-        throw ({code: 'useCyfrUserApi/updateUser', message: 'That dint work'})
+        throw ({code: fileMethod('updateUser'), message: result.data.message})
       }
     } catch (error) {
       info(`updateUser ERROR`,error)
+      return ({code: fileMethod('updateUser'), message: 'That dint work'})
     }
   }
 

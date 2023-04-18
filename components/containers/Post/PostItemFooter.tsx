@@ -10,7 +10,7 @@ import { PostDetail, PostFeed } from "../../../prisma/prismaContext";
 
 import useDebug from "../../../hooks/useDebug";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
-const {debug} = useDebug("PostItemFooter")
+const { debug } = useDebug("PostItemFooter");
 
 type PostItemFooterProps = {
   post: PostDetail | PostFeed;
@@ -19,17 +19,14 @@ type PostItemFooterProps = {
 const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   const [cyfrUser] = useCyfrUserContext();
   // const { sharePost, likePost, invalidateMainFeed } = useMainFeed()
-  const { sharePost, likePost, invalidateFeed } = useFeed({type: 'post'});
-  const { notify } = useToast();
+  const { sharePost, likePost, invalidateFeed } = useFeed({ type: "post" });
+  const { notify, loginRequired } = useToast();
   const { setCommentId, showComment, hideComment } = useCommentContext();
   const isMain = feed === "main";
 
   const isLoggedIn = () => {
     if (!cyfrUser) {
-      notify({
-        type: "warning",
-        message: <LoggedIn />,
-      });
+      loginRequired();
       return false;
     }
     return true;
@@ -48,11 +45,11 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
     debug(`handleLike`);
     const liked = await likePost({ postId: post.id, authorId: cyfrUser!.id });
     if (liked) {
-      notify({ type: "success", message: "You liked this post!!!!!!!!!!!" });
+      notify("You liked this post!!!!!!!!!!!", "success");
       invalidateFeed();
       return;
     }
-    notify({ type: "warning", message: "Well that didn't work..." });
+    notify("Well that didn't work...", "warning");
   };
 
   const handleShare = async () => {
@@ -61,11 +58,11 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
     debug(`handleShare`);
     const shared = await sharePost({ postId: post.id, authorId: cyfrUser!.id });
     if (shared) {
-      notify({ type: "success", message: "You shared this post" });
+      notify("You shared this post", "success");
       invalidateFeed();
       return;
     }
-    notify({ type: "warning", message: "Well that didn't work..." });
+    notify("Well that didn't work...", "warning");
   };
 
   return (
@@ -79,7 +76,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
           label={`Like (${(post.likes || []).length})`}
           onClick={() => handleLike()}
         />
-        <AvatarList users={(post.likes || [])} sz="xs" />
+        <AvatarList users={post.likes || []} sz="xs" />
       </div>
 
       <div className="font-semibold uppercase">
@@ -91,9 +88,9 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
           label={`Share (${(post.shares || []).length})`}
           onClick={() => handleShare()}
         />
-        <AvatarList users={(post.shares || [])} sz="xs" />
+        <AvatarList users={post.shares || []} sz="xs" />
       </div>
-      
+
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={ReplyIcon}

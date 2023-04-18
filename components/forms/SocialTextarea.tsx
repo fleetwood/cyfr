@@ -30,7 +30,7 @@ const {debug, todo} = useDebug("RemirrorEditor")
 
 type MentionItem = { id: string, label: string }
 
-type RemirrorEditorProps = {
+type SocialTextareaProps = {
   placeholder?: string
   content?: string | null
   setContent?: Dispatch<SetStateAction<string | null>>
@@ -39,13 +39,13 @@ type RemirrorEditorProps = {
   maxChar?: number
 }
 
-const RemirrorEditor = ({
+const SocialTextarea = ({
   placeholder,
   content,
   setContent,
   maxChar = -1,
   setValid,
-}: RemirrorEditorProps) => {
+}: SocialTextareaProps) => {
   const [ cyfrUser ] = useCyfrUserContext()
   const [mentions, setMentions] = useState<MentionItem[]>([])
   const [search, setSearch] = useState("")
@@ -136,4 +136,4 @@ const RemirrorEditor = ({
   )
 }
 
-export default dynamic(() => Promise.resolve(RemirrorEditor), { ssr: false })
+export default dynamic(() => Promise.resolve(SocialTextarea), { ssr: false })

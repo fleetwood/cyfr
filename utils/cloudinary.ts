@@ -66,7 +66,7 @@ const getImageProps = (base:string, {...props}) => {
 /**
  * Create a thumbnail of the uploaded image
  * @param url string 
- * @param ...props cloudImageProps 
+ * @param ...props {@link cloudImageProps}
  * @returns string (url)
  */
 const thumb = ({url, ...props}:cloudImageProps) => cloudUrl(url, getImageProps('c_thumb', props))
@@ -74,7 +74,7 @@ const thumb = ({url, ...props}:cloudImageProps) => cloudUrl(url, getImageProps('
 /**
  * Exact width and height without distortion
  * @param url string 
- * @param ...props cloudImageProps 
+ * @param ...props {@link cloudImageProps}
  * @returns string (url)
  */
 const resize = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps(`c_fill`, props))
@@ -82,7 +82,7 @@ const resize = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps
 /**
  * Set to width and/or height with cropping
  * @param url string 
- * @param ...props cloudImageProps 
+ * @param ...props {@link cloudImageProps}
  * @returns string (url)
  */
 const scale = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps('c_scale', props))
@@ -91,7 +91,7 @@ export type AvatarSizeProps = {sz: 'xs' | 'sm' | 'md' | 'lg' | 'xl'}
 /**
  * Create a thumbnail of the uploaded image
  * @param url string
- * @param size AvatarSizeProps
+ * @param size {@link AvatarSizeProps}
  * @returns string
  */
 const avatar = (url:string, size: AvatarSizeProps) => cloudUrl(url, `t_avatar_${size}`)

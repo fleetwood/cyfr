@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import useDebug from "../../../hooks/useDebug"
-import { Gallery, GalleryFeed, PrismaGallery } from "../../../prisma/prismaContext"
+import { Gallery, GalleryStub, PrismaGallery } from "../../../prisma/prismaContext"
 import {
   GetResponseError,
   ResponseError,
@@ -11,7 +11,7 @@ const {todo, err} = useDebug("prismaComment")
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<GalleryFeed[]>>
+  res: NextApiResponse<ResponseResult<GalleryStub[]>>
 ) {
   todo('handle','Why is this posting req.body.body????')
   try {

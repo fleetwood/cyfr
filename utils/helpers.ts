@@ -1,5 +1,6 @@
 import { v4 as uid } from 'uuid'
 import useDebug from '../hooks/useDebug'
+import { BookDetail, BookStub, CyfrUser, Follow } from '../prisma/types'
 
 const {debug} = useDebug('utils')
 
@@ -103,7 +104,7 @@ export const timeDifference = (from:Date|string) => {
     minutes: date_diff.getMinutes(),
   }
   if (ago.weeks > 3) {
-    return `${dayOf(fromDate.getDay())}, ${fromDate.getFullYear()} ${monthOf(fromDate.getMonth())}-${fromDate.getDate() > 9 ? fromDate.getDate() : "0" + fromDate.getDate()}`
+    return `${fromDate.getFullYear()}, ${monthOf(fromDate.getMonth())} ${fromDate.getDate() > 9 ? fromDate.getDate() : "0" + fromDate.getDate()}`
   } else if (ago.weeks > 0) {
     return isOne(ago.weeks, " week")
   } else if (ago.days > 0) {
@@ -175,4 +176,14 @@ export const valToLabel = (val: number) => {
 export function hasOwnProperty<X extends {}, Y extends PropertyKey>
   (obj: X, prop: Y): obj is X & Record<Y, unknown> {
   return obj.hasOwnProperty(prop)
+}
+
+export function isBookAuthor(book:BookDetail|BookStub, cyfrUser:CyfrUser|null) {
+  const isOwner = cyfrUser && book.authors ? book.authors.filter(a => a.id === cyfrUser.id).length > 0 : false
+  debug('isBookAuthor',{title: book.title, authors: ((book.authors||[]).map(a => a.name)), user: cyfrUser?.name ?? 'No cyfrUser', isOwner})
+  return isOwner
+}
+
+export function onlyFans(follow:Follow[]) {
+  return follow.filter(f => f.isFan)
 }

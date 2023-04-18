@@ -97,7 +97,7 @@ const AutoInput = (props:AutoOptionProps) => {
   return (
     <div ref={ref}>
       <input
-        className={`input input-bordered w-full mb-2 ${props.className}`}
+        className={`input input-bordered w-full mb-2 bg-base-200 text-base-content ${props.className}`}
         onChange={(e) => updateSearch(e.currentTarget.value)}
         onKeyDown={(e) => keyCap(e)}
         placeholder={placeholder}

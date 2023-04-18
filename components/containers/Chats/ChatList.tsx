@@ -1,6 +1,6 @@
 import { useState } from "react"
 import useDebug from "../../../hooks/useDebug"
-import { User, UserSimple } from "../../../prisma/prismaContext"
+import { User, UserStub } from "../../../prisma/prismaContext"
 import { now, uniqueKey } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import Avatar from "../../ui/avatar"
@@ -13,7 +13,7 @@ const ChatList = () => {
     const [show, setShow] = useState<boolean>(false)
     const [chatRooms, setChatRooms] = useState<ChatRoomProps[]>([])
 
-    const addRoom = (secondPerson:UserSimple) => {
+    const addRoom = (secondPerson:UserStub) => {
         const room:ChatRoomProps = {
             firstPerson: cyfrUser,
             secondPerson,

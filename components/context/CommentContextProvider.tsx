@@ -61,10 +61,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
       debug(`handleSubmit success`)
       invalidateFeed()
     } else {
-      notify({
-        type: 'warning',
-        message: `Hm. That didn't work....`
-      })
+      notify(`Hm. That didn't work....`,'warning')
     }
   }
 

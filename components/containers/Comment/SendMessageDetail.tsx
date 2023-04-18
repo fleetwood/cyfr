@@ -4,7 +4,7 @@ import { uniqueKey, timeDifference } from "../../../utils/helpers";
 import TailwindInput from "../../forms/TailwindInput";
 import Avatar from "../../ui/avatar";
 import { ChatSendIcon } from "../../ui/icons";
-import RemirrorEditor from "../../ui/RemirrorEditor";
+import RemirrorEditor from "../../forms/SocialTextarea";
 import ReactHtmlParser from "react-html-parser"
 import MentionsMenu from "../../ui/mentionsMenu";
 import useDebug from "../../../hooks/useDebug";
@@ -42,10 +42,10 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
     }
     const inbox = await (await sendMessage(inboxProps))?.data.result
     if (inbox) {
-        notify({type: 'success', message: 'Message sent!'})
+        notify('Message sent!')
         onCreate(inbox)
     } else {
-        notify({type: 'warning', message: `Well that didn't work, sorry!`})
+        notify(`Well that didn't work, sorry!`,'warning')
     }
    }
 

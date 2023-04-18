@@ -1,3 +1,4 @@
+import JsonBlock from "../components/ui/jsonBlock"
 import { __logLevel__ } from "../utils/constants"
 
 type DebugProps = 'DEBUG'|'INFO'|'ERROR'
@@ -14,7 +15,7 @@ ${lineBreak()}
 ${fileMethod(method)} 
 ${methodData(t)}
 ${lineBreak()}
-`) 
+`)
   
   const err = (method: string, data?: any) => log(method, {error: lineBreak('!', 'ERROR'), data})
   
@@ -38,6 +39,8 @@ ${lineBreak('*','TODO')}
 `
   )}}
 
-  return {debug, info, err, todo, stringify, fileMethod}
+  const jsonBlock = (data:any) => level === 'DEBUG' ? <JsonBlock data={data} /> : <></>
+
+  return {debug, info, err, todo, stringify, level, jsonBlock, fileMethod}
 }
 export default useDebug

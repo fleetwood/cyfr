@@ -23,15 +23,7 @@ const GalleryItemView = ({ gallery }: GalleryDetailViewProps) => {
           </div>
         )}
         <div className="min-w-full p-4 space-x-2">
-        <GalleryPhotoswipe items={gallery.images.map((img) => {
-            return {
-              original: img.url,
-              thumbnail: cloudinary.thumb({url: img.url, width:60}),
-              height: img.height,
-              width: img.width,
-              alt: img.title
-            }
-          })} />
+          <GalleryPhotoswipe gallery={gallery} />
         </div>
         <div className="min-w-full">
           <GalleryFooter gallery={gallery} feed={{ type: "gallery" }} />

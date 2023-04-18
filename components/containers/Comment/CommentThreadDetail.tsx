@@ -3,7 +3,7 @@ import useDebug from "../../../hooks/useDebug"
 import { CommentThreadDetails, CyfrUser, User } from "../../../prisma/prismaContext"
 import Avatar from "../../ui/avatar"
 import ReactHtmlParser from "react-html-parser"
-import RemirrorEditor from "../../ui/RemirrorEditor"
+import RemirrorEditor from "../../forms/SocialTextarea"
 import { timeDifference, uniqueKey } from "../../../utils/helpers"
 import useFeed from "../../../hooks/useFeed"
 import { ChatSendIcon } from "../../ui/icons"
@@ -26,7 +26,7 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
 
     const onSend = async () => {
         if (!canSend || !message) {
-            notify({type: 'warning', message: "That didn't work...."})
+            notify("That didn't work....",'warning')
         }
         
         const data = {
@@ -42,7 +42,7 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
         const send = await sendMessage(data)
         
         if (send) {
-            notify({type: 'success', message: "Message sent!"})
+            notify("Message sent!")
             setMessage(() => null)
             invalidateFeed({type: 'inbox'})
         }

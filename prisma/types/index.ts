@@ -1,5 +1,4 @@
 export * from "@prisma/client";
-export * from "./audience.def";
 export * from "./book.def";
 export * from "./chat.def";
 export * from './comment.def';

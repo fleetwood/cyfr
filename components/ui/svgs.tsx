@@ -9,12 +9,8 @@ export type SVGprops = {
 export const SVG = ({children, width, height=40}:SVGprops) => {
     if (height!==width) width=height;
     return (
-    <svg
-        height={height}
-        width={width} 
-        viewBox={`0 0 ${height} ${width}`}
-        >
-            {children}
+    <svg height={height} width={width} viewBox={`0 0 ${height} ${width}`}>
+        {children}
     </svg>
 )}
 

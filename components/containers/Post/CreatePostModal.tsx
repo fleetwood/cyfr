@@ -4,7 +4,7 @@ import useFeed from "../../../hooks/useFeed"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import Dropzone, { CompleteFile } from "../../forms/Dropzone"
-import RemirrorEditor from "../../ui/RemirrorEditor"
+import RemirrorEditor from "../../forms/SocialTextarea"
 import { LoggedIn } from "../../ui/toasty"
 
 const {debug} = useDebug("components/containers/Post/CreatePost")
@@ -17,7 +17,6 @@ const CreatePostModal = (): JSX.Element => {
   const [valid, setIsValid] = useState<boolean>(false)
   const { createPost, invalidateFeed } = useFeed({ type: "post" })
   const [images, setImages] = useState<string[]>([])
-
 
   const onFilesComplete = async (files: CompleteFile[]) => {
     const setFiles = files.flatMap((f) => f.secure_url)
@@ -40,10 +39,7 @@ const CreatePostModal = (): JSX.Element => {
     const post = await createPost(postData)
 
     if (!post) {
-      notify({
-        type: "warning",
-        message: `Uh. Ya that didn't work. Weird.`,
-      })
+      notify(`Uh. Ya that didn't work. Weird.`,'warning')
     } else {
       setContent(null)
       setImages(() => [])
@@ -77,7 +73,7 @@ const CreatePostModal = (): JSX.Element => {
                   setValid={setIsValid}
                 />
 
-                <Dropzone limit={5} onUploadComplete={onFilesComplete} />
+                <Dropzone limit={5} onDropComplete={onFilesComplete} />
 
                 <div className="w-full grid place-items-end mt-2">
                   <button

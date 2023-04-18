@@ -16,8 +16,8 @@ model User {
   image         String?
   slug          String?       @unique
   accounts      Account[]
-  blocking      Block[]       @relation("blocked_from_user")
-  blocked       Block[]       @relation("user_is_blocked")
+  blocks        Block[]       @relation("user_blocks") // blocks that the user has created
+  IsBlocked     Block[]       @relation("user_is_blocked") // where this user has been blocked by another
   chatMessages  ChatMessage[] @relation("user_chat_messages")
   comments      Comment[]     @relation("user_comments")
   ownedCommunes Commune[]     @relation("commune_owner")
@@ -34,6 +34,8 @@ model User {
   membershipId  String?       @unique
   membership    Membership?   @relation("user_membership", fields: [membershipId], references: [id])
   books         Book[]        @relation("user_books")
+  
+  @@index(fields: [id, name, email])
 }
 
 model Post {
@@ -52,6 +54,8 @@ model Post {
   comment       Post?    @relation("post_comments", fields: [commentId], references: [id])
   post_comments Post[]   @relation("post_comments")
   shares        Share[]  @relation("post_shares")
+
+  @@index(fields: [id, authorId, shareId, visible, createdAt("sort: Desc")])
 }
 
 model News {
@@ -101,7 +105,7 @@ model Image {
   authorId  String
   galleryId String?
   shareId   String?
-  url       String
+  url       String   @unique
   postId    String?
   height    Int?     @default(0)
   width     Int?     @default(0)
@@ -131,21 +135,29 @@ model Like {
   post        Post?      @relation("post_likes", fields: [postId], references: [id])
   character   Character? @relation("character_likes", fields: [characterId], references: [id])
   book        Book?      @relation("book_likes", fields: [bookId], references: [id])
+
+  @@index(fields: [id, authorId, postId])
 }
 
 model Share {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-  visible   Boolean  @default(true)
-  authorId  String
-  postId    String?
-  galleryId String?
-  imageId   String?
-  author    User     @relation("user_shares", fields: [authorId], references: [id])
-  gallery   Gallery? @relation("gallery_shares", fields: [galleryId], references: [id])
-  image     Image?   @relation("image_shares", fields: [imageId], references: [id])
-  post      Post?    @relation("post_shares", fields: [postId], references: [id])
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+  visible       Boolean  @default(true)
+  authorId      String
+  postId        String?
+  galleryId     String?
+  imageId       String?
+  characterId   String?
+  bookId        String?
+  author        User        @relation("user_shares", fields: [authorId], references: [id])
+  gallery       Gallery?    @relation("gallery_shares", fields: [galleryId], references: [id])
+  image         Image?      @relation("image_shares", fields: [imageId], references: [id])
+  post          Post?       @relation("post_shares", fields: [postId], references: [id])
+  character     Character?  @relation("character_shares", fields: [characterId], references: [id])
+  book          Book?       @relation("book_shares", fields: [bookId], references: [id])
+
+  @@index(fields: [id, authorId, postId])
 }
 
 model Follow {
@@ -161,6 +173,8 @@ model Follow {
   character   Character? @relation("character_follows", fields: [characterId], references: [id])
   bookId      String?
   book        Book?      @relation("book_follows", fields: [bookId], references: [id])
+
+  @@index(fields: [id, followerId, followingId])
 }
 
 model ChatRoom {
@@ -240,9 +254,12 @@ model Membership {
   id        String    @id @default(cuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
+  expiresAt DateTime? // a null expiresAt is permanent
   active    Boolean   @default(true)
   level     Audience? @default(USER)
   user      User?     @relation("user_membership")
+
+  @@index(fields: [id])
 }
 
 model Genre {
@@ -277,7 +294,7 @@ model Book {
   prospect   Boolean        @default(false)
   fiction    Boolean        @default(true)
   title      String         @unique
-  slug          String      @unique
+  slug       String         @unique
   coverId    String?        @unique
   cover      Image?         @relation("book_cover", fields: [coverId], references: [id])
   genreId    String
@@ -294,6 +311,7 @@ model Book {
   gallery    Gallery?       @relation("book_gallery", fields: [galleryId], references: [id])
   follows    Follow[]       @relation("book_follows")
   likes      Like[]         @relation("book_likes")
+  shares     Share[]        @relation("book_shares")
 }
 
 model Character {
@@ -314,6 +332,7 @@ model Character {
   archetype   String
   likes       Like[]    @relation("character_likes")
   follows     Follow[]  @relation("character_follows")
+  shares      Share[]   @relation("character_shares")
   books       Book[]    @relation("book_characters")
   chapters    Chapter[] @relation("chapter_characters")
   galleryId   String?   @unique
@@ -340,16 +359,20 @@ model Block {
   id             String         @id @default(cuid())
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @default(now())
-  entity         Entity?
-  entityId       String?
+  expiresAt      DateTime?      // a null expire is permanent
+  active         Boolean        @default(true)
+  blockType      BlockType
+  authorId       String
+  author         User           @relation("user_blocks", fields: [authorId], references: [id]) // blocks created by this user
   blockedId      String
   galleryId      String?
   threadId       String?
   userId         String
-  blockedUser    User           @relation("blocked_from_user", fields: [blockedId], references: [id])
   blockedGallery Gallery?       @relation("blocked_from_gallery", fields: [galleryId], references: [id])
   blockedThread  CommentThread? @relation("blocked_from_thread", fields: [threadId], references: [id])
-  user           User           @relation("user_is_blocked", fields: [userId], references: [id])
+  user           User           @relation("user_is_blocked", fields: [userId], references: [id]) // user that is being blocked
+
+  @@index(fields: [id, userId, authorId, threadId, blockType])
 }
 
 model VerificationToken {
@@ -433,4 +456,12 @@ enum Visibility {
   MEMBERS
   AGENTS
   GROUP
+}
+
+enum BlockType {
+  BOOK
+  GALLERY
+  THREAD
+  USER
+  SITE
 }

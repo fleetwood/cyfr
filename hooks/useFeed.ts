@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryFeed, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostFeed, StartInboxThreadProps, UpsertInboxProps } from "../prisma/prismaContext"
+import { CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryStub, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostFeed, StartInboxThreadProps, UpsertInboxProps } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import useDebug from "./useDebug"
 
@@ -40,8 +40,8 @@ export const useFeed = ({type}:FeedTypes) => {
     return null
   }
   
-  const getGalleries = async ():Promise<GalleryFeed[]|null> => {
-    const data = await getApi<GalleryFeed[]|null>(`gallery/all`)
+  const getGalleries = async ():Promise<GalleryStub[]|null> => {
+    const data = await getApi<GalleryStub[]|null>(`gallery/all`)
     if (data.result) {
       const posts = data.result
       return posts

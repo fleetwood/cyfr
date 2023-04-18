@@ -1,67 +1,61 @@
-import { useState } from "react";
-import useUserDetail from "../../../hooks/useUserDetail";
-import { UserFollow } from "../../../prisma/prismaContext";
-import { uniqueKey } from '../../../utils/helpers';
-import { useCyfrUserContext } from "../../context/CyfrUserProvider";
-import { useToast } from "../../context/ToastContextProvider";
-import Avatar from "../../ui/avatar";
-import { FireIcon, HeartIcon } from "../../ui/icons";
-import JsonBlock from "../../ui/jsonBlock";
-import ShrinkableIconButton from "../../ui/shrinkableIconButton";
-import GalleryCreateView from "../Gallery/GalleryCreateView";
-import GalleryItemView from "../Gallery/GalleryItemView";
-import UserDetailPostItem from "../Post/UserDetailPostItem";
+import { useState } from "react"
+import useUserDetail from "../../../hooks/useUserDetail"
+import { UserFollow } from "../../../prisma/prismaContext"
+import { uniqueKey } from '../../../utils/helpers'
+import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import { useToast } from "../../context/ToastContextProvider"
+import Avatar from "../../ui/avatar"
+import { FireIcon, HeartIcon } from "../../ui/icons"
+import ShrinkableIconButton from "../../ui/shrinkableIconButton"
+import BookCover from "../Books/BookCover"
+import GalleryItemView from "../Gallery/GalleryItemView"
+import UserDetailPostItem from "../Post/UserDetailPostItem"
 
 type UserDetailComponentProps = {
-  userId: String;
-};
+  userId: String
+}
 
 const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
-  const [cyfrUser] = useCyfrUserContext();
-  const { currentUser, followers, follows, fans, stans, followUser, stanUser, invalidateUser } = useUserDetail({id: userId});
-  const { notify } = useToast();
-  const [activeTab, setActiveTab] = useState("Posts");
+  const [cyfrUser] = useCyfrUserContext()
+  const { currentUser, followers, follows, fans, stans, followUser, stanUser, invalidateUser } = useUserDetail({id: userId})
+  const isOwner = cyfrUser && currentUser && cyfrUser.id === currentUser.id
+  const { notify } = useToast()
+  const [activeTab, setActiveTab] = useState("Posts")
 
   const activeTabClass = (tab: string) =>
     activeTab === tab
       ? `btn-secondary rounded-b-none mt-0`
-      : `btn-primary -mt-1`;
+      : `btn-primary -mt-1`
 
   const clickFollow = async () => {
-    if (!cyfrUser || !currentUser) return;
+    if (!cyfrUser || !currentUser) return
 
     const result = await followUser({
       followerId: cyfrUser.id,
       followingId: currentUser.id,
       isFan: false
-    });
+    })
 
     if (result) {
-      notify({
-        message: `You are now following ${currentUser.name}!`,
-        type: "success",
-      });
+      notify(`You are now following ${currentUser.name}!`,"success",)
     }
-    invalidateUser();
-  };
+    invalidateUser()
+  }
 
   const clickStan = async () => {
-    if (!cyfrUser || !currentUser) return;
+    if (!cyfrUser || !currentUser) return
 
     const result = await stanUser({
-      followerId: currentUser.id,
-      followingId: cyfrUser.id,
+      followerId: cyfrUser.id,
+      followingId: currentUser.id,
       isFan: true
-    });
+    })
 
     if (result) {
-      notify({
-        message: `You are stanning ${currentUser.name}!!! Nice!`,
-        type: "success",
-      });
+      notify(`You are stanning ${currentUser.name}!!! Nice!`,"success")
     }
-    invalidateUser();
-  };
+    invalidateUser()
+  }
 
   return (
     <div>
@@ -176,9 +170,6 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
       {/* GALLERIES */}
       {activeTab === "Galleries" && (
         <div className="flex flex-col space-y-4 my-4">
-          {currentUser?.id === cyfrUser.id &&
-            <GalleryCreateView />
-          }
 
           <div className="bg-base-100 my-4 p-4 rounded-md">
             {currentUser?.galleries && 
@@ -196,7 +187,9 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
         <div>
           <h2 className="subtitle">Books</h2>
           <div className="bg-base-100 my-4 p-4 rounded-md">
-            TBD
+            {currentUser?.books.map(book => (
+              <BookCover book={book} key={book.id} />
+            ))}
           </div>
         </div>
       )}
@@ -205,10 +198,9 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
         <>
           <h2 className="subtitle">Posts</h2>
           <div className="my-4">
-          {currentUser?.posts &&
-            currentUser?.posts.map((post) => (
+          {currentUser?.posts?.map((post) => (
               <UserDetailPostItem post={post} key={uniqueKey('user-post',currentUser, post)} />
-            ))}
+          ))}
           </div>
         </>
       )}
@@ -219,7 +211,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           <h2 className="h-subtitle">Followers</h2>
           <div className="flex space-x-2 space-y-2">
             {followers.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' />
+              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
             ))}
           </div>
         </div>
@@ -227,7 +219,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           <h2 className="h-subtitle">Follows</h2>
           <div className="flex space-x-2 space-y-2">
             {follows.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' />
+              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
             ))}
           </div>
         </div>
@@ -240,7 +232,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           <h2 className="h-subtitle">Fans</h2>
           <div className="flex space-x-2 space-y-2">
             {fans.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' />
+              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)}/>
             ))}
           </div>
         </div>
@@ -248,14 +240,14 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           <h2 className="h-subtitle">Stans</h2>
           <div className="flex space-x-2 space-y-2">
             {stans.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' />
+              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)}/>
             ))}
           </div>
         </div>
       </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default UserDetailComponent;
+export default UserDetailComponent
