@@ -91,6 +91,7 @@ export type BookUpsertProps = {
   title:        string,
   slug?:        string,
   active:       boolean,
+  fiction:      boolean,
   prospect:     boolean,
   authors:      User[]|CyfrUser[],
   genreId:      string,

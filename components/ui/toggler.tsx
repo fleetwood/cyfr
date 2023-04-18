@@ -1,5 +1,7 @@
 import { Switch } from "@headlessui/react"
-import { uuid } from "../../utils/helpers"
+import useDebug from "../../hooks/useDebug"
+
+const {debug, level} = useDebug('components/ui/Toggler')
 
 type TogglerParams = {
   checked:  boolean
@@ -10,7 +12,7 @@ type TogglerParams = {
   debug?: boolean
 }
 
-const Toggler = ({trueLabel, falseLabel, checked, setChecked, variant = 'primary', debug = false}:TogglerParams) =>
+const Toggler = ({trueLabel, falseLabel, checked, setChecked, variant = 'primary'}:TogglerParams) =>
   <div className="flex place-items-center relative">
     {trueLabel && <span className={`w-1/3 text-center text-${variant} ${checked ? 'font-semibold':'text-opacity-50'}`}>{trueLabel}</span>}
     <Switch
@@ -38,7 +40,7 @@ const Toggler = ({trueLabel, falseLabel, checked, setChecked, variant = 'primary
         />
     </Switch>
     {falseLabel && <span className={`w-1/3 text-center text-${variant} ${!checked ? 'font-semibold':'text-opacity-50'}`}>{falseLabel}</span>}
-    {debug && <span className="mx-2 px-2 text-sm text-info-content bg-info">Checked: {checked.toString()}</span>}
+    {level==='DEBUG' && <span className="mx-2 px-2 text-sm text-info-content bg-info">Checked: {checked.toString()}</span>}
   </div>
 
 export default Toggler

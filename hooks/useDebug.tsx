@@ -41,6 +41,6 @@ ${lineBreak('*','TODO')}
 
   const jsonBlock = (data:any) => level === 'DEBUG' ? <JsonBlock data={data} /> : <></>
 
-  return {debug, info, err, todo, stringify, jsonBlock, fileMethod}
+  return {debug, info, err, todo, stringify, level, jsonBlock, fileMethod}
 }
 export default useDebug

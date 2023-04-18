@@ -78,7 +78,7 @@ const byUser = async (id: string): Promise<BookDetail[]> => {
 
 const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
     try {
-        const {id, title, slug, hook, synopsis, back, status, active, prospect, words} = props
+        const {id, title, slug, hook, synopsis, back, status, active, fiction, prospect, words} = props
         const data =  {
           title,
           slug: encodeURIComponent(slug || title.replaceAll(' ','-')).toLowerCase(),
@@ -88,6 +88,7 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
           status,
           active,
           prospect,
+          fiction,
           words,
           authors: {
             connect: dedupe(props.authors.map(a => { return {id: a.id}}),'id')
@@ -99,7 +100,7 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
           }
         }
 
-        debug('createBook', data)
+        debug('upsert', data)
         todo('createBook',`
             2. if a cover hasn't been uploaded, obtain the default for the genre
             4. categories, oy

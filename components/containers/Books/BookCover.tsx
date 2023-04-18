@@ -2,7 +2,7 @@ import Link from "next/link";
 import useDebug from "../../../hooks/useDebug";
 import { BookDetail, BookStub, Image } from "../../../prisma/prismaContext";
 import { cloudinary } from "../../../utils/cloudinary";
-import { isBookAuthor } from "../../../utils/helpers";
+import { isBookAuthor, uniqueKey } from "../../../utils/helpers";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import Avatar from "../../ui/avatar";
 import { CheckBadge } from "../../ui/icons";
@@ -56,7 +56,7 @@ const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true, authorA
       : <BookImage cover={book.cover||null} title={book.title} width={width!} owner={isOwner} />
     }
     {authorAvatars && book.authors?.map(author => (
-      <Avatar user={author} sz="sm" link={false} className="absolute bottom-0 float-right" />
+      <Avatar user={author} sz="sm" link={false} className="absolute bottom-0 float-right" key={uniqueKey(book,author)} />
     ))}
     {/* <JsonBlock data={book} /> */}
     </div>

@@ -3,16 +3,13 @@ import useDebug from "./useDebug"
 import { sendApi } from "../utils/api"
 import { useState } from "react"
 import { useQueryClient } from "react-query"
+import useBookDetail from "./useBookDetail"
 
 const {debug} = useDebug('hooks/useBookApi','DEBUG')
 
 const useBookApi = (bookDetail:BookDetail) => {
   const [book, setBookState] = useState<BookDetail>(bookDetail)
-  const qc = useQueryClient()
-  const invalidate = () => {
-    debug('invalidate',["bookDetail",book.title])
-    qc.invalidateQueries(["bookDetail",book.slug])
-  }
+  const {invalidate} = useBookDetail(bookDetail.id)
 
   type BookApiUpdate = {
     // title?:       string | null
@@ -28,12 +25,12 @@ const useBookApi = (bookDetail:BookDetail) => {
   }
 
   const update = async (props:BookApiUpdate) => {
-    debug('update',{props})
+    debug('update',{fiction: book.fiction, prospect: book.prospect, active: book.active,props})
     const newBook:BookDetail = {
-      ...bookDetail,
+      ...book,
       ...props
     }
-    setBookState(() => newBook)
+    setBookState(newBook)
   }
   
   const follow = async (followerId:string, isFan=false) => {
@@ -83,14 +80,16 @@ const useBookApi = (bookDetail:BookDetail) => {
   }
   
   const save = async () => {
-    debug('save')
+    debug('save',{fiction: book.fiction, prospect: book.prospect, active: book.active})
     const upsert = await (await sendApi("book/upsert", book)).data
     if (upsert.result) {
+      const b = upsert.result
+      debug('result', {fiction: b.fiction, prospect: b.prospect, active: b.active})
       invalidate()
       return true
     }
     else {
-      debug('Did not get right result?', upsert.result)
+      debug('Did not get right result?', upsert)
       return false
     }
   }
