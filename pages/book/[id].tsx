@@ -14,7 +14,8 @@ const BookByID = ({}) => {
   const router = useRouter()
   const {id} = router.query
 
-  const [cyfrUser] = useCyfrUserContext();
+  const [cyfrUser] = useCyfrUserContext()
+  // TODO: This is weird. Loading the book twice?
   const {book, isLoading, error, invalidate} = useBookDetail(((id||'').toString()))
   const by = (book?.authors||[]).flatMap((author:UserStub) => author.name).join(" and ");
   //todo: This should be handled by a commune...
@@ -25,17 +26,11 @@ const BookByID = ({}) => {
       sectionTitle={book?.title}
       subTitle={by}
     >
-      <div className="book-loading"><div>
-        <div></div><div></div><div></div><div></div>  
-      </div></div>
       {isLoading &&
         <Spinner />
       }
       {book &&
-        <>
-        <EZButton label="Refresh" whenClicked={invalidate} variant="info" />
         <BookDetailComponent bookDetail={book} onUpdate={invalidate} />
-        </>
       }
     </MainLayout>
   );
