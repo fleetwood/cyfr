@@ -29,6 +29,7 @@ import Toggler from "../../ui/toggler";
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe";
 import BookCover, { BookCoverVariant } from "./BookCover";
 import { KeyVal } from "../../../types/props";
+import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/CreateChapterModal";
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -429,6 +430,8 @@ const BookDetailComponent = ({ bookDetail, onUpdate }: BookComponentProps) => {
           <div className="my-4">
             <h3>Chapters</h3>
             <div>
+              <CreateChapterModal />
+              <OpenChapterModalButton />
               <p className="text-xs">
                 <strong>TODO: Create Chapters upsert.</strong>
                 This should be a modal to create a new chapter, or edit/delete
