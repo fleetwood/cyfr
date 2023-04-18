@@ -14,10 +14,18 @@ const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", 'DE
 
 const createChapterModal = 'createChapterModal'
 
-export const OpenChapterModalButton = () => (
-<label htmlFor={createChapterModal} className="btn btn-info space-x-2">
-  <span className="text-info-content">New Chapter</span>
-</label>
+
+type ChapterModalButtonVariant = {
+  variant?: 'button'|'plus'
+}
+export const OpenChapterModalButton = ({variant='button'}:ChapterModalButtonVariant) => (
+  variant === 'button' 
+  ?
+    <label htmlFor={createChapterModal} className="btn btn-info space-x-2">
+      <span className="text-info-content">New Chapter</span>
+    </label>
+  :
+    <label htmlFor={createChapterModal} className="btn btn-sm btn-info btn-circle">+</label>
 )
 
 type CreateChapterModalType = {
@@ -50,6 +58,10 @@ const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
     }
   }
 
+  const buttonGotThis = (e: { preventDefault: () => void }) => {
+    e.preventDefault()
+  }
+
   const closeModal = (e?:any) => {
     debug('closeModal')
     const createModal = document.getElementById(createChapterModal)
@@ -70,7 +82,7 @@ const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
           }
           {cyfrUser && (
             <div className="w-full mx-auto m-4 p-2 sm:p-6 lg:p-4 bg-base-300 rounded-lg">
-              <form className=" flex flex-col" onSubmit={handleSubmit}>
+              <form className=" flex flex-col" onSubmit={buttonGotThis}>
                 <TailwindInput type='text' label='Title' value={chapterTitle} setValue={setChapterTitle} required={true} />
                 <label className='block'>
                   <span className='text-primary font-bold'>Order</span>

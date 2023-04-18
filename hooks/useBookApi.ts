@@ -161,7 +161,7 @@ const useBookApi = (props:BookApiProps):BookApi => {
 
   const addChapter = async (title:string, order:number) => {
     if (!bookDetail) return noBookDetail('addChapter')
-    const props = {bookid: bookDetail.id, title, order}
+    const props = {bookId: bookDetail.id, title, order}
     const result = await (await sendApi('/book/addChapter', props)).data
     if (result.result) {
       invalidate()

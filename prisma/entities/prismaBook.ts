@@ -263,10 +263,11 @@ const share = async (props:ShareProps): Promise<Share> => {
 
 const addChapter = async(props:{bookId:string, title:string, order: number}):Promise<BookDetail> => {
   try {
-    const {bookId:id, title, order} = props
-    debug('addChapter',{id, title, order})
-    const result = await prisma.book.update({
-      where: {id},
+    const {bookId, title, order} = props
+    const update = {
+      where: {
+        id: bookId
+      },
       data: {
         chapters: {
           create: {
@@ -275,9 +276,11 @@ const addChapter = async(props:{bookId:string, title:string, order: number}):Pro
           }
         }
       }
-    })
+    }
+    debug('addChapter',{bookId, update})
+    const result = await prisma.book.update(update)
     if (result) {
-      return detail(id)
+      return detail(bookId)
     }
     throw new Error('Failed to obtain a result')
   } catch (error) {

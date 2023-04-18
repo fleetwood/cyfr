@@ -423,23 +423,21 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
         </div>
       </div>
 
-      {notEmpty(bookDetail.chapters) ||
-        (isAuthor && (
-          <div className="my-4">
-            <h3>Chapters</h3>
-            <div>
-              <CreateChapterModal forBook={bookApi} />
-              <OpenChapterModalButton />
-              <p className="text-xs">
-                <strong>TODO: Create Chapters upsert.</strong>
-                This should be a modal to create a new chapter, or edit/delete
-                an existing chapter. When complete, update{" "}
-                <code>bookHas(bookDetail.chapters) || isAuthor</code> so chapters
-                display for all users, but forms only show for authors.
-              </p>
-            </div>
-          </div>
-        ))}
+      <div className="my-4">
+        <h3>Chapters {isAuthor && <OpenChapterModalButton variant="plus" />}</h3>
+          {isAuthor && <CreateChapterModal forBook={bookApi} />}
+        <div className="flex space-x-4">
+          {cleanArray(bookDetail.chapters).map(chapter => (
+              <div key={uniqueKey(bookDetail, chapter)}>
+                <span className="text-lg font-semibold">{chapter.title}</span>
+              </div>
+          ))}
+        </div>
+        <p className="text-xs">
+          Update <code>bookHas(bookDetail.chapters) || isAuthor</code> so chapters
+          display for all users, but forms only show for authors.
+        </p>
+      </div>
 
       {notEmpty(bookDetail.characters) ||
         (isAuthor && (
