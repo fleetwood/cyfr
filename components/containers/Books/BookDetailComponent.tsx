@@ -31,6 +31,7 @@ import BookCover, { BookCoverVariant } from "./BookCover";
 import { KeyVal } from "../../../types/props";
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/CreateChapterModal";
 import Spinner from "../../ui/spinner";
+import ChapterList from "../Chapter/ChapterList";
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -427,33 +428,25 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
         <h3>Chapters {isAuthor && <OpenChapterModalButton variant="plus" />}</h3>
           {isAuthor && <CreateChapterModal forBook={bookApi} />}
         <div className="flex space-x-4">
-          {cleanArray(bookDetail.chapters).map(chapter => (
-              <div key={uniqueKey(bookDetail, chapter)}>
-                <span className="text-lg font-semibold">{chapter.title}</span>
-              </div>
-          ))}
+          <ChapterList forBook={bookApi} />
         </div>
         <p className="text-xs">
-          Update <code>bookHas(bookDetail.chapters) || isAuthor</code> so chapters
-          display for all users, but forms only show for authors.
+          Make chapters orderable
         </p>
       </div>
 
-      {notEmpty(bookDetail.characters) ||
-        (isAuthor && (
-          <div className="my-4">
-            <h3>Characters</h3>
-            <div>
-              <p className="text-xs">
-                <strong>TODO: Create Characters upsert.</strong>
-                This should be a modal to create a new character, or edit/delete
-                an existing character. When complete, update{" "}
-                <code>bookHas(bookDetail.characters) || isAuthor</code> so characters
-                display for all users, but forms only show for authors.
-              </p>
-            </div>
-          </div>
-        ))}
+      <div className="my-4">
+        <h3>Characters</h3>
+        <div>
+          <p className="text-xs">
+            <strong>TODO: Create Characters upsert.</strong>
+            This should be a modal to create a new character, or edit/delete
+            an existing character. When complete, update{" "}
+            <code>bookHas(bookDetail.characters) || isAuthor</code> so characters
+            display for all users, but forms only show for authors.
+          </p>
+        </div>
+      </div>
 
       {(bookDetail.gallery || isAuthor) && (
         <div className="my-4">

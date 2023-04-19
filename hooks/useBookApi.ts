@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react"
-import { BookDetail, BookStatus, CyfrUser, Genre, GenreListItem, PrismaBook } from "../prisma/prismaContext"
+import { BookDetail, BookStatus, Chapter, Character, CyfrUser, Genre, GenreListItem, PrismaBook } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import useBookDetail from "./useBookDetail"
 import useDebug from "./useDebug"
@@ -45,6 +45,8 @@ export type BookApi = {
   update          : (props: BookApiUpdate) => Promise<boolean | undefined>
   addChapter      : (title: string, order: number) => Promise<any>
   invalidate      : () => void
+  chapters        : Chapter[]
+  characters      : Character[]
 }
 
 const useBookApi = (props:BookApiProps):BookApi => {
@@ -57,6 +59,9 @@ const useBookApi = (props:BookApiProps):BookApi => {
   const notEmpty = (arr: Array<any> | undefined | null) => arr !== undefined && arr !== null && arr.length > 0
 
   const cleanArray = (arr:Array<any> | undefined | null):Array<any> => arr ? arr.filter(a => a!== undefined && a !== null) : []
+
+  const chapters = cleanArray(bookDetail?.chapters).sort((a,b) => a.order > b.order ? 1 : -1) as Chapter[]
+  const characters = cleanArray(bookDetail?.characters) as Character[]
 
   const noBookDetail = (method:string) => {
     debug(method, 'bookDetail is null')
@@ -175,6 +180,8 @@ const useBookApi = (props:BookApiProps):BookApi => {
   return {
     by,
     isAuthor,
+    chapters,
+    characters,
     follow,
     like,
     share,
