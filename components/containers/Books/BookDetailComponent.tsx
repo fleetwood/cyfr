@@ -1,8 +1,8 @@
-import { useState } from "react";
-import ReactHtmlParser from "react-html-parser";
-import useBookApi, { BookApi } from "../../../hooks/useBookApi";
-import useDebug from "../../../hooks/useDebug";
-import { BookDetail, BookStatus } from "../../../prisma/prismaContext";
+import { useState } from "react"
+import ReactHtmlParser from "react-html-parser"
+import useBookApi from "../../../hooks/useBookApi"
+import useDebug from "../../../hooks/useDebug"
+import { BookDetail, BookStatus, Chapter, ChapterDetail, UserStub } from "../../../prisma/prismaContext"
 import {
   isBookAuthor,
   onlyFans,
@@ -10,12 +10,12 @@ import {
   uuid,
   valToLabel,
   ymd,
-} from "../../../utils/helpers";
-import { useCyfrUserContext } from "../../context/CyfrUserProvider";
-import { useToast } from "../../context/ToastContextProvider";
-import { InlineTextarea, TailwindSelectInput } from "../../forms";
-import Avatar from "../../ui/avatar";
-import EZButton from "../../ui/ezButton";
+} from "../../../utils/helpers"
+import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import { useToast } from "../../context/ToastContextProvider"
+import { InlineTextarea, TailwindSelectInput } from "../../forms"
+import Avatar from "../../ui/avatar"
+import EZButton from "../../ui/ezButton"
 import {
   FeatherIcon,
   FireIcon,
@@ -23,20 +23,22 @@ import {
   HeartIcon,
   ReplyIcon,
   ShareIcon,
-} from "../../ui/icons";
-import ShrinkableIconLabel from "../../ui/shrinkableIconLabel";
-import Toggler from "../../ui/toggler";
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe";
-import BookCover, { BookCoverVariant } from "./BookCover";
-import { KeyVal } from "../../../types/props";
-import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/CreateChapterModal";
-import Spinner from "../../ui/spinner";
-import ChapterList from "../Chapter/ChapterList";
+} from "../../ui/icons"
+import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
+import Toggler from "../../ui/toggler"
+import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
+import BookCover, { BookCoverVariant } from "./BookCover"
+import { KeyVal } from "../../../types/props"
+import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/CreateChapterModal"
+import Spinner from "../../ui/spinner"
+import ChapterList from "../Chapter/ChapterList"
+import { BookApi } from "../../../types/bookApi.def"
+import ChapterEdit from "../Chapter/ChapterEdit"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
   "DEBUG"
-);
+)
 
 const ErrorPage = () => (
   <div>
@@ -50,10 +52,12 @@ type BookDetailComponentProps = {
 }
 
 const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
-  const { notify, loginRequired } = useToast();
-  const [cyfrUser] = useCyfrUserContext();
-  const {bookDetail, isLoading, error, notEmpty, cleanArray, follow, share, like, update, save, invalidate, by, isAuthor, genresToOptions} = bookApi
-  const [saveReady, setSaveReady] = useState(false);
+  const { notify, loginRequired } = useToast()
+  const [cyfrUser] = useCyfrUserContext()
+  const {bookDetail, isLoading, error, invalidate, isAuthor} = bookApi
+  const [saveReady, setSaveReady] = useState(false)
+  const [editChapter, setEditChapter] = useState<Chapter|null>()
+
   const statusOptions: KeyVal[] = [
     { key: "DRAFT" },
     { key: "MANUSCRIPT" },
@@ -68,81 +72,81 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
 
   const onFollow = async () => {
     if (!cyfrUser) {
-      loginRequired();
-      return null;
+      loginRequired()
+      return null
     }
-    const result = await follow(cyfrUser.id);
+    const result = await bookApi.follow(cyfrUser.id)
     if (result) {
-      notify(`You are now following ${bookDetail?.title}. Nice!`);
+      notify(`You are now following ${bookDetail?.title}. Nice!`)
     }
-  };
+  }
 
   const onShare = async () => {
     if (!cyfrUser) {
-      loginRequired();
-      return null;
+      loginRequired()
+      return null
     }
-    const result = await share(cyfrUser.id);
+    const result = await bookApi.share(cyfrUser.id)
     if (result) {
-      notify(`You shared ${bookDetail?.title}!`);
+      notify(`You shared ${bookDetail?.title}!`)
     }
-  };
+  }
 
   const onLike = async () => {
     if (!cyfrUser) {
-      loginRequired();
-      return null;
+      loginRequired()
+      return null
     }
-    const result = await like(cyfrUser.id);
+    const result = await bookApi.like(cyfrUser.id)
     if (result) {
-      notify(`You liked ${bookDetail?.title}.`);
+      notify(`You liked ${bookDetail?.title}.`)
     }
-  };
+  }
 
   const updatePanel = (html?: string | null) => {
-    update({ back: html?.toString() });
-    setSaveReady(true);
-  };
+    bookApi.update({ back: html?.toString() })
+    setSaveReady(true)
+  }
 
   const updateSynopsis = (html?: string | null) => {
-    update({ synopsis: html?.toString() });
-    setSaveReady(true);
-  };
+    bookApi.update({ synopsis: html?.toString() })
+    setSaveReady(true)
+  }
 
-  const updateHook = (html?: string | null) => {
-    update({ hook: html?.toString() });
-    setSaveReady(true);
-  };
+  const updateHook = (content:string) => {
+    bookApi.update({ hook: content.toString() })
+    setSaveReady(true)
+  }
 
   const updateActive = (value: boolean) => {
-    update({ active: value });
-    setSaveReady(true);
-  };
+    bookApi.update({ active: value })
+    setSaveReady(true)
+  }
 
   const updateProspect = (value: boolean) => {
-    update({ prospect: value });
-    setSaveReady(true);
-  };
+    bookApi.update({ prospect: value })
+    setSaveReady(true)
+  }
 
   const updateFiction = (value: boolean) => {
-    update({ fiction: value });
-    setSaveReady(true);
-  };
+    bookApi.update({ fiction: value })
+    setSaveReady(true)
+  }
 
   const updateStatus = (value: string) => {
-    update({ status: value as BookStatus });
-    setSaveReady(true);
-  };
+    bookApi.update({ status: value as BookStatus })
+    setSaveReady(true)
+  }
 
   const updateGenre = (value: string) => {
-    update({ genreId: value });
-    setSaveReady(true);
-  };
+    bookApi.update({ genreId: value })
+    setSaveReady(true)
+  }
 
   const onSave = () => {
-    save();
-    setSaveReady(false);
-  };
+    bookApi.save()
+    setSaveReady(false)
+  }
 
   return bookDetail ? (
 
@@ -158,7 +162,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
       {bookDetail.authors && bookDetail.authors.length > 1 && (
         <div>
           <h3>Authors</h3>
-          {bookDetail.authors.map((author) => (
+          {bookDetail.authors.map((author:UserStub) => (
             <Avatar user={author} sz="lg" key={uniqueKey(bookDetail, author)} />
           ))}
         </div>
@@ -206,7 +210,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
               <TailwindSelectInput
                 value={bookDetail?.genre.title}
                 setValue={updateGenre}
-                options={genresToOptions()}
+                options={bookApi.genresToOptions}
               />
             </div>
           ) : (
@@ -223,21 +227,19 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
                   TODO: Create categories upsert. Don't forget to include
                   existing categories, and the ability to create new ones.
                 </p>
-                {cleanArray(bookDetail.categories)
-                  .map((cat) => (
+                {bookApi.categories.map((cat) => (
                     <span className="italic mr-2" key={uuid()}>
                       {cat.title}
                     </span>
-                  ))}
+                ))}
               </div>
             </div>
           ) : (
-            cleanArray(bookDetail.categories)
-              .map((cat) => (
-                <span className="italic mr-2" key={uuid()}>
-                  {cat.title}
-                </span>
-              ))
+            bookApi.categories.map((cat) => (
+              <span className="italic mr-2" key={uuid()}>
+                {cat.title}
+              </span>
+            ))
           )}
         </div>
         <div>{bookDetail.words} words</div>
@@ -246,7 +248,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
             <InlineTextarea
               content={bookDetail.hook}
               setContent={updateHook}
-              onSave={save}
+              onSave={bookApi.save}
             />
           ) : (
             ReactHtmlParser(bookDetail.hook!)
@@ -401,7 +403,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
             <InlineTextarea
               content={bookDetail.back}
               setContent={updatePanel}
-              onSave={save}
+              onSave={bookApi.save}
             />
           ) : (
             ReactHtmlParser(bookDetail.back!)
@@ -416,7 +418,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
             <InlineTextarea
               content={bookDetail.synopsis}
               setContent={updateSynopsis}
-              onSave={save}
+              onSave={bookApi.save}
             />
           ) : (
             ReactHtmlParser(bookDetail.synopsis!)
@@ -428,11 +430,12 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
         <h3>Chapters {isAuthor && <OpenChapterModalButton variant="plus" />}</h3>
           {isAuthor && <CreateChapterModal forBook={bookApi} />}
         <div className="flex space-x-4">
-          <ChapterList forBook={bookApi} />
+          <ChapterList forBook={bookApi} onSelect={setEditChapter} />
         </div>
-        <p className="text-xs">
-          Make chapters orderable
-        </p>
+        {editChapter && 
+          //TODO change this to allow for a chapter stub.
+          <ChapterEdit chapterDetail={editChapter as ChapterDetail} cyfrUser={cyfrUser} />
+        }
       </div>
 
       <div className="my-4">
@@ -468,6 +471,6 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
     </div>
   )
   : <ErrorPage />
-};
+}
 
-export default BookDetailComponent;
+export default BookDetailComponent

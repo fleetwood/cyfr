@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import { GenericResponseError, ResponseError } from "../../types/response"
-import { dedupe } from '../../utils/helpers'
+import { dedupe, now } from '../../utils/helpers'
 import {
   Book,
   BookDeleteProps,
@@ -8,9 +8,11 @@ import {
   BookDetailInclude,
   BookFollowProps,
   BookUpsertProps,
+  Chapter,
   Follow,
   Like,
   LikeProps,
+  PrismaChapter,
   Share,
   ShareProps,
   prisma
@@ -292,6 +294,12 @@ const addChapter = async(props:{bookId:string, title:string, order: number}):Pro
   }
 }
 
+/**
+ * This is a redirect to {@link PrismaChapter.sort}
+ * @returns 
+ */
+const sortChapters =async (currentChapers:Chapter[], changedChapter:Chapter) => PrismaChapter.sort(currentChapers,changedChapter)
+
 const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | undefined> => {
   try {
     debug("deleteBook", { bookId, authorId })
@@ -303,4 +311,4 @@ const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | u
   }
 }
 
-export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, addChapter, deleteBook }
+export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, addChapter, sortChapters, deleteBook }

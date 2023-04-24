@@ -25,16 +25,14 @@ import useDebug from "../../hooks/useDebug"
 import EZButton from "../ui/ezButton"
 const {debug, todo} = useDebug("InlineTextArea")
 
-type MentionItem = { id: string, label: string }
-
 type InlineTextareaProps = {
   placeholder?: string
-  content?: string | null
-  setContent?: (Dispatch<SetStateAction<string | null>>) | ((html?:string | null) => void)
-  setValid?: Dispatch<SetStateAction<boolean>>
-  setCounter?: Dispatch<SetStateAction<number>>
-  onSave?: () => void
-  maxChar?: number
+  content?:     string | null
+  setContent?:  (Dispatch<SetStateAction<string>>) | ((content:string) => void)
+  setValid?:    Dispatch<SetStateAction<boolean>>
+  setCounter?:  Dispatch<SetStateAction<number>>
+  onSave?:      (content:string | null | undefined, count?:number) => void
+  maxChar?:     number
 }
 
 const InlineTextarea = ({
@@ -75,15 +73,16 @@ const InlineTextarea = ({
 
   const onChange = (params: RemirrorEventListenerProps<Remirror.Extensions>) => {
     const newContent = htmlString(params.tr?.doc)
-    const didChange = content && newContent && content?.indexOf(newContent) < 0
-    debug('onChange', didChange)
+    const didChange = (content||'').indexOf(newContent||'') < 0
+    debug('onChange', {content, newContent, index:(content||'').indexOf(newContent||'') < 0, didChange})
     if (!didChange) {
       return
     }
 
     if (setContent) {
-      setContent(htmlString(params.tr?.doc))
+      setContent(htmlString(params.tr?.doc)||'')
     }
+
     setShowSave(() => true)
     const current = manager.getExtension(CountExtension).getCharacterCount()
     const isValid = manager.getExtension(CountExtension).isCountValid()
@@ -96,7 +95,7 @@ const InlineTextarea = ({
   }
 
   const onClickSave = () => {
-    if (onSave) onSave()
+    if (onSave) onSave(content,count)
     setShowSave(() => false)
   }
 

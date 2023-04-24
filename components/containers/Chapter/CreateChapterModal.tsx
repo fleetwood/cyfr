@@ -6,10 +6,11 @@ import { LoggedIn } from '../../ui/toasty'
 import Spinner from '../../ui/spinner'
 import { TailwindInput } from '../../forms'
 import { BookDetail } from '../../../prisma/types'
-import useBookApi, { BookApi } from '../../../hooks/useBookApi'
+import useBookApi from '../../../hooks/useBookApi'
 import EZButton from '../../ui/ezButton'
 import { ClickEventHandler } from 'remirror/dist-types/extensions'
 import { title } from 'process'
+import { BookApi } from '../../../types/bookApi.def'
 const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", 'DEBUG')
 
 const createChapterModal = 'createChapterModal'
@@ -34,12 +35,12 @@ type CreateChapterModalType = {
 
 const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
-  const {cleanArray, bookDetail, addChapter, notEmpty} = forBook
+  const {bookDetail, addChapter} = forBook
   const { notify } = useToast()
   const [valid, setIsValid] = useState<boolean>(false)
   const container = useRef<HTMLDivElement>(null)
 
-  const nextOrder = cleanArray(bookDetail?.chapters).length+1
+  const nextOrder = forBook.chapters.length+1
   const [chapterTitle, setChapterTitle] = useState<string | null>(null)
   const [chapterOrder, setChapterOrder] = useState<number>(nextOrder)
 
@@ -88,7 +89,7 @@ const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
                   <span className='text-primary font-bold'>Order</span>
                 </label>
                 <div className='flex'>
-                  {notEmpty(bookDetail?.chapters) && cleanArray(bookDetail?.chapters).map((c,i) => (
+                  {forBook.chapters.map((c,i) => (
                   <div className={`btn btn-sm btn-circle ${i+1===chapterOrder ? 'btn-primary' :''}`} onClick={() => setChapterOrder(i+1)} key={c.id}>{i+1}</div>
                   ))}
                   <div className={`btn btn-sm btn-circle ${chapterOrder === nextOrder ? 'btn-primary' :''}}`} onClick={() => setChapterOrder(nextOrder)}>{nextOrder}</div>
