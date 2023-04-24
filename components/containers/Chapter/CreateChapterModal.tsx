@@ -5,12 +5,8 @@ import { useToast } from '../../context/ToastContextProvider'
 import { LoggedIn } from '../../ui/toasty'
 import Spinner from '../../ui/spinner'
 import { TailwindInput } from '../../forms'
-import { BookDetail } from '../../../prisma/types'
-import useBookApi from '../../../hooks/useBookApi'
 import EZButton from '../../ui/ezButton'
-import { ClickEventHandler } from 'remirror/dist-types/extensions'
-import { title } from 'process'
-import { BookApi } from '../../../types/bookApi.def'
+import { BookApi, Chapter } from '../../../prisma/prismaContext'
 const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", 'DEBUG')
 
 const createChapterModal = 'createChapterModal'
@@ -89,7 +85,7 @@ const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
                   <span className='text-primary font-bold'>Order</span>
                 </label>
                 <div className='flex'>
-                  {forBook.chapters.map((c,i) => (
+                  {forBook.chapters.map((c:Chapter,i:number) => (
                   <div className={`btn btn-sm btn-circle ${i+1===chapterOrder ? 'btn-primary' :''}`} onClick={() => setChapterOrder(i+1)} key={c.id}>{i+1}</div>
                   ))}
                   <div className={`btn btn-sm btn-circle ${chapterOrder === nextOrder ? 'btn-primary' :''}}`} onClick={() => setChapterOrder(nextOrder)}>{nextOrder}</div>

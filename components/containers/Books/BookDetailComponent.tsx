@@ -2,7 +2,7 @@ import { useState } from "react"
 import ReactHtmlParser from "react-html-parser"
 import useBookApi from "../../../hooks/useBookApi"
 import useDebug from "../../../hooks/useDebug"
-import { BookDetail, BookStatus, Chapter, ChapterDetail, UserStub } from "../../../prisma/prismaContext"
+import { BookApi, BookCategory, BookDetail, BookStatus, Chapter, ChapterDetail, UserStub } from "../../../prisma/prismaContext"
 import {
   isBookAuthor,
   onlyFans,
@@ -32,8 +32,7 @@ import { KeyVal } from "../../../types/props"
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/CreateChapterModal"
 import Spinner from "../../ui/spinner"
 import ChapterList from "../Chapter/ChapterList"
-import { BookApi } from "../../../types/bookApi.def"
-import ChapterEdit from "../Chapter/ChapterEdit"
+import { useRouter } from "next/router"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -56,7 +55,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const {bookDetail, isLoading, error, invalidate, isAuthor} = bookApi
   const [saveReady, setSaveReady] = useState(false)
-  const [editChapter, setEditChapter] = useState<Chapter|null>()
+  const router = useRouter()
 
   const statusOptions: KeyVal[] = [
     { key: "DRAFT" },
@@ -143,6 +142,12 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
     setSaveReady(true)
   }
 
+  const editChapter =(chapter:Chapter) => {
+    //TODO: Don't leave this page with unsaved changes
+    //TODO: add slug to chapter as a compound key
+    router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}`)
+  }
+
   const onSave = () => {
     bookApi.save()
     setSaveReady(false)
@@ -227,7 +232,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
                   TODO: Create categories upsert. Don't forget to include
                   existing categories, and the ability to create new ones.
                 </p>
-                {bookApi.categories.map((cat) => (
+                {bookApi.categories.map((cat:BookCategory) => (
                     <span className="italic mr-2" key={uuid()}>
                       {cat.title}
                     </span>
@@ -235,7 +240,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
               </div>
             </div>
           ) : (
-            bookApi.categories.map((cat) => (
+            bookApi.categories.map((cat:BookCategory) => (
               <span className="italic mr-2" key={uuid()}>
                 {cat.title}
               </span>
@@ -430,12 +435,8 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
         <h3>Chapters {isAuthor && <OpenChapterModalButton variant="plus" />}</h3>
           {isAuthor && <CreateChapterModal forBook={bookApi} />}
         <div className="flex space-x-4">
-          <ChapterList forBook={bookApi} onSelect={setEditChapter} />
+          <ChapterList forBook={bookApi} onSelect={editChapter} />
         </div>
-        {editChapter && 
-          //TODO change this to allow for a chapter stub.
-          <ChapterEdit chapterDetail={editChapter as ChapterDetail} cyfrUser={cyfrUser} />
-        }
       </div>
 
       <div className="my-4">

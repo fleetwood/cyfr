@@ -1,4 +1,4 @@
-import { Book, BookCategory, BookDetail, BookStatus, BookStub, Chapter, Character, CyfrUser, Follow, Gallery, GalleryStub, Genre, Image, Like, Share, User, UserStub } from "../prismaContext"
+import { BookDetail, BookStub, Chapter, Character, CyfrUser, Gallery, GalleryStub } from "../prismaContext"
 
 /**
  * @property characters {@link Character} TODO: should be a CharacterStub
@@ -28,6 +28,20 @@ export type ChapterUpsertProps = {
   order:      number
   createdAt?: string
   updatedAt?: string
+}
+
+export type ChapterApi = {
+  update:         () => void
+  save:           () => Promise<boolean>
+  content:        string|null
+  order:          number
+  title:          string
+  active:         boolean
+  words:          number
+  chapterDetail:  ChapterDetail
+  isLoading:      boolean
+  error:          any
+  invalidate:     ()=>void
 }
 
 export type ChapterApiProps = {

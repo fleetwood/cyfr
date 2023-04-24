@@ -1,5 +1,7 @@
+export type EZButtonVariant = "base" | "primary" | "secondary" | "accent" | "success" | "info" | "warning" | undefined
+
 type EzButtonProps = {
-    variant?: 'primary'|'secondary'|'accent'|'base'|'success'|'info'|'warning'
+    variant?: EZButtonVariant
     label: string
     whenClicked: Function
     disabled?: boolean

@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
-import { Chapter } from "../../../prisma/prismaContext";
+import { BookApi, Chapter } from "../../../prisma/prismaContext";
 import useDebug from "../../../hooks/useDebug";
-import { BookApi } from "../../../types/bookApi.def";
 import Spinner from "../../ui/spinner";
 
 type ChapterListProps = {

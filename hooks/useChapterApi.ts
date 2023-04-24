@@ -1,6 +1,6 @@
 import { useQueryClient } from "react-query"
 import { ChapterWebApiProps } from "../pages/api/chapter"
-import { Chapter, ChapterApiProps, ChapterApiUpdate, ChapterDetail, CyfrUser } from "../prisma/prismaContext"
+import { Chapter, ChapterApi, ChapterApiProps, ChapterApiUpdate, ChapterDetail, CyfrUser } from "../prisma/prismaContext"
 import { sendApi } from "../utils/api"
 import useChapterDetail from "./useChapterDetail"
 import useDebug from "./useDebug"
@@ -80,18 +80,18 @@ const useChapterApi = (props:ChapterApiProps) => {
   const save = async () => upsert(chapterDetail!)
 
   return {
-    chapterDetail,
-    content,
-    detail,
-    error,
-    invalidate,
-    isLoading,
-    order,
+    update,
     save,
-    stub,
+    content,
+    order,
     title,
-    update
-  }
+    active,
+    words,
+    chapterDetail,
+    isLoading,
+    error,
+    invalidate
+  } as unknown as ChapterApi
 }
 
 export default useChapterApi

@@ -1,11 +1,9 @@
-import { Dispatch, SetStateAction, useState } from "react"
-import { BookDetail, BookStatus, Image, Chapter, Character, CyfrUser, Genre, GenreListItem, PrismaBook, BookCategory } from "../prisma/prismaContext"
-import { getApi, sendApi } from "../utils/api"
+import { useState } from "react"
+import { BookApi, BookApiProps, BookApiRelations, BookApiUpdate, BookCategory, BookDetail, BookStatus, Chapter, Character, CyfrUser, GenreListItem, PrismaBook } from "../prisma/prismaContext"
+import { KeyVal } from "../types/props"
+import { sendApi } from "../utils/api"
 import useBookDetail from "./useBookDetail"
 import useDebug from "./useDebug"
-import { KeyVal } from "../types/props"
-import {BookApi, BookApiProps, BookApiRelations, BookApiUpdate} from './../types/bookApi.def'
-import { sortChapters } from "../utils/helpers"
 
 const {debug, info, err} = useDebug('hooks/useBookApi','DEBUG')
 
