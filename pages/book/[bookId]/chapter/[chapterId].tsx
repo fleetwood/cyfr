@@ -35,6 +35,7 @@ export type ChapterLayoutProps = ChapterServersideProps & {
 
 export enum ChapterViews {
   DETAIL,
+  EDIT,
   READ,
   REVIEW
 }

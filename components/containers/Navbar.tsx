@@ -1,6 +1,6 @@
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { useCyfrUserContext } from "../context/CyfrUserProvider";
 import Avatar from "../ui/avatar";
 import { BookIcon, CyfrLogo, HouseIcon, UserIcon } from "../ui/icons";
@@ -8,14 +8,18 @@ import ShrinkableIconLink from "../ui/shrinkableIconLink";
 import ShrinkableLink from "../ui/shrinkableLink";
 
 type NavbarProps = {
-  className?: string;
-  iconClassName?: string;
-  pageScrolled: boolean;
+  className?: string
+  iconClassName?: string
+  pageScrolled?: boolean
+  leftChildren?: ReactNode
+  rightChildren?: ReactNode
 };
 
 const Navbar = ({
   className,
   iconClassName,
+  leftChildren,
+  rightChildren,
   pageScrolled: active,
 }: NavbarProps) => {
   const [cyfrUser] = useCyfrUserContext();
@@ -24,7 +28,7 @@ const Navbar = ({
   const userUrl = cyfrUser ? cyfrUser.name : ''
 
   useEffect(() => {
-    setIsPageScrolled(active);
+    setIsPageScrolled(active||false)
   }, [active]);
 
   return (
@@ -40,17 +44,21 @@ const Navbar = ({
           `}
       >
         <div className="flex justify-start">
-          <ShrinkableLink
-            href="/"
-            label="Cyfr"
-            className={`ml-1 text-primary transition-all duration-200 ease-linear ${
-              active ? "mt-0" : "-mt-20"
-            }`}
-          >
-            <CyfrLogo size="sm" className="text-primary" />
-          </ShrinkableLink>
+          {active && 
+            <ShrinkableLink
+              href="/"
+              label="Cyfr"
+              className={`ml-1 text-primary transition-all duration-200 ease-linear ${
+                active ? "mt-0" : "-mt-20"
+              }`}
+            >
+              <CyfrLogo size="sm" className="text-primary" />
+            </ShrinkableLink>
+          }
+          {leftChildren}
         </div>
         <div className={`space-x-6 flex w-full justify-end`}>
+          {rightChildren}
           <ShrinkableIconLink
             href="/"
             label="Home"

@@ -1,19 +1,27 @@
-import React, { Dispatch, SetStateAction } from "react";
-import EZButton, { EZButtonVariant } from "../../ui/ezButton";
+import { Dispatch, SetStateAction } from "react";
 import { ChapterViews } from "../../../pages/book/[bookId]/chapter/[chapterId]";
+import { ChapterDetailIcon, FeatherIcon, ReadsIcon, StarIcon } from "../../ui/icons";
+import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 
 type ChapterViewSelectorProps = {
-  view: ChapterViews
-  setView: Dispatch<SetStateAction<ChapterViews>>
+  view:       ChapterViews
+  setView:    Dispatch<SetStateAction<ChapterViews>>
+  showEdit?:  boolean
 }
 
-const ChapterViewSelector = ({view, setView}:ChapterViewSelectorProps) => {
-  const isSelected = (v: ChapterViews):EZButtonVariant =>  v === view ? 'primary' : 'base'
-  return (
-    <div className="flex">
-      <EZButton label="Detail" whenClicked={() => setView(ChapterViews.DETAIL)} variant={isSelected(ChapterViews.DETAIL)} />
-      <EZButton label="Read" whenClicked={() => setView(ChapterViews.READ)} variant={isSelected(ChapterViews.READ)} />
-      <EZButton label="Review" whenClicked={() => setView(ChapterViews.REVIEW)} variant={isSelected(ChapterViews.REVIEW)} />
+const ChapterViewSelector = ({view, setView, showEdit=false}:ChapterViewSelectorProps) => 
+    <div className="flex space-x-2">
+      {view!==ChapterViews.DETAIL &&
+        <ShrinkableIconButton className="rounded-lg p-2" label="Detail" icon={ChapterDetailIcon} onClick={() => setView(ChapterViews.DETAIL)} />
+      }
+      {view!==ChapterViews.READ &&
+        <ShrinkableIconButton className="rounded-lg p-2" label="Read" icon={ReadsIcon} onClick={() => setView(ChapterViews.READ)} />
+      }
+      {view !== ChapterViews.REVIEW &&
+        <ShrinkableIconButton className="rounded-lg p-2" label="Review" icon={StarIcon} onClick={() => setView(ChapterViews.REVIEW)} />
+      }
+      {showEdit &&
+        <ShrinkableIconButton className="rounded-lg p-2" label="Edit" icon={FeatherIcon} onClick={() => setView(ChapterViews.EDIT)} />
+      }
     </div>
-)}
-export default ChapterViewSelector;
+export default ChapterViewSelector

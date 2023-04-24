@@ -46,8 +46,8 @@ const ChapterDetailLayout = (props:ChapterLayoutProps) => {
         <div className="box-border snap-y min-h-full">
           <h3>{props.bookDetail.title}</h3>
           <h2>{props.chapterDetail.title}</h2>
-          <ChapterViewSelector setView={props.setView} view={props.view} />
-          <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} />
+          <ChapterViewSelector setView={props.setView} view={props.view} showEdit={bookApi.isAuthor} />
+          <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} />
         </div>
         <Footer />
       </main>
