@@ -6,7 +6,7 @@ import {
     ResponseError,
     ResponseResult
 } from "../../../types/response"
-const {debug, fileMethod, err} = useDebug('api/image', 'DEBUG')
+const {debug, fileMethod, err} = useDebug('api/image')
 
 /**
  * 

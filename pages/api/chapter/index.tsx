@@ -38,6 +38,7 @@ const stub = async (id:string) => {
 }
 
 const upsert = async (chapter:Chapter) => {
+  debug('upsert', chapter)
   const result = await PrismaChapter.upsert({
     ...chapter,
   })
@@ -58,26 +59,31 @@ export default async function handle(
     debug('handle',{chapter, method})
     let result = null
 
-    switch (method) {
-      case 'DETAIL':
-        result = detail(id!)
-        break
-      case 'STUB':
-        result = stub(id!)
-        break
-      case 'UPSERT':
-        result = upsert(chapter!)
-        break
-      default:
-        throw {code: fileMethod('handle'), message: 'Unable to determine method....'}
+    const sendResult = (result:unknown) => {
+      if (result) {
+        debug('result', result)
+        res.status(200).json({ result })
+        res.end()
+      }
+
+      throw {code: fileMethod('sendResult'), message: 'No results were determined.'}
     }
-    if (result) {
-      debug('result', result)
-      res.status(200).json({ result })
+
+    if (method === 'DETAIL') {
+      return sendResult(await detail(id!))
     }
+    else if (method === 'STUB') {
+      return sendResult(await stub(id!))
+    }
+    else if (method === 'UPSERT'){
+      return sendResult(await upsert(chapter!))
+    }
+
+    throw {code: fileMethod('handle'), message: 'Unable to determine method....'}
   } catch (e: Error | ResponseError | any) {
     err("\tFAIL", e)
     const error = GetResponseError(e)
     res.status(500).json({ error })
+    res.end()
   }
 }

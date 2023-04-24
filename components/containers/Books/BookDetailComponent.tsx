@@ -159,9 +159,9 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
     <div>
       {isAuthor && (
         <div className="fixed top-10 right-[232px] z-20 space-x-4 transition-all duration-200 ease-out">
-          <EZButton label="Refresh" whenClicked={invalidate} variant="info" />
+          <EZButton label="Refresh" onClick={invalidate} variant="info" />
           {saveReady &&
-            <EZButton label="SAVE" whenClicked={onSave} variant="warning" className="shadow-black shadow-md" />
+            <EZButton label="SAVE" onClick={onSave} variant="warning" className="shadow-black shadow-md" />
           }
         </div>
       )}

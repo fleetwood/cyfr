@@ -5,7 +5,7 @@ import { ChapterDetail } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import useDebug from "./useDebug"
 
-const { debug, info } = useDebug("hooks/useChapterDetail")
+const { debug, info } = useDebug("hooks/useChapterDetail", 'DEBUG')
 
 const useChapterDetail = (chapterId:string) => {
   const qc = useQueryClient()
@@ -37,9 +37,9 @@ const useChapterDetail = (chapterId:string) => {
           info(`onSettled ${["chapterDetail", chapterId]} ERROR`, { error, data })
           setError(error)
         }
-        if (data) {
+        if (data?.result) {
           debug(`onSettled`, data)
-            setChapterDetail(data)
+            setChapterDetail(data.result)
         }
       }
     }

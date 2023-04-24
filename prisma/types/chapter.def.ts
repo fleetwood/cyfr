@@ -31,7 +31,7 @@ export type ChapterUpsertProps = {
 }
 
 export type ChapterApi = {
-  update:         () => void
+  update:         (props: ChapterApiUpdate) => boolean
   save:           () => Promise<boolean>
   content:        string|null
   order:          number

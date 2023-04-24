@@ -2,7 +2,7 @@ import BookDetailLayout, { BookDetailLayoutProps } from "../../../components/lay
 import useDebug from "../../../hooks/useDebug";
 import { PrismaBook, PrismaGenre } from "../../../prisma/prismaContext";
 
-const {debug, info} = useDebug('pages/book/[bookId]', 'DEBUG')
+const {debug, info} = useDebug('pages/book/[bookId]')
 
 export async function getServerSideProps(context: any) {
   const {bookId} = context.params

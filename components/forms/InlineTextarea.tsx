@@ -27,23 +27,37 @@ const {debug, todo} = useDebug("InlineTextArea")
 
 type InlineTextareaProps = {
   placeholder?: string
-  content?:     string | null
+  content?:     string | null | undefined
   setContent?:  (Dispatch<SetStateAction<string>>) | ((content:string) => void)
+  words?:       number
+  setWords?:    (Dispatch<SetStateAction<number>>) | ((words:number) => void)
   setValid?:    Dispatch<SetStateAction<boolean>>
   setCounter?:  Dispatch<SetStateAction<number>>
-  onSave?:      (content:string | null | undefined, count?:number) => void
+  onSave?:      () => void
+  onChange?:    (props:InlineTextAreaUpdate) => void
   maxChar?:     number
+  showCount?:   boolean
+}
+
+export type InlineTextAreaUpdate = {
+  content?:   string | null | undefined
+  chars:  number
+  words:  number
 }
 
 const InlineTextarea = ({
   placeholder,
   content,
   setContent,
-  maxChar = -1,
   setValid,
-  onSave
+  onSave,
+  onChange,
+  words,
+  setWords,
+  maxChar = -1,
+  showCount = false
 }: InlineTextareaProps) => {
-  const [count, setCount] = useState(-1)
+  const [chars, setChars] = useState(-1)
   const [perc, setPerc] = useState(0)
   const [showSave, setShowSave] = useState(false)
   const [isValid, setIsValid] = useState(false)
@@ -71,7 +85,7 @@ const InlineTextarea = ({
   const htmlString = (doc: Node | undefined) =>
     doc ? prosemirrorNodeToHtml(doc) : null
 
-  const onChange = (params: RemirrorEventListenerProps<Remirror.Extensions>) => {
+  const onContentChange = (params: RemirrorEventListenerProps<Remirror.Extensions>) => {
     const newContent = htmlString(params.tr?.doc)
     const didChange = (content||'').indexOf(newContent||'') < 0
     debug('onChange', {content, newContent, index:(content||'').indexOf(newContent||'') < 0, didChange})
@@ -79,32 +93,41 @@ const InlineTextarea = ({
       return
     }
 
+    const charCount = manager.getExtension(CountExtension).getCharacterCount()
+    const wordCount = manager.getExtension(CountExtension).getWordCount()
+    const isValid = manager.getExtension(CountExtension).isCountValid()
+    
+    if (maxChar>0) {
+      setChars(() => charCount)
+      setPerc(() => Math.floor((charCount/maxChar)*100))
+    }
+
     if (setContent) {
       setContent(htmlString(params.tr?.doc)||'')
     }
-
-    setShowSave(() => true)
-    const current = manager.getExtension(CountExtension).getCharacterCount()
-    const isValid = manager.getExtension(CountExtension).isCountValid()
-    if (maxChar>0) {
-        setCount(() => current)
-        setPerc(() => Math.floor((current/maxChar)*100))
+    if (setWords){
+      setWords(wordCount)
     }
-    debug('isValid?',{current,isValid})
-    validate(current >= 1 && isValid)
+    setShowSave(true)
+    
+    debug('isValid?',{current: charCount,isValid})
+    validate(charCount >= 1 && isValid)
   }
 
   const onClickSave = () => {
-    if (onSave) onSave(content,count)
+    if (onSave) onSave()
     setShowSave(() => false)
   }
 
   return (
-    <div className="remirror-theme bg-base-200 text-base-content rounded-md">
+    <div className="remirror-theme max-h-screen text-base-content">
+      {words && 
+        <div className="text-sm right-0">Words: {words}</div>
+      }
       <Remirror
         manager={manager}
         initialContent={state}
-        onChange={(p) => onChange(p)}
+        onChange={(p) => onContentChange(p)}
         autoFocus
       >
         <EditorComponent />
@@ -112,11 +135,11 @@ const InlineTextarea = ({
       {maxChar > 0 && (
         <div className="w-full flex">
             {/* @ts-ignore */}
-            <progress className={`w-full -my-1 h-1 ${count >= maxChar ? 'progress-error' : perc > 90 ? 'progress-warning' : 'progress-primary'}`} value={perc} max={100} />
+            <progress className={`w-full -my-1 h-1 ${chars >= maxChar ? 'progress-error' : perc > 90 ? 'progress-warning' : 'progress-primary'}`} value={perc} max={100} />
         </div>
       )}
       {onSave && showSave &&
-        <EZButton disabled={!isValid} label="Save" whenClicked={onClickSave} />
+        <EZButton disabled={!isValid} label="Save" onClick={onClickSave} />
       }
     </div>
   )

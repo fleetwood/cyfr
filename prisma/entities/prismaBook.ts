@@ -18,7 +18,7 @@ import {
   prisma
 } from "../prismaContext"
 
-const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
+const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook")
 
 const detail = async (idOrTitleOrSlug:string) => {
   try {

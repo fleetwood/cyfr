@@ -7,7 +7,7 @@ import Dropzone, { CompleteFile } from '../../forms/Dropzone'
 import TailwindInput from '../../forms/TailwindInput'
 import GalleryPhotoswipe from './GalleryPhotoswipe'
 
-const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm', 'DEBUG')
+const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm')
 
 export type GalleryNestedProps = {
     gallery?:         GalleryStub

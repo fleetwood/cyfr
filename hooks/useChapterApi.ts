@@ -18,8 +18,6 @@ const noChapterDetail = (method:string) => {
  * @returns 
  */
 const useChapterApi = (props:ChapterApiProps) => {
-  debug('useChapterApi')
-
   const {chapterDetail, setChapterDetail, isLoading, error, invalidate} = useChapterDetail(props.chapterDetail.id)
 
   const qc = useQueryClient()
@@ -32,7 +30,10 @@ const useChapterApi = (props:ChapterApiProps) => {
   //////////////////////////////////////////////
   ///  CRUD   //////////////////////////////////
   //////////////////////////////////////////////
-  const sendChapterApi = async (props:ChapterWebApiProps) => sendApi('/chapter', props)
+  const sendChapterApi = async (props:ChapterWebApiProps) => {
+    debug('sendChapterApi', props)
+    return sendApi('/chapter', props)
+  }
 
   const upsert = async (chapter:ChapterDetail|Chapter) => {
     debug('upsert', chapter)
@@ -66,15 +67,20 @@ const useChapterApi = (props:ChapterApiProps) => {
    * @property words: number
    * @property content: {string|null}
    */
-  const update = async (props:ChapterApiUpdate) => {
-    if (!chapterDetail) return noChapterDetail('update')
-    debug('update',{title, active, order, words, content, props})
+  const update = (props:ChapterApiUpdate) => {
+    if (!chapterDetail) {
+      noChapterDetail('update')
+      return false
+    }
+    debug('update',{chapterDetail, props})
     const updateChapter:ChapterDetail = {
       ...chapterDetail,
-      ...props,
+      ...{...props},
       title: props.title??chapterDetail.title
     }
-    setChapterDetail(updateChapter)
+    debug('update', updateChapter)
+    setChapterDetail(() => updateChapter)
+    return true
   }
 
   const save = async () => upsert(chapterDetail!)

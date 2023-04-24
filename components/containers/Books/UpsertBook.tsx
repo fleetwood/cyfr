@@ -226,10 +226,10 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
         </>
       )}
       <div className="flex justify-between my-4">
-        {!showEditor && <EZButton label={book ? 'Edit' : 'Create'} whenClicked={toggle} />}
-        {showEditor && <EZButton label="Save" whenClicked={saveBook} />}
+        {!showEditor && <EZButton label={book ? 'Edit' : 'Create'} onClick={toggle} />}
+        {showEditor && <EZButton label="Save" onClick={saveBook} />}
         {showEditor && (
-          <EZButton label="Cancel" variant="warning" whenClicked={toggle} />
+          <EZButton label="Cancel" variant="warning" onClick={toggle} />
         )}
       </div>
     </div>

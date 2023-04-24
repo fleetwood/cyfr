@@ -7,7 +7,7 @@ import Spinner from '../../ui/spinner'
 import { TailwindInput } from '../../forms'
 import EZButton from '../../ui/ezButton'
 import { BookApi, Chapter } from '../../../prisma/prismaContext'
-const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", 'DEBUG')
+const {debug} = useDebug("components/containers/Chapter/CreateChapterModal")
 
 const createChapterModal = 'createChapterModal'
 
@@ -91,7 +91,7 @@ const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
                   <div className={`btn btn-sm btn-circle ${chapterOrder === nextOrder ? 'btn-primary' :''}}`} onClick={() => setChapterOrder(nextOrder)}>{nextOrder}</div>
                 </div>
                 <div className="w-full grid place-items-end mt-2">
-                  <EZButton disabled={chapterTitle===null || chapterTitle.trim().length<1} label='Create' whenClicked={handleSubmit} />
+                  <EZButton disabled={chapterTitle===null || chapterTitle.trim().length<1} label='Create' onClick={handleSubmit} />
                 </div>
               </form>
             </div>

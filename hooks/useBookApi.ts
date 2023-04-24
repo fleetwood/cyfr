@@ -5,7 +5,7 @@ import { sendApi } from "../utils/api"
 import useBookDetail from "./useBookDetail"
 import useDebug from "./useDebug"
 
-const {debug, info, err} = useDebug('hooks/useBookApi','DEBUG')
+const {debug, info, err} = useDebug('hooks/useBookApi')
 
 /**
  * 

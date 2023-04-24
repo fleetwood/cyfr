@@ -2,7 +2,7 @@ import { Chapter, ChapterDetail, ChapterStub, Share, ShareDeleteProps, ShareFeed
 import useDebug from "../../hooks/useDebug"
 import { now, sortChapters } from "../../utils/helpers"
 
-const {debug, info, fileMethod} = useDebug('entities/prismaChapter', 'DEBUG')
+const {debug, info, fileMethod} = useDebug('entities/prismaChapter')
 
 const detail = async (id: string): Promise<ChapterDetail | null> => {
   debug('detail', id)
