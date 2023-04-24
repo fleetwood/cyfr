@@ -143,9 +143,10 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
   }
 
   const editChapter =(chapter:Chapter) => {
+    const v = bookApi.isAuthor ? '?v=edit' : ''
     //TODO: Don't leave this page with unsaved changes
     //TODO: add slug to chapter as a compound key
-    router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}`)
+    router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
   }
 
   const onSave = () => {

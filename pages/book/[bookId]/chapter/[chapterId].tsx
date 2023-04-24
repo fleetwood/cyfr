@@ -9,6 +9,7 @@ const {debug, info} = useDebug('pages/book/[bookId]/chapter/[chapterId]', 'DEBUG
 
 export async function getServerSideProps(context: any) {
   const {bookId, chapterId} = context.params
+  const {v} = context.query
   const bookDetail = await PrismaBook.detail(bookId)
   const chapterDetail = await PrismaChapter.detail(chapterId)
   const genres = await PrismaGenre.all()
@@ -17,15 +18,17 @@ export async function getServerSideProps(context: any) {
     props: {
       bookDetail,
       chapterDetail,
-      genres
+      genres,
+      v
     }
   }
 }
 
 export type ChapterServersideProps = {
-  bookDetail: BookDetail
+  bookDetail:     BookDetail
   chapterDetail:  ChapterDetail
-  genres: GenreListItem[]
+  genres:         GenreListItem[]
+  v?:             string
 }
 
 export type ChapterLayoutProps = ChapterServersideProps & {
@@ -40,8 +43,13 @@ export enum ChapterViews {
   REVIEW
 }
 
-const ChapterDetailPage = ({bookDetail, chapterDetail, genres}:ChapterServersideProps) => {
-  const [chapterView, setChapterView] = useState(ChapterViews.DETAIL)
+const ChapterDetailPage = ({bookDetail, chapterDetail, genres, v}:ChapterServersideProps) => {
+  const view = v && v === 'edit' ? ChapterViews.EDIT
+    : v && v === 'read' ? ChapterViews.READ
+    : v && v === 'review' ? ChapterViews.REVIEW
+    : ChapterViews.DETAIL
+
+  const [chapterView, setChapterView] = useState(view)
   
   return (
     chapterView == ChapterViews.DETAIL ? <ChapterDetailLayout view={chapterView} setView={setChapterView} bookDetail={bookDetail} chapterDetail={chapterDetail} genres={genres} /> 
