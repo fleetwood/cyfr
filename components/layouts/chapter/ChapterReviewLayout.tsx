@@ -11,6 +11,7 @@ import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
 import EZButton from "../../ui/ezButton"
+import Link from "next/link"
 
 const ChapterReviewLayout = (props:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
@@ -52,8 +53,7 @@ const ChapterReviewLayout = (props:ChapterLayoutProps) => {
             {toasts.map((toast) => toast.toast)}
         </div>
         <div className="box-border snap-y min-h-full">
-          <h3>{props.bookDetail.title}</h3>
-          <h2>{props.chapterDetail.title}</h2>
+              <h3><Link href={`/book/${bookApi.bookDetail?.slug}`}>{bookApi.bookDetail?.title}</Link></h3>
           <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} />
         </div>
         <Footer />

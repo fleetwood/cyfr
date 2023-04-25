@@ -52,11 +52,10 @@ const upsert = async (chapter:Chapter) => {
 
     if (result) {
       debug('upsert', result)
-      // const sum = await prisma.$queryRaw`SELECT sum(words) FROM "Chapter" where "bookId" = ${chapter.bookId}`||0
-      // const book = await prisma.book.update({where: {id: chapter.bookId}, data:{ words: sum}})
-      // if (!book) {
-      //   info('upsert (book)', 'Unable to update the book count for some reason....')
-      // }
+      const sum = await prisma.$queryRaw`SELECT f_book_wordCount(${chapter.bookId})`
+      if (!sum) {
+        info('upsert (book)', 'Unable to update the book count for some reason....')
+      }
       return result
     }
     throw {code: fileMethod('upsert'), message :'Did not obtain an upsert result'}

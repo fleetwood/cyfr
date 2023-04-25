@@ -10,6 +10,7 @@ import RightColumn from "../../containers/RightColumn"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
+import Link from "next/link"
 
 const ChapterDetailLayout = (props:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
@@ -44,8 +45,7 @@ const ChapterDetailLayout = (props:ChapterLayoutProps) => {
           {toasts.map((toast) => toast.toast)}
         </div>
         <div className="box-border snap-y min-h-full">
-          <h3>{props.bookDetail.title}</h3>
-          <h2>{props.chapterDetail.title}</h2>
+          <h3><Link href={`/book/${bookApi.bookDetail?.slug}`}>{bookApi.bookDetail?.title}</Link></h3>
           <ChapterViewSelector setView={props.setView} view={props.view} showEdit={bookApi.isAuthor} />
           <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} />
         </div>

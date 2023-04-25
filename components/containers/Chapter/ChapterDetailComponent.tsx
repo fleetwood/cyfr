@@ -3,9 +3,10 @@ import useDebug from "../../../hooks/useDebug"
 import { ChapterViews } from '../../../pages/book/[bookId]/chapter/[chapterId]'
 import { BookApi, ChapterApi } from '../../../prisma/prismaContext'
 import { useToast } from "../../context/ToastContextProvider"
-import { InlineTextarea } from '../../forms'
+import { InlineTextarea, TailwindInput, TailwindTextarea } from '../../forms'
 import { useEffect, useState } from "react"
 import Spinner from "../../ui/spinner"
+import EZButton from "../../ui/ezButton"
 
 const {debug} = useDebug('ChapterDetailComponent', 'DEBUG')
 
@@ -22,21 +23,25 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
   const readView = view === ChapterViews.READ
   const reviewView = view === ChapterViews.REVIEW
 
+  const [title, setTitle] = useState<string|null>(null)
   const [content, setContent] = useState('')
   const [words, setWords] = useState(0)
   
   const onSave = async () => {
     debug('onSave')
-    const save = await chapterApi.save({content: content!, words})
+    //TODO validate this natch
+    const save = await chapterApi.save({title: title!, content: content!, words})
     if (save) {
       debug('save', save)
-      notify(`Chapter saved! ${save}`)
+      notify(`Chapter saved!`)
+      chapterApi.invalidate()
     } else {
       notify(`There was an error saving your content! :( ${save}`, 'warning')
     }
   }
 
   useEffect(() => {
+    setTitle(() => chapterApi.chapterDetail?.title??'')
     setContent(() => chapterApi.chapterDetail?.content??'')
     setWords(() => chapterApi.chapterDetail?.words??0)
   }, [chapterApi.chapterDetail])
@@ -46,23 +51,28 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
       {chapterApi.isLoading && 
         <Spinner />
       }
+
       {(detailView || readView) && chapterApi.chapterDetail &&
         <div className='font-ibarra'>
+          <h2>{chapterApi.chapterDetail?.title}</h2>
           {ReactHtmlParser(chapterApi.chapterDetail.content??'')}
         </div>
       }
-      {editView &&
+      {editView && bookApi.isAuthor && chapterApi.chapterDetail &&
         <div>
-          {bookApi.isAuthor && chapterApi.chapterDetail &&
-            <InlineTextarea content={content} setContent={setContent} words={words} setWords={setWords} onSave={onSave} />
-          }
-          {!bookApi.isAuthor && 
-            <p>You do not have access to edit this content.</p>
-          }
+          <EZButton disabled={false} label="Save" onClick={onSave} />
+          <h2>
+            <TailwindInput type="text" value={title} setValue={setTitle} />
+          </h2>
+          <div className="relative max-h-max">
+            <InlineTextarea content={content} setContent={setContent} words={words} setWords={setWords} />
+          </div>
+          
         </div>
       }
       {reviewView &&
         <div>
+          <h2>{chapterApi.chapterDetail?.title}</h2>
           {ReactHtmlParser(chapterApi.chapterDetail?.content??'')}
         </div>
       }
