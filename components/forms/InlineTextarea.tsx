@@ -103,9 +103,11 @@ const InlineTextarea = ({
     }
 
     if (setContent) {
-      setContent(htmlString(params.tr?.doc)||'')
+      debug('setContent')
+      setContent(newContent!)
     }
     if (setWords){
+      debug('setWords')
       setWords(wordCount)
     }
     setShowSave(true)

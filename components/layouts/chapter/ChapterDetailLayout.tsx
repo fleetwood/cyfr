@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import useBookApi from "../../../hooks/useBookApi"
 import useChapterApi from "../../../hooks/useChapterApi"
 import { ChapterLayoutProps } from "../../../pages/book/[bookId]/chapter/[chapterId]"
@@ -46,7 +46,6 @@ const ChapterDetailLayout = (props:ChapterLayoutProps) => {
         <div className="box-border snap-y min-h-full">
           <h3>{props.bookDetail.title}</h3>
           <h2>{props.chapterDetail.title}</h2>
-          <div>Words {chapterApi.words}</div>
           <ChapterViewSelector setView={props.setView} view={props.view} showEdit={bookApi.isAuthor} />
           <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} />
         </div>

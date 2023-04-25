@@ -31,14 +31,8 @@ export type ChapterUpsertProps = {
 }
 
 export type ChapterApi = {
-  update:         (props: ChapterApiUpdate) => boolean
-  save:           () => Promise<boolean>
-  content:        string|null
-  order:          number
-  title:          string
-  active:         boolean
-  words:          number
-  chapterDetail:  ChapterDetail
+  save:           (props: ChapterApiUpdate) => Promise<ChapterDetail|null>
+  chapterDetail:  ChapterDetail|null
   isLoading:      boolean
   error:          any
   invalidate:     ()=>void

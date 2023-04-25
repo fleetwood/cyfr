@@ -148,7 +148,7 @@ export type BookApiProps = {
 }
 
 /**
- * @property update {@link BookApi.update}
+ * @property update {@link BookApi["update"]}
  */
 export type BookApi = {
   by              : string

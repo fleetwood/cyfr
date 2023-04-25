@@ -10,7 +10,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     if (result) {
       res.status(200).json({ result: result })
     } else {
-        res.status(200).json({ result: null })
+      res.status(200).json({ result: null })
     }
   } catch (e) {
     err("\tFAIL", e)

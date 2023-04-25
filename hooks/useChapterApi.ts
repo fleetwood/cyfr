@@ -1,5 +1,4 @@
 import { useQueryClient } from "react-query"
-import { ChapterWebApiProps } from "../pages/api/chapter"
 import { Chapter, ChapterApi, ChapterApiProps, ChapterApiUpdate, ChapterDetail, CyfrUser } from "../prisma/prismaContext"
 import { sendApi } from "../utils/api"
 import useChapterDetail from "./useChapterDetail"
@@ -17,7 +16,7 @@ const noChapterDetail = (method:string) => {
  * @param cyfrUser?:  {@link CyfrUser} 
  * @returns 
  */
-const useChapterApi = (props:ChapterApiProps) => {
+const useChapterApi = (props:ChapterApiProps):ChapterApi => {
   const {chapterDetail, setChapterDetail, isLoading, error, invalidate} = useChapterDetail(props.chapterDetail.id)
 
   const qc = useQueryClient()
@@ -27,29 +26,24 @@ const useChapterApi = (props:ChapterApiProps) => {
    */
   const {content, order, title, active, words} = chapterDetail ?? {}
 
-  //////////////////////////////////////////////
-  ///  CRUD   //////////////////////////////////
-  //////////////////////////////////////////////
-  const sendChapterApi = async (props:ChapterWebApiProps) => {
-    debug('sendChapterApi', props)
-    return sendApi('/chapter', props)
-  }
-
-  const upsert = async (chapter:ChapterDetail|Chapter) => {
+  const upsert = async (chapter:ChapterDetail):Promise<ChapterDetail|null> => {
     debug('upsert', chapter)
-    const result = await sendChapterApi({method: 'UPSERT', chapter})
-    return result|| null
+    const result = await sendApi('chapter/upsert', {chapter})
+    if (result) {
+      return result as unknown as ChapterDetail
+    }
+    else return null
   }
 
   const detail = async (id:string) => {
     debug('detail', id)
-    const result = await sendChapterApi({method: 'DETAIL', id})
+    const result = await sendApi('chapter/detail', id)
     return result|| null
   }
 
   const stub = async (id:string) => {
     debug('stub', id)
-    const result = await sendChapterApi({method: 'STUB', id})
+    const result = await sendApi('chapter/stub', id)
     return result|| null
   }
 
@@ -67,37 +61,27 @@ const useChapterApi = (props:ChapterApiProps) => {
    * @property words: number
    * @property content: {string|null}
    */
-  const update = (props:ChapterApiUpdate) => {
+  const save = async (props:ChapterApiUpdate):Promise<ChapterDetail|null> => {
     if (!chapterDetail) {
       noChapterDetail('update')
-      return false
+      return null
     }
-    debug('update',{chapterDetail, props})
     const updateChapter:ChapterDetail = {
       ...chapterDetail,
-      ...{...props},
+      ...props,
       title: props.title??chapterDetail.title
     }
     debug('update', updateChapter)
-    setChapterDetail(() => updateChapter)
-    return true
+    return upsert(updateChapter)
   }
 
-  const save = async () => upsert(chapterDetail!)
-
   return {
-    update,
     save,
-    content,
-    order,
-    title,
-    active,
-    words,
     chapterDetail,
     isLoading,
     error,
     invalidate
-  } as unknown as ChapterApi
+  }
 }
 
 export default useChapterApi

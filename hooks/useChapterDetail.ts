@@ -11,7 +11,7 @@ const useChapterDetail = (chapterId:string) => {
   const qc = useQueryClient()
   const getChapterDetail = async () => {
     if (!chapterId) return null
-    const chapterDetail = await sendApi(`/chapter`,{method:'DETAIL', id: chapterId})
+    const chapterDetail = await sendApi(`chapter/detail`,{id:chapterId})
     if (chapterDetail.data) {
       return (chapterDetail.data as ChapterDetail)
     }
@@ -38,7 +38,7 @@ const useChapterDetail = (chapterId:string) => {
           setError(error)
         }
         if (data?.result) {
-          debug(`onSettled`, data)
+          debug(`onSettled`, data.result)
             setChapterDetail(data.result)
         }
       }

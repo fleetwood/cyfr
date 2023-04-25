@@ -1,8 +1,8 @@
-import { Chapter, ChapterDetail, ChapterStub, Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
+import { Chapter, ChapterDetail, ChapterStub, PrismaBook, Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
 import { now, sortChapters } from "../../utils/helpers"
 
-const {debug, info, fileMethod} = useDebug('entities/prismaChapter')
+const {debug, info, fileMethod} = useDebug('entities/prismaChapter', 'DEBUG')
 
 const detail = async (id: string): Promise<ChapterDetail | null> => {
   debug('detail', id)
@@ -29,11 +29,10 @@ const stub = async (id: string): Promise<ChapterStub | null> => {
 const upsert = async (chapter:Chapter) => {
   debug('upsert', chapter)
   try {
-    const updatedAt = now()
     const create = {
       title: chapter.title,
       order: chapter.order,
-      words: chapter.words||0,
+      words: chapter.words,
       bookId: chapter.bookId
     }
     const update = {
@@ -41,20 +40,23 @@ const upsert = async (chapter:Chapter) => {
       id: chapter.id,
       content: chapter.content,
       active: chapter.active,
-      galleryId: chapter.galleryId,
-      updatedAt
+      galleryId: chapter.galleryId
     }
-
     const upsert = {
       where: { id: chapter.id},
       create,
       update
     }
     debug('upsert data', upsert)
-    const result = await prisma.chapter.upsert(upsert)
+    const result = await prisma.chapter.upsert({...upsert})
 
     if (result) {
       debug('upsert', result)
+      // const sum = await prisma.$queryRaw`SELECT sum(words) FROM "Chapter" where "bookId" = ${chapter.bookId}`||0
+      // const book = await prisma.book.update({where: {id: chapter.bookId}, data:{ words: sum}})
+      // if (!book) {
+      //   info('upsert (book)', 'Unable to update the book count for some reason....')
+      // }
       return result
     }
     throw {code: fileMethod('upsert'), message :'Did not obtain an upsert result'}
