@@ -23,27 +23,8 @@ import {
 } from "remirror/extensions"
 import useDebug from "../../hooks/useDebug"
 import EZButton from "../ui/ezButton"
+import { InlineTextareaProps } from "../../types/props"
 const {debug, todo} = useDebug("InlineTextArea")
-
-type InlineTextareaProps = {
-  placeholder?: string
-  content?:     string | null | undefined
-  setContent?:  (Dispatch<SetStateAction<string>>) | ((content:string) => void)
-  words?:       number
-  setWords?:    (Dispatch<SetStateAction<number>>) | ((words:number) => void)
-  setValid?:    Dispatch<SetStateAction<boolean>>
-  setCounter?:  Dispatch<SetStateAction<number>>
-  onSave?:      () => void
-  onChange?:    (props:InlineTextAreaUpdate) => void
-  maxChar?:     number
-  showCount?:   boolean
-}
-
-export type InlineTextAreaUpdate = {
-  content?:   string | null | undefined
-  chars:  number
-  words:  number
-}
 
 const InlineTextarea = ({
   placeholder,
