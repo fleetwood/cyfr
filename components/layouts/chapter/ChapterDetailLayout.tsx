@@ -29,22 +29,22 @@ const ChapterDetailLayout = (props:ChapterLayoutProps) => {
   }
 
   return (
-    <div className="w-full min-h-screen max-h-screen flex flex-col sm:flex-row flex-wrap sm:flex-nowrap flex-grow">
+    <div className="w-full flex flex-col sm:flex-row flex-wrap sm:flex-nowrap">
       <div className="w-fixed w-full flex-shrink flex-grow-0 bg-gradient-to-b from-secondary to-neutral">
         <LeftColumn />
       </div>
       <main
         role="main"
-        className="w-full min-h-screen flex-grow m-0 overflow-auto scrollbar-hide relative"
+        className="w-full flex flex-col m-0 overflow-auto scrollbar-hide relative"
         onScroll={handleScroll}
         ref={mainRef}
       >
-        <Navbar className="min-w-full transition-all duration-200 ease-out" pageScrolled={scrollActive} />
+        <Navbar className="w-full transition-all duration-200 ease-out" pageScrolled={scrollActive} />
 
-        <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
+        <div className="toast toast-top toast-center w-4/6 mt-10 z-12 p-0">
           {toasts.map((toast) => toast.toast)}
         </div>
-        <div className="box-border snap-y min-h-full">
+        <div className="box-border snap-y min-h-full flex-1">
           <h3><Link href={`/book/${bookApi.bookDetail?.slug}`}>{bookApi.bookDetail?.title}</Link></h3>
           <ChapterViewSelector setView={props.setView} view={props.view} showEdit={bookApi.isAuthor} />
           <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} />

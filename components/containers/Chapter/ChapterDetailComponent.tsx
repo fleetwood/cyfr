@@ -8,6 +8,7 @@ import { TailwindInput } from '../../forms'
 import WritingFocusedEditor from "../../forms/WritingFocusedEditor"
 import EZButton from "../../ui/ezButton"
 import Spinner from "../../ui/spinner"
+import CharacterList from "../Characters/CharacterList"
 
 const {debug} = useDebug('ChapterDetailComponent', 'DEBUG')
 
@@ -56,6 +57,7 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
       {(detailView || readView) && chapterApi.chapterDetail &&
         <div className='font-ibarra'>
           <h2>{chapterApi.chapterDetail?.title}</h2>
+          <CharacterList characters={chapterApi.chapterDetail.characters} />
           {ReactHtmlParser(chapterApi.chapterDetail.content??'')}
         </div>
       }
@@ -64,15 +66,15 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
           <h2>
             <TailwindInput type="text" value={title} setValue={setTitle} />
           </h2>
+          <CharacterList characters={chapterApi.chapterDetail.characters} />
           <div className="relative max-h-max">
             <WritingFocusedEditor content={content} setContent={setContent} words={words} setWords={setWords} onSave={onSave} />
           </div>
-          
         </div>
       }
-      {reviewView &&
+      {reviewView && chapterApi.chapterDetail &&
         <div>
-          <h2>{chapterApi.chapterDetail?.title}</h2>
+          <CharacterList characters={chapterApi.chapterDetail.characters} />
           {ReactHtmlParser(chapterApi.chapterDetail?.content??'')}
         </div>
       }

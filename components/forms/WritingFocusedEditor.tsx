@@ -124,7 +124,7 @@ const WritingFocusedEditor = ({
   }
 
   return (
-      <div className="remirror-theme max-h-screen text-base-content">
+      <div className="remirror-theme flex-1 text-base-content">
         <Remirror
           manager={manager}
           initialContent={state}
@@ -132,35 +132,37 @@ const WritingFocusedEditor = ({
           autoFocus
           classNames={['relative']}
         >
-          <Toolbar>
+          <div className="sticky top-0">
+            <Toolbar>
 
-          <CommandButtonGroup>
-            <DecreaseFontSizeButton />
-            <FontSizeButtons />
-              <FontFamilyButtons />
-            <IncreaseFontSizeButton />
-          </CommandButtonGroup>
+              <CommandButtonGroup>
+                <DecreaseFontSizeButton />
+                <FontSizeButtons />
+                  <FontFamilyButtons />
+                <IncreaseFontSizeButton />
+              </CommandButtonGroup>
 
-            <CommandButtonGroup>
-              <ToggleBoldButton />
-              <ToggleItalicButton />
-              <ToggleSuperscriptButton />
-              <ToggleSubscriptButton />
-              <ToggleStrikeButton />
-            </CommandButtonGroup>
+              <CommandButtonGroup>
+                <ToggleBoldButton />
+                <ToggleItalicButton />
+                <ToggleSuperscriptButton />
+                <ToggleSubscriptButton />
+                <ToggleStrikeButton />
+              </CommandButtonGroup>
 
-            <TextAlignmentButtonGroup />
-            <IndentationButtonGroup />
-            <LineHeightButtonDropdown />
+              <TextAlignmentButtonGroup />
+              <IndentationButtonGroup />
+              <LineHeightButtonDropdown />
 
-            <CommandButtonGroup className="absolute right-0 flex space-x-4">
-              {words && 
-                <div className="text-sm">Words: {words}</div>
-              }
-              <ShrinkableIconButton label="" icon={SaveIcon} onClick={onSave}  className="btn btn-sm btn-primary" />
-            </CommandButtonGroup>
-          </Toolbar>
-          <FindReplaceComponent />
+              <CommandButtonGroup className="absolute right-0 flex space-x-4">
+                {words && 
+                  <div className="text-sm">Words: {words}</div>
+                }
+                <ShrinkableIconButton label="" icon={SaveIcon} onClick={onSave}  className="btn btn-sm btn-primary" />
+              </CommandButtonGroup>
+            </Toolbar>
+            <FindReplaceComponent />
+          </div>
           <EditorComponent />
 
         </Remirror>

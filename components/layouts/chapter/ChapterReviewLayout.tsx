@@ -46,14 +46,14 @@ const ChapterReviewLayout = (props:ChapterLayoutProps) => {
       >
         <Navbar className="min-w-full transition-all duration-200 ease-out" pageScrolled={scrollActive} />
 
-        <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
-            <div className="absolute right-0">
-                <ChapterViewSelector setView={props.setView} view={props.view} showEdit={bookApi.isAuthor} />
-            </div>
-            {toasts.map((toast) => toast.toast)}
+        <div className="toast toast-top toast-center w-4/6 mt-12 z-10 p-0">
+          {toasts.map((toast) => toast.toast)}
         </div>
         <div className="box-border snap-y min-h-full">
-              <h3><Link href={`/book/${bookApi.bookDetail?.slug}`}>{bookApi.bookDetail?.title}</Link></h3>
+          <div className="absolute right-0">
+              <ChapterViewSelector setView={props.setView} view={props.view} showEdit={bookApi.isAuthor} />
+          </div>
+          <h3><Link href={`/book/${bookApi.bookDetail?.slug}`}>{bookApi.bookDetail?.title}</Link></h3>
           <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} />
         </div>
         <Footer />
