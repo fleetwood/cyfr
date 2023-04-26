@@ -15,8 +15,7 @@ import { PrismaUser } from "../prisma/entities/prismaUser"
 import { CyfrUser } from "../prisma/types/user.def"
 import { cloudinary } from "../utils/cloudinary"
 import UserDetailPage from "./user/[id]"
-import { User } from "../prisma/prismaContext"
-const {debug, info} = useDebug('pages/account', 'DEBUG')
+const {debug, info} = useDebug('pages/account')
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
   const user = await PrismaUser.userInSessionContext(context)

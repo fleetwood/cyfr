@@ -15,7 +15,7 @@ const useBookDetail = (bookId:string) => {
     return (bookDetail.result as BookDetail) || bookDetail.error || null
   }
 
-  const [book, setBook] = useState<BookDetail|null>(null)
+  const [bookDetail, setBookDetail] = useState<BookDetail|null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<any>()
 
@@ -36,14 +36,15 @@ const useBookDetail = (bookId:string) => {
         }
         if (data) {
           debug(`onSettled`, data)
-            setBook(data)
+            setBookDetail(data)
         }
       }
     }
   )
 
   return {
-    book,
+    bookDetail,
+    setBookDetail,
     isLoading,
     error,
     invalidate

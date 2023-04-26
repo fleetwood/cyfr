@@ -8,7 +8,7 @@ import EZButton from "../../ui/ezButton"
 import { BookIcon, DollarIcon, HeartIcon, ReplyIcon, ShareIcon, StarIcon, UserIcon } from "../../ui/icons"
 import BookCover, { BookCoverVariant } from "./BookCover"
 
-const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent', 'DEBUG')
+const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent')
 
 type BookComponentProps = {
   book: BookStub
@@ -39,7 +39,7 @@ const BookStubComponent = ({book, authorAvatars}: BookComponentProps) => {
       }
       
       <div>
-        {isOwner && <EZButton label="EDIT" whenClicked={() => router.push(`/book/${book.title}`)} /> }
+        {isOwner && <EZButton label="EDIT" onClick={() => router.push(`/book/${book.title}`)} /> }
         <div className="flex">
           <span>{book.fiction ? 'FICTION' : 'NON-FICTION'}</span>
           <span>{book.genre.title}</span>

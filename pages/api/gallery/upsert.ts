@@ -6,7 +6,7 @@ import {
   ResponseError,
   ResponseResult
 } from "../../../types/response"
-const {debug, info} = useDebug("api/gallery/upsert", 'DEBUG')
+const {debug, info} = useDebug("api/gallery/upsert")
 
 export default async function handle(
   req: NextApiRequest,

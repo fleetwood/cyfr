@@ -1,6 +1,5 @@
 import { v4 as uid } from 'uuid'
-import useDebug from '../hooks/useDebug'
-import { BookDetail, BookStub, CyfrUser, Follow } from '../prisma/types'
+import useDebug from '../../hooks/useDebug'
 
 const {debug} = useDebug('utils')
 
@@ -31,6 +30,7 @@ export const ymd = (date: Date = now()): string => {
   return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec
 }
 
+//TODO this can be cleaned up a bit
 const isOne = (num: number, label: string) =>
   num !== 1 ? `${num} ${label}s ago` : `${num} ${label} ago`
 
@@ -148,7 +148,7 @@ export const uniqueKey = (...items:any) => {
     ).join('-')
   return key
 }
-
+//TODO document this
 export const uniqueArray = (a:string[]) => {
   var seen = {};
   // @ts-ignore
@@ -172,18 +172,8 @@ export const valToLabel = (val: number) => {
   })
   return result
 }
-
+//TODO where is this being used?
 export function hasOwnProperty<X extends {}, Y extends PropertyKey>
   (obj: X, prop: Y): obj is X & Record<Y, unknown> {
   return obj.hasOwnProperty(prop)
-}
-
-export function isBookAuthor(book:BookDetail|BookStub, cyfrUser:CyfrUser|null) {
-  const isOwner = cyfrUser && book.authors ? book.authors.filter(a => a.id === cyfrUser.id).length > 0 : false
-  debug('isBookAuthor',{title: book.title, authors: ((book.authors||[]).map(a => a.name)), user: cyfrUser?.name ?? 'No cyfrUser', isOwner})
-  return isOwner
-}
-
-export function onlyFans(follow:Follow[]) {
-  return follow.filter(f => f.isFan)
 }

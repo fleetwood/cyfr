@@ -4,7 +4,7 @@ import {
   Book, Chapter, GalleryCreateProps, GalleryDetail, GalleryEngageProps, GalleryStub, GalleryStubInclude, GalleryUpsertProps, ImageUpsertProps, Like, Share
 } from "../prismaContext"
 
-const {debug, info, fileMethod} = useDebug('entities/prismaGallery', 'DEBUG')
+const {debug, info, fileMethod} = useDebug('entities/prismaGallery')
 
 export type GalleryAddImageProps = {
   id: string

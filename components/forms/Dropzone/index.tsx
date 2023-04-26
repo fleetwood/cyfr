@@ -5,7 +5,7 @@ import UploadFileView from "./UploadingFileView"
 import { UploadableFile, CompleteFile, DropzoneProps } from "./types.defs"
 import {Image as PrismaImage} from './../../../prisma/prismaContext'
 import useDebug from "../../../hooks/useDebug"
-const {debug, jsonBlock} = useDebug("components/forms/Dropzone/index", 'DEBUG')
+const {debug, jsonBlock} = useDebug("components/forms/Dropzone/index")
 
 function Dropzone({limit=-1, onDropComplete, onDropChange, children}:DropzoneProps) {
   const [files, setFiles] = useState<UploadableFile[]>([])

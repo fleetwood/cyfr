@@ -8,7 +8,7 @@ import { sendApi } from "../../../utils/api"
 import { ImageUpsertProps, Image } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import Link from "next/link"
-const {debug} = useDebug("components/forms/Dropzone/UploadingFileView", 'DEBUG')
+const {debug} = useDebug("components/forms/Dropzone/UploadingFileView")
 
 const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileViewProps) => {
   const [cyfrUser, loading] = useCyfrUserContext()

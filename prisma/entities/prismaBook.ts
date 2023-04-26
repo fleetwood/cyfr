@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import { GenericResponseError, ResponseError } from "../../types/response"
-import { dedupe } from '../../utils/helpers'
+import { dedupe, now } from '../../utils/helpers'
 import {
   Book,
   BookDeleteProps,
@@ -8,15 +8,17 @@ import {
   BookDetailInclude,
   BookFollowProps,
   BookUpsertProps,
+  Chapter,
   Follow,
   Like,
   LikeProps,
+  PrismaChapter,
   Share,
   ShareProps,
   prisma
 } from "../prismaContext"
 
-const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
+const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook")
 
 const detail = async (idOrTitleOrSlug:string) => {
   try {
@@ -261,6 +263,43 @@ const share = async (props:ShareProps): Promise<Share> => {
   }
 }
 
+const addChapter = async(props:{bookId:string, title:string, order: number}):Promise<BookDetail> => {
+  try {
+    const {bookId, title, order} = props
+    const update = {
+      where: {
+        id: bookId
+      },
+      data: {
+        chapters: {
+          create: {
+            title,
+            order
+          }
+        }
+      }
+    }
+    debug('addChapter',{bookId, update})
+    const result = await prisma.book.update(update)
+    if (result) {
+      return detail(bookId)
+    }
+    throw new Error('Failed to obtain a result')
+  } catch (error) {
+    debug(`addChapter ERROR`, {
+      ...{ props },
+      ...{ error },
+    });
+    throw GenericResponseError(error as unknown as ResponseError);
+  }
+}
+
+/**
+ * This is a redirect to {@link PrismaChapter.sort}
+ * @returns 
+ */
+const sortChapters =async (currentChapers:Chapter[], changedChapter:Chapter) => PrismaChapter.sort(currentChapers,changedChapter)
+
 const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | undefined> => {
   try {
     debug("deleteBook", { bookId, authorId })
@@ -272,4 +311,4 @@ const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | u
   }
 }
 
-export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, deleteBook }
+export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, addChapter, sortChapters, deleteBook }

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { AudienceLevels, useAudience } from "../../hooks/useAudience";
 import useDebug from "../../hooks/useDebug";
-const {debug} = useDebug('components/ui/allowContent', 'DEBUG')
+const {debug} = useDebug('components/ui/allowContent')
 
 type AllowContentProps = {
   redirect?: string | undefined

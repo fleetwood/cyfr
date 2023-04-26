@@ -18,3 +18,23 @@ export type TailwindFormProps = {
   labelClassName?: string
   inputClassName?: string
 }
+
+export type InlineTextareaProps = {
+  placeholder?: string
+  content?:     string | null | undefined
+  setContent?:  (Dispatch<SetStateAction<string>>) | ((content:string) => void)
+  words?:       number
+  setWords?:    (Dispatch<SetStateAction<number>>) | ((words:number) => void)
+  setValid?:    Dispatch<SetStateAction<boolean>>
+  setCounter?:  Dispatch<SetStateAction<number>>
+  onSave?:      () => void
+  onChange?:    (props:InlineTextAreaUpdate) => void
+  maxChar?:     number
+  showCount?:   boolean
+}
+
+export type InlineTextAreaUpdate = {
+  content?:   string | null | undefined
+  chars:  number
+  words:  number
+}

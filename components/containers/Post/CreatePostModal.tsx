@@ -6,11 +6,19 @@ import { useToast } from "../../context/ToastContextProvider"
 import Dropzone, { CompleteFile } from "../../forms/Dropzone"
 import RemirrorEditor from "../../forms/SocialTextarea"
 import { LoggedIn } from "../../ui/toasty"
+import { CyfrLogo } from "../../ui/icons"
 
 const {debug} = useDebug("components/containers/Post/CreatePost")
+const createPostModal = 'createPostModal'
+
+export const CreatePostModalButton = () => (
+  <label htmlFor={createPostModal} className="btn btn-info space-x-2">
+    <CyfrLogo className="animate-pulse text-info-content w-[1.25rem]" />
+    <span className="text-info-content">New Post</span>
+  </label>
+)
 
 const CreatePostModal = (): JSX.Element => { 
-  const createPostModal = 'createPostModal'
   const [cyfrUser] = useCyfrUserContext()
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
