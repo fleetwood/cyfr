@@ -7,6 +7,7 @@ import { InlineTextarea, TailwindInput, TailwindTextarea } from '../../forms'
 import { useEffect, useState } from "react"
 import Spinner from "../../ui/spinner"
 import EZButton from "../../ui/ezButton"
+import ChapterFooter from "./ChapterFooter"
 
 const {debug} = useDebug('ChapterDetailComponent', 'DEBUG')
 
@@ -56,10 +57,14 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
         <div className='font-ibarra'>
           <h2>{chapterApi.chapterDetail?.title}</h2>
           {ReactHtmlParser(chapterApi.chapterDetail.content??'')}
+          <div>
+            <ChapterFooter bookDetail={bookApi.bookDetail} chapters={bookApi.chapters} currentChapter={chapterApi.chapterDetail} />
+          </div>
         </div>
       }
       {editView && bookApi.isAuthor && chapterApi.chapterDetail &&
         <div>
+
           <EZButton disabled={false} label="Save" onClick={onSave} />
           <h2>
             <TailwindInput type="text" value={title} setValue={setTitle} />
