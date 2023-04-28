@@ -84,6 +84,8 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
           {ReactHtmlParser(chapterApi.chapterDetail?.content??'')}
         </div>
       }
+
+      {/* TODO Add Gallery stuff cuz chapters need mood board yo */}
     </div>
   )
 }
