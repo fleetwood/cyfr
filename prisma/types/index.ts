@@ -1,6 +1,7 @@
 export * from "@prisma/client";
 export * from "./book.def";
 export * from "./chapter.def";
+export * from "./character.def";
 export * from "./chat.def";
 export * from './comment.def';
 export * from "./feed.def";
