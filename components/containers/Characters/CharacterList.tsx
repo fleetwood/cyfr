@@ -1,16 +1,15 @@
-import { Character } from '@prisma/client'
-import React from 'react'
+import { BookApi, Character } from '../../../prisma/prismaContext'
 
 type CharacterListProps = {
-    characters?: Character[] | undefined
+    forBook :   BookApi
+    onSelect?:  (character:Character) => void
 }
 
-const CharacterList = ({characters}:CharacterListProps) => {
+const CharacterList = ({forBook, onSelect}:CharacterListProps) => {
     return (
     <div>
-        <h4>Characters [NI]</h4>
-        {characters && characters.map((c:Character) => (
-            <span>{c.name}</span>
+        {forBook.characters && forBook.characters.map((c:Character) => (
+            <span onClick={() => onSelect ? onSelect(c) : {}}>{c.name}</span>
         ))}
     </div>
 )}

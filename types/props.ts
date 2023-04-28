@@ -13,24 +13,27 @@ export type TailwindFormProps = {
   label?: string
   placeholder?: string
   value: string | null
-  setValue: Dispatch<SetStateAction<string | null>>
+  setValue: Dispatch<SetStateAction<string>> | Dispatch<SetStateAction<string|null>>
   cardClassName?: string
   labelClassName?: string
   inputClassName?: string
 }
 
 export type InlineTextareaProps = {
-  placeholder?: string
-  content?:     string | null | undefined
-  setContent?:  (Dispatch<SetStateAction<string>>) | ((content:string) => void)
-  words?:       number
-  setWords?:    (Dispatch<SetStateAction<number>>) | ((words:number) => void)
-  setValid?:    Dispatch<SetStateAction<boolean>>
-  setCounter?:  Dispatch<SetStateAction<number>>
-  onSave?:      () => void
-  onChange?:    (props:InlineTextAreaUpdate) => void
-  maxChar?:     number
-  showCount?:   boolean
+  label?:           string
+  labelClassName?:  string
+  required?:        boolean
+  placeholder?:     string
+  content?:         string | null | undefined
+  setContent?:      (Dispatch<SetStateAction<string>>) | ((content:string) => void)
+  words?:           number
+  setWords?:        (Dispatch<SetStateAction<number>>) | ((words:number) => void)
+  setValid?:        Dispatch<SetStateAction<boolean>>
+  setCounter?:      Dispatch<SetStateAction<number>>
+  onSave?:          () => void
+  onChange?:        (props:InlineTextAreaUpdate) => void
+  maxChar?:         number
+  showCount?:       boolean
 }
 
 export type InlineTextAreaUpdate = {

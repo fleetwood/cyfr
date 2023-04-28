@@ -25,6 +25,7 @@ const Navbar = ({
 }: NavbarProps) => {
   const [cyfrUser] = useCyfrUserContext();
   const [isPageScrolled, setIsPageScrolled] = useState(false);
+  const [showDropDown, setShowDropDown ] = useState(false)
 
   const userUrl = cyfrUser ? cyfrUser.name : ''
 
@@ -42,11 +43,12 @@ const Navbar = ({
           sticky top-0 
           bg-secondary 
           flex 
+          justify-between
           z-40
           ${isPageScrolled ? "shadow-lg shadow-black" : ""}
           `}
       >
-        <div className="flex justify-start">
+        <div className="flex flex-row justify-start">
           {active && 
             <ShrinkableLink
               href="/"
@@ -60,7 +62,7 @@ const Navbar = ({
           }
           {leftChildren}
         </div>
-        <div className={`space-x-6 flex w-full justify-end`}>
+        <div className={`flex flex-row nav-item dropdown static justify-end`}>
           {rightChildren}
           <ShrinkableIconLink
             href="/"
@@ -75,41 +77,46 @@ const Navbar = ({
             className={iconClassName}
           />
           {cyfrUser ? (
-            <div className="dropdown dropdown-end text-secondary-content">
-            <label tabIndex={0} className="btn btn-ghost rounded-btn space-x-2">
-              <p>{cyfrUser.name}</p>
-              <Avatar user={cyfrUser} sz='sm' link={false} />
-            </label>
-            <div className="menu dropdown-content grid grid-cols-3 min-w-max drop-shadow-lg bg-secondary bg-opacity-90 rounded-lg">
+            <div className="dropdown dropdown-end text-secondary-content min-w-full float-right">
+              <label tabIndex={0} className="btn btn-ghost rounded-btn space-x-2" onClick={() => setShowDropDown(!showDropDown)}>
+                <p>{cyfrUser.name}</p>
+                <Avatar user={cyfrUser} sz='sm' link={false} />
+              </label>
 
-              <div className="col-1 px-4 py-2 bg-primary bg-opacity-90 rounded-l-lg">
-                <h3 className="w-[100%]"><Link href={`/user/${userUrl}/books`} className='min-w-full rounded-lg hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Books</Link></h3>
-                <ul className="col-1 p-2 text-primary-content mt-2 space-y-2">
-                  {cyfrUser.books.map(book => (
-                  <li key={uniqueKey(book)}><Link className="hover:bg-opacity-100 hover:bg-primary hover:drop-shadow-md" href={`/book/${book.slug}`}>{book.title}</Link></li>
-                  ))}
-                </ul>
-              </div>
+
+              <div className={`dropdown-content w-full top-full drop-shadow-lg bg-secondary bg-opacity-90 rounded-lg`}>
               
-              <ul className="col-1 p-2 text-secondary-content mt-2 space-y-2 w-[400px]">
-                <li><Link href="/user/inbox" className={linkClass}>Inbox</Link></li>
-                <li><Link href={`/user/${userUrl}/books`} className={linkClass}>Books</Link></li>
-                <li><Link href={`/user/${userUrl}/gallery`} className={linkClass}>Galleries</Link></li>
-                <li><Link href={`/user/${userUrl}/memberships`} className={linkClass}>Memberships</Link></li>
-                <li><Link href={`/user/${userUrl}`} className={linkClass}>Profile</Link></li>
-                <li><Link href={`/account`} className={linkClass}>Account</Link></li>
-                <li><Link href={`#`} className={linkClass} onClick={() => signOut()} >Log Out</Link></li>
-              </ul>
+                <div className="grid lg:grid-cols-3 gap-6">
+                  <ul className="px-4 py-2 bg-primary bg-opacity-90 rounded-l-lg">
+                    {/* <h3 className="w-[100%]"><Link href={`/user/${userUrl}/books`} className='min-w-full rounded-lg hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Books</Link></h3> */}
+                    {/* <ul className="col-1 p-2 text-primary-content mt-2 space-y-2"> */}
+                      {cyfrUser.books.map(book => (
+                      <li key={uniqueKey(book)}><Link className="hover:bg-opacity-100 hover:bg-primary hover:drop-shadow-md" href={`/book/${book.slug}`}>{book.title}</Link></li>
+                      ))}
+                    {/* </ul> */}
+                  </ul>
+                  <ul className="p-2 text-secondary-content mt-2 space-y-2">
+                    <li><Link href="/user/inbox" className={linkClass}>Inbox</Link></li>
+                    <li><Link href={`/user/${userUrl}/books`} className={linkClass}>Books</Link></li>
+                    <li><Link href={`/user/${userUrl}/gallery`} className={linkClass}>Galleries</Link></li>
+                    <li><Link href={`/user/${userUrl}/memberships`} className={linkClass}>Memberships</Link></li>
+                    <li><Link href={`/user/${userUrl}`} className={linkClass}>Profile</Link></li>
+                    <li><Link href={`/account`} className={linkClass}>Account</Link></li>
+                    <li><Link href={`#`} className={linkClass} onClick={() => signOut()} >Log Out</Link></li>
+                  </ul>
 
-              <div className="col-1 p-2 text-secondary-content mt-2 space-y-2 w-[400px]">
-                <div><span><b>Posts</b> {cyfrUser.posts.length}</span></div>
-                <div><span><b>Followers</b> {cyfrUser.followers.length}</span></div>
-                <div><span><b>Fans</b> {onlyFans(cyfrUser.followers).length} </span></div>
-                <div><span><b>Reads</b> [NI]</span></div>
-                <div><span><b>Reviews</b> [NI]</span></div>
-              </div>
+                  <ul className="p-2 text-secondary-content mt-2 space-y-2">
+                    <li><span><b>Posts</b> {cyfrUser.posts.length}</span></li>
+                    <li><span><b>Followers</b> {cyfrUser.followers.length}</span></li>
+                    <li><span><b>Fans</b> {onlyFans(cyfrUser.followers).length} </span></li>
+                    <li><span><b>Reads</b> [NI]</span></li>
+                    <li><span><b>Reviews</b> [NI]</span></li>
+                  </ul>
+                </div>
+              
             </div>
-          </div>
+
+            </div>
           ) : (
             <ShrinkableIconLink
               href={"/login"}
@@ -119,6 +126,7 @@ const Navbar = ({
             />
           )}
         </div>
+        
       </nav>
     </>
   );

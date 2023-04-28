@@ -37,6 +37,7 @@ export type CharacterUpsertProps = {
   backstory:   string
   title:       string
   archetype:   string
+  bookId:      string
 }
 
 export type CharacterApi = {

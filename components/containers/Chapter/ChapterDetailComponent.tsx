@@ -58,7 +58,7 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
       {(detailView || readView) && chapterApi.chapterDetail &&
         <div className='font-ibarra'>
           <h2>{chapterApi.chapterDetail?.title}</h2>
-          <CharacterList characters={chapterApi.chapterDetail.characters} />
+          <CharacterList forBook={bookApi} />
           {ReactHtmlParser(chapterApi.chapterDetail.content??'')}
           <div>
             <ChapterFooter bookDetail={bookApi.bookDetail} chapters={bookApi.chapters} currentChapter={chapterApi.chapterDetail} />
@@ -72,7 +72,7 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
           <h2>
             <TailwindInput type="text" value={title} setValue={setTitle} />
           </h2>
-          <CharacterList characters={chapterApi.chapterDetail.characters} />
+          <CharacterList forBook={bookApi} />
           <div className="relative max-h-max">
             <WritingFocusedEditor content={content} setContent={setContent} words={words} setWords={setWords} onSave={onSave} />
           </div>
@@ -80,7 +80,7 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
       }
       {reviewView && chapterApi.chapterDetail &&
         <div>
-          <CharacterList characters={chapterApi.chapterDetail.characters} />
+          <CharacterList forBook={bookApi}/>
           {ReactHtmlParser(chapterApi.chapterDetail?.content??'')}
         </div>
       }

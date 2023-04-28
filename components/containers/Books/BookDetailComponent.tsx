@@ -2,7 +2,7 @@ import { useState } from "react"
 import ReactHtmlParser from "react-html-parser"
 import useBookApi from "../../../hooks/useBookApi"
 import useDebug from "../../../hooks/useDebug"
-import { BookApi, BookCategory, BookDetail, BookStatus, Chapter, ChapterDetail, UserStub } from "../../../prisma/prismaContext"
+import { BookApi, BookCategory, BookDetail, BookStatus, Chapter, ChapterDetail, Character, UserStub } from "../../../prisma/prismaContext"
 import {
   isBookAuthor,
   onlyFans,
@@ -33,6 +33,8 @@ import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/CreateCha
 import Spinner from "../../ui/spinner"
 import ChapterList from "../Chapter/ChapterList"
 import { useRouter } from "next/router"
+import CharacterList from "../Characters/CharacterList"
+import CreateCharacterModal, { OpenCharacterModalButton } from "../Characters/CreateCharacterModal"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -147,6 +149,14 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
     //TODO: Don't leave this page with unsaved changes
     //TODO: add slug to chapter as a compound key
     router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
+  }
+
+  const editCharacter =(character:Character) => {
+    debug('editCharacter', character)
+    // const v = bookApi.isAuthor ? '?v=edit' : ''
+    //TODO: Don't leave this page with unsaved changes
+    //TODO: add slug to character as a compound key
+    // router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
   }
 
   const onSave = () => {
@@ -441,15 +451,10 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
       </div>
 
       <div className="my-4">
-        <h3>Characters</h3>
-        <div>
-          <p className="text-xs">
-            <strong>TODO: Create Characters upsert.</strong>
-            This should be a modal to create a new character, or edit/delete
-            an existing character. When complete, update{" "}
-            <code>bookHas(bookDetail.characters) || isAuthor</code> so characters
-            display for all users, but forms only show for authors.
-          </p>
+        <h3>Characters{isAuthor && <OpenCharacterModalButton variant="plus" />}</h3>
+          {isAuthor && <CreateCharacterModal forBook={bookApi} />}
+          <div className="flex space-x-4">
+          <CharacterList forBook={bookApi} />
         </div>
       </div>
 

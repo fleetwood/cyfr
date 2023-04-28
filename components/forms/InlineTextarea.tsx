@@ -24,6 +24,7 @@ import {
 import useDebug from "../../hooks/useDebug"
 import EZButton from "../ui/ezButton"
 import { InlineTextareaProps } from "../../types/props"
+import { IsRequired } from "./TailwindInput"
 const {debug, todo} = useDebug("InlineTextArea")
 
 const InlineTextarea = ({
@@ -35,6 +36,9 @@ const InlineTextarea = ({
   onChange,
   words,
   setWords,
+  label,
+  labelClassName,
+  required = false,
   maxChar = -1,
   showCount = false
 }: InlineTextareaProps) => {
@@ -104,6 +108,9 @@ const InlineTextarea = ({
 
   return (
     <div className="remirror-theme max-h-screen text-base-content">
+      {label &&
+        <span className={labelClassName+' text-primary font-bold'}>{label}<IsRequired required={required} /></span>
+      }
       {words && 
         <div className="text-sm right-0">Words: {words}</div>
       }

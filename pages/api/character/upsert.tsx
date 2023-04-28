@@ -14,8 +14,8 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<unknown>>
 ) {
   try {
-    const {character} = req.body.body
-    debug('handle', {character})
+    const character = req.body.body
+    debug('handle', character)
     const result = await PrismaCharacter.upsert(character)
     if (result) {
       debug('result', {result})

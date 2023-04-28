@@ -1,4 +1,4 @@
-import { Chapter, Character, CharacterDetail, CharacterStub, PrismaBook, Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
+import { Chapter, Character, CharacterDetail, CharacterStub, CharacterUpsertProps, PrismaBook, Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
 import { now, sortChapters } from "../../utils/helpers"
 
@@ -24,7 +24,7 @@ const stub = async (id: string): Promise<CharacterStub | null> => {
   }
 }
 
-const upsert = async (character:Character|CharacterDetail) => {
+const upsert = async (character:CharacterUpsertProps) => {
   debug('upsert', character)
   try {
     const {
@@ -39,9 +39,10 @@ const upsert = async (character:Character|CharacterDetail) => {
       description,
       backstory,
       title,
-      archetype
+      archetype,
+      bookId
     } = character
-    const create = {
+    const data = {
       active,
       name,
       familyName,
@@ -53,18 +54,18 @@ const upsert = async (character:Character|CharacterDetail) => {
       description,
       backstory,
       title,
-      archetype
+      archetype,
+      books: {
+        connect: {
+          id: bookId
+        }
+      }
     }
-    const update = {
-      ...create
-    }
-    
-    debug('upsert data', upsert)
-    const result = await prisma.character.upsert({
-      where: { id: character.id},
-      create,
-      update
-    })
+    debug('upsert data', {data})
+    //TODO bc for some stupid reason if id is undefined the where statement is just empty oy
+    const result = character.id !== undefined 
+      ? await prisma.character.update({where: {id: character.id}, data})
+      : await prisma.character.create({data})
 
     if (result) {
       debug('upsert', result)
