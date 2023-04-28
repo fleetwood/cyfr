@@ -1,5 +1,6 @@
 export * from "./prismaBook"
 export * from "./prismaChapter"
+export * from "./prismaCharacter"
 export * from "./prismaComment"
 export * from "./prismaCommune"
 export * from "./prismaGallery"

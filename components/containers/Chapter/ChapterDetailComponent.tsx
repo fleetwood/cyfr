@@ -9,6 +9,7 @@ import WritingFocusedEditor from "../../forms/WritingFocusedEditor"
 import EZButton from "../../ui/ezButton"
 import Spinner from "../../ui/spinner"
 import CharacterList from "../Characters/CharacterList"
+import ChapterFooter from "./ChapterFooter"
 
 const {debug} = useDebug('ChapterDetailComponent', 'DEBUG')
 
@@ -59,10 +60,15 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
           <h2>{chapterApi.chapterDetail?.title}</h2>
           <CharacterList characters={chapterApi.chapterDetail.characters} />
           {ReactHtmlParser(chapterApi.chapterDetail.content??'')}
+          <div>
+            <ChapterFooter bookDetail={bookApi.bookDetail} chapters={bookApi.chapters} currentChapter={chapterApi.chapterDetail} />
+          </div>
         </div>
       }
       {editView && bookApi.isAuthor && chapterApi.chapterDetail &&
         <div>
+
+          <EZButton disabled={false} label="Save" onClick={onSave} />
           <h2>
             <TailwindInput type="text" value={title} setValue={setTitle} />
           </h2>
