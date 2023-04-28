@@ -48,7 +48,7 @@ const CreateCharacterModal = ({forBook}:CreateCharacterModalType) => {
   const [backstory, setBackstory] = useState<string>('')
   const [active, setActive] = useState<boolean>(true)
 
-  const displayName = name || (givenName || '') + (familyName || '')
+  const displayName = name || [givenName, familyName].join(' ').trim()
 
   const steps = ['Bio', 'Appearance', 'Backstory', 'Thumbnail', 'Done']
   const [currentStep, setCurrentStep] = useState(0)
