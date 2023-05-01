@@ -1,4 +1,4 @@
-import GalleryCreateView from "../../../components/containers/Gallery/GalleryCreateView";
+import GalleryCreateModal from "../../../components/containers/Gallery/GalleryCreateModal";
 import GalleryDetailView from "../../../components/containers/Gallery/GalleryDetailView";
 import MainLayout from "../../../components/layouts/MainLayout";
 import {
@@ -28,7 +28,7 @@ const UserGalleryPage = ({ user, galleries }: InferGetServerSidePropsType<typeof
   <MainLayout sectionTitle="Galleries" subTitle={user?.name || ""}>
     <div className="flex flex-col space-y-4">
       {cyfrUser && cyfrUser.id === user?.id && 
-        <GalleryCreateView  />
+        <GalleryCreateModal  />
       }
       {galleries.map((gallery:GalleryDetail) => (
         <div className="relative" key={`user:${user?.id}-gallery:${gallery.id}`}>

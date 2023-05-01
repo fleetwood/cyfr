@@ -7,7 +7,7 @@ import Dropzone, { CompleteFile } from '../../forms/Dropzone'
 import TailwindInput from '../../forms/TailwindInput'
 import GalleryPhotoswipe from './GalleryPhotoswipe'
 
-const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm')
+const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm', 'DEBUG')
 
 export type GalleryNestedProps = {
     gallery?:         GalleryStub
@@ -16,10 +16,9 @@ export type GalleryNestedProps = {
     labelClassName?:  string
     className?:       string
     variant?:         'no-title'|'no-description'|null
-    onUpsert?:        Function
+    onUpsert?:        (galleryId?:string) => void
 }
 
-//TODO Add/Remove images to/from existing gallery
 const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
     const [cyfrUser] = useCyfrUserContext()
     const [images, setImages] = useState<Image[]>(gallery?.images ?? [])
@@ -51,11 +50,10 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
         images: images,
         //TODO: add delete button
       }
-      const result = await sendApi('gallery/upsert', newGallery)
-      if (result?.data) {
-        const upsertGallery = result.data
-        debug('upsertGallery', {upsertGallery})
-        if (onUpsert) onUpsert(result.data)
+      const saved = await sendApi('gallery/upsert', newGallery)
+      if (onUpsert) {
+        debug('onUpsert', {result: saved?.data?.result ?? null})
+        onUpsert(saved?.data?.result ? saved.data.result.id : null)
       }
     }
 

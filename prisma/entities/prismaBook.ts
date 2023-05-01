@@ -294,6 +294,36 @@ const addChapter = async(props:{bookId:string, title:string, order: number}):Pro
   }
 }
 
+const addGallery = async(props:{bookId:string, galleryId:string}):Promise<BookDetail> => {
+  try {
+    const {galleryId, bookId} = props
+    const update = {
+      where: {
+        id: bookId
+      },
+      data: {
+        gallery: {
+          connect: {
+            id: galleryId
+          }
+        }
+      }
+    }
+    debug('addGallery',{bookId, update})
+    const result = await prisma.book.update(update)
+    if (result) {
+      return detail(bookId)
+    }
+    throw new Error('Failed to obtain a result')
+  } catch (error) {
+    debug(`addGallery ERROR`, {
+      ...{ props },
+      ...{ error },
+    });
+    throw GenericResponseError(error as unknown as ResponseError);
+  }
+}
+
 /**
  * This is a redirect to {@link PrismaChapter.sort}
  * @returns 
@@ -311,4 +341,4 @@ const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | u
   }
 }
 
-export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, addChapter, sortChapters, deleteBook }
+export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, addChapter,addGallery, sortChapters, deleteBook }

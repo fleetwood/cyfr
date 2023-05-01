@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react"
 import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, Genre, GenreListItem, Image, Like, Share, User, UserStub } from "../prismaContext"
 import { KeyVal } from "../../types/props"
+import useBookApi from "../../hooks/useBookApi"
 
 export type BookStub = Book & {
   authors: {
@@ -147,8 +148,12 @@ export type BookApiProps = {
   cyfrUser?:  CyfrUser
 }
 
+
 /**
- * @property update {@link BookApi["update"]}
+ * 
+ * @description Type for the {@link useBookApi} hook. 
+ * @export
+ * @typedef {BookApi}
  */
 export type BookApi = {
   by              : string
@@ -167,6 +172,7 @@ export type BookApi = {
   genresToOptions : KeyVal[]
   update          : (props: BookApiUpdate) => Promise<boolean | undefined>
   addChapter      : (title: string, order: number) => Promise<any>
+  addGallery      : (galleryId: string) => Promise<any>
   invalidate      : () => void
   saveChapter     : (chapter:Chapter) => Promise<boolean>
   sortChapters    : (chapter:Chapter) => Promise<boolean>

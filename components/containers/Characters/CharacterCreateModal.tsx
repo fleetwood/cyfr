@@ -8,22 +8,13 @@ import { InlineTextarea, TailwindInput } from '../../forms'
 import EZButton from '../../ui/ezButton'
 import { BookApi, Character } from '../../../prisma/prismaContext'
 import { sendApi } from '../../../utils/api'
+import OpenModal from '../../ui/openModal'
 const {debug} = useDebug("components/containers/Character/CreateCharacterModal")
 
 const createCharacterModal = 'createCharacterModal'
 
-type CharacterModalButtonVariant = {
-  variant?: 'button'|'plus'
-}
-export const OpenCharacterModalButton = ({variant='button'}:CharacterModalButtonVariant) => (
-  variant === 'button' 
-  ?
-    <label htmlFor={createCharacterModal} className="btn btn-info space-x-2">
-      <span className="text-info-content">New Character</span>
-    </label>
-  :
-    <label htmlFor={createCharacterModal} className="btn btn-sm btn-info btn-circle">+</label>
-)
+export const OpenCharacterModalButton = () => <OpenModal htmlFor={createCharacterModal} label='Create Character' />
+export const OpenCharacterModalPlus = () => <OpenModal htmlFor={createCharacterModal} variant='plus' />
 
 type CreateCharacterModalType = {
   forBook: BookApi
@@ -136,10 +127,6 @@ const CreateCharacterModal = ({forBook}:CreateCharacterModalType) => {
                 <EZButton disabled={false} label='Create' onClick={handleSubmit} />
 
               </form>
-              {/* <div className='flex justify-between max-w-full'>
-                <button disabled={currentStep<1} className='btn btn-sm btn-primary' onClick={() => setCurrentStep((c) => c-1)} >&lt;</button>
-                <button disabled={currentStep>=steps.length-1} className='btn btn-sm btn-primary' onClick={() => setCurrentStep((c) => c+1)} >&gt;</button>
-              </div> */}
             </div>
           )}
         </div>

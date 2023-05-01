@@ -1,15 +1,15 @@
+import { useRouter } from "next/router"
 import { useState } from "react"
 import ReactHtmlParser from "react-html-parser"
-import useBookApi from "../../../hooks/useBookApi"
 import useDebug from "../../../hooks/useDebug"
-import { BookApi, BookCategory, BookDetail, BookStatus, Chapter, ChapterDetail, Character, UserStub } from "../../../prisma/prismaContext"
+import { BookApi, BookCategory, BookStatus, Chapter, Character, UserStub } from "../../../prisma/prismaContext"
+import { KeyVal } from "../../../types/props"
 import {
-  isBookAuthor,
   onlyFans,
   uniqueKey,
   uuid,
   valToLabel,
-  ymd,
+  ymd
 } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
@@ -17,24 +17,23 @@ import { InlineTextarea, TailwindSelectInput } from "../../forms"
 import Avatar from "../../ui/avatar"
 import EZButton from "../../ui/ezButton"
 import {
-  FeatherIcon,
   FireIcon,
   FollowIcon,
   HeartIcon,
+  PhotoIcon,
   ReplyIcon,
-  ShareIcon,
+  ShareIcon
 } from "../../ui/icons"
 import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
+import Spinner from "../../ui/spinner"
 import Toggler from "../../ui/toggler"
+import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
+import ChapterList from "../Chapter/ChapterList"
+import CreateCharacterModal, { OpenCharacterModalPlus } from "../Characters/CharacterCreateModal"
+import CharacterList from "../Characters/CharacterList"
+import GalleryCreateModal, { OpenGalleryModalPlus } from "../Gallery/GalleryCreateModal"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import BookCover, { BookCoverVariant } from "./BookCover"
-import { KeyVal } from "../../../types/props"
-import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/CreateChapterModal"
-import Spinner from "../../ui/spinner"
-import ChapterList from "../Chapter/ChapterList"
-import { useRouter } from "next/router"
-import CharacterList from "../Characters/CharacterList"
-import CreateCharacterModal, { OpenCharacterModalButton } from "../Characters/CreateCharacterModal"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -48,6 +47,14 @@ const ErrorPage = () => (
   </div>
 )
 
+
+/**
+ * Description placeholder
+ * @date 5/1/2023 - 12:38:57 PM
+ *
+ * @typedef {BookDetailComponentProps}
+ * @param {bookApi:BookApi} {@link BookApi}
+ */
 type BookDetailComponentProps = {
   bookApi: BookApi
 }
@@ -101,6 +108,18 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
     const result = await bookApi.like(cyfrUser.id)
     if (result) {
       notify(`You liked ${bookDetail?.title}.`)
+    }
+  }
+
+  const onGalleryUpsert = async (galleryId?:string) => {
+    debug('onGalleryUpsert', galleryId)
+    if (!galleryId) {
+      notify('Hm that dint work', 'info')
+      return
+    }
+    const added = await bookApi.addGallery(galleryId)
+    if (added) {
+      notify(`You created a gallery ${bookDetail?.title}.`)
     }
   }
 
@@ -451,28 +470,22 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
       </div>
 
       <div className="my-4">
-        <h3>Characters{isAuthor && <OpenCharacterModalButton variant="plus" />}</h3>
+        <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
           {isAuthor && <CreateCharacterModal forBook={bookApi} />}
           <div className="flex space-x-4">
           <CharacterList forBook={bookApi} />
         </div>
       </div>
 
-      {(bookDetail.gallery || isAuthor) && (
         <div className="my-4">
-          <h3>Gallery</h3>
+          <h3>Gallery {isAuthor && bookDetail.gallery===undefined ? <OpenGalleryModalPlus /> : <span>{PhotoIcon}</span> }</h3>
           <div>
-            <p className="text-xs">
-              <strong>TODO: Create chapters upsert.</strong>
-              This should be a modal to create a new gallery, or edit/delete an
-              existing gallery. When complete, update{" "}
-              <code>bookDetail.gallery || isAuthor</code> so gallery displays for all
-              users, but forms only show for authors.
-            </p>
+          {(bookDetail.gallery || isAuthor) && (
+            <GalleryCreateModal onUpsert={onGalleryUpsert} />
+          )}
           </div>
           <GalleryPhotoswipe gallery={bookDetail.gallery} />
         </div>
-      )}
 
       {isAuthor && jsonBlock(bookDetail)}
     </div>

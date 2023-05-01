@@ -155,6 +155,19 @@ const useBookApi = (props:BookApiProps):BookApi => {
     }
   }
 
+  const addGallery = async (galleryId?:string) => {
+    if (!bookDetail) return noBookDetail('addGallery')
+    if (!galleryId) return false
+    const result = await (await sendApi('/book/addGallery', {galleryId, bookId: bookDetail.id})).data
+    if (result.result) {
+      invalidate()
+      return result.result
+    } else {
+      debug('Did not get right result?', {props})
+      return false
+    }
+  }
+
   const sortChapters = async (changedChapter:Chapter):Promise<Boolean> => {
     debug('sortChapters', chapters)
     if (!bookDetail) return noBookDetail('sortChapters')
@@ -204,6 +217,7 @@ const useBookApi = (props:BookApiProps):BookApi => {
     isAuthor,
     isLoading, 
     addChapter,
+    addGallery,
     cleanArray,
     follow,
     genresToOptions,
