@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
-import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, Genre, GenreListItem, Image, Like, Share, User, UserStub } from "../prismaContext"
+import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, GalleryStub, Genre, GenreListItem, Image, Like, Share, User, UserStub } from "../prismaContext"
 import { KeyVal } from "../../types/props"
 import useBookApi from "../../hooks/useBookApi"
 
@@ -66,7 +66,7 @@ export type BookDetail = {
   galleryId: string | null
   categories: BookCategory[],
   characters: Character[],
-  gallery: Gallery,
+  gallery: GalleryStub,
   genreId: string
   genre: Genre
   likes: Like[]
