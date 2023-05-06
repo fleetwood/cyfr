@@ -1,5 +1,5 @@
 import useDebug from "../../hooks/useDebug"
-import { Gallery, Genre, GenreDeleteProps, GenreFeed, GenreFeedInclude, GenreListItem, GenreUpsertProps, prisma } from "../prismaContext"
+import { Gallery, Genre, GenreDeleteProps, GenreFeed, GenreFeedInclude, GenreStub, GenreUpsertProps, prisma } from "../prismaContext"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGenre')
 
@@ -32,12 +32,12 @@ const byTitle = async (title:string):Promise<Genre[]> => {
   }
 }
 
-const all = async (): Promise<GenreListItem[]> => {
+const all = async (): Promise<GenreStub[]> => {
   try {
-    const result =  await prisma.$queryRaw`SELECT * FROM v_genre_all`
+    const result =  await prisma.$queryRaw`SELECT * FROM v_genre_stub`
     
     if (result) {
-      return result as GenreListItem[]
+      return result as GenreStub[]
     }
     
     throw({code: fileMethod('all'), message: 'No results returned'})

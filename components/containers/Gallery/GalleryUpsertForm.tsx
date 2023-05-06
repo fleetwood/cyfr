@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useDebug from '../../../hooks/useDebug'
-import { Gallery, GalleryCreateProps, GalleryStub, GalleryUpsertProps, Image } from '../../../prisma/prismaContext'
+import { Gallery, GalleryCreateProps, GalleryStub, GalleryUpsertProps, Image, ImageStub } from '../../../prisma/prismaContext'
 import { sendApi } from '../../../utils/api'
 import { useCyfrUserContext } from '../../context/CyfrUserProvider'
 import Dropzone, { CompleteFile } from '../../forms/Dropzone'
@@ -21,7 +21,7 @@ export type GalleryNestedProps = {
 
 const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
     const [cyfrUser] = useCyfrUserContext()
-    const [images, setImages] = useState<Image[]>(gallery?.images ?? [])
+    const [images, setImages] = useState<ImageStub[]>(gallery?.images ?? [])
     const [title, setTitle] = useState<string|null>(gallery?.title ?? null)
     const [description, setDescription] = useState<string|null>(null)
   
@@ -47,7 +47,13 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
         title,
         description,
         authorId: cyfrUser.id,
-        images: images,
+        images: images.map((img:ImageStub) => {return {
+          id:     img.id,
+          height: img.height,
+          width:  img.width,
+          url:    img.url,
+          title:  img.title
+        }as unknown as Image}),
         //TODO: add delete button
       }
       const saved = await sendApi('gallery/upsert', newGallery)
@@ -87,3 +93,5 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
 }
 
 export default GalleryUpsertForm
+
+

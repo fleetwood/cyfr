@@ -1,13 +1,12 @@
-import { ImageFeed, ImageFeedInclude, ImageUpsertProps } from './image.def';
 import {
-  Follow,
   Gallery,
   Image,
   Like,
   Share,
   User,
-  UserStub,
-} from "../prismaContext"
+  UserStub
+} from "../prismaContext";
+import { ImageFeed, ImageFeedInclude, ImageStub, ImageUpsertProps } from './image.def';
 
 export type GalleryUpsertProps = {
   galleryId?: string|null
@@ -32,7 +31,7 @@ export type GalleryEngageProps = {
 }
 
 export type GalleryStub = Gallery & {
-  images: Image[] // todo: include likes and shares
+  images: ImageStub[]
   likes: Like[]
   shares: Share[]
 }

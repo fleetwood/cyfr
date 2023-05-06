@@ -18,7 +18,7 @@ export default async function handle(
 ) {
   const id = req.query.id?.toString() || "";
   try {
-    const gallery = await PrismaGallery.getDetail(id);
+    const gallery = await PrismaGallery.detail(id);
     if (gallery) {
       res.status(200).json({ result: gallery });
     } else {

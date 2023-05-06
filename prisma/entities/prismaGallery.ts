@@ -29,16 +29,56 @@ const userGalleries = async (authorId: string): Promise<any> => {
   }
 }
 
+const details = async () : Promise<GalleryDetail[]> => {
+  debug("details")
+  try {
+    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_gallery_detail`
+    if (result) return result as GalleryDetail[]
+    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
+  } catch (error) {
+    info(`getDetail ERROR`, error)
+    throw error
+  }
+}
+const stubs = async () : Promise<GalleryStub[]> => {
+  debug("details")
+  try {
+    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_gallery_stub`
+    if (result) return result as GalleryStub[]
+    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
+  } catch (error) {
+    info(`getDetail ERROR`, error)
+    throw error
+  }
+}
+
 /**
  * Using `f_gallery_detail` FNX
  * @param galleryId: string
  * @returns: {@link GalleryDetail}
  */
-const getDetail = async (galleryId: string): Promise<GalleryDetail> => {
+const detail = async (galleryId: string): Promise<GalleryDetail> => {
   debug("getDetail", { galleryId })
   try {
     const result:any[] = await prisma.$queryRaw`SELECT * FROM f_gallery_detail(${galleryId})`
     if (result[0]) return result[0] as GalleryDetail
+    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
+  } catch (error) {
+    info(`getDetail ERROR`, error)
+    throw error
+  }
+}
+
+/**
+ * Using `v_gallery_stub` 
+ * @param galleryId: string
+ * @returns: {@link GalleryDetail}
+ */
+const stub = async (galleryId: string): Promise<GalleryStub> => {
+  debug("getDetail", { galleryId })
+  try {
+    const result = await prisma.$queryRaw`SELECT * FROM v_gallery_stub WHERE "id" = ${galleryId}`
+    if (result) return result as GalleryStub
     throw { code: fileMethod, message: "Unable to find a gallery by that key" }
   } catch (error) {
     info(`getDetail ERROR`, error)
@@ -90,16 +130,8 @@ const share = async ({
  */
 const all = async (): Promise<GalleryStub[]> => {
   try {
-    const g = await prisma.gallery.findMany({
-      where: {
-        visible: true,
-      },
-      include: GalleryStubInclude,
-      orderBy: {
-        updatedAt: "desc",
-      },
-    })
-    if (g) return g
+    const g = await prisma.$queryRaw`select * from v_gallery_stub`
+  if (g) return g as GalleryStub[]
     throw { code: fileMethod, message: "Unable to obtain all galleries!!!" }
   } catch (error) {
     throw error
@@ -214,7 +246,10 @@ export const PrismaGallery = {
   addImages,
   createGallery,
   upsertGallery,
-  getDetail,
+  details,
+  detail,
+  stubs,
+  stub,
   like,
   share,
   all,

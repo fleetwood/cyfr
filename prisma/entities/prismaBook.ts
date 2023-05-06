@@ -5,7 +5,6 @@ import {
   Book,
   BookDeleteProps,
   BookDetail,
-  BookDetailInclude,
   BookFollowProps,
   BookUpsertProps,
   Chapter,
@@ -38,33 +37,17 @@ const detail = async (idOrTitleOrSlug:string) => {
   }
 }
 
-const byId = async (id: string): Promise<BookDetail | null> => {
-  try {
-    return (await prisma.book.findFirst({
-      where: {
-        id: id,
-        active: true,
-      },
-      include: BookDetailInclude,
-    })) as unknown as BookDetail
-  } catch (error) {
-    throw { code: fileMethod("byId"), message: "No book was returned!" }
-  }
-}
+const byId = async (id: string): Promise<BookDetail | null> => detail(id)
 
 const byUser = async (id: string): Promise<BookDetail[]> => {
   try {
-    const books = await prisma.book.findMany({
-      where: {
-        authors: {
-          some: {
-            id,
-          },
-        },
-        active: true,
-      },
-      include: BookDetailInclude,
-    })
+    const books = await prisma.$queryRaw`
+      SELECT * FROM v_book_detail
+      WHERE id IN (
+          SELECT "A"
+          FROM _user_books
+          WHERE "B" = ${id}
+      )`
     if (books) {
       return books as unknown as BookDetail[]
     }
@@ -110,10 +93,9 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
         const result = id 
           ? prisma.book.update({
             where: {id}, 
-            data, 
-            include: BookDetailInclude
+            data
           })
-          : prisma.book.create({data, include: BookDetailInclude})
+          : prisma.book.create({data})
         if (result) {
           return result as unknown as BookDetail
         }

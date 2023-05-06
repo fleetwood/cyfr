@@ -100,64 +100,6 @@ export type CyfrUser = UserDetail & {
   
 }
 
-export const CyfrUserInclude = {
-    _count: {
-      select: {
-        likes: true,
-        sessions: true,
-        shares: true
-      }
-    },
-    membership: true,
-    posts: {
-      include: PostFeedInclude
-    },
-    images: {
-      include: {
-        _count: { 
-          select: {
-            likes: true,
-            shares: true,
-          }
-        }
-    }},
-    galleries: {
-      include: {
-        images: {
-          include: {
-            _count: {
-              select: {
-              likes: true,
-              shares: true
-            }}
-          }
-        },
-        likes: true,
-        shares: true,
-      }
-    },
-    following: {
-      select: {
-        follower: true
-      }
-    },
-    follower: { 
-      select: {
-        following: true
-      }
-    },
-    fanOf: {
-      select: {
-        fanOf: true
-      }
-    },
-    fans:  {
-      select: {
-        fan: true
-      }
-    }
-}
-
 export type UserStub = {
   id:     string
   name:   string

@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
 import useBookApi from "../../hooks/useBookApi"
-import { BookDetail, GenreListItem, PrismaBook, PrismaGenre, UserStub } from "../../prisma/prismaContext"
+import { BookDetail, GenreStub, UserStub } from "../../prisma/prismaContext"
+import BookDetailComponent from "../containers/Books/BookDetailComponent"
 import Footer from "../containers/Footer"
 import LeftColumn from "../containers/LeftColumn"
 import Navbar from "../containers/Navbar"
@@ -8,11 +9,10 @@ import RightColumn from "../containers/RightColumn"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
 import { useToast } from "../context/ToastContextProvider"
 import Section from "../ui/section"
-import BookDetailComponent from "../containers/Books/BookDetailComponent"
 
 export type BookDetailLayoutProps = {
-  bookDetail:    BookDetail
-  genres:  GenreListItem[]
+  bookDetail: BookDetail
+  genres:     GenreStub[]
 }
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
@@ -30,7 +30,7 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
 
   const handleScroll = (e:any) => {
     const position = mainRef?.current?.scrollTop
-    setScrollActive(current => position && position > 120 || false)
+    setScrollActive(() => position && position > 120 || false)
   }
 
   return (

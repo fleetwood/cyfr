@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react"
 import useDebug from "../../../../hooks/useDebug"
-import { BookDetail, ChapterDetail, GenreListItem, PrismaBook, PrismaChapter, PrismaGenre } from "../../../../prisma/prismaContext"
+import { BookDetail, ChapterDetail, GenreStub, PrismaBook, PrismaChapter, PrismaGenre } from "../../../../prisma/prismaContext"
 import ChapterReadLayout from "../../../../components/layouts/chapter/ChapterReadLayout"
 import ChapterReviewLayout from "../../../../components/layouts/chapter/ChapterReviewLayout"
 import ChapterDetailLayout from "../../../../components/layouts/chapter/ChapterDetailLayout"
@@ -27,7 +27,7 @@ export async function getServerSideProps(context: any) {
 export type ChapterServersideProps = {
   bookDetail:     BookDetail
   chapterDetail:  ChapterDetail
-  genres:         GenreListItem[]
+  genres:         GenreStub[]
   v?:             string
 }
 

@@ -5,7 +5,7 @@ import { GalleryDetail } from "../../prisma/types";
 
 export async function getServerSideProps(context: any) {
     const galleryId = context.params.id
-    const gallery = await PrismaGallery.getDetail(galleryId)
+    const gallery = await PrismaGallery.detail(galleryId)
   
     return {
       props: {

@@ -1,91 +1,35 @@
 import { Dispatch, SetStateAction } from "react"
-import { Book, BookCategory, BookStatus, Chapter, Character, CyfrUser, Follow, Gallery, GalleryStub, Genre, GenreListItem, Image, Like, Share, User, UserStub } from "../prismaContext"
+import { Book, BookCategory, BookStatus, Chapter, ChapterStub, Character, CharacterStub, CyfrUser, Follow, Gallery, GalleryStub, Genre, GenreStub, Image, Like, Share, User, UserStub } from "../prismaContext"
 import { KeyVal } from "../../types/props"
 import useBookApi from "../../hooks/useBookApi"
 
+// TODO Create/Verify view in db
 export type BookStub = Book & {
-  authors: {
-    id: string
-    name: string
-    email: string
-    image: string
-    follows: UserStub[],
-    followers: UserStub[],
-    postCount: number
-  }[],
-  cover?: Image
-  genre: Genre
+  likes:      number
+  shares:     number
+  follows:    number
+  chapters:   Chapter[]
+  characters: Character[]
+  // relations
+  authors:    UserStub[],
+  cover?:     Image
+  genre:      Genre
   categories: BookCategory[]
-  likes: Number
-  follows: Number
-  chapters: Number
 }
 
-export const BookListInclude = {
-}
-
-export type BookFeed = Book & {
-  authors: User[],
-  categories: BookCategory[],
-  chapters: Chapter[],
-  fans: Follow[],
-  gallery: Gallery,
-  genre: Genre,
-  likes: Like[]
-}
-
-export const BookFeedInclude = {
-  authors: true,
-  categories: true,
-  chapters: true,
-  characters: true,
-  fans: true,
-  gallery: true,
-  genre: true,
-  likes: true
- }
-
-export type BookDetail = {
-  authors: UserStub[]
-  id: string
-  createdAt: string
-  updatedAt: string
-  startedAt: string | null
-  completeAt: string | null
-  active: boolean
-  status: BookStatus | null
-  prospect: boolean
-  fiction: boolean
-  title: string
-  slug: string
-  coverId: string | null
-  hook: string | null
-  synopsis: string | null
-  back: string | null
-  words: number
-  galleryId: string | null
-  categories: BookCategory[],
-  characters: Character[],
-  gallery: GalleryStub,
-  genreId: string
-  genre: Genre
-  likes: Like[]
-  follows: Follow[]
-  shares: Share[]
-  cover: Image
-  chapters: Chapter[]
-}
-
-export const BookDetailInclude = {
-  authors: true,
-  categories: true,
-  chapters: true,
-  characters: true,
-  follows: true,
-  gallery: true,
-  genre: true,
-  likes: true,
-  cover: true
+// TODO Create/Verify view in db
+export type BookDetail = Book & {
+  genre:      Genre
+  //TODO: Gallery should be stub
+  gallery:    Gallery
+  authors:    UserStub[]
+  cover:      Image
+  likes:      Like[]
+  follows:    Follow[]
+  shares:     Share[]
+  chapters:   ChapterStub[]
+  characters: CharacterStub[]
+  categories: BookCategory[]
 }
 
 export type BookUpsertProps = {
@@ -111,11 +55,9 @@ export type BookDeleteProps = {
   authorId: string
 }
 
-
+// TODO This does not account for startedAt and completeAt bc @#$@#$ Date -> String
 export type BookApiUpdate = {
   title?:       string | null
-  startedAt?:   string | null
-  completedAt?: string | null
   active?:      boolean
   prospect?:    boolean
   fiction?:     boolean
@@ -139,12 +81,12 @@ type BookRelationsUpdate = {
 
 /**
  * @property bookDetail {@link BookDetail}
- * @property genres {@link GenreListItem}[]
+ * @property genres {@link GenreStub}[]
  * @property cyfrUser? {@link CyfrUser}
  */
 export type BookApiProps = {
   bookDetail: BookDetail
-  genres?:    GenreListItem[]
+  genres?:    GenreStub[]
   cyfrUser?:  CyfrUser
 }
 
@@ -168,7 +110,7 @@ export type BookApi = {
   cleanArray      : (arr: Array<any> | undefined | null) => Array<any>
   bookDetail      : BookDetail | null
   setBookDetail   : Dispatch<SetStateAction<BookDetail | null>>
-  genres          : GenreListItem[]
+  genres          : GenreStub[]
   genresToOptions : KeyVal[]
   update          : (props: BookApiUpdate) => Promise<boolean | undefined>
   addChapter      : (title: string, order: number) => Promise<any>
