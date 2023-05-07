@@ -8,7 +8,7 @@ export async function getServerSideProps(context: any) {
   const {bookId} = context.params
   debug('getServerSideProps', bookId)
   const bookDetail = await PrismaBook.detail(bookId)
-  const genres = await PrismaGenre.all()
+  const genres = await PrismaGenre.stubs()
 
   return {
     props: {

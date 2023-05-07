@@ -12,7 +12,7 @@ export async function getServerSideProps(context: any) {
   const {v} = context.query
   const bookDetail = await PrismaBook.detail(bookId)
   const chapterDetail = await PrismaChapter.detail(chapterId)
-  const genres = await PrismaGenre.all()
+  const genres = await PrismaGenre.stubs()
 
   return {
     props: {

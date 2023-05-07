@@ -10,7 +10,7 @@ import { uniqueKey } from "../../utils/helpers";
 const {debug, jsonBlock} = useDebug('books/index')
 
 export async function getServerSideProps(context: any) {
-    const genres = await PrismaGenre.all()
+    const genres = await PrismaGenre.stubs()
     return {
       props: {
         genres,

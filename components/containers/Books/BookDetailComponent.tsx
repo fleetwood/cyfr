@@ -208,7 +208,6 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
           book={bookDetail}
           variant={BookCoverVariant.COVER}
           link={false}
-          authorAvatars={false}
         />
       )}
       {isAuthor && 
@@ -473,7 +472,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
         <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
           {isAuthor && <CreateCharacterModal forBook={bookApi} />}
           <div className="flex space-x-4">
-          <CharacterList forBook={bookApi} />
+          <CharacterList characters={bookApi.bookDetail?.characters} />
         </div>
       </div>
 

@@ -6,9 +6,9 @@ const {err, stringify}= useDebug('/api/genre/[title]')
 const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   const { title } = req.query
   try {
-    const result = await PrismaGenre.byTitle(title?.toString() || "")
-    if (result[0]) {
-      res.status(200).json({ result: result[0] })
+    const result = await PrismaGenre.detail(title?.toString() || "")
+    if (result) {
+      res.status(200).json({ result: result })
     } else {
         res.status(200).json({ result: null })
     }

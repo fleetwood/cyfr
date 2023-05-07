@@ -1,13 +1,10 @@
-// 20230506153043
-// http://localhost:3000/api/views
 export type v_author_detail = {
-  id: string
-  name: string
-  email: string
-  emailVerified: string // timestamp
-  image: string
   slug: string
-  membershipId: string
+  image: string
+  email: string
+  name: string
+  id: string
+  emailVerified: string // timestamp
   membership: {}
   posts: {}
   likes: {}
@@ -18,45 +15,51 @@ export type v_author_detail = {
   fans: {}
   books: {}
   galleries: {}
-}
-export type v_author_stub = {
-  id: string
-  name: string
-  email: string
-  emailVerified: string // timestamp
-  image: string
-  slug: string
   membershipId: string
-  membership: {}
-  posts: number
-  likes: number
-  shares: number
-  follows: number
-  stans: number
-  followers: number
-  fans: number
-  books: {}
-  galleries: {}
 }
-export type v_book_detail = {
+
+export type v_author_stub = {
+  follows: number
+  emailVerified: string // timestamp
+  membership: {}
+  email: string
+  name: string
   id: string
-  createdAt: string // timestamp
-  updatedAt: string // timestamp
-  startedAt: string // timestamp
-  completeAt: string // timestamp
+  posts: number
+  membershipId: string
+  likes: number
+  slug: string
+  image: string
+  shares: number
+  galleries: {}
+  books: {}
+  fans: number
+  followers: number
+  stans: number
+}
+
+export type v_book_detail = {
+  words: number
+  galleryId: string
+  back: string
+  synopsis: string
+  hook: string
+  genreId: string
+  coverId: string
+  slug: string
+  title: string
+  id: string
+  chapters: {}
+  characters: {}
+  categories: {}
   active: boolean
+  completeAt: string // timestamp
+  startedAt: string // timestamp
+  updatedAt: string // timestamp
+  createdAt: string // timestamp
   status: any // enum
   prospect: boolean
   fiction: boolean
-  title: string
-  slug: string
-  coverId: string
-  genreId: string
-  hook: string
-  synopsis: string
-  back: string
-  words: number
-  galleryId: string
   genre: {}
   gallery: {}
   authors: {}
@@ -64,58 +67,64 @@ export type v_book_detail = {
   likes: {}
   follows: {}
   shares: {}
-  chapters: {}
-  characters: {}
-  categories: {}
 }
+
 export type v_book_stub = {
-  id: string
-  createdAt: string // timestamp
-  updatedAt: string // timestamp
-  startedAt: string // timestamp
-  completeAt: string // timestamp
-  active: boolean
-  status: any // enum
-  prospect: boolean
   fiction: boolean
-  title: string
-  slug: string
-  coverId: string
   hook: string
-  synopsis: string
-  back: string
-  words: number
-  galleryId: string
+  coverId: string
+  slug: string
+  title: string
   genreId: string
-  genre: {}
-  authors: {}
-  cover: {}
-  likes: number
-  follows: number
-  shares: number
-  chapters: {}
-  characters: {}
-  categories: {}
-}
-export type v_chapter_stub = {
+  galleryId: string
+  prospect: boolean
+  status: any // enum
+  active: boolean
+  completeAt: string // timestamp
+  startedAt: string // timestamp
+  updatedAt: string // timestamp
+  createdAt: string // timestamp
   id: string
+  back: string
+  synopsis: string
+  categories: {}
+  characters: {}
+  chapters: {}
+  shares: number
+  follows: number
+  likes: number
+  cover: {}
+  authors: {}
+  genre: {}
+  words: number
+}
+
+export type v_chapter_stub = {
+  words: number
   createdAt: string // timestamp
   updatedAt: string // timestamp
   active: boolean
-  content: string
-  words: number
-  bookId: string
-  galleryId: string
   order: number
-  title: string
   characters: {}
   gallery: {}
-}
-export type v_character_stub = {
+  title: string
+  galleryId: string
+  bookId: string
+  content: string
   id: string
-  createdAt: string // timestamp
-  updatedAt: string // timestamp
-  active: boolean
+}
+
+export type v_character_stub = {
+  gallery: {}
+  archetype: string
+  galleryId: string
+  backstory: string
+  likes: {}
+  title: string
+  id: string
+  fans: {}
+  followers: {}
+  shares: {}
   name: string
   familyName: string
   givenName: string
@@ -124,33 +133,170 @@ export type v_character_stub = {
   age: string
   role: string
   description: string
-  backstory: string
-  title: string
-  archetype: string
-  galleryId: string
+  createdAt: string // timestamp
+  updatedAt: string // timestamp
+  active: boolean
   books: {}
   chapters: {}
-  gallery: {}
-  likes: {}
-  shares: {}
-  followers: {}
-  fans: {}
 }
+
 export type v_follower_stub = {
-  id: string
+  isFan:        boolean
+  bookId:       string
+  characterId:  string
+  followingId:  string
+  followerId:   string
+  character:    {}
+  book:         {}
+  user:         {}
+  updatedAt:    string // timestamp
+  createdAt:    string // timestamp
+  id:           string
+}
+
+export type v_following_stub = {
   createdAt: string // timestamp
   updatedAt: string // timestamp
   isFan: boolean
-  followerId: string
-  followingId: string
-  characterId: string
-  bookId: string
   user: {}
   book: {}
   character: {}
-}
-export type v_following_stub = {
+  bookId: string
   id: string
+  followingId: string
+  followerId: string
+  characterId: string
+}
+
+export type v_gallery_detail = {
   createdAt: string // timestamp
   updatedAt: string // timestamp
+  visible: boolean
+  author: {}
+  images: {}
+  likes: {}
+  shares: {}
+  id: string
+  title: string
+  description: string
+  authorId: string
+  shareId: string
+}
+
+export type v_gallery_stub = {
+  title: string
+  likes: {}
+  images: {}
+  createdAt: string // timestamp
+  updatedAt: string // timestamp
+  shareId: string
+  author: {}
+  id: string
+  visible: boolean
+  description: string
+  shares: {}
+  authorId: string
+}
+
+export type v_genre_all = {
+  books: {}
+  createdAt: string // timestamp
+  updatedAt: string // timestamp
+  galleryId: string
+  gallery: {}
+  description: string
+  totalbooks: number
+  title: string
+  slug: string
+  id: string
+}
+
+export type v_genre_detail = {
+  createdAt: string // timestamp
+  books: {}
+  title: string
+  description: string
+  galleryId: string
+  id: string
+  slug: string
+  updatedAt: string // timestamp
+  gallery: {}
+  totalbooks: number
+}
+
+export type v_genre_stub = {
+  books: {}
+  description: string
+  createdAt: string // timestamp
+  updatedAt: string // timestamp
+  galleryId: string
+  title: string
+  slug: string
+  id: string
+  gallery: {}
+}
+
+export type v_like_detail = {
+  authorId: string
+  updatedAt: string // timestamp
+  createdAt: string // timestamp
+  gallery: {}
+  image: {}
+  comment: {}
+  character: {}
+  book: {}
+  post: {}
+  author: {}
+  id: string
+  postId: string
+  galleryId: string
+  imageId: string
+  commentId: string
+  characterId: string
+  bookId: string
+}
+
+export type v_like_stub = {
+  characterId: string
+  updatedAt: string // timestamp
+  postId: string
+  commentId: string
+  author: {}
+  authorId: string
+  galleryId: string
+  imageId: string
+  bookId: string
+  id: string
+  createdAt: string // timestamp}
+}
+
+export type v_share_detail = {
+  id: string
+  characterId: string
+  imageId: string
+  postId: string
+  author: {}
+  character: {}
+  bookId: string
+  image: {}
+  gallery: {}
+  post: {}
+  book: {}
+  createdAt: string // timestamp
+  updatedAt: string // timestamp
+  galleryId: string
+  visible: boolean
+  authorId: string
+}
+
+export type v_share_stub = {
+  characterId: string
+  postId: string
+  galleryId: string
+  imageId: string
+  createdAt: string // timestamp
+  author: {}
+  updatedAt: string // timestamp
+  authorId: string
+  bookId: string
 }
