@@ -87,7 +87,7 @@ const resize = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps
  */
 const scale = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps('c_scale', props))
 
-export type AvatarSizeProps = {sz: 'xs' | 'sm' | 'md' | 'lg' | 'xl'}
+export type AvatarSizeProps = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 /**
  * Create a thumbnail of the uploaded image
  * @param url string

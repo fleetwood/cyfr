@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import ReactHtmlParser from 'react-html-parser'
-import { PostFeed } from '../../../prisma/prismaContext'
+import { PostStub } from '../../../prisma/prismaContext'
 import { timeDifference, uniqueKey } from '../../../utils/helpers'
 import Avatar from '../../ui/avatar'
 import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
 import PostItemFooter from './PostItemFooter'
 
 type UserPostDetailProps = {
-  post: PostFeed
+  post: PostStub
 }
 
 const UserDetailPostItem = ({ post }: UserPostDetailProps) => 

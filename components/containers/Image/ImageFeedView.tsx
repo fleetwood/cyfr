@@ -1,7 +1,8 @@
-import { ImageFeed, ImageViewProps } from '../../../prisma/prismaContext';
+import { ImageFeed, ImageStub, ImageViewProps } from '../../../prisma/prismaContext';
 
-const ImageFeedView = ({ image, className, onClick }: ImageViewProps) => {
-  const handleClick = (image: ImageFeed) =>
+const ImageFeedView = ({ item, className, onClick }: ImageViewProps) => {
+    const {image} = item
+  const handleClick = (image: ImageStub) =>
     onClick ? onClick(image) : () => {}
 
   return (

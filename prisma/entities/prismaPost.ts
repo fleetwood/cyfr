@@ -1,5 +1,5 @@
 import useDebug from "../../hooks/useDebug"
-import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeed } from "../prismaContext"
+import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub } from "../prismaContext"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPosts')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
@@ -29,7 +29,7 @@ const all = async (): Promise<any> => {
   debug('all')
   try {
     const posts =  await prisma.$queryRaw`select * from f_post_feed()`;
-    return posts as unknown as PostFeed[]
+    return posts as unknown as PostStub[]
   } catch (error) {
     throw { code: fileMethod('all'), message: "No posts were returned!" }
   }

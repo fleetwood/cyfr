@@ -6,14 +6,14 @@ import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 import { LoggedIn } from "../../ui/toasty";
 
 import useFeed from "../../../hooks/useFeed";
-import { PostDetail, PostFeed } from "../../../prisma/prismaContext";
+import { PostDetail, PostStub } from "../../../prisma/prismaContext";
 
 import useDebug from "../../../hooks/useDebug";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 const { debug } = useDebug("PostItemFooter");
 
 type PostItemFooterProps = {
-  post: PostDetail | PostFeed;
+  post: PostDetail | PostStub;
   feed: "main" | "user" | "post" | "share" | "default";
 };
 const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
@@ -66,6 +66,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
   };
 
   return (
+    post ?
     <>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
@@ -76,6 +77,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
           label={`Like (${(post.likes || []).length})`}
           onClick={() => handleLike()}
         />
+        {/* @ts-ignore */}
         <AvatarList users={post.likes || []} sz="xs" />
       </div>
 
@@ -88,6 +90,7 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
           label={`Share (${(post.shares || []).length})`}
           onClick={() => handleShare()}
         />
+        {/* @ts-ignore */}
         <AvatarList users={post.shares || []} sz="xs" />
       </div>
 
@@ -100,12 +103,13 @@ const PostItemFooter = ({ post, feed = "default" }: PostItemFooterProps) => {
           label={`Comment (${(post.post_comments || []).length})`}
           onClick={() => handleComment()}
         />
-        <AvatarList
+        {/* <AvatarList
           users={(post.post_comments || []).map((a) => a.author)}
           sz="xs"
-        />
+        /> */}
       </div>
     </>
+    : <></>
   );
 };
 

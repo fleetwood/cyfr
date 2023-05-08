@@ -5,11 +5,11 @@ import PostItemFooter from "../../components/containers/Post/PostItemFooter";
 import MainLayout from "../../components/layouts/MainLayout";
 import Avatar from "../../components/ui/avatar";
 import JsonBlock from "../../components/ui/jsonBlock";
-import { PostFeed, PrismaPost } from "../../prisma/prismaContext";
+import { PostStub, PrismaPost } from "../../prisma/prismaContext";
 import { timeDifference } from '../../utils/helpers';
 
 type PostDetailPageProps = {
-  post: PostFeed
+  post: PostStub
 }
 
 export async function getServerSideProps(context: any) {

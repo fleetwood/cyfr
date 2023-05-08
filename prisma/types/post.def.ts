@@ -36,7 +36,7 @@ type PostComments = Post & {
   author: User;
 };
 
-export type PostFeed = Post & {
+export type PostStub = Post & {
   createdat?: string
   updatedat?: string
   author: User;
@@ -60,7 +60,7 @@ export type PostDetail = Post & {
   createdat?: string
   updatedat?: string
   author: UserFeed;
-  post_comments: PostFeed[];
+  post_comments: PostStub[];
   likes: (Like & { author: User })[];
   shares: (Share & { author: User })[];
   images: ImageFeed[];

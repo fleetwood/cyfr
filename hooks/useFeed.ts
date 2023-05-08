@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryStub, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostFeed, StartInboxThreadProps, UpsertInboxProps } from "../prisma/prismaContext"
+import { CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryStub, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostStub, StartInboxThreadProps, UpsertInboxProps } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import useDebug from "./useDebug"
 
@@ -23,16 +23,22 @@ export const useFeed = ({type}:FeedTypes) => {
   const [commentId, setCommentId] = useState<string|null>(null)
 
   const getMainFeed = async ():Promise<MainFeed[]|null> => {
-    const data = await getApi(`feed/main`)
-    if (data.result) {
-      const posts = data.result
-      return posts
-    }
-    return null
+    const result = await getApi(`feed/main`)
+    debug('getMainFeed')
+    return result.map((r:any) => {
+      return {
+        ...r,
+        post: JSON.parse(r.post),
+        gallery: JSON.parse(r.gallery),
+        image: JSON.parse(r.image),
+        character: JSON.parse(r.character),
+        book: JSON.parse(r.book),
+      }
+    })
   }
   
-  const getPosts = async ():Promise<PostFeed[]|null> => {
-    const data = await getApi<PostFeed[]|null>(`post/all`)
+  const getPosts = async ():Promise<PostStub[]|null> => {
+    const data = await getApi<PostStub[]|null>(`post/all`)
     if (data.result) {
       const posts = data.result
       return posts

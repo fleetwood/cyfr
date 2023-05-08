@@ -1,4 +1,4 @@
-import { BookStub, Follow, Gallery, GalleryStub, Image, Membership, Post, PostFeed, User } from "./../prismaContext"
+import { BookStub, Follow, Gallery, GalleryStub, Image, Membership, Post, PostStub, User } from "./../prismaContext"
 
 /**
  * This is complaining if imported from Post.defs that it can't be
@@ -37,7 +37,7 @@ export const UserFeedInclude = {
 
 export type UserDetail = User & {
   membership?:  Membership,
-  posts:        PostFeed[]
+  posts:        PostStub[]
   messagable:   UserStub[]
   canMention:   UserStub[]
   follows:      UserFollow[]
