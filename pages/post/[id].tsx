@@ -1,7 +1,7 @@
 import { InferGetServerSidePropsType } from "next";
 import ReactHtmlParser from "react-html-parser";
 import GalleryPhotoswipe from "../../components/containers/Gallery/GalleryPhotoswipe";
-import PostItemFooter from "../../components/containers/Post/PostItemFooter";
+import FeedFooter from "../../components/containers/Feed/FeedFooter";
 import MainLayout from "../../components/layouts/MainLayout";
 import Avatar from "../../components/ui/avatar";
 import JsonBlock from "../../components/ui/jsonBlock";
@@ -54,7 +54,7 @@ const PostDetailPage = ({ post }: InferGetServerSidePropsType<typeof getServerSi
         }
 
         <div className="flex flex-row justify-around">
-          <PostItemFooter post={post} feed="post" />
+          <FeedFooter post={post} feed="post" />
         </div>
       </div>
     </MainLayout>

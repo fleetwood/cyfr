@@ -7,6 +7,7 @@ const ImageFeedView = ({ item, className, onClick }: ImageViewProps) => {
 
   return (
     <div className={`relative rounded-lg overflow-clip ${className}`}>
+        <div className="font-semibold">Image</div>
         {image && 
         <>
         {image.title &&

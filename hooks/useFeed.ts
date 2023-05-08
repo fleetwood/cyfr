@@ -35,6 +35,7 @@ export const useFeed = ({type}:FeedTypes) => {
         book: JSON.parse(r.book),
       }
     })
+    .sort((a:MainFeed,b:MainFeed) => a.updatedAt > b.updatedAt ? -1 : 1)
   }
   
   const getPosts = async ():Promise<PostStub[]|null> => {

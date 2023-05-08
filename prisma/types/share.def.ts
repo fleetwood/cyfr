@@ -1,4 +1,4 @@
-import { PostStub, Share, User } from "./../prismaContext"
+import { PostStub, Share, User, UserStub } from "./../prismaContext"
 
 export type ShareDeleteProps = {
   id:         String
@@ -21,4 +21,8 @@ export type ShareFeed = Share & {
   updatedat?: String
   author:     User
   post?:      PostStub | null
+}
+
+export type ShareStub = Share & {
+  author: UserStub
 }

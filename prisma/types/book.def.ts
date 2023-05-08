@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction } from "react"
-import { Book, BookCategory, BookStatus, Chapter, ChapterStub, Character, CharacterStub, CyfrUser, Follow, Gallery, GalleryStub, Genre, GenreStub, Image, Like, Share, User, UserStub } from "../prismaContext"
+import { Book, BookCategory, BookStatus, Chapter, ChapterStub, Character, CharacterStub, CyfrUser, Follow, Gallery, GalleryStub, Genre, GenreStub, Image, Like, Share, User, UserFollow, UserStub } from "../prismaContext"
 import { KeyVal } from "../../types/props"
 import useBookApi from "../../hooks/useBookApi"
 
 // TODO Create/Verify view in db
 export type BookStub = Book & {
-  likes:      number
-  shares:     number
-  follows:    number
+  follows:    UserFollow[]
+  likes:      UserStub[]
+  shares:     UserStub[]
   chapters:   Chapter[]
   characters: Character[]
   // relations
@@ -24,9 +24,9 @@ export type BookDetail = Book & {
   gallery:    Gallery
   authors:    UserStub[]
   cover:      Image
-  likes:      Like[]
-  follows:    Follow[]
-  shares:     Share[]
+  follows:    UserFollow[]
+  likes:      UserStub[]
+  shares:     UserStub[]
   chapters:   ChapterStub[]
   characters: CharacterStub[]
   categories: BookCategory[]

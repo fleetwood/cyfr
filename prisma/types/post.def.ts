@@ -37,14 +37,14 @@ type PostComments = Post & {
 };
 
 export type PostStub = Post & {
-  createdat?: string
-  updatedat?: string
-  author: User;
-  comment?: Post | null;
-  post_comments: (Post & { author: User })[];
-  likes: UserStub[];
-  shares: UserStub[];
-  images: Image[];
+  createdat?:     string
+  updatedat?:     string
+  author:         UserStub
+  comment?:       Post | null;
+  post_comments:  (Post & { author: User })[];
+  likes:          UserStub[];
+  shares:         UserStub[];
+  images:         Image[];
 };
 
 export const PostFeedInclude = {

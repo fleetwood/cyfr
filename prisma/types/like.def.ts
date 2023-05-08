@@ -1,4 +1,4 @@
-import { Like, Post, User } from "./../prismaContext"
+import { Like, UserStub } from "./../prismaContext"
 
 export type LikeProps = {
   authorId:     String
@@ -10,11 +10,6 @@ export type LikeProps = {
   bookId?:      String
 }
 
-export type ShareWithAuthorPost = Like & {
-  author: User
-  post?: Post
-}
-export const ShareWithAuthorPostInclude = {
-  author: true,
-  post: true,
+export type LikeStub = Like & {
+  author: UserStub
 }

@@ -2,8 +2,9 @@ import { AvatarSizeProps } from "../../utils/cloudinary";
 import { uuid } from "../../utils/helpers";
 import Avatar from "./avatar";
 
-type AvatarListProps = AvatarSizeProps & {
-  users: any[]
+type AvatarListProps = {
+  sz:     AvatarSizeProps
+  users:  any[]
   limit?: number
 }
 

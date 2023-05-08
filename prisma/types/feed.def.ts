@@ -1,4 +1,4 @@
-import { Book, Character, Gallery, PostStub, ImageStub, User, BookStub } from "./../prismaContext"
+import { Book, Character, Gallery, PostStub, ImageStub, User, BookStub, GalleryStub, CharacterStub } from "./../prismaContext"
 
 export type MainFeed = {
     id:         string
@@ -8,8 +8,8 @@ export type MainFeed = {
     author:     User
     isShare:    boolean
     post?:      PostStub
-    gallery?:   Gallery
+    gallery?:   GalleryStub
     image?:     ImageStub
-    character?: Character
+    character?: CharacterStub
     book?:      BookStub
 }

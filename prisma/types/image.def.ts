@@ -54,14 +54,14 @@ export type ImageStub = {
   url: string
   height: number | null
   width: number | null
-  likes: (Like & { author: User })[]
-  shares: (Share & { author: User })[]
+  likes: UserStub[]
+  shares: UserStub[]
 }
 
 export type ImageDetail = Image & {
   author: User
-  likes: (Like & { author: User })[]
-  shares: (Share & { author: User })[]
+  likes: UserStub[]
+  shares: UserStub[]
   gallery?: (Gallery & {
     author: User
     likes: (Like & { author: User })[]

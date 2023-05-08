@@ -31,9 +31,10 @@ export type GalleryEngageProps = {
 }
 
 export type GalleryStub = Gallery & {
+  author: UserStub
   images: ImageStub[]
-  likes: Like[]
-  shares: Share[]
+  likes:  UserStub[]
+  shares: UserStub[]
 }
 
 export const GalleryStubInclude = {

@@ -12,7 +12,8 @@ const CharacterFeedView = ({item}:CharacterFeedViewProps) => {
     const {character,isShare,author} = item
   return (
     <>
-        {jsonBlock(character)}
+      <div className="font-semibold">Character</div>
+      {jsonBlock(character)}
     </>
   )
 }
