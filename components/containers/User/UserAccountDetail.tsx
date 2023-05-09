@@ -1,8 +1,8 @@
 import { useState } from "react"
 import useUserDetail, { UserDetailHookProps } from "../../../hooks/useUserDetail"
-import { UserFollow } from "../../../prisma/prismaContext"
+import { PostStub, UserFollow } from "../../../prisma/prismaContext"
 import Avatar from "../../ui/avatar"
-import UserDetailFollow from "./UserDetailFollow"
+import PostStubView from "../Post/PostStubView"
 
 const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
 
@@ -68,9 +68,9 @@ const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
 
         {activeTab==="Posts" &&
           <div className="bg-base-300 rounded-md p-4 mt-4">
-             {/* {currentUser.posts.map((post: PostWithDetails) => (
-                  <UserDetailPostItem post={post} key={post.id} />
-              ))} */}
+            {currentUser.posts.map((post: PostStub) => (
+              <PostStubView post={post} key={post.id} />
+            ))}
           </div>
         }
 

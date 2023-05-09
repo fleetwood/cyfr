@@ -1,20 +1,21 @@
 import Link from "next/link";
-import { GalleryDetail, MainFeed } from "./../../../prisma/prismaContext";
+import { GalleryStub } from "../../../prisma/prismaContext";
 import GalleryFooter from "./GalleryFooter";
 import GalleryPhotoswipe from "./GalleryPhotoswipe";
-import { cloudinary } from "../../../utils/cloudinary";
 
-type GalleryDetailViewProps = {
-  gallery: GalleryDetail
+type GalleryStubViewProps = {
+  gallery: GalleryStub
 };
 
-const GalleryDetailView = ({gallery}: GalleryDetailViewProps) => {
+const GalleryStubView = ({gallery}: GalleryStubViewProps) => {
   
   return (
     <div className="rounded-lg bg-base-300 text-base-content my-4">
       <div className="font-semibold">Gallery</div>
       {gallery.title && (
-        <h2 className="h-subtitle p-4">{gallery.title}</h2>
+        <Link href={`/gallery/${gallery.id}`}>
+          <h2 className="h-subtitle p-4">{gallery.title}</h2>
+        </Link>
       )}
       {gallery.description && (
         <div className="min-w-full p-4 bg-base-100">
@@ -30,4 +31,4 @@ const GalleryDetailView = ({gallery}: GalleryDetailViewProps) => {
     </div>
 )}
 
-export default GalleryDetailView;
+export default GalleryStubView;

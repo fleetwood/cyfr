@@ -4,29 +4,29 @@ import { PrismaGallery } from "../../prisma/entities/prismaGallery";
 import { GalleryDetail } from "../../prisma/types";
 
 export async function getServerSideProps(context: any) {
-    const galleryId = context.params.id
-    const gallery = await PrismaGallery.detail(galleryId)
-  
-    return {
-      props: {
-        gallery,
-      },
-    }
-  }
+  const galleryId = context.params.id;
+  const gallery = await PrismaGallery.detail(galleryId);
 
-type GalleryDetailPageProps= {
-    gallery: GalleryDetail
+  return {
+    props: {
+      gallery,
+    },
+  };
 }
 
-const GalleryDetailPage = ({gallery}: GalleryDetailPageProps) => {
-    return (
-        <MainLayout 
-            subTitle={gallery.title||'Gallery'}
-            sectionTitle={gallery.author?.name||'Gallery'}
-            >
-            <GalleryDetailView gallery={gallery} />
-        </MainLayout>
-    )
-}
+type GalleryDetailPageProps = {
+  gallery: GalleryDetail;
+};
+
+const GalleryDetailPage = ({ gallery }: GalleryDetailPageProps) => {
+  return (
+    <MainLayout
+      subTitle={gallery.title || "Gallery"}
+      sectionTitle={gallery.author?.name || "Gallery"}
+    >
+      <GalleryDetailView gallery={gallery} />
+    </MainLayout>
+  );
+};
 
 export default GalleryDetailPage;

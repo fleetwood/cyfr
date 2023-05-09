@@ -3,7 +3,7 @@ import useDebug from "../../../hooks/useDebug"
 import { MainFeed, prisma } from "../../../prisma/prismaContext"
 
 import { ResponseResult } from "../../../types/response"
-const {debug, err, fileMethod}= useDebug('/api/feed/main')
+const {debug, err, fileMethod}= useDebug('/api/feed/main', 'DEBUG')
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse<ResponseResult<MainFeed[]>>) {
   debug('handle')

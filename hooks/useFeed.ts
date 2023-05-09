@@ -25,17 +25,21 @@ export const useFeed = ({type}:FeedTypes) => {
   const getMainFeed = async ():Promise<MainFeed[]|null> => {
     const result = await getApi(`feed/main`)
     debug('getMainFeed')
-    return result.map((r:any) => {
-      return {
-        ...r,
-        post: JSON.parse(r.post),
-        gallery: JSON.parse(r.gallery),
-        image: JSON.parse(r.image),
-        character: JSON.parse(r.character),
-        book: JSON.parse(r.book),
-      }
-    })
-    .sort((a:MainFeed,b:MainFeed) => a.updatedAt > b.updatedAt ? -1 : 1)
+    try {
+      return result.map((r:any) => {
+        return {
+          ...r,
+          post: JSON.parse(r.post),
+          gallery: JSON.parse(r.gallery),
+          character: JSON.parse(r.character),
+          book: JSON.parse(r.book),
+        }
+      })
+      .sort((a:MainFeed,b:MainFeed) => a.updatedAt > b.updatedAt ? -1 : 1)  
+    } catch (error) {
+      debug('getMaindFeed', error)
+      return null
+    }
   }
   
   const getPosts = async ():Promise<PostStub[]|null> => {

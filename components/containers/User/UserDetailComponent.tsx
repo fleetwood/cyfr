@@ -9,7 +9,7 @@ import { FireIcon, HeartIcon } from "../../ui/icons"
 import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import BookCover from "../Books/BookCover"
 import GalleryItemView from "../Gallery/GalleryItemView"
-import UserDetailPostItem from "../Post/UserDetailPostItem"
+import PostStubView from "../Post/PostStubView"
 
 type UserDetailComponentProps = {
   userId: String
@@ -199,7 +199,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           <h2 className="subtitle">Posts</h2>
           <div className="my-4">
           {currentUser?.posts?.map((post) => (
-              <UserDetailPostItem post={post} key={uniqueKey('user-post',currentUser, post)} />
+              <PostStubView post={post} key={post.id} />
           ))}
           </div>
         </>

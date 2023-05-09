@@ -61,8 +61,8 @@ export type PostDetail = Post & {
   updatedat?: string
   author: UserFeed;
   post_comments: PostStub[];
-  likes: (Like & { author: User })[];
-  shares: (Share & { author: User })[];
+  likes: UserStub[];
+  shares: UserStub[];
   images: ImageFeed[];
 };
 

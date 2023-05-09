@@ -27,7 +27,7 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
   
     const onFilesComplete = async (images: Image[]) => {
       debug(`onFilesComplete`,images)
-      setImages((current) => [...current, ...images])
+      setImages((current) => [...current, ...images as unknown as ImageStub[]])
     }
   
     const onFileChange = async (file:Image) => { 

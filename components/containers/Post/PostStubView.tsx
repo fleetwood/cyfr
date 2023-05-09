@@ -1,22 +1,15 @@
-import ReactHtmlParser from "react-html-parser";
-import { MainFeed, PostStub, UserStub } from "../../../prisma/prismaContext";
-import FeedFooter from "../Feed/FeedFooter";
+import { PostStub } from "../../../prisma/prismaContext";
 
 import useDebug from "../../../hooks/useDebug";
-import UserInfo from "../../ui/userInfo";
-import { timeDifference, uuid } from "../../../utils/helpers";
-import Link from "next/link";
 import HtmlContent from "../../ui/htmlContent";
-import Avatar from "../../ui/avatar";
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe";
 const { debug, jsonBlock } = useDebug("MainFeedItem", "DEBUG");
 
 type PostFeedItemProps = {
-  item: MainFeed;
+  post: PostStub;
 };
 
-const PostFeedView = ({ item }: PostFeedItemProps) => {
-  const { post, isShare, author } = item;
+const PostStubView = ({ post }: PostFeedItemProps) => {
   const comments: any[] = [];
 
   return post ? (
@@ -59,4 +52,4 @@ const PostFeedView = ({ item }: PostFeedItemProps) => {
   );
 };
 
-export default PostFeedView;
+export default PostStubView;
