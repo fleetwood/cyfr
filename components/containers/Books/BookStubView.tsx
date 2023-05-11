@@ -7,18 +7,23 @@ import Avatar from "../../ui/avatar"
 import EZButton from "../../ui/ezButton"
 import { BookIcon, DollarIcon, HeartIcon, ReplyIcon, ShareIcon, StarIcon, UserIcon } from "../../ui/icons"
 import BookCover, { BookCoverVariant } from "./BookCover"
+import HtmlContent from "../../ui/htmlContent"
 
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent')
+
+type BookComponentVarians = 'showFooter'
 
 type BookComponentProps = {
   book: BookStub
   authorAvatars?: Boolean
+  variant?: BookComponentVarians
 }
 
-const BookStubComponent = ({book, authorAvatars}: BookComponentProps) => {
+const BookStubView = ({book, authorAvatars, variant}: BookComponentProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const isOwner = isBookAuthor(book, cyfrUser)
   const router = useRouter()
+  const showFooter = variant==='showFooter'
 
   return (
     <div>
@@ -39,28 +44,30 @@ const BookStubComponent = ({book, authorAvatars}: BookComponentProps) => {
       }
       
       <div>
-        {isOwner && <EZButton label="EDIT" onClick={() => router.push(`/book/${book.title}`)} /> }
+        {isOwner && <EZButton label="EDIT" onClick={() => router.push(`/book/${book.slug}`)} /> }
         <div className="flex">
           <span>{book.fiction ? 'FICTION' : 'NON-FICTION'}</span>
-          <span>{book.genre.title}</span>
-          {book.categories.filter(m => m !== null).map(cat => (<span className="" key={cat.id}>{cat.title}</span>))}
+          {book.genre && <span>{book.genre?.title}</span>}
+          {book.categories?.filter(m => m !== null).map(cat => (<span className="" key={cat.id}>{cat.title}</span>))}
         </div>
         <div>{book.words} words</div>
-        <div className="my-4 text-xl font-ibarra">{book.hook}</div>
+        {book.hook &&
+          <div className="my-4 text-xl font-ibarra"><HtmlContent content={book.hook} /></div>
+        }
       </div>
-
+      {showFooter &&
         <div className="flex">
           <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
             <label className="font-semibold mr-2">{HeartIcon}</label>
-            <span className="text-primary">{valToLabel(book.likes.length)}</span>
+            <span className="text-primary">{valToLabel((book.likes||[]).length)}</span>
           </div>
           <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
             <label className="font-semibold mr-2">{ShareIcon}</label>
-            <span className="text-primary">{valToLabel(book.shares.length)}</span>
+            <span className="text-primary">{valToLabel((book.shares||[]).length)}</span>
           </div>
           <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
             <label className="font-semibold mr-2">{UserIcon}</label>
-            <span className="text-primary">{valToLabel(book.follows.length)}</span>
+            <span className="text-primary">{valToLabel((book.follows||[]).length)}</span>
           </div>
           <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
             <label className="font-semibold mr-2">{ReplyIcon}</label>
@@ -79,8 +86,9 @@ const BookStubComponent = ({book, authorAvatars}: BookComponentProps) => {
             <span className="text-primary">(NI)</span>
           </div>
         </div>
+      }
       </div>
   )
 }
 
-export default BookStubComponent
+export default BookStubView

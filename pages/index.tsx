@@ -1,16 +1,11 @@
-import BookFeedView from "../components/containers/Books/BookFeedView"
-import CharacterFeedView from "../components/containers/Characters/CharacterFeedView"
 import FeedItem from "../components/containers/Feed/FeedItem"
-import GalleryDetailView from "../components/containers/Gallery/GalleryDetailView"
-import ImageStubView from "../components/containers/Image/ImageStubView"
 import { CreatePostModalButton } from "../components/containers/Post/CreatePostModal"
-import PostStubView from "../components/containers/Post/PostStubView"
 import MainLayout from "../components/layouts/MainLayout"
 import { CyfrLogo } from "../components/ui/icons"
 import useDebug from "../hooks/useDebug"
 import useFeed from "../hooks/useFeed"
-import { MainFeed, PostStub, UserStub } from "../prisma/types"
-import { uniqueKey, uuid } from "../utils/helpers"
+import { MainFeed } from "../prisma/types"
+import { uniqueKey } from "../utils/helpers"
 const {debug, jsonBlock} = useDebug('pages/index', 'DEBUG')
 
 

@@ -1,16 +1,11 @@
-import React from "react";
 import { MainFeed } from "../../../prisma/types";
-import FeedHeader from "./FeedHeader";
-import Link from "next/link";
-import { timeDifference } from "../../../utils/helpers";
-import Avatar from "../../ui/avatar";
-import BookFeedView from "../Books/BookFeedView";
+import BookStubView from "../Books/BookStubView";
 import CharacterFeedView from "../Characters/CharacterFeedView";
-import GalleryDetailView from "../Gallery/GalleryDetailView";
+import GalleryStubView from "../Gallery/GalleryStubView";
 import ImageStubView from "../Image/ImageStubView";
 import PostStubView from "../Post/PostStubView";
 import FeedFooter from "./FeedFooter";
-import GalleryStubView from "../Gallery/GalleryStubView";
+import FeedHeader from "./FeedHeader";
 
 type FeedItemProps = {
   item: MainFeed;
@@ -33,7 +28,7 @@ const FeedItem = ({ item }: FeedItemProps) => {
             {item.post && <PostStubView post={item.post} />}
             {item.image && <ImageStubView image={item.image} />}
             {item.gallery && <GalleryStubView gallery={item.gallery} />}
-            {item.book && <BookFeedView item={item} />}
+            {item.book && <BookStubView book={item.book} variant="showFooter" />}
             {item.character && <CharacterFeedView item={item} />}
         </div>
         <FeedFooter item={item} />

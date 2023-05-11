@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import useBookApi from "../../hooks/useBookApi"
 import { BookDetail, GenreStub, UserStub } from "../../prisma/prismaContext"
-import BookDetailComponent from "../containers/Books/BookDetailComponent"
+import BookDetailComponent from "../containers/Books/BookDetailView"
 import Footer from "../containers/Footer"
 import LeftColumn from "../containers/LeftColumn"
 import Navbar from "../containers/Navbar"
@@ -9,6 +9,7 @@ import RightColumn from "../containers/RightColumn"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
 import { useToast } from "../context/ToastContextProvider"
 import Section from "../ui/section"
+import BookDetailView from "../containers/Books/BookDetailView"
 
 export type BookDetailLayoutProps = {
   bookDetail: BookDetail
@@ -54,7 +55,7 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
           sectionTitle={bookDetail?.title}
           subTitle={bookDetail?.authors?.flatMap(a => a.name).join(' and ')}
         >
-          <BookDetailComponent bookApi={bookApi} />
+          <BookDetailView bookApi={bookApi} />
         </Section>
         <Footer />
       </main>

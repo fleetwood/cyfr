@@ -16,12 +16,12 @@ export type GalleryAddImageProps = {
  * @param authorId :string
  * @returns `json`
  */
-const userGalleries = async (authorId: string): Promise<any> => {
+const userGalleries = async (authorId: string): Promise<GalleryDetail[]> => {
   debug('userGalleries', {authorId})
   try {
-    const result = await prisma.$queryRaw`select * from f_user_galleries(${authorId})`
+    const result = await prisma.$queryRaw`select * from v_gallery_detail WHERE "authorId" = ${authorId}`
     if (result) {
-      return result
+      return result as GalleryDetail[]
     }
     throw {code: fileMethod, message: 'Could not find galleries for that user id'}
   } catch (error) {
@@ -122,20 +122,6 @@ const share = async ({
     return share
   }
   throw { code: fileMethod, message: "Feature not implemented" }
-}
-
-/**
- * Using `prisma.gallery.findMany`
- * @returns: {@link GalleryStub}
- */
-const all = async (): Promise<GalleryStub[]> => {
-  try {
-    const g = await prisma.$queryRaw`select * from v_gallery_stub`
-  if (g) return g as GalleryStub[]
-    throw { code: fileMethod, message: "Unable to obtain all galleries!!!" }
-  } catch (error) {
-    throw error
-  }
 }
 
 /**
@@ -252,6 +238,5 @@ export const PrismaGallery = {
   stub,
   like,
   share,
-  all,
   userGalleries
 }

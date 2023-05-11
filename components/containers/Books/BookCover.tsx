@@ -54,11 +54,14 @@ const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true, authorA
     ? cover.width
     : Number(variant) as number
   debug('BookCover', {cyfrUser: cyfrUser?.name ?? 'No cyfrUser', isOwner})
+
+  const Booky = () => <BookImage cover={book.cover||null} title={book.title} width={width!} owner={isOwner} />
+
   return (
     <div className="max-w-fit relative p-4">
     {link 
-      ? <Link href={`/book/${book.slug ?? book.id}`}><BookImage cover={book.cover||null} title={book.title} width={width!} owner={isOwner} /></Link> 
-      : <BookImage cover={book.cover||null} title={book.title} width={width!} owner={isOwner} />
+      ? <Link href={`/book/${book.slug ?? book.id}`}><Booky /></Link> 
+      : <Booky />
     }
     {authorAvatars && 
       <div className="flex pt-2 space-x-2">

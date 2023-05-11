@@ -14,7 +14,7 @@ const PostStubView = ({ post }: PostFeedItemProps) => {
 
   return post ? (
     <div className="p-4 mt-4 font-feed">
-      <div className="font-semibold">Post</div>
+      <h2>PostStubView</h2>
       {post.content && <HtmlContent content={post.content} />}
 
       {post.images?.length > 0 && post.images[0] !== null && (

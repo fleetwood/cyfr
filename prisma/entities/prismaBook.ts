@@ -6,6 +6,7 @@ import {
   BookDeleteProps,
   BookDetail,
   BookFollowProps,
+  BookStub,
   BookUpsertProps,
   Chapter,
   Follow,
@@ -37,7 +38,49 @@ const detail = async (idOrTitleOrSlug:string) => {
   }
 }
 
-const byId = async (id: string): Promise<BookDetail | null> => detail(id)
+const details = async ():Promise<BookDetail[]> => {
+  try {
+    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_book_detail`
+    if (result.length>0) {
+      return result[0] as BookDetail[]
+    }
+    throw { code: fileMethod("details"), message: "No book was returned!" }
+  } catch (error) {
+    info('details FAIL', error)
+    throw(error)
+  }
+}
+
+const stub = async (idOrTitleOrSlug:string) => {
+  try {
+    const result:any[] = await prisma.$queryRaw`SELECT * 
+      FROM v_book_stub 
+      WHERE id = ${idOrTitleOrSlug}
+        OR LOWER(title) = LOWER(${idOrTitleOrSlug})
+        OR LOWER(slug) = LOWER(${idOrTitleOrSlug})
+      `
+    if (result.length>0) {
+      return result[0] as BookStub
+    }
+    throw { code: fileMethod("stub"), message: "No book was returned!" }
+  } catch (error) {
+    info('stubs FAIL', error)
+    throw(error)
+  }
+}
+
+const stubs = async ():Promise<BookStub[]> => {
+  try {
+    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_book_stub`
+    if (result.length>0) {
+      return result[0] as BookStub[]
+    }
+    throw { code: fileMethod("stubs"), message: "No book was returned!" }
+  } catch (error) {
+    info('stubs FAIL', error)
+    throw(error)
+  }
+}
 
 const byUser = async (id: string): Promise<BookDetail[]> => {
   try {
@@ -323,4 +366,4 @@ const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | u
   }
 }
 
-export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, addChapter,addGallery, sortChapters, deleteBook }
+export const PrismaBook = { detail, details, stub, stubs, byUser, upsert, follow, like, share, addChapter,addGallery, sortChapters, deleteBook }

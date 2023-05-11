@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryStub, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostStub, StartInboxThreadProps, UpsertInboxProps } from "../prisma/prismaContext"
+import { BookStub, CharacterStub, CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryStub, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostStub, StartInboxThreadProps, UpsertInboxProps } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import useDebug from "./useDebug"
 
@@ -29,10 +29,10 @@ export const useFeed = ({type}:FeedTypes) => {
       return result.map((r:any) => {
         return {
           ...r,
-          post: JSON.parse(r.post),
-          gallery: JSON.parse(r.gallery),
-          character: JSON.parse(r.character),
-          book: JSON.parse(r.book),
+          post: JSON.parse(r.post) as PostStub,
+          gallery: JSON.parse(r.gallery) as GalleryStub,
+          character: JSON.parse(r.character) as CharacterStub,
+          book: JSON.parse(r.book) as BookStub,
         }
       })
       .sort((a:MainFeed,b:MainFeed) => a.updatedAt > b.updatedAt ? -1 : 1)  
@@ -52,7 +52,7 @@ export const useFeed = ({type}:FeedTypes) => {
   }
   
   const getGalleries = async ():Promise<GalleryStub[]|null> => {
-    const data = await getApi<GalleryStub[]|null>(`gallery/all`)
+    const data = await getApi<GalleryStub[]|null>(`gallery/stubs`)
     if (data.result) {
       const posts = data.result
       return posts

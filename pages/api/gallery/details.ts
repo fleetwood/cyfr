@@ -1,25 +1,26 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import useDebug from "../../../hooks/useDebug"
-import { Gallery, GalleryStub, PrismaGallery } from "../../../prisma/prismaContext"
+import { Gallery, GalleryDetail, PrismaGallery } from "../../../prisma/prismaContext"
 import {
   GetResponseError,
   ResponseError,
   ResponseResult
 } from "../../../types/response"
 
-const {todo, err} = useDebug("prismaComment")
+const filename = "api/gallery/details"
+const {todo, err} = useDebug(filename)
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<GalleryStub[]>>
+  res: NextApiResponse<ResponseResult<GalleryDetail[]>>
 ) {
   todo('handle','Why is this posting req.body.body????')
   try {
-    const gallery = await PrismaGallery.all()
-    if (gallery) {
-      res.status(200).json({ result: gallery })
+    const result = await PrismaGallery.details()
+    if (result) {
+      res.status(200).json({ result })
     } else {
-      throw { code: "api/gallery/create", message: "Failed to create gallery" }
+      throw { code: filename, message: "Failed to find gallery details" }
     }
   } catch (e: Error | ResponseError | any) {
     err("handle.error", e)

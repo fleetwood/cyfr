@@ -1,4 +1,4 @@
-import UserDetailComponent from "../../../components/containers/User/UserDetailComponent";
+import UserDetailView from "../../../components/containers/User/UserDetailView";
 import MainLayout from "../../../components/layouts/MainLayout";
 import useUserDetail from "../../../hooks/useUserDetail";
 import { InferGetServerSidePropsType } from "next";
@@ -31,11 +31,11 @@ const UserDetailPage = ({ userId, layout='main' }:UserDetailProps) => {
         subTitle={currentUser?.name || ""}
       >
         {currentUser && 
-          <UserDetailComponent userId={currentUser!.id} />
+          <UserDetailView userId={currentUser!.id} />
         }
       </MainLayout>
     }
-    { layout==='none' && currentUser && <UserDetailComponent userId={currentUser!.id} /> }
+    { layout==='none' && currentUser && <UserDetailView userId={currentUser!.id} /> }
     </>
 )}
 
