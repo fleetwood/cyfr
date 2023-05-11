@@ -11,19 +11,15 @@ import HtmlContent from "../../ui/htmlContent"
 
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent')
 
-type BookComponentVarians = 'showFooter'
-
 type BookComponentProps = {
   book: BookStub
   authorAvatars?: Boolean
-  variant?: BookComponentVarians
 }
 
-const BookStubView = ({book, authorAvatars, variant}: BookComponentProps) => {
+const BookStubView = ({book, authorAvatars}: BookComponentProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const isOwner = isBookAuthor(book, cyfrUser)
   const router = useRouter()
-  const showFooter = variant==='showFooter'
 
   return (
     <div>
@@ -55,39 +51,8 @@ const BookStubView = ({book, authorAvatars, variant}: BookComponentProps) => {
           <div className="my-4 text-xl font-ibarra"><HtmlContent content={book.hook} /></div>
         }
       </div>
-      {showFooter &&
-        <div className="flex">
-          <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-            <label className="font-semibold mr-2">{HeartIcon}</label>
-            <span className="text-primary">{valToLabel((book.likes||[]).length)}</span>
-          </div>
-          <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-            <label className="font-semibold mr-2">{ShareIcon}</label>
-            <span className="text-primary">{valToLabel((book.shares||[]).length)}</span>
-          </div>
-          <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-            <label className="font-semibold mr-2">{UserIcon}</label>
-            <span className="text-primary">{valToLabel((book.follows||[]).length)}</span>
-          </div>
-          <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-            <label className="font-semibold mr-2">{ReplyIcon}</label>
-            <span className="text-primary">(NI)</span>
-          </div>
-          <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-            <label className="font-semibold mr-2">{BookIcon}</label>
-            <span className="text-primary">(NI)</span>
-          </div>
-          <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-            <label className="font-semibold mr-2">{StarIcon}</label>
-            <span className="text-primary">(NI)</span>
-          </div>
-          <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-            <label className="font-semibold mr-2">{DollarIcon}</label>
-            <span className="text-primary">(NI)</span>
-          </div>
-        </div>
-      }
-      </div>
+
+    </div>
   )
 }
 

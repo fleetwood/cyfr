@@ -24,9 +24,6 @@ const GalleryStubView = ({gallery}: GalleryStubViewProps) => {
       <div className="min-w-full p-4 space-x-2">
         <GalleryPhotoswipe gallery={gallery} />
       </div>
-      <div className="min-w-full">
-        <GalleryFooter gallery={gallery} feed={{ type: "gallery" }} />
-      </div>
     </div>
 )}
 

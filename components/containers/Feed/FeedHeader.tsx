@@ -39,13 +39,15 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
           {(item.book || item.character) && (
             <AvatarList users={originalAuthors || []} sz="sm" />
           )}
-          {(!item.book && !item.character) && (
+          {(item.post || item.gallery) && (
             <Avatar shadow={true} user={originalAuthor} sz="sm" />
           )}
         </div>
         <div>
           <Link href={link} className="text-primary underline">
-            Posted {timeDifference((item.updatedAt || "").toString())}
+            {item.post &&
+              <span>Posted {timeDifference((item.updatedAt || "").toString())}</span>
+            }
           </Link>
         </div>
       </div>

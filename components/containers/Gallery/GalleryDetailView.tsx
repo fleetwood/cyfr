@@ -25,7 +25,7 @@ const GalleryDetailView = ({gallery}: GalleryDetailViewProps) => {
         <GalleryPhotoswipe gallery={gallery} />
       </div>
       <div className="min-w-full">
-        <GalleryFooter gallery={gallery} feed={{ type: "gallery" }} />
+        <GalleryFooter gallery={gallery} />
       </div>
     </div>
 )}

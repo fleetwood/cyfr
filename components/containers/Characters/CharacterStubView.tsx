@@ -1,15 +1,14 @@
 import React from 'react'
 import useDebug from '../../../hooks/useDebug'
-import { MainFeed } from '../../../prisma/types'
+import { CharacterStub } from '../../../prisma/prismaContext'
 
 const {debug, jsonBlock} = useDebug('containers/Characters/CharacterFeedView', 'DEBUG')
 
 type CharacterFeedViewProps = {
-    item: MainFeed
+    character: CharacterStub
 }
 
-const CharacterFeedView = ({item}:CharacterFeedViewProps) => {
-    const {character,isShare,author} = item
+const CharacterStubView = ({character}:CharacterFeedViewProps) => {
   return (
     <>
       <div className="font-semibold">Character</div>
@@ -18,4 +17,4 @@ const CharacterFeedView = ({item}:CharacterFeedViewProps) => {
   )
 }
 
-export default CharacterFeedView
+export default CharacterStubView
