@@ -15,7 +15,6 @@ const FeedFooter = ({ item }: FeedFooterProps) => {
 
   return (
     <>
-    FEED
       {post && <PostFooter post={post} />}
       {gallery && <GalleryFooter gallery={gallery} />}
       {book && <BookFooter book={book} />}

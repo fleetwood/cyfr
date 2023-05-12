@@ -17,10 +17,7 @@ const PostStubView = ({ post }: PostFeedItemProps) => {
       {post.content && <HtmlContent content={post.content} className="font-feed" />}
 
       {post.images?.length > 0 && post.images[0] !== null && (
-        <>
-          {jsonBlock(post.images)}
-          <GalleryPhotoswipe images={post.images} />
-        </>
+        <GalleryPhotoswipe images={post.images} />
       )}
 
       {comments && comments.length > 0 && (

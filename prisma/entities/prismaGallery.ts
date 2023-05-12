@@ -96,8 +96,18 @@ const like = async ({
   galleryId,
   authorId,
 }: GalleryEngageProps): Promise<Like> => {
-  debug(`like`, { galleryId, authorId })
-  throw { code: fileMethod, message: "Feature not implemented" }
+  try {
+    const like = await prisma.like.create({
+      data: {
+        galleryId,
+        authorId
+      }
+    })
+    if (like) return like
+    throw {code: fileMethod('like'), message: 'Unable to create like'}
+  } catch (error) {
+    throw error
+  }
 }
 
 /**
