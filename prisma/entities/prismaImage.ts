@@ -1,44 +1,54 @@
-import { Image, Like, ImageDetail,ImageFeed, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude, ImageUpsertProps } from "../prismaContext"
+import { Image, Like, ImageDetail,ImageFeed, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude, ImageUpsertProps, ImageStub } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
 const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage','DEBUG')
 
-const byId = async (id: string): Promise<ImageDetail | null> => {
+const detail = async (id: string): Promise<ImageDetail | null> => {
   try {
-    return await prisma.image.findFirst({
-      where: {
-        id: id,
-        visible: true
-      },
-      include: ImageDetailInclude,
-    })
+    const image = await prisma.$queryRaw`SELECT * FROM v_image_detail WHERE "id" = ${id}`
+    if (image) {
+      return image as ImageDetail
+    }
+    throw({ code: "images/byId", message: "No images were returned!" })
   } catch (error) {
     throw { code: "images/byId", message: "No images were returned!" }
   }
 }
 
-/**
- * @satisfies visible:true
- * @satisfies commentId:null //don't include Shares
- * @returns ImageFeed[]
- */
-const all = async (): Promise<ImageFeed[] | []> => {
-  debug('all')
+const details = async (): Promise<ImageDetail[]> => {
   try {
-    return await prisma.image.findMany({
-      where: {
-        visible: true
-      },
-      include: ImageFeedInclude,
-      orderBy: [
-        {
-          updatedAt: "desc",
-        },
-      ],
-    }) as unknown as ImageFeed[]
+    const image = await prisma.$queryRaw`SELECT * FROM v_image_detail`
+    if (image) {
+      return image as ImageDetail[]
+    }
+    throw({ code: "images/byId", message: "No images were returned!" })
   } catch (error) {
-    throw { code: "images/all", message: "No images were returned!" }
+    throw { code: "images/byId", message: "No images were returned!" }
   }
 }
+const stub = async (id: string): Promise<ImageStub | null> => {
+  try {
+    const image = await prisma.$queryRaw`SELECT * FROM v_image_stub WHERE "id" = ${id}`
+    if (image) {
+      return image as ImageStub
+    }
+    throw({ code: "images/byId", message: "No images were returned!" })
+  } catch (error) {
+    throw { code: "images/byId", message: "No images were returned!" }
+  }
+}
+
+const stubs = async (): Promise<ImageStub[]> => {
+  try {
+    const image = await prisma.$queryRaw`SELECT * FROM v_image_stub`
+    if (image) {
+      return image as ImageStub[]
+    }
+    throw({ code: "images/byId", message: "No images were returned!" })
+  } catch (error) {
+    throw { code: "images/byId", message: "No images were returned!" }
+  }
+}
+
 
 const upsert = async (props: ImageUpsertProps): Promise<Image> => {
   debug('upsert', props)
@@ -138,4 +148,4 @@ const commentOnImage = async (props: any): Promise<Image> => {
   }
 }
 
-export const PrismaImage = { all, byId, upsert, deleteImage, likeImage, shareImage, commentOnImage }
+export const PrismaImage = { detail, details, stub, stubs, upsert, deleteImage, likeImage, shareImage, commentOnImage }

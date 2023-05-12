@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { BookApi, BookApiProps, BookApiRelations, BookApiUpdate, BookCategory, BookDetail, BookStatus, Chapter, Character, CyfrUser, GenreListItem, PrismaBook } from "../prisma/prismaContext"
+import { BookApi, BookApiProps, BookApiRelations, BookApiUpdate, BookCategory, BookDetail, BookStatus, Chapter, Character, CyfrUser, GenreStub, PrismaBook } from "../prisma/prismaContext"
 import { KeyVal } from "../types/props"
 import { sendApi } from "../utils/api"
 import useBookDetail from "./useBookDetail"
@@ -10,14 +10,14 @@ const {debug, info, err} = useDebug('hooks/useBookApi')
 /**
  * 
  * @param bookDetail: {@link BookDetail}
- * @param genres?:    {@link GenreListItem}
+ * @param genres?:    {@link GenreStub}
  * @param cyfrUser?:  {@link CyfrUser} 
  * @returns 
  */
 const useBookApi = (props:BookApiProps):BookApi => {
   debug('useBookApi')
   const {bookDetail, setBookDetail, isLoading, error, invalidate} = useBookDetail(props.bookDetail.id)
-  const [genres, setGenres] = useState<GenreListItem[]>(props.genres||[])
+  const [genres] = useState<GenreStub[]>(props.genres||[])
 
   const genresToOptions:KeyVal[] = genres.map(g => { return { key: g.title, value: g.id }})
 
@@ -155,6 +155,19 @@ const useBookApi = (props:BookApiProps):BookApi => {
     }
   }
 
+  const addGallery = async (galleryId?:string) => {
+    if (!bookDetail) return noBookDetail('addGallery')
+    if (!galleryId) return false
+    const result = await (await sendApi('/book/addGallery', {galleryId, bookId: bookDetail.id})).data
+    if (result.result) {
+      invalidate()
+      return result.result
+    } else {
+      debug('Did not get right result?', {props})
+      return false
+    }
+  }
+
   const sortChapters = async (changedChapter:Chapter):Promise<Boolean> => {
     debug('sortChapters', chapters)
     if (!bookDetail) return noBookDetail('sortChapters')
@@ -204,6 +217,7 @@ const useBookApi = (props:BookApiProps):BookApi => {
     isAuthor,
     isLoading, 
     addChapter,
+    addGallery,
     cleanArray,
     follow,
     genresToOptions,

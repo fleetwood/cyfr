@@ -1,64 +1,93 @@
 import useDebug from "../../hooks/useDebug"
-import { Gallery, Genre, GenreDeleteProps, GenreFeed, GenreFeedInclude, GenreListItem, GenreUpsertProps, prisma } from "../prismaContext"
+import {
+  Gallery,
+  Genre,
+  GenreDeleteProps,
+  GenreDetail,
+  GenreFeed,
+  GenreFeedInclude,
+  GenreStub,
+  GenreUpsertProps,
+  prisma,
+} from "../prismaContext"
 
-const {debug, info, fileMethod} = useDebug('entities/prismaGenre')
+const { debug, info, fileMethod } = useDebug("entities/prismaGenre")
 
-const insertDefaults = async():Promise<any> => {
-  // const genres = require('./../db.bak/genre.json')
-  return prisma.genre.createMany({data: []})
-}
-
-const byId = async (id: string): Promise<GenreFeed|null> => {
+const details = async (): Promise<GenreDetail[]> => {
   try {
-    return await prisma.genre.findUnique({
-      where: { id },
-      include: GenreFeedInclude,
-    }) as unknown as GenreFeed || null
+    debug("details")
+    return (await prisma.$queryRaw`
+      SELECT * 
+      FROM v_genre_detail
+    `) as GenreDetail[]
   } catch (error) {
-    throw { code: fileMethod('byId'), message: "No genre was returned!" }
+    info("details", { error })
+    throw { code: fileMethod("byId"), message: "No genre was returned!" }
   }
 }
 
-const byTitle = async (title:string):Promise<Genre[]> => {
+const detail = async (idOrSlugOrName: string): Promise<GenreDetail> => {
   try {
-    debug('byTitle', title)
-    return await prisma.genre.findMany({
-      where: { title: { equals: title, mode: 'insensitive'} },
-      include: GenreFeedInclude,
-    })
+    debug("detail", idOrSlugOrName)
+    return (await prisma.$queryRaw`
+      SELECT * 
+      FROM v_genre_detail detail
+      WHERE detail.id = ${idOrSlugOrName}
+      OR    LOWER(detail.name) = LOWER(${idOrSlugOrName})
+      OR    LOWER(detail.slug) = LOWER(${idOrSlugOrName})
+    `) as GenreDetail
   } catch (error) {
-    info('byTitle', {error})
-    throw { code: fileMethod('byId'), message: "No genre was returned!" }
+    info("detail", { error })
+    throw { code: fileMethod("byId"), message: "No genre was returned!" }
   }
 }
 
-const all = async (): Promise<GenreListItem[]> => {
+const stubs = async (): Promise<GenreStub[]> => {
   try {
-    const result =  await prisma.$queryRaw`SELECT * FROM v_genre_all`
-    
-    if (result) {
-      return result as GenreListItem[]
-    }
-    
-    throw({code: fileMethod('all'), message: 'No results returned'})
+    debug("stubs")
+    return (await prisma.$queryRaw`
+      SELECT * 
+      FROM v_genre_stub
+    `) as GenreStub[]
   } catch (error) {
-    throw { code: fileMethod("all"), message: "No genres were returned!" }
+    info("stubs", { error })
+    throw { code: fileMethod("byId"), message: "No genre was returned!" }
   }
 }
 
-const gallery = async(byGenre?:string): Promise<Gallery|null> => {
+const stub = async (idOrSlugOrName: string): Promise<GenreDetail> => {
   try {
-    const results:(Genre & { gallery: Gallery | null; })|null = await prisma.genre.findFirst({
-      include: {
-        gallery: true
-      }
-    })
+    debug("stub", idOrSlugOrName)
+    return (await prisma.$queryRaw`
+      SELECT * 
+      FROM v_genre_stub
+      WHERE detail.id = ${idOrSlugOrName}
+      OR    LOWER(detail.name) = LOWER(${idOrSlugOrName})
+      OR    LOWER(detail.slug) = LOWER(${idOrSlugOrName})
+    `) as GenreStub
+  } catch (error) {
+    info("stub", { error })
+    throw { code: fileMethod("byId"), message: "No genre was returned!" }
+  }
+}
+
+const gallery = async (byGenre?: string): Promise<Gallery | null> => {
+  try {
+    const results: (Genre & { gallery: Gallery | null }) | null =
+      await prisma.genre.findFirst({
+        include: {
+          gallery: true,
+        },
+      })
     if (results) {
       return results.gallery
     }
-    throw({ code: fileMethod('covers'), message: `Unable to obtain genre covers (${byGenre})`})
+    throw {
+      code: fileMethod("covers"),
+      message: `Unable to obtain genre covers (${byGenre})`,
+    }
   } catch (error) {
-    debug('covers', {error, byGenre})
+    debug("covers", { error, byGenre })
     return null
   }
 }
@@ -66,43 +95,48 @@ const gallery = async(byGenre?:string): Promise<Gallery|null> => {
 const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
   const method = "upsertGenre"
   try {
-    const {title, description } = props
-    const slug = title.replace(' ','-').toLowerCase().trim()
-    debug(method, {title, description})
-    
-    return await prisma.genre.upsert({ 
+    const { title, description } = props
+    const slug = title.replace(" ", "-").toLowerCase().trim()
+    debug(method, { title, description })
+
+    return (await prisma.genre.upsert({
       where: {
-        title
+        title,
       },
       update: {
         title,
         description,
-        slug
+        slug,
       },
       create: {
         title,
         description,
-        slug
+        slug,
       },
       select: {
         title: true,
         description: true,
-        slug: true
-      }
-    }) as unknown as GenreFeed
+        slug: true,
+      },
+    })) as unknown as GenreFeed
   } catch (error) {
     info(method, error)
     throw { code: fileMethod(method), message: "Genre was not created!" }
   }
 }
 
-const deleteGenre = async ({id, title}: GenreDeleteProps): Promise<Genre|null> => {
+const deleteGenre = async ({
+  id,
+  title,
+}: GenreDeleteProps): Promise<Genre | null> => {
   const method = "deleteGenre"
   try {
-    debug(method, {id, title})
-    const where = id ? {id} : title ? {title} : undefined
-    return id ? await prisma.genre.delete({where: {id}})
-      : title ? await prisma.genre.delete({where : {title}})
+    debug(method, { id, title })
+    const where = id ? { id } : title ? { title } : undefined
+    return id
+      ? await prisma.genre.delete({ where: { id } })
+      : title
+      ? await prisma.genre.delete({ where: { title } })
       : null
   } catch (error) {
     info(fileMethod(method), error)
@@ -110,4 +144,12 @@ const deleteGenre = async ({id, title}: GenreDeleteProps): Promise<Genre|null> =
   }
 }
 
-export const PrismaGenre = { all, byId, byTitle, gallery, upsertGenre, deleteGenre, insertDefaults }
+export const PrismaGenre = {
+  detail,
+  details,
+  stub,
+  stubs,
+  gallery,
+  upsertGenre,
+  deleteGenre,
+}

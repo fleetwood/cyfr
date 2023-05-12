@@ -9,6 +9,7 @@ import WritingFocusedEditor from "../../forms/WritingFocusedEditor"
 import EZButton from "../../ui/ezButton"
 import Spinner from "../../ui/spinner"
 import CharacterList from "../Characters/CharacterList"
+import ChapterFooter from "./ChapterFooter"
 
 const {debug} = useDebug('ChapterDetailComponent', 'DEBUG')
 
@@ -57,16 +58,30 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
       {(detailView || readView) && chapterApi.chapterDetail &&
         <div className='font-ibarra'>
           <h2>{chapterApi.chapterDetail?.title}</h2>
-          <CharacterList characters={chapterApi.chapterDetail.characters} />
+          <div>
+            <h4>Characters</h4>
+            <CharacterList characters={chapterApi.chapterDetail?.characters} />
+          </div>
           {ReactHtmlParser(chapterApi.chapterDetail.content??'')}
+          <div>
+            <ChapterFooter bookDetail={bookApi.bookDetail} chapters={bookApi.chapters} currentChapter={chapterApi.chapterDetail} />
+          </div>
         </div>
       }
       {editView && bookApi.isAuthor && chapterApi.chapterDetail &&
         <div>
+
+          <EZButton disabled={false} label="Save" onClick={onSave} />
           <h2>
             <TailwindInput type="text" value={title} setValue={setTitle} />
           </h2>
-          <CharacterList characters={chapterApi.chapterDetail.characters} />
+          <div>
+            <h4>Characters</h4>
+            <div className="font-bold text-lg">Book</div>
+            <CharacterList characters={bookApi.bookDetail?.characters} />
+            <div className="font-bold text-lg">Chapter</div>
+            <CharacterList characters={chapterApi.chapterDetail?.characters} />
+          </div>
           <div className="relative max-h-max">
             <WritingFocusedEditor content={content} setContent={setContent} words={words} setWords={setWords} onSave={onSave} />
           </div>
@@ -74,10 +89,16 @@ const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailCompone
       }
       {reviewView && chapterApi.chapterDetail &&
         <div>
-          <CharacterList characters={chapterApi.chapterDetail.characters} />
+          <div>
+            <h4>Characters</h4>
+            <div className="font-bold text-lg">Chapter</div>
+            <CharacterList characters={chapterApi.chapterDetail?.characters} />
+          </div>
           {ReactHtmlParser(chapterApi.chapterDetail?.content??'')}
         </div>
       }
+
+      {/* TODO Add Gallery stuff cuz chapters need mood board yo */}
     </div>
   )
 }

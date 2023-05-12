@@ -1,4 +1,4 @@
-import { BookDetail, BookStub, Chapter, Character, CyfrUser, Gallery, GalleryStub } from "../prismaContext"
+import { BookDetail, BookStub, Chapter, Character, CharacterStub, CyfrUser, Gallery, GalleryStub } from "../prismaContext"
 
 /**
  * @property characters {@link Character} TODO: should be a CharacterStub
@@ -14,8 +14,8 @@ export type ChapterStub = Chapter & {
  */
 export type ChapterDetail = Chapter & {
   book:         BookDetail
-  gallery?:     Gallery
-  characters?:  Character[]
+  gallery?:     GalleryStub
+  characters?:  CharacterStub[]
 }
 
 export type ChapterUpsertProps = {

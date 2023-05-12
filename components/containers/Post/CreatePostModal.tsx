@@ -3,12 +3,13 @@ import useDebug from "../../../hooks/useDebug"
 import useFeed from "../../../hooks/useFeed"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
-import Dropzone, { CompleteFile } from "../../forms/Dropzone"
+import Dropzone from "../../forms/Dropzone"
 import RemirrorEditor from "../../forms/SocialTextarea"
-import { LoggedIn } from "../../ui/toasty"
 import { CyfrLogo } from "../../ui/icons"
+import { LoggedIn } from "../../ui/toasty"
+import { Image } from "./../../../prisma/prismaContext"
 
-const {debug} = useDebug("components/containers/Post/CreatePost")
+const {debug} = useDebug("components/containers/Post/CreatePost", 'DEBUG')
 const createPostModal = 'createPostModal'
 
 export const CreatePostModalButton = () => (
@@ -24,12 +25,10 @@ const CreatePostModal = (): JSX.Element => {
   const [content, setContent] = useState<string | null>(null)
   const [valid, setIsValid] = useState<boolean>(false)
   const { createPost, invalidateFeed } = useFeed({ type: "post" })
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<Image[]>([])
 
-  const onFilesComplete = async (files: CompleteFile[]) => {
-    const setFiles = files.flatMap((f) => f.secure_url)
-    debug(`onFilesComplete`,setFiles)
-    setImages((current) => [...current, ...setFiles])
+  const onFilesComplete = async(files: Image[]) => {
+    setImages((current) => [...current, ...files])
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -38,11 +37,11 @@ const CreatePostModal = (): JSX.Element => {
       debug(`handleSubmit: sth is disabled....`, { cyfrUser, content })
       return
     }
-
+    debug('handleSubmit', images)
     const postData = {
       content: content!,
       authorId: cyfrUser.id,
-      images: images.flatMap((url) => url),
+      images: images,
     }
     const post = await createPost(postData)
 

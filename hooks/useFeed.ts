@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryStub, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostFeed, StartInboxThreadProps, UpsertInboxProps } from "../prisma/prismaContext"
+import { BookStub, CharacterStub, CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryStub, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostStub, StartInboxThreadProps, UpsertInboxProps } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import useDebug from "./useDebug"
 
@@ -23,16 +23,32 @@ export const useFeed = ({type}:FeedTypes) => {
   const [commentId, setCommentId] = useState<string|null>(null)
 
   const getMainFeed = async ():Promise<MainFeed[]|null> => {
-    const data = await getApi(`feed/main`)
-    if (data.result) {
-      const posts = data.result
-      return posts
+    const result = await getApi(`feed/main`)
+    debug('getMainFeed')
+    try {
+      return result.map((r:any) => {
+        // aggregating mainFeed requires a UNION ALL between post and shares
+        // in V_feed_main, which in turn requires casting the json_agg records
+        // to ::text   so here we have to parse those records back to json
+        //
+        // oy.
+        return {
+          ...r,
+          post: JSON.parse(r.post) as PostStub,
+          gallery: JSON.parse(r.gallery) as GalleryStub,
+          character: JSON.parse(r.character) as CharacterStub,
+          book: JSON.parse(r.book) as BookStub,
+        }
+      })
+      .sort((a:MainFeed,b:MainFeed) => a.updatedAt > b.updatedAt ? -1 : 1)  
+    } catch (error) {
+      debug('getMaindFeed', error)
+      return null
     }
-    return null
   }
   
-  const getPosts = async ():Promise<PostFeed[]|null> => {
-    const data = await getApi<PostFeed[]|null>(`post/all`)
+  const getPosts = async ():Promise<PostStub[]|null> => {
+    const data = await getApi<PostStub[]|null>(`post/all`)
     if (data.result) {
       const posts = data.result
       return posts
@@ -41,7 +57,7 @@ export const useFeed = ({type}:FeedTypes) => {
   }
   
   const getGalleries = async ():Promise<GalleryStub[]|null> => {
-    const data = await getApi<GalleryStub[]|null>(`gallery/all`)
+    const data = await getApi<GalleryStub[]|null>(`gallery/stubs`)
     if (data.result) {
       const posts = data.result
       return posts

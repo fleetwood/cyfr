@@ -1,4 +1,4 @@
-import GalleryCreateView from "../../../components/containers/Gallery/GalleryCreateView";
+import GalleryCreateModal from "../../../components/containers/Gallery/GalleryCreateModal";
 import GalleryDetailView from "../../../components/containers/Gallery/GalleryDetailView";
 import MainLayout from "../../../components/layouts/MainLayout";
 import {
@@ -11,7 +11,7 @@ import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider
 
 export async function getServerSideProps(context: any) {
   const user = await PrismaUser.userInSessionContext(context);
-  const galleries = user ? await PrismaGallery.userGalleries(context.query.id) : []
+  const galleries = user ? await PrismaGallery.userGalleries(user.id) : []
 
   return {
     props: {
@@ -28,7 +28,7 @@ const UserGalleryPage = ({ user, galleries }: InferGetServerSidePropsType<typeof
   <MainLayout sectionTitle="Galleries" subTitle={user?.name || ""}>
     <div className="flex flex-col space-y-4">
       {cyfrUser && cyfrUser.id === user?.id && 
-        <GalleryCreateView  />
+        <GalleryCreateModal  />
       }
       {galleries.map((gallery:GalleryDetail) => (
         <div className="relative" key={`user:${user?.id}-gallery:${gallery.id}`}>

@@ -1,5 +1,5 @@
 import { InferGetServerSidePropsType } from "next";
-import BookStubComponent from "../../../components/containers/Books/BookStubComponent";
+import BookStubView from "../../../components/containers/Books/BookStubView";
 import MainLayout from "../../../components/layouts/MainLayout";
 import { PrismaUser } from "../../../prisma/prismaContext";
 import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
@@ -25,7 +25,7 @@ const UserBooksPage = ({ user }: InferGetServerSidePropsType<typeof getServerSid
   return user ? (
     <MainLayout pageTitle={title} sectionTitle={title}>
       <div className="flex flex-col space-y-4">
-        {user.books && user.books.map(book => <BookStubComponent book={book} key={book.id} authorAvatars={false} />)}
+        {user.books && user.books.map(book => <BookStubView book={book} key={book.id} authorAvatars={false} />)}
       </div>
       {isOwner && <UpsertBook onUpsert={() => invalidateUser()} />}
     </MainLayout>

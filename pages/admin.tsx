@@ -7,9 +7,10 @@ import { CyfrLogo } from "../components/ui/icons"
 import { AudienceLevels, useAudience } from "../hooks/useAudience"
 import useDebug from "../hooks/useDebug"
 import { useSession } from "../lib/next-auth-react-query"
-import { GenreListItem } from "../prisma/prismaContext"
+
 import { getApi } from "../utils/api"
 import { uniqueKey } from "../utils/helpers"
+import { GenreStub } from "../prisma/prismaContext"
 
 const { debug, jsonBlock } = useDebug("admin page", "DEBUG")
 
@@ -17,8 +18,8 @@ const AdminPage = ({}) => {
   useSession({ required: true, redirectTo: "/" })
   const router = useRouter()
   const {hasAccess} = useAudience(AudienceLevels.OWNER)
-  const [genres, setGenres] = useState<Array<GenreListItem>>([])
-  const [editGenre, setEditGenre] = useState<GenreListItem|null>(null)
+  const [genres, setGenres] = useState<Array<GenreStub>>([])
+  const [editGenre, setEditGenre] = useState<GenreStub|null>(null)
   
   const CyfrHome = (
     <div className="flex">

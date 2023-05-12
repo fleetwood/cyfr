@@ -19,7 +19,7 @@ if (__prod__) {
   info(`prisma is running globally`)
   if (!global.prisma) {
     global.prisma = new PrismaClient({
-      log: ['query']
+      // log: ['query']
     })
   }
   prisma = global.prisma

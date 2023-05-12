@@ -5,8 +5,8 @@ import {
   Book,
   BookDeleteProps,
   BookDetail,
-  BookDetailInclude,
   BookFollowProps,
+  BookStub,
   BookUpsertProps,
   Chapter,
   Follow,
@@ -38,33 +38,59 @@ const detail = async (idOrTitleOrSlug:string) => {
   }
 }
 
-const byId = async (id: string): Promise<BookDetail | null> => {
+const details = async ():Promise<BookDetail[]> => {
   try {
-    return (await prisma.book.findFirst({
-      where: {
-        id: id,
-        active: true,
-      },
-      include: BookDetailInclude,
-    })) as unknown as BookDetail
+    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_book_detail`
+    if (result.length>0) {
+      return result[0] as BookDetail[]
+    }
+    throw { code: fileMethod("details"), message: "No book was returned!" }
   } catch (error) {
-    throw { code: fileMethod("byId"), message: "No book was returned!" }
+    info('details FAIL', error)
+    throw(error)
+  }
+}
+
+const stub = async (idOrTitleOrSlug:string) => {
+  try {
+    const result:any[] = await prisma.$queryRaw`SELECT * 
+      FROM v_book_stub 
+      WHERE id = ${idOrTitleOrSlug}
+        OR LOWER(title) = LOWER(${idOrTitleOrSlug})
+        OR LOWER(slug) = LOWER(${idOrTitleOrSlug})
+      `
+    if (result.length>0) {
+      return result[0] as BookStub
+    }
+    throw { code: fileMethod("stub"), message: "No book was returned!" }
+  } catch (error) {
+    info('stubs FAIL', error)
+    throw(error)
+  }
+}
+
+const stubs = async ():Promise<BookStub[]> => {
+  try {
+    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_book_stub`
+    if (result.length>0) {
+      return result[0] as BookStub[]
+    }
+    throw { code: fileMethod("stubs"), message: "No book was returned!" }
+  } catch (error) {
+    info('stubs FAIL', error)
+    throw(error)
   }
 }
 
 const byUser = async (id: string): Promise<BookDetail[]> => {
   try {
-    const books = await prisma.book.findMany({
-      where: {
-        authors: {
-          some: {
-            id,
-          },
-        },
-        active: true,
-      },
-      include: BookDetailInclude,
-    })
+    const books = await prisma.$queryRaw`
+      SELECT * FROM v_book_detail
+      WHERE id IN (
+          SELECT "A"
+          FROM _user_books
+          WHERE "B" = ${id}
+      )`
     if (books) {
       return books as unknown as BookDetail[]
     }
@@ -110,10 +136,9 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
         const result = id 
           ? prisma.book.update({
             where: {id}, 
-            data, 
-            include: BookDetailInclude
+            data
           })
-          : prisma.book.create({data, include: BookDetailInclude})
+          : prisma.book.create({data})
         if (result) {
           return result as unknown as BookDetail
         }
@@ -294,6 +319,36 @@ const addChapter = async(props:{bookId:string, title:string, order: number}):Pro
   }
 }
 
+const addGallery = async(props:{bookId:string, galleryId:string}):Promise<BookDetail> => {
+  try {
+    const {galleryId, bookId} = props
+    const update = {
+      where: {
+        id: bookId
+      },
+      data: {
+        gallery: {
+          connect: {
+            id: galleryId
+          }
+        }
+      }
+    }
+    debug('addGallery',{bookId, update})
+    const result = await prisma.book.update(update)
+    if (result) {
+      return detail(bookId)
+    }
+    throw new Error('Failed to obtain a result')
+  } catch (error) {
+    debug(`addGallery ERROR`, {
+      ...{ props },
+      ...{ error },
+    });
+    throw GenericResponseError(error as unknown as ResponseError);
+  }
+}
+
 /**
  * This is a redirect to {@link PrismaChapter.sort}
  * @returns 
@@ -311,4 +366,4 @@ const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | u
   }
 }
 
-export const PrismaBook = { detail, byId, byUser, upsert, follow, like, share, addChapter, sortChapters, deleteBook }
+export const PrismaBook = { detail, details, stub, stubs, byUser, upsert, follow, like, share, addChapter,addGallery, sortChapters, deleteBook }

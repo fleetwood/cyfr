@@ -1,15 +1,14 @@
-import { InferGetServerSidePropsType } from "next";
-import ReactHtmlParser from "react-html-parser";
 import GalleryPhotoswipe from "../../components/containers/Gallery/GalleryPhotoswipe";
-import PostItemFooter from "../../components/containers/Post/PostItemFooter";
+import PostFooter from "../../components/containers/Post/PostFooter";
 import MainLayout from "../../components/layouts/MainLayout";
 import Avatar from "../../components/ui/avatar";
+import HtmlContent from "../../components/ui/htmlContent";
 import JsonBlock from "../../components/ui/jsonBlock";
-import { PostFeed, PrismaPost } from "../../prisma/prismaContext";
+import { PostDetail, PrismaPost } from "../../prisma/prismaContext";
 import { timeDifference } from '../../utils/helpers';
 
 type PostDetailPageProps = {
-  post: PostFeed
+  post: PostDetail
 }
 
 export async function getServerSideProps(context: any) {
@@ -23,7 +22,7 @@ export async function getServerSideProps(context: any) {
   }
 }
 
-const PostDetailPage = ({ post }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const PostDetailPage = ({ post }:PostDetailPageProps) => {
   return (post && 
     <MainLayout
       pageTitle={`${post.author.name}`}
@@ -40,7 +39,7 @@ const PostDetailPage = ({ post }: InferGetServerSidePropsType<typeof getServerSi
         </div>
         {post.content && 
         <div className="text-base-content m-8 font-ibarra">
-          {ReactHtmlParser(post.content)}
+          <HtmlContent content={post.content} />
           <JsonBlock data={post} />
         </div>}
         {/* {post.post_comments && post.post_comments.map(c => (
@@ -54,7 +53,7 @@ const PostDetailPage = ({ post }: InferGetServerSidePropsType<typeof getServerSi
         }
 
         <div className="flex flex-row justify-around">
-          <PostItemFooter post={post} feed="post" />
+          <PostFooter post={post} />
         </div>
       </div>
     </MainLayout>

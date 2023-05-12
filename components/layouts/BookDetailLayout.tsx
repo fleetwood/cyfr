@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
 import useBookApi from "../../hooks/useBookApi"
-import { BookDetail, GenreListItem, PrismaBook, PrismaGenre, UserStub } from "../../prisma/prismaContext"
+import { BookDetail, GenreStub, UserStub } from "../../prisma/prismaContext"
+import BookDetailComponent from "../containers/Books/BookDetailView"
 import Footer from "../containers/Footer"
 import LeftColumn from "../containers/LeftColumn"
 import Navbar from "../containers/Navbar"
@@ -8,11 +9,11 @@ import RightColumn from "../containers/RightColumn"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
 import { useToast } from "../context/ToastContextProvider"
 import Section from "../ui/section"
-import BookDetailComponent from "../containers/Books/BookDetailComponent"
+import BookDetailView from "../containers/Books/BookDetailView"
 
 export type BookDetailLayoutProps = {
-  bookDetail:    BookDetail
-  genres:  GenreListItem[]
+  bookDetail: BookDetail
+  genres:     GenreStub[]
 }
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
@@ -30,7 +31,7 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
 
   const handleScroll = (e:any) => {
     const position = mainRef?.current?.scrollTop
-    setScrollActive(current => position && position > 120 || false)
+    setScrollActive(() => position && position > 120 || false)
   }
 
   return (
@@ -54,7 +55,7 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
           sectionTitle={bookDetail?.title}
           subTitle={bookDetail?.authors?.flatMap(a => a.name).join(' and ')}
         >
-          <BookDetailComponent bookApi={bookApi} />
+          <BookDetailView bookApi={bookApi} />
         </Section>
         <Footer />
       </main>

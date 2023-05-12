@@ -12,20 +12,17 @@ import AvatarList from "../../ui/avatarList"
 
 type GalleryFooterProps = {
   gallery: GalleryDetail | GalleryStub
-  feed: FeedTypes
 }
 
 const {debug} = useDebug('components/containers/Gallery/GalleryFooter')
 
 const GalleryFooter = ({
-  gallery,
-  feed: { type = "gallery" },
+  gallery
 }: GalleryFooterProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const { shareGallery, likeGallery, invalidateFeed } = useFeed({ type })
+  const { shareGallery, likeGallery, invalidateFeed } = useFeed({type: 'gallery'  })
   const { notify, loginRequired } = useToast()
   const { setCommentId, showComment, hideComment } = useCommentContext()
-  const isMain = type === "main"
 
   const isLoggedIn = () => {
     if (!cyfrUser) {

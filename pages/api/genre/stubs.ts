@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import useDebug from "../../../hooks/useDebug";
 import { PrismaGenre } from "../../../prisma/prismaContext";
-const {err, stringify} = useDebug('api/genre/list')
+const {err, stringify} = useDebug('api/genre/stubs')
 
 const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const result = await PrismaGenre.all();
+    const result = await PrismaGenre.stubs();
     if (result) {
       res.status(200).json({ result });
     } else {

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { getApi, sendApi } from "../utils/api"
-import { PostCommentProps, PostCreateProps, PostEngageProps, PostFeed } from "../prisma/prismaContext"
+import { PostCommentProps, PostCreateProps, PostEngageProps, PostStub } from "../prisma/prismaContext"
 import useDebug from "./useDebug"
 const {debug, info} = useDebug("usePosts")
 
@@ -18,7 +18,7 @@ export async function getPosts() {
 
 export const usePosts = () => {
   const qc = useQueryClient()
-  const [posts, setPosts] = useState<PostFeed[]>()
+  const [posts, setPosts] = useState<PostStub[]>()
   const [commentId, setCommentId] = useState<string|null>(null)
 
   const query = useQuery(
@@ -30,7 +30,7 @@ export const usePosts = () => {
           info(`onSettled(${allPostsQuery}) ERROR`,{ error, data })
         }
         if (data) {
-          setPosts(() => data as PostFeed[])
+          setPosts(() => data as PostStub[])
         }
       }
     }

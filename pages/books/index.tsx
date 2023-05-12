@@ -4,13 +4,13 @@ import TailwindInput from "../../components/forms/TailwindInput";
 import MainLayout from '../../components/layouts/MainLayout';
 import EZButton from "../../components/ui/ezButton";
 import useDebug from "../../hooks/useDebug";
-import { BookStub, GenreListItem, PrismaGenre } from '../../prisma/prismaContext';
+import { BookStub, GenreStub, PrismaGenre } from '../../prisma/prismaContext';
 import { uniqueKey } from "../../utils/helpers";
 
 const {debug, jsonBlock} = useDebug('books/index')
 
 export async function getServerSideProps(context: any) {
-    const genres = await PrismaGenre.all()
+    const genres = await PrismaGenre.stubs()
     return {
       props: {
         genres,
@@ -20,12 +20,12 @@ export async function getServerSideProps(context: any) {
   }
 
 type BooksPageProps = {
-    genres: GenreListItem[]
+    genres: GenreStub[]
 }
 
 const BooksPage = ({genres}: BooksPageProps) => {
   const [search, setSearch] = useState<string|null>(null)
-  const [visibleGenres, setVisibleGenres] = useState<GenreListItem[]>(genres)
+  const [visibleGenres, setVisibleGenres] = useState<GenreStub[]>(genres)
   const [visibleBooks, setVisibleBooks] = useState<BookStub[]>(genres.flatMap(g => {return [...g.books]}))
 
   useEffect(() => {
@@ -50,8 +50,8 @@ const BooksPage = ({genres}: BooksPageProps) => {
           }
           <TailwindInput type="text" inputClassName="w-[50%]" placeholder="What are you interested in?" setValue={setSearch} value={search} />
           <div className="grid grid-cols-4 justify-between gap-2 py-4">
-            {genres.map((g:GenreListItem) => (
-              <EZButton label={`${g.title} (${g.totalbooks})`} variant={visibleGenres.filter(v => v.id === g.id).length> 0 ? 'primary' : 'secondary'} key={uniqueKey(g)} onClick={() => setSearch(() => g.title)}/>
+            {genres.map((g:GenreStub) => (
+              <EZButton label={`${g.title} (${g.books?.filter(b => b !== null).length})`} variant={visibleGenres.filter(v => v.id === g.id).length> 0 ? 'primary' : 'secondary'} key={uniqueKey(g)} onClick={() => setSearch(() => g.title)}/>
             ))}
           </div>
           <div className="grid grid-cols-3 justify-between gap-2 py-4">

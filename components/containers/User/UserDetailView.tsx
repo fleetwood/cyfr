@@ -8,14 +8,14 @@ import Avatar from "../../ui/avatar"
 import { FireIcon, HeartIcon } from "../../ui/icons"
 import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 import BookCover from "../Books/BookCover"
-import GalleryItemView from "../Gallery/GalleryItemView"
-import UserDetailPostItem from "../Post/UserDetailPostItem"
+import PostStubView from "../Post/PostStubView"
+import GalleryStubView from "../Gallery/GalleryStubView"
 
-type UserDetailComponentProps = {
+type UserDetailViewProps = {
   userId: String
 }
 
-const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
+const UserDetailView = ({ userId }: UserDetailViewProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const { currentUser, followers, follows, fans, stans, followUser, stanUser, invalidateUser } = useUserDetail({id: userId})
   const isOwner = cyfrUser && currentUser && cyfrUser.id === currentUser.id
@@ -176,7 +176,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
               currentUser.galleries.map(gallery => 
               <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
                 {/* <JsonBlock data={gallery} /> */}
-                <GalleryItemView gallery={gallery}/>
+                <GalleryStubView gallery={gallery}/>
               </div>
             )}
           </div>
@@ -199,7 +199,7 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
           <h2 className="subtitle">Posts</h2>
           <div className="my-4">
           {currentUser?.posts?.map((post) => (
-              <UserDetailPostItem post={post} key={uniqueKey('user-post',currentUser, post)} />
+              <PostStubView post={post} key={post.id} />
           ))}
           </div>
         </>
@@ -250,4 +250,4 @@ const UserDetailComponent = ({ userId }: UserDetailComponentProps) => {
   )
 }
 
-export default UserDetailComponent
+export default UserDetailView

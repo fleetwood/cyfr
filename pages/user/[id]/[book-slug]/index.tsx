@@ -1,11 +1,10 @@
 import BookDetailLayout, { BookDetailLayoutProps } from "../../../../components/layouts/BookDetailLayout"
-import useCyfrUser from "../../../../hooks/useCyfrUser"
 import { PrismaBook, PrismaGenre } from "../../../../prisma/prismaContext"
 
 export async function getServerSideProps(context: any) {
   const id = context.params.id
   const bookDetail = await PrismaBook.detail(id)
-  const genres = await PrismaGenre.all()
+  const genres = await PrismaGenre.stubs()
 
   return {
     props: {

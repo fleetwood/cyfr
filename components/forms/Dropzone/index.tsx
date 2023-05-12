@@ -13,6 +13,7 @@ function Dropzone({limit=-1, onDropComplete, onDropChange, children}:DropzonePro
   const [completedFiles, setCompletedFiles] = useState<PrismaImage[]>([])
   
   const getLimit = (a:any[]) => (limit > 0 ? limit-completedFiles.length : a.length)
+  const fileCount = () => getLimit([]) > 0 ? `up to ${getLimit([])}` : ``
 
   const onDrop = useCallback((acceptedFiles:File[], rejectedFiles:FileRejection[]) => {
     debug(`onDrop`,{acceptedFiles, rejectedFiles})
@@ -61,7 +62,7 @@ function Dropzone({limit=-1, onDropComplete, onDropChange, children}:DropzonePro
             <p>Drop n Go!!</p> :
             limit === 1 
               ? <p>Drop your file here</p> 
-              : <p>Drop up to <strong>{getLimit([])}</strong> files here, or click to select...</p>
+              : <p>Drop {fileCount()} files here, or click to select...</p>
         }
         
       </div>

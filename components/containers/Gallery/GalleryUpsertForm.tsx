@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import useDebug from '../../../hooks/useDebug'
-import { Gallery, GalleryCreateProps, GalleryStub, GalleryUpsertProps, Image } from '../../../prisma/prismaContext'
+import { Gallery, GalleryCreateProps, GalleryStub, GalleryUpsertProps, Image, ImageStub } from '../../../prisma/prismaContext'
 import { sendApi } from '../../../utils/api'
 import { useCyfrUserContext } from '../../context/CyfrUserProvider'
 import Dropzone, { CompleteFile } from '../../forms/Dropzone'
 import TailwindInput from '../../forms/TailwindInput'
 import GalleryPhotoswipe from './GalleryPhotoswipe'
 
-const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm')
+const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm', 'DEBUG')
 
 export type GalleryNestedProps = {
     gallery?:         GalleryStub
@@ -16,19 +16,18 @@ export type GalleryNestedProps = {
     labelClassName?:  string
     className?:       string
     variant?:         'no-title'|'no-description'|null
-    onUpsert?:        Function
+    onUpsert?:        (galleryId?:string) => void
 }
 
-//TODO Add/Remove images to/from existing gallery
 const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
     const [cyfrUser] = useCyfrUserContext()
-    const [images, setImages] = useState<Image[]>(gallery?.images ?? [])
+    const [images, setImages] = useState<ImageStub[]>(gallery?.images ?? [])
     const [title, setTitle] = useState<string|null>(gallery?.title ?? null)
     const [description, setDescription] = useState<string|null>(null)
   
     const onFilesComplete = async (images: Image[]) => {
       debug(`onFilesComplete`,images)
-      setImages((current) => [...current, ...images])
+      setImages((current) => [...current, ...images as unknown as ImageStub[]])
     }
   
     const onFileChange = async (file:Image) => { 
@@ -48,14 +47,19 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
         title,
         description,
         authorId: cyfrUser.id,
-        images: images,
+        images: images.map((img:ImageStub) => {return {
+          id:     img.id,
+          height: img.height,
+          width:  img.width,
+          url:    img.url,
+          title:  img.title
+        }as unknown as Image}),
         //TODO: add delete button
       }
-      const result = await sendApi('gallery/upsert', newGallery)
-      if (result?.data) {
-        const upsertGallery = result.data
-        debug('upsertGallery', {upsertGallery})
-        if (onUpsert) onUpsert(result.data)
+      const saved = await sendApi('gallery/upsert', newGallery)
+      if (onUpsert) {
+        debug('onUpsert', {result: saved?.data?.result ?? null})
+        onUpsert(saved?.data?.result ? saved.data.result.id : null)
       }
     }
 
@@ -89,3 +93,5 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
 }
 
 export default GalleryUpsertForm
+
+

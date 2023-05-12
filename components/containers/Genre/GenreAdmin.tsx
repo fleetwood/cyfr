@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react"
 import useDebug from "../../../hooks/useDebug"
-import { Gallery, Genre, GenreFeed, GenreListItem } from "../../../prisma/prismaContext"
+import { Gallery, GenreStub } from "../../../prisma/prismaContext"
 import { sendApi } from "../../../utils/api"
 import { useToast } from "../../context/ToastContextProvider"
-import Dropzone, { CompleteFile } from "../../forms/Dropzone"
+import { CompleteFile } from "../../forms/Dropzone"
 import TailwindInput from "../../forms/TailwindInput"
-import GalleryUpsertForm from "../Gallery/GalleryUpsertForm"
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 const {debug } = useDebug('components/containers/Genre/AddGenre')
 
 type GenreAdminProps = {
-    editGenre: GenreListItem|GenreFeed|Genre|null
+    editGenre: GenreStub|null
 }
 
 const GenreAdmin = ({editGenre}:GenreAdminProps) => {

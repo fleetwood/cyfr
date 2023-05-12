@@ -6,6 +6,7 @@ import { isBookAuthor, uniqueKey } from "../../../utils/helpers";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import Avatar from "../../ui/avatar";
 import { CheckBadge } from "../../ui/icons";
+import JsonBlock from "../../ui/jsonBlock";
 
 const {debug} = useDebug('BookCover')
 
@@ -29,10 +30,14 @@ type BookCoverProps = {
 const BookImage = ({cover, title, width, owner}:{cover: Image|null, title: string, width: number, owner?:boolean}) => { 
   const badge = owner ? <span className="absolute top-0 right-0 text-success" aria-label="Your Book!">{CheckBadge}</span> : ''
   
-  return cover !== null
-      ? <><img src={cloudinary.thumb({ url: cover.url, width })} />{badge}</>
-      : <>{title}{badge}</>
-}
+  return (
+    <div className="book-cover">
+      <div><h3>{title}</h3>{badge}</div>
+      {cover && 
+        <div><img src={cloudinary.thumb({ url: cover.url, width })} />{badge}</div>
+      }
+    </div>
+)}
 
 /**
  * 
@@ -49,15 +54,22 @@ const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true, authorA
     ? cover.width
     : Number(variant) as number
   debug('BookCover', {cyfrUser: cyfrUser?.name ?? 'No cyfrUser', isOwner})
+
+  const Booky = () => <BookImage cover={book.cover||null} title={book.title} width={width!} owner={isOwner} />
+
   return (
-    <div className="max-w-fit relative">
+    <div className="max-w-fit relative p-4">
     {link 
-      ? <Link href={`/book/${book.slug ?? book.id}`}><BookImage cover={book.cover||null} title={book.title} width={width!} owner={isOwner} /></Link> 
-      : <BookImage cover={book.cover||null} title={book.title} width={width!} owner={isOwner} />
+      ? <Link href={`/book/${book.slug ?? book.id}`}><Booky /></Link> 
+      : <Booky />
     }
-    {authorAvatars && book.authors?.map(author => (
-      <Avatar user={author} sz="sm" link={false} className="absolute bottom-0 float-right" key={uniqueKey(book,author)} />
-    ))}
+    {authorAvatars && 
+      <div className="flex pt-2 space-x-2">
+        {book.authors?.map(author => (
+          <Avatar user={author} sz="sm" link={false} className="absolute bottom-0 float-right" key={uniqueKey(book,author)} />
+        ))}
+      </div>
+    }
     {/* <JsonBlock data={book} /> */}
     </div>
 )}

@@ -3,17 +3,15 @@ import { useQuery, useQueryClient } from "react-query"
 import { MainFeed, PostCommentProps, PostCreateProps, PostEngageProps } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import useDebug from "./useDebug"
-const {debug, info} = useDebug("useMainFeed")
+const {debug, info} = useDebug("useMainFeed", 'DEBUG')
 
 export const mainFeedQuery = ['feed', { type: 'mainPage'}]
 
 export async function getMainFeed() {
+  debug('getMainFeed')
   const data = await getApi(`feed/main`)
-  if (data.result) {
-    const posts = data.result
-    return posts
-  }
-  return null
+  debug('getMainFeed.data', data)
+  return data || null
 }
 
 export const useMainFeed = () => {

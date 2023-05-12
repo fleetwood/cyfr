@@ -29,9 +29,9 @@ const LeftColumn = () => {
         {!__prod__ &&   
           <li>
             <ShrinkableIconLink
-              href={"/gallery/create"}
+              href="https://industrialscripts.com/archetypes-of-characters/"
               target="_self"
-              label="Create Gallery"
+              label="Archetypes"
               icon={PhotoIcon}
             />
           </li>

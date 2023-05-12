@@ -5,7 +5,7 @@ import { UserFeed, UserFeedInclude, UserStub } from "./user.def";
 export type PostCreateProps = {
   content: string;
   authorId: string;
-  images?: string[];
+  images?: Image[];
 };
 
 export type PostDeleteProps = {
@@ -36,15 +36,15 @@ type PostComments = Post & {
   author: User;
 };
 
-export type PostFeed = Post & {
-  createdat?: string
-  updatedat?: string
-  author: User;
-  comment?: Post | null;
-  post_comments: (Post & { author: User })[];
-  likes: UserStub[];
-  shares: UserStub[];
-  images: Image[];
+export type PostStub = Post & {
+  createdat?:     string
+  updatedat?:     string
+  author:         UserStub
+  comment?:       Post | null;
+  post_comments:  (Post & { author: User })[];
+  likes:          UserStub[];
+  shares:         UserStub[];
+  images:         Image[];
 };
 
 export const PostFeedInclude = {
@@ -60,9 +60,9 @@ export type PostDetail = Post & {
   createdat?: string
   updatedat?: string
   author: UserFeed;
-  post_comments: PostFeed[];
-  likes: (Like & { author: User })[];
-  shares: (Share & { author: User })[];
+  post_comments: PostStub[];
+  likes: UserStub[];
+  shares: UserStub[];
   images: ImageFeed[];
 };
 
