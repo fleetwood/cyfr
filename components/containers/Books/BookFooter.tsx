@@ -12,15 +12,15 @@ const BookFooter = ({book}:BookFooterProps) => {
     <div className="flex">
     <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
       <label className="font-semibold mr-2">{HeartIcon}</label>
-      <span className="text-primary">{valToLabel((book.likes||[]).length)}</span>
+      <span className="text-primary">{(book.likes||[]).length}</span>
     </div>
     <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
       <label className="font-semibold mr-2">{ShareIcon}</label>
-      <span className="text-primary">{valToLabel((book.shares||[]).length)}</span>
+      <span className="text-primary">{(book.shares||[]).length}</span>
     </div>
     <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
       <label className="font-semibold mr-2">{UserIcon}</label>
-      <span className="text-primary">{valToLabel((book.follows||[]).length)}</span>
+      <span className="text-primary">{(book.follows||[]).length}</span>
     </div>
     <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
       <label className="font-semibold mr-2">{ReplyIcon}</label>

@@ -14,9 +14,8 @@ const AvatarList = ({ users, sz = "sm", limit = 4 }: AvatarListProps) => {
   
   return (
     <div className={`avatar-group`}>
-      {users && users.slice(0,total).map(user => {
-        // @ts-ignore, mapping that has to happen bc sql fncs return the user as json, not typed. Meh.
-        const {id, name, image} = user.author || user
+      {users && users.filter(u => u !== null).slice(0,total).map(user => {
+        const {id, name, image} = user
         return <Avatar user={{id, name, image}} sz={sz} key={uuid()} />
       })}
       {extra > 0 &&

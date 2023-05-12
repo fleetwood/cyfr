@@ -10,16 +10,16 @@ import { LikeStub, MainFeed, Post, PostDetail, PostStub, ShareStub, UserStub } f
 
 import useDebug from "../../../hooks/useDebug"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-const { debug } = useDebug("PostItemFooter")
+const { debug, jsonBlock } = useDebug("PostItemFooter", 'DEBUG')
 
 type PostFooterProps = {
   post: PostDetail | PostStub
 }
-const FeedFooter = ({ post }: PostFooterProps) => {
+const PostFooter = ({ post }: PostFooterProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const likes:UserStub[] = post?.likes || []
-  const shares:UserStub[] = post?.shares || []
-  const comments:(Post & {author: UserStub})[] = [] // post?.shares || gallery?.shares || image?.shares || book?.shares || character?.shares || []
+  const likes:UserStub[] = post?.likes?.filter(f=>f!==null)||[]
+  const shares:UserStub[] = post?.shares?.filter(f=>f!==null)||[]
+  const comments:PostStub[] = []
   const { sharePost, likePost, invalidateFeed } = useFeed({ type: "post" })
   const { notify, loginRequired } = useToast()
   const { setCommentId, showComment, hideComment } = useCommentContext()
@@ -111,4 +111,4 @@ const FeedFooter = ({ post }: PostFooterProps) => {
   )
 }
 
-export default FeedFooter
+export default PostFooter

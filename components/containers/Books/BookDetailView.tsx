@@ -34,6 +34,7 @@ import CharacterList from "../Characters/CharacterList"
 import GalleryCreateModal, { OpenGalleryModalPlus } from "../Gallery/GalleryCreateModal"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import BookCover, { BookCoverVariant } from "./BookCover"
+import HtmlContent from "../../ui/htmlContent"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -367,7 +368,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
             onClick={onLike}
           />
           <span className="text-primary">
-            {valToLabel(bookDetail.likes?.length ?? 0)}
+            {bookDetail.likes?.length || 0}
           </span>
         </div>
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
@@ -379,7 +380,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
             onClick={onShare}
           />
           <span className="text-primary">
-            {valToLabel(bookDetail.shares?.length ?? 0)}
+            {bookDetail.shares?.length || 0}
           </span>
         </div>
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
@@ -391,7 +392,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
             onClick={onFollow}
           />
           <span className="text-primary">
-            {valToLabel(bookDetail.follows?.length ?? 0)}
+            {bookDetail.follows?.length || 0}
           </span>
         </div>
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
@@ -403,7 +404,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
             onClick={() => {}}
           />
           <span className="text-primary">
-            {valToLabel(onlyFans(bookDetail.follows ?? []).length)}
+            0
           </span>
         </div>
         <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
@@ -439,9 +440,9 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
               setContent={updatePanel}
               onSave={bookApi.save}
             />
-          ) : (
-            ReactHtmlParser(bookDetail.back!)
-          )}
+          ) : 
+            <HtmlContent content={bookDetail.back||''}/>
+          }
         </div>
       </div>
 
@@ -455,7 +456,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
               onSave={bookApi.save}
             />
           ) : (
-            ReactHtmlParser(bookDetail.synopsis!)
+            <HtmlContent content={bookDetail.synopsis!} />
           )}
         </div>
       </div>

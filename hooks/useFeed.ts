@@ -27,6 +27,11 @@ export const useFeed = ({type}:FeedTypes) => {
     debug('getMainFeed')
     try {
       return result.map((r:any) => {
+        // aggregating mainFeed requires a UNION ALL between post and shares
+        // in V_feed_main, which in turn requires casting the json_agg records
+        // to ::text   so here we have to parse those records back to json
+        //
+        // oy.
         return {
           ...r,
           post: JSON.parse(r.post) as PostStub,

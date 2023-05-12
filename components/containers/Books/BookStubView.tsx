@@ -40,7 +40,6 @@ const BookStubView = ({book, authorAvatars}: BookComponentProps) => {
       }
       
       <div>
-        {isOwner && <EZButton label="EDIT" onClick={() => router.push(`/book/${book.slug}`)} /> }
         <div className="flex">
           <span>{book.fiction ? 'FICTION' : 'NON-FICTION'}</span>
           {book.genre && <span>{book.genre?.title}</span>}

@@ -18,6 +18,9 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
     : item.character ? `/character/${item.character.id}`
     : `/`
 
+  const updatedAt = item.post?.updatedAt ?? item.gallery?.updatedAt ?? null
+  const label = updatedAt ?` Posted ${timeDifference(updatedAt.toString())}` : `Read more`
+
   const originalAuthor:UserStub = (item.post ? item.post.author
     : item.gallery ? item.gallery.author
     : item.author) as UserStub
@@ -34,23 +37,18 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
           <div>Shared {timeDifference((item.updatedAt || "").toString())}</div>
         </div>
       }
-      <div className="">
-        <div>
-          {(item.book || item.character) && (
-            <AvatarList users={originalAuthors || []} sz="sm" />
-          )}
-          {(item.post || item.gallery) && (
-            <Avatar shadow={true} user={originalAuthor} sz="sm" />
-          )}
+      {(item.post || item.gallery) && (
+        <div className="">
+            <div>
+                <Avatar shadow={true} user={originalAuthor} sz="sm" />
+            </div>
+          <div>
+            <Link href={link} className="text-primary underline">
+              <span>{label}</span>
+            </Link>
+          </div>
         </div>
-        <div>
-          <Link href={link} className="text-primary underline">
-            {item.post &&
-              <span>Posted {timeDifference((item.updatedAt || "").toString())}</span>
-            }
-          </Link>
-        </div>
-      </div>
+      )}
     </div>
   )
 }
