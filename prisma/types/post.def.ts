@@ -5,7 +5,7 @@ import { UserFeed, UserFeedInclude, UserStub } from "./user.def";
 export type PostCreateProps = {
   content: string;
   authorId: string;
-  images?: string[];
+  images?: Image[];
 };
 
 export type PostDeleteProps = {

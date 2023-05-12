@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub } from "../prismaContext"
-const {debug, err, info, fileMethod} = useDebug('entities/prismaPosts')
+const {debug, err, info, fileMethod} = useDebug('entities/prismaPost')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
   try {
@@ -37,25 +37,16 @@ const all = async (): Promise<any> => {
 
 const createPost = async (props: PostCreateProps): Promise<Post> => {
   const {content, authorId, images} = { ...props }
-  const imageData = images && images.length>0 ? {
-      createMany: { data: [
-        images.forEach(url => {return {authorId, url}})
-      ]}
-  }:null
-  
   const data = {
     authorId, 
     content, 
     images: {
-      createMany: {data: 
-        images===undefined
-          ?[]
-          :images.map(url => {return {authorId, url}})
-    }}
+      connect: images?.filter(i => i!==null).map(i => {return {id: i.id}}) ?? []
+    }
   }
 
   try {
-    debug('createPost', data)
+    debug('createPost', {data})
     return await prisma.post.create({ data })
   } catch (error) {
     info("createPost ERROR: ", error)
