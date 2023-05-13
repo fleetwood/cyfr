@@ -80,7 +80,7 @@ const Navbar = ({
             <div className="dropdown dropdown-end text-secondary-content min-w-full float-right">
               <label tabIndex={0} className="btn btn-ghost rounded-btn space-x-2" onClick={() => setShowDropDown(!showDropDown)}>
                 <p>{cyfrUser.name}</p>
-                <Avatar user={cyfrUser} sz='sm' link={false} />
+                <Avatar user={cyfrUser} sz='sm' link={false} variant={['no-profile']} />
               </label>
 
 

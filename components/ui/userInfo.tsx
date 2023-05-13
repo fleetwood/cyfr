@@ -16,7 +16,7 @@ const UserInfo = ({user,link,sz,variant}:UserInfoProps) => {
     const count = (prop:any[]|number):number => Array.isArray(prop) ? prop.length : prop
   return (
     <div>
-        <Avatar user={user} link={link} popover={popover} sz={sz} />
+        <Avatar user={user} link={link} sz={sz} />
         
     </div>
   )

@@ -12,7 +12,7 @@ import {
   prisma, User, UserFeed,
   UserFeedInclude, UserStub
 } from "../prismaContext";
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser");
+const { fileMethod, debug, todo, info:debugInfo, err } = useDebug("entities/prismaUser");
 
 type AllPostQueryParams = {
   limit?: Number;
@@ -78,6 +78,19 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
   }
 };
 
+const userInfo = async (id:string): Promise<any> => {
+  debug('userInfo', {id})
+  try {
+    const result:any[] = await prisma.$queryRaw<any[]>`select * from "v_user_info" where name = ${'Fleetwood'}`
+    if (result[0]) {
+      return result[0]
+    }
+    throw {code: fileMethod, message: 'Could not find info for that user id'}
+  } catch (error) {
+    throw error
+  }
+}
+
 const detail = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => {
   debug('getCyfrUser', {idOrNameOrEmail})
   try {
@@ -93,7 +106,7 @@ const detail = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => {
     }
     return user[0].cyfrUser as CyfrUser;
   } catch (error) {
-    info(`getCyfrUser FAIL`, error);
+    debugInfo(`getCyfrUser FAIL`, error);
     throw error;
   }
 }
@@ -108,7 +121,7 @@ const canMention = async (id: string, search?: string):Promise<any> => {
     debug('mentions', {mentions})
     return mentions || []
   } catch (error) {
-    info(`canMention broke`, error);
+    debugInfo(`canMention broke`, error);
     throw error;
   }
 };
@@ -131,7 +144,7 @@ const userInSessionContext = async (context: GetSessionParams | undefined): Prom
     const session = await getSession(context);
     return detail(session?.user?.email||'')
   } catch (error) {
-    info(fileMethod("userInSessionContext"), { error });
+    debugInfo(fileMethod("userInSessionContext"), { error });
     return null;
   }
 };
@@ -193,7 +206,7 @@ const userCurrentlyOnline = async (id: string) => {
     }
     return user._count.sessions > 0;
   } catch (error) {
-    info(`userCurrentlyOnline error`);
+    debugInfo(`userCurrentlyOnline error`);
     return null;
   }
 };
@@ -226,6 +239,7 @@ const updatePreferences = async ({
 export const PrismaUser = {
   allUsersQuery,
   detail,
+  userInfo,
   userInSessionContext,
   userInSessionReq,
   userCurrentlyOnline,
