@@ -9,7 +9,7 @@ import { CyfrLogo } from "../../ui/icons"
 import { LoggedIn } from "../../ui/toasty"
 import { Image } from "./../../../prisma/prismaContext"
 
-const {debug} = useDebug("components/containers/Post/CreatePost", 'DEBUG')
+const {debug} = useDebug("components/containers/Post/CreatePost")
 const createPostModal = 'createPostModal'
 
 export const CreatePostModalButton = () => (

@@ -10,7 +10,7 @@ import { LikeStub, MainFeed, Post, PostDetail, PostStub, ShareStub, UserStub } f
 
 import useDebug from "../../../hooks/useDebug"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-const { debug, jsonBlock } = useDebug("PostItemFooter", 'DEBUG')
+const { debug, jsonBlock } = useDebug("PostItemFooter")
 
 type PostFooterProps = {
   post: PostDetail | PostStub

@@ -1,6 +1,6 @@
 import { Image, Like, ImageDetail,ImageFeed, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude, ImageUpsertProps, ImageStub } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
-const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage','DEBUG')
+const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage')
 
 const detail = async (id: string): Promise<ImageDetail | null> => {
   try {

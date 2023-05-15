@@ -2,7 +2,7 @@ import { Chapter, Character, CharacterDetail, CharacterStub, CharacterUpsertProp
 import useDebug from "../../hooks/useDebug"
 import { now, sortChapters } from "../../utils/helpers"
 
-const {debug, info, fileMethod} = useDebug('entities/prismaCharacter', 'DEBUG')
+const {debug, info, fileMethod} = useDebug('entities/prismaCharacter')
 
 const detail = async (id: string): Promise<CharacterDetail | null> => {
   debug('detail', id)

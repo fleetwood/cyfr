@@ -5,7 +5,7 @@ import ChapterReadLayout from "../../../../components/layouts/chapter/ChapterRea
 import ChapterReviewLayout from "../../../../components/layouts/chapter/ChapterReviewLayout"
 import ChapterDetailLayout from "../../../../components/layouts/chapter/ChapterDetailLayout"
 
-const {debug, info} = useDebug('pages/book/[bookId]/chapter/[chapterId]', 'DEBUG')
+const {debug, info} = useDebug('pages/book/[bookId]/chapter/[chapterId]')
 
 export async function getServerSideProps(context: any) {
   const {bookId, chapterId} = context.params

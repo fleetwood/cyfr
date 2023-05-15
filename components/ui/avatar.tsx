@@ -12,7 +12,7 @@ import { AvatarSizeProps, cloudinary } from "../../utils/cloudinary";
 import Spinner from "./spinner";
 import useDebug from "../../hooks/useDebug";
 
-const {debug, jsonBlock} = useDebug('avatar','DEBUG')
+const {debug, jsonBlock} = useDebug('avatar')
 
 type AvatarProps = {
   user?: CyfrUser | UserDetail | UserFeed | User | UserStub;

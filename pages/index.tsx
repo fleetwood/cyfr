@@ -6,7 +6,7 @@ import useDebug from "../hooks/useDebug"
 import useFeed from "../hooks/useFeed"
 import { MainFeed } from "../prisma/types"
 import { uniqueKey } from "../utils/helpers"
-const {debug, jsonBlock} = useDebug('pages/index', 'DEBUG')
+const {debug, jsonBlock} = useDebug('pages/index')
 
 
 type HomePageProps = {}

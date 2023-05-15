@@ -2,7 +2,7 @@ import React from 'react'
 import useDebug from '../../../hooks/useDebug'
 import { CharacterStub } from '../../../prisma/prismaContext'
 
-const {debug, jsonBlock} = useDebug('containers/Characters/CharacterFeedView', 'DEBUG')
+const {debug, jsonBlock} = useDebug('containers/Characters/CharacterFeedView')
 
 type CharacterFeedViewProps = {
     character: CharacterStub

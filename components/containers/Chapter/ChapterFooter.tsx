@@ -3,7 +3,7 @@ import { BookDetail, Chapter } from "../../../prisma/prismaContext"
 import useDebug from "../../../hooks/useDebug"
 import JsonBlock from "../../ui/jsonBlock"
 
-const {debug} = useDebug('ChapterFooter', 'DEBUG')
+const {debug} = useDebug('ChapterFooter')
 
 type ChapterFooterProps = {
     bookDetail?:        BookDetail | null

@@ -7,8 +7,7 @@ import {
   ResponseResult
 } from "../../../types/response"
 
-const {debug, err, fileMethod} = useDebug('api/character/upsert', 'DEBUG')
-
+const {debug, err, fileMethod} = useDebug('api/character/upsert')
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<unknown>>

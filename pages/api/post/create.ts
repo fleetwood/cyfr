@@ -8,7 +8,7 @@ import { logError, todo } from "../../../utils/log"
 import { Post, PrismaPost } from "../../../prisma/prismaContext"
 import useDebug from "../../../hooks/useDebug"
 
-const {debug} = useDebug('api/post/create', 'DEBUG')
+const {debug} = useDebug('api/post/create')
 
 export default async function handle(
   req: NextApiRequest,

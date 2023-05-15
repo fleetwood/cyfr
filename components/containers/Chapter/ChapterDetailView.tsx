@@ -11,7 +11,7 @@ import Spinner from "../../ui/spinner"
 import CharacterList from "../Characters/CharacterList"
 import ChapterFooter from "./ChapterFooter"
 
-const {debug} = useDebug('ChapterDetailComponent', 'DEBUG')
+const {debug} = useDebug('ChapterDetailComponent')
 
 type ChapterDetailComponentProps = {
   bookApi: BookApi

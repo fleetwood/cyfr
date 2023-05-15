@@ -5,7 +5,7 @@ import { ChapterDetail } from "../prisma/prismaContext"
 import { getApi, sendApi } from "../utils/api"
 import useDebug from "./useDebug"
 
-const { debug, info } = useDebug("hooks/useChapterDetail", 'DEBUG')
+const { debug, info } = useDebug("hooks/useChapterDetail")
 
 const useChapterDetail = (chapterId:string) => {
   const qc = useQueryClient()
