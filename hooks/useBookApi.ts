@@ -5,7 +5,7 @@ import { sendApi } from "../utils/api"
 import useBookDetail from "./useBookDetail"
 import useDebug from "./useDebug"
 
-const {debug, info, err} = useDebug('hooks/useBookApi')
+const {debug, info, err} = useDebug('hooks/useBookApi', 'DEBUG')
 
 /**
  * 
@@ -16,7 +16,14 @@ const {debug, info, err} = useDebug('hooks/useBookApi')
  */
 const useBookApi = (props:BookApiProps):BookApi => {
   debug('useBookApi')
-  const {bookDetail, setBookDetail, isLoading, error, invalidate} = useBookDetail(props.bookDetail.id)
+  
+  // the API will get information from the hook, but will store its own state, since
+  // UI is often bound to bookDetail
+  const {bookDetail, isLoading, error, invalidate} = useBookDetail(props.bookDetail.id)
+  const [apiBookDetail, setApiBookDetail] = useState<BookDetail>(props.bookDetail)
+  // override the useBookDetail setter to point to the API instead
+  const setBookDetail = setApiBookDetail
+
   const [genres] = useState<GenreStub[]>(props.genres||[])
 
   const genresToOptions:KeyVal[] = genres.map(g => { return { key: g.title, value: g.id }})
@@ -71,6 +78,21 @@ const useBookApi = (props:BookApiProps):BookApi => {
     }
   }
 
+  const updateGenre = async (genreId:string):Promise<boolean> => {
+    debug('updateGenre', genreId)
+    const bd = {...apiBookDetail, genreId}
+    const upsert = await (await sendApi("book/upsert", bd)).data
+    if (upsert.result) {
+      debug('result', {...upsert.result})
+      invalidate()
+      return true
+    }
+    else {
+      debug('Did not get right result?', upsert)
+      return false
+    }
+  }
+
   /**
    * Be careful with this, as we are using {@link PrismaBook.upsert} for the save operation,
    * so props like {@link BookDetail.title} cannot be *null*. Also, cannot use this for 
@@ -87,16 +109,19 @@ const useBookApi = (props:BookApiProps):BookApi => {
    * @param synopsis: {string|null}
    * @param hook: {string|null}
    */
-  const update = async (props:BookApiUpdate) => {
+  const update = async ({props, autoSave}:BookApiUpdate) => {
     if (!bookDetail) return noBookDetail('update')
-    debug('update',{fiction: bookDetail.fiction, prospect: bookDetail.prospect, active: bookDetail.active,props})
+    debug('update',{fiction: bookDetail.fiction, prospect: bookDetail.prospect, active: bookDetail.active,props, genre: bookDetail.genre})
     const newBook:BookDetail = {
-      ...bookDetail,
+      ...apiBookDetail,
       ...props,
       genreId: props.genreId??bookDetail.genreId,
       title: props.title??bookDetail.title
     }
     setBookDetail(newBook)
+    if (autoSave) (
+      save()
+    )
   }
 
   const share = async (userId:string) => {
@@ -230,6 +255,7 @@ const useBookApi = (props:BookApiProps):BookApi => {
     saveChapter,
     sortChapters,
     update,
+    updateGenre
   } as BookApi
 }
 

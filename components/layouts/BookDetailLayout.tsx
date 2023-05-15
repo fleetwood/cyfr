@@ -1,7 +1,6 @@
 import { useRef, useState } from "react"
 import useBookApi from "../../hooks/useBookApi"
 import { BookDetail, GenreStub, UserStub } from "../../prisma/prismaContext"
-import BookDetailComponent from "../containers/Books/BookDetailView"
 import Footer from "../containers/Footer"
 import LeftColumn from "../containers/LeftColumn"
 import Navbar from "../containers/Navbar"

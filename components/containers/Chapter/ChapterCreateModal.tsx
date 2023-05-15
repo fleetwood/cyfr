@@ -27,9 +27,10 @@ export const OpenChapterModalButton = ({variant='button'}:ChapterModalButtonVari
 
 type CreateChapterModalType = {
   forBook: BookApi
+  onSave?: () => void
 }
 
-const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
+const CreateChapterModal = ({forBook, onSave}:CreateChapterModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
   const {bookDetail, addChapter} = forBook
   const { notify } = useToast()
@@ -50,6 +51,7 @@ const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
     if (result) {
       notify(`${chapterTitle} was added ${bookDetail?.title}!`)
       closeModal()
+      if (onSave) onSave()
     } else {
       notify('Hm, that dint work', 'warning')
     }

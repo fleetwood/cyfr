@@ -57,18 +57,21 @@ export type BookDeleteProps = {
 
 // TODO This does not account for startedAt and completeAt bc @#$@#$ Date -> String
 export type BookApiUpdate = {
-  title?:       string | null
-  active?:      boolean
-  prospect?:    boolean
-  fiction?:     boolean
-  status?:      BookStatus
-  back?:        string | null
-  synopsis?:    string | null
-  hook?:        string | null
-  genreId?:     string | null
+  props: {
+    title?:       string | null
+    active?:      boolean
+    prospect?:    boolean
+    fiction?:     boolean
+    status?:      BookStatus
+    back?:        string | null
+    synopsis?:    string | null
+    hook?:        string | null
+    genreId?:     string | null
+  }
+  autoSave?:      boolean
 }
 
-export type BookApiRelations = 'Chapter' | 'Chapters' | 'Character' | 'Gallery'
+export type BookApiRelations = 'Chapter' | 'Chapters' | 'Character' | 'Gallery' | 'Genre'
 type BookRelationsUpdate = {
   relation      : BookApiRelations
   genre?        : Genre
@@ -121,4 +124,5 @@ export type BookApi = {
   chapters        : Chapter[]
   characters      : Character[]
   categories      : BookCategory[]
+  updateGenre     : (genreId:string) => Promise<boolean>
 }
