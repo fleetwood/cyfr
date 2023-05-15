@@ -3,7 +3,6 @@ import PostFooter from "../../components/containers/Post/PostFooter";
 import MainLayout from "../../components/layouts/MainLayout";
 import Avatar from "../../components/ui/avatar";
 import HtmlContent from "../../components/ui/htmlContent";
-import JsonBlock from "../../components/ui/jsonBlock";
 import { PostDetail, PrismaPost } from "../../prisma/prismaContext";
 import { timeDifference } from '../../utils/helpers';
 
@@ -37,24 +36,17 @@ const PostDetailPage = ({ post }:PostDetailPageProps) => {
         <div className="absolute right-0 pr-4">
           Posted {timeDifference((post.createdat || '').toString())}
         </div>
-        {post.content && 
-        <div className="text-base-content m-8 font-ibarra">
-          <HtmlContent content={post.content} />
-          <JsonBlock data={post} />
-        </div>}
+        <HtmlContent content={post.content!} /> 
+        {post.images?.length > 0 && post.images[0] !== null &&
+          <GalleryPhotoswipe images={post.images} />
+        }
         {/* {post.post_comments && post.post_comments.map(c => (
           <div className="text-base-content m-8 font-ibarra" key={uniqueKey('post-comment',post,c)}>
             {ReactHtmlParser(c.content!)}
           </div>
           ))} */}
-          
-        {post.images?.length > 0 && post.images[0] !== null &&
-          <GalleryPhotoswipe images={post.images} />
-        }
-
-        <div className="flex flex-row justify-around">
-          <PostFooter post={post} />
-        </div>
+         
+        <PostFooter post={post} />
       </div>
     </MainLayout>
   )
