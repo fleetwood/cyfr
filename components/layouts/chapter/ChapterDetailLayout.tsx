@@ -1,21 +1,21 @@
-import { useEffect, useRef, useState } from "react"
-import useBookApi from "../../../hooks/useBookApi"
+import Link from "next/link"
+import { useRef, useState } from "react"
 import useChapterApi from "../../../hooks/useChapterApi"
 import { ChapterLayoutProps } from "../../../pages/book/[bookId]/chapter/[chapterId]"
-import ChapterDetailComponent from "../../containers/Chapter/ChapterDetailView"
+import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
 import Footer from "../../containers/Footer"
 import LeftColumn from "../../containers/LeftColumn"
 import Navbar from "../../containers/Navbar"
 import RightColumn from "../../containers/RightColumn"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
-import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
-import Link from "next/link"
+import useBookDetail from "../../../hooks/useBookDetail"
 
 const ChapterDetailLayout = (props:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const bookApi = useBookApi({bookDetail: props.bookDetail, cyfrUser})
-  const chapterApi = useChapterApi({chapterDetail: props.chapterDetail, cyfrUser})
+  const {bookDetail, chapterDetail} = props
+  const {isAuthor} = useBookDetail(props.bookDetail.id, cyfrUser)
+  const chapterApi = useChapterApi({chapterDetail, cyfrUser})
   //todo: This should be handled by a commune...
   // const isAuthor = (bookDetail?.author`s||[]).filter((a:UserStub) => a.id === cyfrUser?.id).length > 0
   
@@ -25,7 +25,7 @@ const ChapterDetailLayout = (props:ChapterLayoutProps) => {
 
   const handleScroll = (e:any) => {
     const position = mainRef?.current?.scrollTop
-    setScrollActive(current => position && position > 120 || false)
+    setScrollActive(() => position && position > 120 || false)
   }
 
   return (
@@ -45,9 +45,9 @@ const ChapterDetailLayout = (props:ChapterLayoutProps) => {
           {toasts.map((toast) => toast.toast)}
         </div>
         <div className="box-border snap-y min-h-full flex-1">
-          <h3><Link href={`/book/${bookApi.bookDetail?.slug}`}>{bookApi.bookDetail?.title}</Link></h3>
-          <ChapterViewSelector setView={props.setView} view={props.view} showEdit={bookApi.isAuthor} />
-          <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} />
+          <h3><Link href={`/book/${bookDetail?.slug}`}>{bookDetail?.title}</Link></h3>
+          <ChapterViewSelector setView={props.setView} view={props.view} showEdit={isAuthor} />
+          {/* <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} /> */}
         </div>
         <Footer />
       </main>

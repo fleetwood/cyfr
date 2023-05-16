@@ -1,13 +1,24 @@
 
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { BookDetail } from "../prisma/prismaContext"
+import { BookApi, BookDetail, CyfrUser } from "../prisma/prismaContext"
 import { getApi } from "../utils/api"
 import useDebug from "./useDebug"
 
 const { debug, info } = useDebug("BookDetailProvider")
 
-const useBookDetail = (bookId:string) => {
+export type BookDetailHook = {
+  bookDetail:     BookDetail | null
+  setBookDetail:  Dispatch<SetStateAction<BookDetail | null>>
+  isLoading:      boolean
+  error:          any
+  by:             string
+  isAuthor:       boolean
+  api:            any
+  invalidate:     () => void
+}
+
+const useBookDetail = (bookId:string, cyfrUser:CyfrUser) => {
   const qc = useQueryClient()
   const getBookDetail = async () => {
     if (!bookId) return null
@@ -18,6 +29,10 @@ const useBookDetail = (bookId:string) => {
   const [bookDetail, setBookDetail] = useState<BookDetail|null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [error, setError] = useState<any>()
+
+  const by = (bookDetail?.authors??[]).flatMap(author => author.name).join(' and ')
+  //todo: This should be handled by a commune...
+  const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
   const invalidate = () => {
     info('invalidate',["bookDetail", bookId])
@@ -47,8 +62,10 @@ const useBookDetail = (bookId:string) => {
     setBookDetail,
     isLoading,
     error,
-    invalidate
-  }
+    invalidate,
+    by, 
+    isAuthor
+  } as BookDetailHook
 }
 
 export default useBookDetail

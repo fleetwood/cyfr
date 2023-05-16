@@ -25,5 +25,6 @@ if (__prod__) {
   prisma = global.prisma
 }
 
+export * from './api'
 export * from "./types"
 export * from './entities'

@@ -1,22 +1,21 @@
+import Link from "next/link"
 import { useRef, useState } from "react"
-import useBookApi from "../../../hooks/useBookApi"
 import useChapterApi from "../../../hooks/useChapterApi"
 import { ChapterLayoutProps } from "../../../pages/book/[bookId]/chapter/[chapterId]"
 import ChapterDetailComponent from "../../containers/Chapter/ChapterDetailView"
-import Footer from "../../containers/Footer"
+import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
 import LeftColumn from "../../containers/LeftColumn"
 import Navbar from "../../containers/Navbar"
-import RightColumn from "../../containers/RightColumn"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
-import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
 import { HamburgerIcon } from "../../ui/icons"
-import Link from "next/link"
+import useBookDetail from "../../../hooks/useBookDetail"
 
 const ChapterReadLayout = (props:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const bookApi = useBookApi({bookDetail: props.bookDetail, cyfrUser})
-  const chapterApi = useChapterApi({chapterDetail: props.chapterDetail, cyfrUser})
+  const {bookDetail, chapterDetail} = props
+  const {isAuthor} = useBookDetail(props.bookDetail.id, cyfrUser)
+  const chapterApi = useChapterApi({chapterDetail, cyfrUser})
   //todo: This should be handled by a commune...
   // const isAuthor = (bookDetail?.author`s||[]).filter((a:UserStub) => a.id === cyfrUser?.id).length > 0
   
@@ -49,15 +48,15 @@ const ChapterReadLayout = (props:ChapterLayoutProps) => {
             />
 
             <div className="absolute right-0">
-                <ChapterViewSelector setView={props.setView} view={props.view} showEdit={bookApi.isAuthor} />
+                <ChapterViewSelector setView={props.setView} view={props.view} showEdit={isAuthor} />
             </div>
 
             <div className="toast toast-top toast-center w-4/6 mt-12 z-10">
               {toasts.map((toast) => toast.toast)}
             </div>
             <div className="box-border snap-y min-h-full">
-              <h3><Link href={`/book/${bookApi.bookDetail?.slug}`}>{bookApi.bookDetail?.title}</Link></h3>
-              <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} />
+              <h3><Link href={`/book/${bookDetail?.slug}`}>{bookDetail?.title}</Link></h3>
+              {/* <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} /> */}
             </div>
           </main>
         </div>

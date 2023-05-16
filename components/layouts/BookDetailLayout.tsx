@@ -1,6 +1,7 @@
 import { useRef, useState } from "react"
-import useBookApi from "../../hooks/useBookApi"
-import { BookDetail, GenreStub, UserStub } from "../../prisma/prismaContext"
+import useBookDetail from "../../hooks/useBookDetail"
+import { GenreStub } from "../../prisma/prismaContext"
+import BookDetailView from "../containers/Books/BookDetailView"
 import Footer from "../containers/Footer"
 import LeftColumn from "../containers/LeftColumn"
 import Navbar from "../containers/Navbar"
@@ -8,21 +9,15 @@ import RightColumn from "../containers/RightColumn"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
 import { useToast } from "../context/ToastContextProvider"
 import Section from "../ui/section"
-import BookDetailView from "../containers/Books/BookDetailView"
 
 export type BookDetailLayoutProps = {
-  bookDetail: BookDetail
-  genres:     GenreStub[]
+  bookId: string
+  genres: GenreStub[]
 }
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
-
   const [cyfrUser] = useCyfrUserContext()
-  const bookApi = useBookApi({...props, cyfrUser})
-  const {bookDetail} = bookApi
-  const by = (bookDetail?.authors||[]).flatMap((author:UserStub) => author.name).join(" and ");
-  //todo: This should be handled by a commune...
-  // const isAuthor = (bookDetail?.author`s||[]).filter((a:UserStub) => a.id === cyfrUser?.id).length > 0
+  const {bookDetail, setBookDetail, isLoading, error, invalidate, by, isAuthor, api} = useBookDetail(props.bookId, cyfrUser)
   
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -54,7 +49,7 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
           sectionTitle={bookDetail?.title}
           subTitle={bookDetail?.authors?.flatMap(a => a.name).join(' and ')}
         >
-          <BookDetailView bookApi={bookApi} />
+          <BookDetailView bookDetailHook={{bookDetail, setBookDetail, isLoading, error, invalidate, by, isAuthor, api}} />
         </Section>
         <Footer />
       </main>

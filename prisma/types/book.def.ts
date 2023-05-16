@@ -1,7 +1,4 @@
-import { Dispatch, SetStateAction } from "react"
-import { Book, BookCategory, BookStatus, Chapter, ChapterStub, Character, CharacterStub, CyfrUser, Follow, Gallery, GalleryStub, Genre, GenreStub, Image, Like, Share, User, UserFollow, UserStub } from "../prismaContext"
-import { KeyVal } from "../../types/props"
-import useBookApi from "../../hooks/useBookApi"
+import { Book, BookCategory, BookStatus, Chapter, ChapterStub, Character, CharacterStub, CyfrUser, Gallery, Genre, Image, User, UserFollow, UserStub } from "../prismaContext"
 
 // TODO Create/Verify view in db
 export type BookStub = Book & {
@@ -80,49 +77,4 @@ type BookRelationsUpdate = {
   characters?   : Character[] 
   categories?   : BookCategory[] 
   cover?        : Image
-}
-
-/**
- * @property bookDetail {@link BookDetail}
- * @property genres {@link GenreStub}[]
- * @property cyfrUser? {@link CyfrUser}
- */
-export type BookApiProps = {
-  bookDetail: BookDetail
-  genres?:    GenreStub[]
-  cyfrUser?:  CyfrUser
-}
-
-
-/**
- * 
- * @description Type for the {@link useBookApi} hook. 
- * @export
- * @typedef {BookApi}
- */
-export type BookApi = {
-  by              : string
-  isAuthor        : boolean
-  isLoading       : boolean
-  error           : any
-  follow          : (followerId: string, isFan?: boolean) => Promise<boolean>
-  like            : (userId: string) => Promise<boolean>
-  share           : (userId: string) => Promise<boolean>
-  save            : () => Promise<boolean>
-  notEmpty        : (arr: Array<any> | undefined | null) => boolean
-  cleanArray      : (arr: Array<any> | undefined | null) => Array<any>
-  bookDetail      : BookDetail | null
-  setBookDetail   : Dispatch<SetStateAction<BookDetail | null>>
-  genres          : GenreStub[]
-  genresToOptions : KeyVal[]
-  update          : (props: BookApiUpdate) => Promise<boolean | undefined>
-  addChapter      : (title: string, order: number) => Promise<any>
-  addGallery      : (galleryId: string) => Promise<any>
-  invalidate      : () => void
-  saveChapter     : (chapter:Chapter) => Promise<boolean>
-  sortChapters    : (chapter:Chapter) => Promise<boolean>
-  chapters        : Chapter[]
-  characters      : Character[]
-  categories      : BookCategory[]
-  updateGenre     : (genreId:string) => Promise<boolean>
 }

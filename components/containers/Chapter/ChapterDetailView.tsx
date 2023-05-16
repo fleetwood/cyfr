@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import ReactHtmlParser from "react-html-parser"
 import useDebug from "../../../hooks/useDebug"
 import { ChapterViews } from '../../../pages/book/[bookId]/chapter/[chapterId]'
-import { BookApi, ChapterApi } from '../../../prisma/prismaContext'
+import { ChapterApi } from '../../../prisma/prismaContext'
 import { useToast } from "../../context/ToastContextProvider"
 import { TailwindInput } from '../../forms'
 import WritingFocusedEditor from "../../forms/WritingFocusedEditor"
@@ -14,7 +14,7 @@ import ChapterFooter from "./ChapterFooter"
 const {debug} = useDebug('ChapterDetailComponent')
 
 type ChapterDetailComponentProps = {
-  bookApi: BookApi
+  bookApi: any
   chapterApi: ChapterApi
   view?: ChapterViews
 }

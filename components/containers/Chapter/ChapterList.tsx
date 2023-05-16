@@ -2,11 +2,12 @@ import React, { useState, useRef } from "react";
 import { BookApi, Chapter } from "../../../prisma/prismaContext";
 import useDebug from "../../../hooks/useDebug";
 import Spinner from "../../ui/spinner";
+import { BookDetailHook } from "../../../hooks/useBookDetail";
 
 type ChapterListProps = {
-    forBook :   BookApi
-    onSort? :   (chapter:Chapter) => void
-    onSelect?:  (chapter:Chapter) => void
+    bookDetailHook: BookDetailHook
+    onSort? :       (chapter:Chapter) => void
+    onSelect?:      (chapter:Chapter) => void
 }
 
 const {debug} = useDebug('containers/Chapter/ChapterList')
@@ -17,8 +18,8 @@ type DragProps = {
 }
 
 
-const ChapterList = ({forBook, onSort, onSelect}:ChapterListProps) => {
-    const [bookChapters, setBookChapters] = useState<Chapter[]>(forBook.chapters)
+const ChapterList = ({bookDetailHook, onSort, onSelect}:ChapterListProps) => {
+    const [bookChapters, setBookChapters] = useState<Chapter[]>(bookDetailHook.bookDetail?.chapters??[])
     const [dragging, setDragging] = useState<boolean>(false)
     const dragItem = useRef<any>(null)
     const dragOverItem = useRef<any>(null)
@@ -37,7 +38,7 @@ const ChapterList = ({forBook, onSort, onSelect}:ChapterListProps) => {
     const handleSort = async (e:React.DragEvent<HTMLDivElement>,chapter:Chapter) => {
       showSpinnerModal(true)
       const sortChapter = {...chapter, order: dragOverItem.current}
-      await forBook.sortChapters(sortChapter)
+      await bookDetailHook.api.sortChapters(sortChapter)
       dragItem.current = null
       dragOverItem.current = null
       setDragging(false)

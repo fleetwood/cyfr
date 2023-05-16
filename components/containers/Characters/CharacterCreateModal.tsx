@@ -9,6 +9,7 @@ import EZButton from '../../ui/ezButton'
 import { BookApi, Character } from '../../../prisma/prismaContext'
 import { sendApi } from '../../../utils/api'
 import OpenModal from '../../ui/openModal'
+import { BookDetailHook } from '../../../hooks/useBookDetail'
 const {debug} = useDebug("components/containers/Character/CreateCharacterModal")
 
 const createCharacterModal = 'createCharacterModal'
@@ -17,12 +18,12 @@ export const OpenCharacterModalButton = () => <OpenModal htmlFor={createCharacte
 export const OpenCharacterModalPlus = () => <OpenModal htmlFor={createCharacterModal} variant='plus' />
 
 type CreateCharacterModalType = {
-  forBook: BookApi
+  bookDetailHook: BookDetailHook
 }
 
-const CreateCharacterModal = ({forBook}:CreateCharacterModalType) => {
+const CreateCharacterModal = ({bookDetailHook}:CreateCharacterModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
-  const {bookDetail} = forBook
+  const {bookDetail} = bookDetailHook
   const { notify } = useToast()
   const container = useRef<HTMLDivElement>(null)
 

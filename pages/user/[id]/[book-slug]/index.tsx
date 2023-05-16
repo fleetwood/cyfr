@@ -10,11 +10,10 @@ export async function getServerSideProps(context: any) {
     props: {
       bookDetail,
       genres
-    } as BookDetailLayoutProps,
+    }
   }
 }
 
 const BookByID = (props: BookDetailLayoutProps) => BookDetailLayout(props)
 
 export default BookByID
-

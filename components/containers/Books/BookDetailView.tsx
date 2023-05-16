@@ -1,65 +1,39 @@
+import { Tab } from "@headlessui/react"
 import { useRouter } from "next/router"
 import { Fragment, useState } from "react"
+import { BookDetailHook } from "../../../hooks/useBookDetail"
 import useDebug from "../../../hooks/useDebug"
-import { BookApi, BookCategory, BookStatus, Chapter, Character, UserStub } from "../../../prisma/prismaContext"
-import { KeyVal } from "../../../types/props"
-import {
-  uniqueKey,
-  uuid,
-  valToLabel,
-  ymd
-} from "../../../utils/helpers"
+import ErrorPage from "../../../pages/404"
+import { BookDetail, Chapter } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
-import { InlineTextarea, TailwindSelectInput } from "../../forms"
-import Avatar from "../../ui/avatar"
-import EZButton from "../../ui/ezButton"
+import { InlineTextarea } from "../../forms"
+import HtmlContent from "../../ui/htmlContent"
 import {
-  FireIcon,
-  FollowIcon,
-  HeartIcon,
-  PhotoIcon,
-  QuestionMarkIcon,
-  ReplyIcon,
-  ShareIcon
+  PhotoIcon
 } from "../../ui/icons"
-import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
 import Spinner from "../../ui/spinner"
-import Toggler from "../../ui/toggler"
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
 import ChapterList from "../Chapter/ChapterList"
 import CreateCharacterModal, { OpenCharacterModalPlus } from "../Characters/CharacterCreateModal"
 import CharacterList from "../Characters/CharacterList"
 import GalleryCreateModal, { OpenGalleryModalPlus } from "../Gallery/GalleryCreateModal"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
-import BookCover, { BookCoverVariant } from "./BookCover"
-import HtmlContent from "../../ui/htmlContent"
-import ErrorPage from "../../../pages/404"
 import BookDetailHeader from "./BookDetailHeader"
-import { Tab, Transition } from "@headlessui/react"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
   "DEBUG"
 )
 
-/**
- * Description placeholder
- * @date 5/1/2023 - 12:38:57 PM
- *
- * @typedef {BookDetailComponentProps}
- * @param {bookApi:BookApi} {@link BookApi}
- */
-type BookDetailComponentProps = {
-  bookApi: BookApi
+type BookDetailViewProps = {
+  bookDetailHook: BookDetailHook
 }
 
-const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
+const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, isLoading, error, invalidate, isAuthor} = bookApi
-  const [saveReady, setSaveReady] = useState(false)
-  const router = useRouter()
+  const {bookDetail, setBookDetail, isLoading, error, by, isAuthor, invalidate} = bookDetailHook
 
   const [activeTab, setActiveTab] = useState(0)
   const selected = (tab:number) => `cursor-pointer hover:text-secondary transition-colors duration-300 ${activeTab === tab ? 'h-subtitle' : 'text-info'}`
@@ -67,7 +41,6 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
 
   if (isLoading) return <Spinner />
 
-  //TODO create an error page
   if (error) return <ErrorPage />
 
   const onGalleryUpsert = async (galleryId?:string) => {
@@ -76,38 +49,37 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
       notify('Hm that dint work', 'info')
       return
     }
-    const added = await bookApi.addGallery(galleryId)
-    if (added) {
-      notify(`You created a gallery ${bookDetail?.title}.`)
-    }
+    // const added = await bookApi.addGallery(galleryId)
+    // if (added) {
+    //   notify(`You created a gallery ${bookDetail?.title}.`)
+    // }
   }
 
   const updatePanel = (html?: string | null) => {
-    bookApi.update({ props: {back: html?.toString()}, autoSave: true })
-    setSaveReady(true)
+    // bookApi.update({ props: {back: html?.toString()}, autoSave: true })
+    // setSaveReady(true)
   }
 
   const updateSynopsis = (html?: string | null) => {
-    bookApi.update({props:{ synopsis: html?.toString()}, autoSave: true})
-    setSaveReady(true)
+    // bookApi.update({props:{ synopsis: html?.toString()}, autoSave: true})
+    // setSaveReady(true)
   }
 
   const editChapter =(chapter:Chapter) => {
-    const v = bookApi.isAuthor ? '?v=edit' : ''
-    //TODO: Don't leave this page with unsaved changes
-    //TODO: add slug to chapter as a compound key
-    router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
+    // const v = bookApi.isAuthor ? '?v=edit' : ''
+    // //TODO: Don't leave this page with unsaved changes
+    // //TODO: add slug to chapter as a compound key
+    // router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
   }
 
   const onSave = () => {
-    bookApi.save()
-    invalidate()
+    // bookApi.save()
+    // invalidate()
   }
 
   return bookDetail ? (
-
     <div>
-      <BookDetailHeader bookApi={bookApi} />
+      <BookDetailHeader bookDetailHook={bookDetailHook} />
 
         <div>
           <Tab.Group vertical onChange={setActiveTab}>
@@ -124,12 +96,12 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
                 <div className="my-4 font-ibarra">
                     {isAuthor ? (
                       <InlineTextarea
-                        content={bookDetail.back}
+                        content={bookDetail?.back}
                         setContent={updatePanel}
-                        onSave={bookApi.save}
+                        onSave={() => notify('This was changed to bookDetailHook')}
                       />
                     ) : 
-                      <HtmlContent content={bookDetail.back||''}/>
+                      <HtmlContent content={bookDetail?.back||''}/>
                     }
                 </div>
               </Tab.Panel>
@@ -143,7 +115,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
                       <InlineTextarea
                         content={bookDetail.synopsis}
                         setContent={updateSynopsis}
-                        onSave={bookApi.save}
+                        onSave={() => notify('This was changed to bookDetailHook')}
                       />
                     ) : (
                       <HtmlContent content={bookDetail.synopsis!} />
@@ -156,9 +128,9 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
               <Tab.Panel>
                 <div className="my-4">
                   <h3>Chapters {isAuthor && <OpenChapterModalButton variant="plus" />}</h3>
-                    {isAuthor && <CreateChapterModal forBook={bookApi} onSave={onSave} />}
+                    {isAuthor && <CreateChapterModal bookDetailHook={bookDetailHook} onSave={onSave} />}
                   <div className="flex space-x-4">
-                    <ChapterList forBook={bookApi} onSelect={editChapter} />
+                    <ChapterList bookDetailHook={bookDetailHook} onSelect={editChapter} />
                   </div>
                 </div>
               </Tab.Panel>
@@ -167,9 +139,9 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
               <Tab.Panel>                
                 <div className="my-4">
                   <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
-                    {isAuthor && <CreateCharacterModal forBook={bookApi} />}
+                    {isAuthor && <CreateCharacterModal bookDetailHook={bookDetailHook} />}
                     <div className="flex space-x-4">
-                    <CharacterList characters={bookApi.bookDetail?.characters} />
+                    <CharacterList characters={bookDetail?.characters} />
                   </div>
                 </div>
 
@@ -190,11 +162,10 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
             </Tab.Panels>
           </Tab.Group>
         </div>
-
     </div>
     
   )
   : <ErrorPage />
 }
 
-export default BookDetailComponent
+export default BookDetailView

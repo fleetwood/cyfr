@@ -1,6 +1,7 @@
+import { BookDetailHook } from "../../../hooks/useBookDetail"
 import useDebug from "../../../hooks/useDebug"
 import ErrorPage from "../../../pages/404"
-import { BookApi, BookCategory, BookStatus } from "../../../prisma/prismaContext"
+import { BookCategory } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import {
   uuid,
@@ -52,13 +53,14 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 )}
 
 type BookDetailHeaderProps = {
-  bookApi:  BookApi
+  bookDetailHook:  BookDetailHook
 }
 
-const BookDetailHeader = ({bookApi}:BookDetailHeaderProps) => {
+const BookDetailHeader = ({bookDetailHook}:BookDetailHeaderProps) => {
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, isLoading, error, invalidate, isAuthor} = bookApi
+  const {bookDetail, isLoading, error, invalidate, isAuthor} = bookDetailHook
+  // const {isAuthor, by} = api
   // const router = useRouter()
 
   const statusOptions: KeyVal[] = [
@@ -78,11 +80,11 @@ const BookDetailHeader = ({bookApi}:BookDetailHeaderProps) => {
       loginRequired()
       return null
     }
-    const result = await bookApi.follow(cyfrUser.id)
-    if (result) {
-      notify(`You are now following ${bookDetail?.title}. Nice!`)
-      invalidate()
-    }
+    // const result = await bookApi.follow(cyfrUser.id)
+    // if (result) {
+    //   notify(`You are now following ${bookDetail?.title}. Nice!`)
+    //   invalidate()
+    // }
   }
 
   const onShare = async () => {
@@ -90,11 +92,11 @@ const BookDetailHeader = ({bookApi}:BookDetailHeaderProps) => {
       loginRequired()
       return null
     }
-    const result = await bookApi.share(cyfrUser.id)
-    if (result) {
-      notify(`You shared ${bookDetail?.title}!`)
-      invalidate()
-    }
+    // const result = await bookApi.share(cyfrUser.id)
+    // if (result) {
+    //   notify(`You shared ${bookDetail?.title}!`)
+    //   invalidate()
+    // }
   }
 
   const onLike = async () => {
@@ -102,35 +104,35 @@ const BookDetailHeader = ({bookApi}:BookDetailHeaderProps) => {
       loginRequired()
       return null
     }
-    const result = await bookApi.like(cyfrUser.id)
-    if (result) {
-      notify(`You liked ${bookDetail?.title}.`)
-      invalidate()
-    }
+    // const result = await bookApi.like(cyfrUser.id)
+    // if (result) {
+    //   notify(`You liked ${bookDetail?.title}.`)
+    //   invalidate()
+    // }
   }
 
   const updateHook = (content:string) => {
-    bookApi.update({ props: { hook: content.toString() }, autoSave: true})
+    // bookApi.update({ props: { hook: content.toString() }, autoSave: true})
   }
 
   const updateActive = (value: boolean) => {
-    bookApi.update({ props: { active: value }, autoSave: true})
+    // bookApi.update({ props: { active: value }, autoSave: true})
   }
 
   const updateProspect = (value: boolean) => {
-    bookApi.update({props: { prospect: value }, autoSave: true})
+    // bookApi.update({props: { prospect: value }, autoSave: true})
   }
 
   const updateFiction = (value: boolean) => {
-    bookApi.update({props: { fiction: value }, autoSave: true})
+    // bookApi.update({props: { fiction: value }, autoSave: true})
   }
 
   const updateStatus = (value: string) => {
-    bookApi.update({props: { status: value as BookStatus }, autoSave: true})
+    // bookApi.update({props: { status: value as BookStatus }, autoSave: true})
   }
 
   const updateGenre = (value: string) => {
-    bookApi.updateGenre(value)
+    // bookApi.updateGenre(value)
   }
 
   return bookDetail ? (
@@ -152,11 +154,11 @@ const BookDetailHeader = ({bookApi}:BookDetailHeaderProps) => {
         <div className="flex">
           {isAuthor ? (
             <div>
-              <label className="font-semibold w-[50%]">Genre</label>
+              <label className="font-semibold w-[50%]">Genre (TODO)</label>
               <TailwindSelectInput
                 value={bookDetail?.genre.title}
                 setValue={updateGenre}
-                options={bookApi.genresToOptions}
+                options={[]}
               />
             </div>
           ) : (
@@ -173,7 +175,7 @@ const BookDetailHeader = ({bookApi}:BookDetailHeaderProps) => {
                   TODO: Create categories upsert. Don't forget to include
                   existing categories, and the ability to create new ones.
                 </p>
-                {bookApi.categories.map((cat:BookCategory) => (
+                {bookDetail.categories?.filter(c => c!==null).map((cat:BookCategory) => (
                     <span className="italic mr-2" key={uuid()}>
                       {cat.title}
                     </span>
@@ -181,7 +183,7 @@ const BookDetailHeader = ({bookApi}:BookDetailHeaderProps) => {
               </div>
             </div>
           ) : (
-            bookApi.categories.map((cat:BookCategory) => (
+            bookDetail.categories?.filter(c => c!==null).map((cat:BookCategory) => (
               <span className="italic mr-2" key={uuid()}>
                 {cat.title}
               </span>
@@ -194,7 +196,7 @@ const BookDetailHeader = ({bookApi}:BookDetailHeaderProps) => {
             <InlineTextarea
               content={bookDetail.hook}
               setContent={updateHook}
-              onSave={bookApi.save}
+              onSave={() => notify('This was changed from bookApi to bookDetail')}
             />
           ) : (
             <HtmlContent content={bookDetail.hook??''} />

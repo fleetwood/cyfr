@@ -6,7 +6,8 @@ import { LoggedIn } from '../../ui/toasty'
 import Spinner from '../../ui/spinner'
 import { TailwindInput } from '../../forms'
 import EZButton from '../../ui/ezButton'
-import { BookApi, Chapter } from '../../../prisma/prismaContext'
+import { Chapter } from '../../../prisma/prismaContext'
+import { BookDetailHook } from '../../../hooks/useBookDetail'
 const {debug} = useDebug("components/containers/Chapter/CreateChapterModal")
 
 const createChapterModal = 'createChapterModal'
@@ -26,18 +27,18 @@ export const OpenChapterModalButton = ({variant='button'}:ChapterModalButtonVari
 )
 
 type CreateChapterModalType = {
-  forBook: BookApi
-  onSave?: () => void
+  bookDetailHook: BookDetailHook
+  onSave?:        () => void
 }
 
-const CreateChapterModal = ({forBook, onSave}:CreateChapterModalType) => {
+const CreateChapterModal = ({bookDetailHook, onSave}:CreateChapterModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
-  const {bookDetail, addChapter} = forBook
+  const {bookDetail} = bookDetailHook
   const { notify } = useToast()
   const [valid, setIsValid] = useState<boolean>(false)
   const container = useRef<HTMLDivElement>(null)
 
-  const nextOrder = forBook.chapters.length+1
+  const nextOrder = (bookDetail?.chapters??[]).length+1
   const [chapterTitle, setChapterTitle] = useState<string | null>(null)
   const [chapterOrder, setChapterOrder] = useState<number>(nextOrder)
 
@@ -47,7 +48,7 @@ const CreateChapterModal = ({forBook, onSave}:CreateChapterModalType) => {
       debug(`handleSubmit: sth is disabled....`, { cyfrUser, chapterTitle })
       return
     }
-    const result = await addChapter(chapterTitle!, chapterOrder)
+    const result = false; // await addChapter(chapterTitle!, chapterOrder)
     if (result) {
       notify(`${chapterTitle} was added ${bookDetail?.title}!`)
       closeModal()
@@ -87,7 +88,7 @@ const CreateChapterModal = ({forBook, onSave}:CreateChapterModalType) => {
                   <span className='text-primary font-bold'>Order</span>
                 </label>
                 <div className='flex'>
-                  {forBook.chapters.map((c:Chapter,i:number) => (
+                  {(bookDetail?.chapters??[]).map((c:Chapter,i:number) => (
                   <div className={`btn btn-sm btn-circle ${i+1===chapterOrder ? 'btn-primary' :''}`} onClick={() => setChapterOrder(i+1)} key={c.id}>{i+1}</div>
                   ))}
                   <div className={`btn btn-sm btn-circle ${chapterOrder === nextOrder ? 'btn-primary' :''}}`} onClick={() => setChapterOrder(nextOrder)}>{nextOrder}</div>
