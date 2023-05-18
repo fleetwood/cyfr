@@ -3,7 +3,7 @@ import useDebug from "../../../../hooks/useDebug"
 import { ResponseResult } from "../../../../types/response"
 import { PrismaUser } from "../../../../prisma/prismaContext"
 
-const {debug, stringify, fileMethod} = useDebug('api/user/stub/[id]', 'DEBUG')
+const {debug, stringify, fileMethod} = useDebug('api/user/stub/[id]')
 
 export default async function handle(
   req: NextApiRequest,

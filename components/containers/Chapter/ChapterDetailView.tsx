@@ -11,6 +11,7 @@ import Spinner from "../../ui/spinner"
 import CharacterList from "../Characters/CharacterList"
 import ChapterFooter from "./ChapterFooter"
 import { ChapterDetailHook } from "../../../hooks/useChapterDetail"
+import ErrorPage from "../../../pages/404"
 
 const {debug} = useDebug('ChapterDetailComponent')
 
@@ -48,7 +49,7 @@ const ChapterDetailComponent = ({chapterDetailHook, view}:ChapterDetailComponent
     }
   }
 
-  return (
+  return error ? <ErrorPage /> : (
     <div>
       {isLoading && 
         <Spinner />
@@ -56,14 +57,14 @@ const ChapterDetailComponent = ({chapterDetailHook, view}:ChapterDetailComponent
 
       {(detailView || readView) && chapterDetail &&
         <div className='font-ibarra'>
-          <h2>{chapterDetail?.title}</h2>
+          <h2>{chapterDetail.title}</h2>
           <div>
             <h4>Characters</h4>
-            <CharacterList characters={chapterDetail?.characters} />
+            <CharacterList characters={chapterDetail.characters} />
           </div>
           {ReactHtmlParser(chapterDetail.content??'')}
           <div>
-            <ChapterFooter bookDetail={bookDetail} chapters={bookDetail!.chapters??[]} currentChapter={chapterDetail} />
+            <ChapterFooter bookDetail={bookDetail} chapters={bookDetail.chapters??[]} currentChapter={chapterDetail} />
           </div>
         </div>
       }

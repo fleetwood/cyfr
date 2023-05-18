@@ -8,10 +8,14 @@ import Navbar from "../../containers/Navbar"
 import RightColumn from "../../containers/RightColumn"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
+import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
+import useDebug from "../../../hooks/useDebug"
 
-const ChapterDetailLayout = (props:ChapterLayoutProps) => {
+const {debug, jsonBlock} = useDebug('ChapterDetailLayout')
+
+const ChapterDetailLayout = ({chapterDetailHook, genres, view, setView}:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, chapterDetail} = props.chapterDetailHook
+  const { bookDetail } = chapterDetailHook
   
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -38,11 +42,13 @@ const ChapterDetailLayout = (props:ChapterLayoutProps) => {
         <div className="toast toast-top toast-center w-4/6 mt-10 z-12 p-0">
           {toasts.map((toast) => toast.toast)}
         </div>
-        <div className="box-border snap-y min-h-full flex-1">
-          <h3><Link href={`/book/${bookDetail?.slug}`}>{bookDetail?.title}</Link></h3>
-          <ChapterViewSelector setView={props.setView} view={props.view} />
-          {/* <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} /> */}
-        </div>
+          {bookDetail && chapterDetailHook && 
+          <div className="box-border snap-y min-h-full flex-1">
+            <h3><Link href={`/book/${bookDetail?.slug}`}>{bookDetail?.title}</Link></h3>
+            <ChapterViewSelector setView={setView} view={view} />
+            <ChapterDetailView chapterDetailHook={chapterDetailHook} view={view} />
+          </div>
+          }
         <Footer />
       </main>
       <div className="w-fixed w-full flex-shrink flex-grow-0 px-2">

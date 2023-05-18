@@ -14,9 +14,9 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<unknown>>
 ) {
   try {
-    const {id} = req.body.body
-    debug('handle',{id})
-    const result = await PrismaChapter.detail(id)
+    const {chapterId} = req.body.body
+    debug('handle',{chapterId})
+    const result = await PrismaChapter.detail(chapterId)
     if (result) {
       debug('detail', result)
       res.status(200).json({ result })

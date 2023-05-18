@@ -46,7 +46,7 @@ const ChapterList = ({bookDetailHook, onSort, onSelect}:ChapterListProps) => {
     }
 
     const getStyles = (index:number) => {
-        const style = `text-primary-focus bg-opacity-20 bg-neutral text-neutral-content border border-primary rounded-md italic`
+        const style = `text-primary-focus bg-opacity-20 bg-neutral hover:bg-primary hover:text-primary-content transition-colors duration-200 text-neutral-content border border-primary rounded-md italic`
         const over = `mt-10`
         // @ts-ignore
         return (dragItem.current === index) ? style : dragOverItem.current === index ? over : ''
@@ -66,7 +66,7 @@ const ChapterList = ({bookDetailHook, onSort, onSelect}:ChapterListProps) => {
             >
               <div className="flex space-x-2">
                 <span className="text-xs text-primary btn btn-circle btn-sm cursor-move ">{index+1}</span>
-                <span onClick={() => onSelect ? onSelect(chapter) : {}}>{chapter.title}</span>
+                <span className="cursor-pointer" onClick={() => onSelect ? onSelect(chapter) : {}}>{chapter.title}</span>
               </div>
             </div>
           );

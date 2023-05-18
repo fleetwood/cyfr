@@ -17,6 +17,8 @@ import CharacterList from "../Characters/CharacterList"
 import GalleryCreateModal, { OpenGalleryModalPlus } from "../Gallery/GalleryCreateModal"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import BookDetailHeader from "./BookDetailHeader"
+import router, { Router } from "next/router"
+import next from "next/types"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -98,10 +100,10 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
   }
 
   const editChapter =(chapter:Chapter) => {
-    // const v = bookApi.isAuthor ? '?v=edit' : ''
-    // //TODO: Don't leave this page with unsaved changes
-    // //TODO: add slug to chapter as a compound key
-    // router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
+    const v = isAuthor ? '?v=edit' : ''
+    //TODO: Don't leave this page with unsaved changes
+    //TODO: add slug to chapter as a compound key
+    router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
   }
 
   const onSave = () => {

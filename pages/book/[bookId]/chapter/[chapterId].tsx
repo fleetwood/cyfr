@@ -9,22 +9,6 @@ import useCyfrUser from "../../../../hooks/useCyfrUser"
 
 const {debug, info} = useDebug('pages/book/[bookId]/chapter/[chapterId]')
 
-export async function getServerSideProps(context: any) {
-  const {bookId, chapterId} = context.params
-  const {v} = context.query
-  const bookDetail = await PrismaBook.detail(bookId)
-  const genres = await PrismaGenre.stubs()
-
-  return {
-    props: {
-      bookDetail,
-      chapterId,
-      genres,
-      v
-    }
-  }
-}
-
 export type ChapterServersideProps = {
   bookDetail: BookDetail
   chapterId:  string
@@ -44,6 +28,22 @@ export enum ChapterViews {
   EDIT,
   READ,
   REVIEW
+}
+
+export async function getServerSideProps(context: any) {
+  const {bookId, chapterId} = context.params
+  const {v} = context.query
+  const bookDetail = await PrismaBook.detail(bookId)
+  const genres = await PrismaGenre.stubs()
+
+  return {
+    props: {
+      bookDetail,
+      chapterId,
+      genres,
+      v
+    }
+  }
 }
 
 const ChapterDetailPage = ({bookDetail, chapterId, genres, v}:ChapterServersideProps) => {

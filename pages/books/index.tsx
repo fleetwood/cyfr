@@ -59,7 +59,6 @@ const BooksPage = ({genres}: BooksPageProps) => {
                 <BookCover book={book} key={uniqueKey(book)} />
             ))}
           </div>
-          {/* {jsonBlock(visibleGenres)} */}
         </div>
     </MainLayout>
   )

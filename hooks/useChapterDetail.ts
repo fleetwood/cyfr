@@ -1,17 +1,17 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import ChapterApi from "../prisma/api/chapter"
-import { BookDetail, ChapterDetail, ChapterDetailApi, ChapterDetailState, ChapterRelations, CyfrUser } from "../prisma/prismaContext"
-import { sendApi } from "../utils/api"
+import { BookDetail, ChapterDetail, ChapterDetailApi, ChapterDetailState, CyfrUser } from "../prisma/prismaContext"
+import { RocketQuery } from "../types/props"
+import { getApi, sendApi } from "../utils/api"
 import { now } from "../utils/helpers"
 import useDebug from "./useDebug"
-import { RocketQuery } from "../types/props"
 
 const { debug, info } = useDebug("hooks/useChapterDetail")
 
 export type ChapterDetailHook = {
-  bookDetail?:      BookDetail
-  chapterDetail?:   ChapterDetail|null
+  bookDetail:      BookDetail
+  chapterDetail:   ChapterDetail|null
   query:            RocketQuery
   api:              ChapterDetailApi
   state:            ChapterDetailState
@@ -24,23 +24,15 @@ type ChapterDetailProps = {
 }
 
 const useChapterDetail = ({bookDetail, chapterId, cyfrUser}:ChapterDetailProps):ChapterDetailHook => {
+  debug('useChapterDetail', {book: bookDetail.title, chapterId, cyfrUser: cyfrUser?.name??'Not logged in'})
   const qc = useQueryClient()
-  const getChapterDetail = async () => {
-    if (!chapterId) return null
-    const chapterDetail = await sendApi(`chapter/detail`,{id:chapterId})
-    if (chapterDetail.data) {
-      return (chapterDetail.data as ChapterDetail)
-    }
-    return null
-  }
-  
   const [chapterDetail, setChapterDetail] = useState<ChapterDetail|null>(null)
 
   // // STATE
   // id: string;
   const id = chapterDetail?.id
   // createdAt: Date;
-  const createdAt = chapterDetail?.createdAt.toDateString()??''
+  const createdAt = chapterDetail?.createdAt ?? ''
   // updatedAt: Date;
   const [updatedAt, setUpdatedAt] = useState<string>(now.toString())
   // active: boolean;
@@ -69,6 +61,15 @@ const useChapterDetail = ({bookDetail, chapterId, cyfrUser}:ChapterDetailProps):
 
   const api = ChapterApi()
 
+  const getChapterDetail = async () => {
+    if (!chapterId) return null
+    debug('rkt query', {chapterId, book:bookDetail?.title??'undefined', cyfrUser: cyfrUser?.name ?? 'not logged in'})
+    const chapterDetail = await sendApi('chapter/detail', {chapterId})
+    if (chapterDetail.data) {
+      return (chapterDetail.data as ChapterDetail)
+    }
+    return null
+  }
   const invalidate = () => {
     info('invalidate',["chapterDetail", chapterId])
     qc.invalidateQueries(["chapterDetail", chapterId])
@@ -86,7 +87,9 @@ const useChapterDetail = ({bookDetail, chapterId, cyfrUser}:ChapterDetailProps):
         }
         if (data?.result) {
           debug(`onSettled`, data.result)
-            setChapterDetail(data.result)
+          const detail = data.result
+            setChapterDetail(() => detail)
+            setTitle(() => detail.title??'')
         }
       }
     }
@@ -94,6 +97,7 @@ const useChapterDetail = ({bookDetail, chapterId, cyfrUser}:ChapterDetailProps):
 
   return {
     chapterDetail,
+    bookDetail,
     api,
     query: {
       error, 

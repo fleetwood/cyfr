@@ -20,7 +20,7 @@ import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
 import Spinner from "../../ui/spinner"
 import Toggler from "../../ui/toggler"
 
-const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader",'DEBUG')
+const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
 type BookInfoProps = {
   className?:       string
