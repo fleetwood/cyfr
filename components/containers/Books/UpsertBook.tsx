@@ -9,6 +9,7 @@ import {
   Chapter,
   Character,
   Gallery,
+  GalleryStub,
   User,
   UserStub,
 } from "../../../prisma/prismaContext"
@@ -64,7 +65,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   const [characters, setCharacters] = useState<Character[]>(
     book?.characters || []
   )
-  const [gallery, setGallery] = useState<Gallery | null>(book?.gallery || null)
+  const [gallery, setGallery] = useState<GalleryStub | null>(book?.gallery || null)
   const [images, setImages] = useState<string[]>([])
 
   const [showEditor, setShowEditor] = useState<boolean>(false)

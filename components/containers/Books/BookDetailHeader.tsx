@@ -1,7 +1,6 @@
-import { BookDetailHook } from "../../../hooks/useBookDetail"
 import useDebug from "../../../hooks/useDebug"
 import ErrorPage from "../../../pages/404"
-import { BookCategory } from "../../../prisma/prismaContext"
+import { BookCategory, BookDetailHook } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import {
   uuid,
@@ -59,9 +58,9 @@ type BookDetailHeaderProps = {
 const BookDetailHeader = ({bookDetailHook}:BookDetailHeaderProps) => {
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, isLoading, error, invalidate, isAuthor} = bookDetailHook
-  // const {isAuthor, by} = api
-  // const router = useRouter()
+  const {bookDetail, query, state} = bookDetailHook
+
+  const {isAuthor} = state
 
   const statusOptions: KeyVal[] = [
     { key: "DRAFT" },
@@ -70,10 +69,10 @@ const BookDetailHeader = ({bookDetailHook}:BookDetailHeaderProps) => {
     { key: "PUBLISHED" },
   ]
 
-  if (isLoading) return <Spinner />
+  if (query.isLoading) return <Spinner />
 
   //TODO create an error page
-  if (error) return <ErrorPage />
+  if (query.error) return <ErrorPage />
 
   const onFollow = async () => {
     if (!cyfrUser) {
@@ -176,9 +175,9 @@ const BookDetailHeader = ({bookDetailHook}:BookDetailHeaderProps) => {
                   existing categories, and the ability to create new ones.
                 </p>
                 {bookDetail.categories?.filter(c => c!==null).map((cat:BookCategory) => (
-                    <span className="italic mr-2" key={uuid()}>
-                      {cat.title}
-                    </span>
+                  <span className="italic mr-2" key={uuid()}>
+                    {cat.title}
+                  </span>
                 ))}
               </div>
             </div>

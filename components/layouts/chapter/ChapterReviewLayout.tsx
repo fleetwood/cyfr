@@ -1,23 +1,17 @@
+import Link from "next/link"
 import { useRef, useState } from "react"
-import useChapterApi from "../../../hooks/useChapterApi"
 import { ChapterLayoutProps } from "../../../pages/book/[bookId]/chapter/[chapterId]"
-import ChapterDetailComponent from "../../containers/Chapter/ChapterDetailView"
+import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
 import Footer from "../../containers/Footer"
 import LeftColumn from "../../containers/LeftColumn"
 import Navbar from "../../containers/Navbar"
 import RightColumn from "../../containers/RightColumn"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
-import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
-import EZButton from "../../ui/ezButton"
-import Link from "next/link"
-import useBookDetail from "../../../hooks/useBookDetail"
 
 const ChapterReviewLayout = (props:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, chapterDetail} = props
-  const {isAuthor} = useBookDetail(props.bookDetail.id, cyfrUser)
-  const chapterApi = useChapterApi({chapterDetail, cyfrUser})
+  const {bookDetail, chapterDetail} = props.chapterDetailHook
   const {notify} = useToast()
   //todo: This should be handled by a commune...
   // const isAuthor = (bookDetail?.author`s||[]).filter((a:UserStub) => a.id === cyfrUser?.id).length > 0
@@ -52,7 +46,7 @@ const ChapterReviewLayout = (props:ChapterLayoutProps) => {
         </div>
         <div className="box-border snap-y min-h-full">
           <div className="absolute right-0">
-              <ChapterViewSelector setView={props.setView} view={props.view} showEdit={isAuthor} />
+              <ChapterViewSelector setView={props.setView} view={props.view} />
           </div>
           <h3><Link href={`/book/${bookDetail?.slug}`}>{bookDetail?.title}</Link></h3>
           {/* <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} /> */}

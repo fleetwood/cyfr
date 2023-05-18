@@ -6,10 +6,9 @@ import { LoggedIn } from '../../ui/toasty'
 import Spinner from '../../ui/spinner'
 import { InlineTextarea, TailwindInput } from '../../forms'
 import EZButton from '../../ui/ezButton'
-import { BookApi, Character } from '../../../prisma/prismaContext'
+import { BookDetailHook, Character } from '../../../prisma/prismaContext'
 import { sendApi } from '../../../utils/api'
 import OpenModal from '../../ui/openModal'
-import { BookDetailHook } from '../../../hooks/useBookDetail'
 const {debug} = useDebug("components/containers/Character/CreateCharacterModal")
 
 const createCharacterModal = 'createCharacterModal'

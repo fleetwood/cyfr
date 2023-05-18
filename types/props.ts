@@ -9,6 +9,12 @@ export type KeyVal = {
   value?: string | number | null
 }
 
+export type RocketQuery = {
+  isLoading:    boolean
+  invalidate:   () => void
+  error:        any
+}
+
 export type TailwindFormProps = {
   label?: string
   placeholder?: string

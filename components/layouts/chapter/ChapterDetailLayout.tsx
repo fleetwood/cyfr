@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { useRef, useState } from "react"
-import useChapterApi from "../../../hooks/useChapterApi"
 import { ChapterLayoutProps } from "../../../pages/book/[bookId]/chapter/[chapterId]"
 import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
 import Footer from "../../containers/Footer"
@@ -9,15 +8,10 @@ import Navbar from "../../containers/Navbar"
 import RightColumn from "../../containers/RightColumn"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
-import useBookDetail from "../../../hooks/useBookDetail"
 
 const ChapterDetailLayout = (props:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, chapterDetail} = props
-  const {isAuthor} = useBookDetail(props.bookDetail.id, cyfrUser)
-  const chapterApi = useChapterApi({chapterDetail, cyfrUser})
-  //todo: This should be handled by a commune...
-  // const isAuthor = (bookDetail?.author`s||[]).filter((a:UserStub) => a.id === cyfrUser?.id).length > 0
+  const {bookDetail, chapterDetail} = props.chapterDetailHook
   
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -46,7 +40,7 @@ const ChapterDetailLayout = (props:ChapterLayoutProps) => {
         </div>
         <div className="box-border snap-y min-h-full flex-1">
           <h3><Link href={`/book/${bookDetail?.slug}`}>{bookDetail?.title}</Link></h3>
-          <ChapterViewSelector setView={props.setView} view={props.view} showEdit={isAuthor} />
+          <ChapterViewSelector setView={props.setView} view={props.view} />
           {/* <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} /> */}
         </div>
         <Footer />

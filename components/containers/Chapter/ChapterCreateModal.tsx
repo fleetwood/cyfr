@@ -6,8 +6,7 @@ import { LoggedIn } from '../../ui/toasty'
 import Spinner from '../../ui/spinner'
 import { TailwindInput } from '../../forms'
 import EZButton from '../../ui/ezButton'
-import { Chapter } from '../../../prisma/prismaContext'
-import { BookDetailHook } from '../../../hooks/useBookDetail'
+import { BookDetailHook, Chapter } from '../../../prisma/prismaContext'
 const {debug} = useDebug("components/containers/Chapter/CreateChapterModal")
 
 const createChapterModal = 'createChapterModal'

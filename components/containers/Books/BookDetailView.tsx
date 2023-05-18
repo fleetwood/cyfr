@@ -1,11 +1,8 @@
 import { Tab } from "@headlessui/react"
-import { useRouter } from "next/router"
 import { Fragment, useState } from "react"
-import { BookDetailHook } from "../../../hooks/useBookDetail"
 import useDebug from "../../../hooks/useDebug"
 import ErrorPage from "../../../pages/404"
-import { BookDetail, Chapter } from "../../../prisma/prismaContext"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import { BookDetailHook, BookDetailApi, Chapter, BookDetailState, BookRelations } from "../../../prisma/prismaContext"
 import { useToast } from "../../context/ToastContextProvider"
 import { InlineTextarea } from "../../forms"
 import HtmlContent from "../../ui/htmlContent"
@@ -30,18 +27,48 @@ type BookDetailViewProps = {
   bookDetailHook: BookDetailHook
 }
 
+/**
+ * 
+ * @param bookDetailHook {@link BookDetailHook} see also {@link BookDetailApi}
+ * @returns 
+ */
 const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
   const { notify, loginRequired } = useToast()
-  const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, setBookDetail, isLoading, error, by, isAuthor, invalidate} = bookDetailHook
 
   const [activeTab, setActiveTab] = useState(0)
   const selected = (tab:number) => `cursor-pointer hover:text-secondary transition-colors duration-300 ${activeTab === tab ? 'h-subtitle' : 'text-info'}`
 
+  const {bookDetail, query, state, relations, api} = bookDetailHook
 
-  if (isLoading) return <Spinner />
+  const { 
+    // READ-ONLY
+    id, createdAt, isAuthor,
+    // mutable states
+    updatedAt, setUpdatedAt,
+    startedAt, setStartedAt,
+    completeAt, setCompleteAt,
+    active, setActive,
+    status, setStatus,
+    prospect, setProspect,
+    fiction, setFiction,
+    title, setTitle,
+    slug, setSlug,
+    coverId, setCoverId,
+    genreId, setGenreId,
+    hook, setHook,
+    synopsis, setSynopsis,
+    back, setBack,
+    galleryId, setGalleryId
+  }:BookDetailState = state
 
-  if (error) return <ErrorPage />
+  const {
+    // RELATIONS, READ-ONLY
+    genre, gallery, authors, cover, follows, likes, shares, chapters, characters, categories 
+    
+  }:BookRelations = relations
+
+  if (bookDetailHook.query.isLoading) return <Spinner />
+  if (bookDetailHook.query.error) return <ErrorPage error={bookDetailHook.query.error} />
 
   const onGalleryUpsert = async (galleryId?:string) => {
     debug('onGalleryUpsert', galleryId)
@@ -55,9 +82,14 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
     // }
   }
 
-  const updatePanel = (html?: string | null) => {
-    // bookApi.update({ props: {back: html?.toString()}, autoSave: true })
-    // setSaveReady(true)
+  const updatePanel = async () => {
+    debug('updatePanel', back)
+    const success = await bookDetailHook.api.save(state.current)
+    if (success) {
+      notify('SAVED!!!!!!!!!!')
+    } else {
+      notify('No save.', 'warning')
+    }
   }
 
   const updateSynopsis = (html?: string | null) => {
@@ -77,7 +109,7 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
     // invalidate()
   }
 
-  return bookDetail ? (
+  return (
     <div>
       <BookDetailHeader bookDetailHook={bookDetailHook} />
 
@@ -96,12 +128,12 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
                 <div className="my-4 font-ibarra">
                     {isAuthor ? (
                       <InlineTextarea
-                        content={bookDetail?.back}
-                        setContent={updatePanel}
-                        onSave={() => notify('This was changed to bookDetailHook')}
+                        content={back}
+                        setContent={setBack}
+                        onSave={updatePanel}
                       />
                     ) : 
-                      <HtmlContent content={bookDetail?.back||''}/>
+                      <HtmlContent content={back}/>
                     }
                 </div>
               </Tab.Panel>
@@ -113,12 +145,12 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
                   <div className="font-ibarra">
                     {isAuthor ? (
                       <InlineTextarea
-                        content={bookDetail.synopsis}
-                        setContent={updateSynopsis}
-                        onSave={() => notify('This was changed to bookDetailHook')}
+                        content={synopsis}
+                        setContent={setSynopsis}
+                        onSave={updateSynopsis}
                       />
                     ) : (
-                      <HtmlContent content={bookDetail.synopsis!} />
+                      <HtmlContent content={synopsis} />
                     )}
                   </div>
                 </div>
@@ -141,7 +173,7 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
                   <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
                     {isAuthor && <CreateCharacterModal bookDetailHook={bookDetailHook} />}
                     <div className="flex space-x-4">
-                    <CharacterList characters={bookDetail?.characters} />
+                    <CharacterList characters={characters} />
                   </div>
                 </div>
 
@@ -150,22 +182,20 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
               {/* GALLERY */}
               <Tab.Panel>
                 <div className="my-4">
-                  <h3>Gallery {isAuthor && bookDetail.gallery===undefined ? <OpenGalleryModalPlus /> : <span>{PhotoIcon}</span> }</h3>
+                  <h3>Gallery {isAuthor && gallery===undefined ? <OpenGalleryModalPlus /> : <span>{PhotoIcon}</span> }</h3>
                   <div>
-                  {(bookDetail.gallery || isAuthor) && (
+                  {(gallery || isAuthor) && (
                     <GalleryCreateModal onUpsert={onGalleryUpsert} />
                   )}
                   </div>
-                  <GalleryPhotoswipe gallery={bookDetail.gallery} />
+                  <GalleryPhotoswipe gallery={gallery} />
                 </div>
               </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
         </div>
-    </div>
-    
+    </div>    
   )
-  : <ErrorPage />
 }
 
 export default BookDetailView

@@ -17,7 +17,8 @@ export type BookDetailLayoutProps = {
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, setBookDetail, isLoading, error, invalidate, by, isAuthor, api} = useBookDetail(props.bookId, cyfrUser)
+  const bookDetailHook = useBookDetail(props.bookId, cyfrUser)
+  const {bookDetail, query, state, api} = bookDetailHook
   
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -49,7 +50,7 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
           sectionTitle={bookDetail?.title}
           subTitle={bookDetail?.authors?.flatMap(a => a.name).join(' and ')}
         >
-          <BookDetailView bookDetailHook={{bookDetail, setBookDetail, isLoading, error, invalidate, by, isAuthor, api}} />
+          <BookDetailView bookDetailHook={bookDetailHook} />
         </Section>
         <Footer />
       </main>

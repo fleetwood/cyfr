@@ -1,8 +1,7 @@
 import React, { useState, useRef } from "react";
-import { BookApi, Chapter } from "../../../prisma/prismaContext";
+import { BookDetailHook, Chapter } from "../../../prisma/prismaContext";
 import useDebug from "../../../hooks/useDebug";
 import Spinner from "../../ui/spinner";
-import { BookDetailHook } from "../../../hooks/useBookDetail";
 
 type ChapterListProps = {
     bookDetailHook: BookDetailHook
