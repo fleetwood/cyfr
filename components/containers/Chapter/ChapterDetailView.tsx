@@ -1,17 +1,15 @@
-import { useEffect, useState } from "react"
 import ReactHtmlParser from "react-html-parser"
+import { ChapterDetailHook } from "../../../hooks/useChapterDetail"
 import useDebug from "../../../hooks/useDebug"
+import ErrorPage from "../../../pages/404"
 import { ChapterViews } from '../../../pages/book/[bookId]/chapter/[chapterId]'
-import { ChapterDetailApi } from '../../../prisma/prismaContext'
 import { useToast } from "../../context/ToastContextProvider"
 import { TailwindInput } from '../../forms'
 import WritingFocusedEditor from "../../forms/WritingFocusedEditor"
 import EZButton from "../../ui/ezButton"
 import Spinner from "../../ui/spinner"
 import CharacterList from "../Characters/CharacterList"
-import ChapterFooter from "./ChapterFooter"
-import { ChapterDetailHook } from "../../../hooks/useChapterDetail"
-import ErrorPage from "../../../pages/404"
+import ChapterNav from "./ChapterNav"
 
 const {debug} = useDebug('ChapterDetailComponent')
 
@@ -64,7 +62,7 @@ const ChapterDetailComponent = ({chapterDetailHook, view}:ChapterDetailComponent
           </div>
           {ReactHtmlParser(chapterDetail.content??'')}
           <div>
-            <ChapterFooter bookDetail={bookDetail} chapters={bookDetail.chapters??[]} currentChapter={chapterDetail} />
+            <ChapterNav bookDetail={bookDetail} chapters={bookDetail.chapters??[]} currentChapter={chapterDetail} />
           </div>
         </div>
       }
