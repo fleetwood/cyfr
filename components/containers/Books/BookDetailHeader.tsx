@@ -1,6 +1,6 @@
 import useDebug from "../../../hooks/useDebug"
 import ErrorPage from "../../../pages/404"
-import { BookCategory, BookDetailHook } from "../../../prisma/prismaContext"
+import { BookCategory, BookDetail, BookDetailHook } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import {
   uuid,
@@ -52,15 +52,14 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 )}
 
 type BookDetailHeaderProps = {
-  bookDetailHook:  BookDetailHook
+  bookDetail:  BookDetail
 }
 
-const BookDetailHeader = ({bookDetailHook}:BookDetailHeaderProps) => {
+const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, query, state} = bookDetailHook
 
-  const {isAuthor} = state
+  const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
   const statusOptions: KeyVal[] = [
     { key: "DRAFT" },
@@ -68,11 +67,6 @@ const BookDetailHeader = ({bookDetailHook}:BookDetailHeaderProps) => {
     { key: "PRIVATE" },
     { key: "PUBLISHED" },
   ]
-
-  if (query.isLoading) return <Spinner />
-
-  //TODO create an error page
-  if (query.error) return <ErrorPage />
 
   const onFollow = async () => {
     if (!cyfrUser) {

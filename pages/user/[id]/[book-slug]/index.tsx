@@ -2,13 +2,12 @@ import BookDetailLayout, { BookDetailLayoutProps } from "../../../../components/
 import { PrismaBook, PrismaGenre } from "../../../../prisma/prismaContext"
 
 export async function getServerSideProps(context: any) {
-  const id = context.params.id
-  const bookDetail = await PrismaBook.detail(id)
+  const {bookId, bookSlug} = context.params
   const genres = await PrismaGenre.stubs()
 
   return {
-    props: {
-      bookDetail,
+    props:{
+      bookId: bookId||bookSlug,
       genres
     }
   }

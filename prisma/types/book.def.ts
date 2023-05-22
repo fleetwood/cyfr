@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react"
 import { Book, BookCategory, BookStatus, Chapter, ChapterStub, Character, CharacterStub, CyfrUser, Gallery, GalleryStub, Genre, GenreStub, Image, User, UserFollow, UserStub } from "../prismaContext"
 import { RocketQuery } from "../../types/props"
+import { UseQueryResult } from "react-query"
 
 export type BookRelations = {
   genre:        Genre
@@ -99,10 +100,12 @@ export type BookDetailState = {
 
 export type BookDetailHook = BookDetail & {
   bookDetail:     BookDetail | null
-  query:          RocketQuery
+  query:          UseQueryResult<any, any> & {
+    invalidate :  () => void
+  }
   api:            BookDetailApi
-  state:          BookDetailState
-  relations:      BookRelations
+  // state:          BookDetailState
+  // relations:      BookRelations
 }
 
 export type BookDetailApi = {
@@ -111,7 +114,7 @@ export type BookDetailApi = {
   follow:         (followerId: string, isFan?: boolean) => Promise<boolean>
   like:           (userId: string) => Promise<boolean>
   share:          (userId: string) => Promise<boolean>
-  save:           (bookDetail: BookDetail) => Promise<boolean>
+  save:           (detail?:BookDetail) => Promise<boolean>
   sortChapters:   (changedChapter: Chapter) => Promise<Boolean>
   updateChapter:  (chapter: Chapter) => Promise<boolean>
   updateGenre:    (genreId: string) => Promise<boolean>

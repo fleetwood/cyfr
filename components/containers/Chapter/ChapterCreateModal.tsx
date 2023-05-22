@@ -6,7 +6,7 @@ import { LoggedIn } from '../../ui/toasty'
 import Spinner from '../../ui/spinner'
 import { TailwindInput } from '../../forms'
 import EZButton from '../../ui/ezButton'
-import { BookDetailHook, Chapter } from '../../../prisma/prismaContext'
+import { BookDetail, BookDetailHook, Chapter } from '../../../prisma/prismaContext'
 const {debug} = useDebug("components/containers/Chapter/CreateChapterModal")
 
 const createChapterModal = 'createChapterModal'
@@ -26,13 +26,12 @@ export const OpenChapterModalButton = ({variant='button'}:ChapterModalButtonVari
 )
 
 type CreateChapterModalType = {
-  bookDetailHook: BookDetailHook
-  onSave?:        () => void
+  bookDetail:   BookDetail
+  onSave?:      () => void
 }
 
-const CreateChapterModal = ({bookDetailHook, onSave}:CreateChapterModalType) => {
+const CreateChapterModal = ({bookDetail, onSave}:CreateChapterModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
-  const {bookDetail} = bookDetailHook
   const { notify } = useToast()
   const [valid, setIsValid] = useState<boolean>(false)
   const container = useRef<HTMLDivElement>(null)

@@ -108,14 +108,11 @@ const BookApi = (bookDetail:BookDetail|null):BookDetailApi => {
   //   }
   // }
 
-  const save = async (bookDetail: BookDetail) => {
-    if (!bookDetail) return noBookDetail("save")
-    debug("save", {
-      fiction: bookDetail.fiction,
-      prospect: bookDetail.prospect,
-      active: bookDetail.active,
-    })
-    const upsert = await (await sendApi("book/upsert", bookDetail)).data
+  const save = async (detail?:BookDetail) => {
+    if (!detail) return noBookDetail("save")
+    const {back, synopsis, active, prospect, fiction, title, slug, words} = detail
+    debug("save", {back, synopsis, active, prospect, fiction, title, slug, words})
+    const upsert = await (await sendApi("book/upsert", detail)).data
     if (upsert.result) {
       const b = upsert.result
       debug("result", {

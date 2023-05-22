@@ -1,8 +1,8 @@
 import { Tab } from "@headlessui/react"
-import { Fragment, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import useDebug from "../../../hooks/useDebug"
 import ErrorPage from "../../../pages/404"
-import { BookDetailHook, BookDetailApi, Chapter, BookDetailState, BookRelations } from "../../../prisma/prismaContext"
+import { BookDetailHook, BookDetailApi, Chapter, BookDetailState, BookRelations, BookDetail } from "../../../prisma/prismaContext"
 import { useToast } from "../../context/ToastContextProvider"
 import { InlineTextarea } from "../../forms"
 import HtmlContent from "../../ui/htmlContent"
@@ -19,6 +19,8 @@ import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import BookDetailHeader from "./BookDetailHeader"
 import router, { Router } from "next/router"
 import next from "next/types"
+import useBookQuery from "../../../hooks/useBookQuery"
+import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -26,7 +28,7 @@ const { jsonBlock, debug } = useDebug(
 )
 
 type BookDetailViewProps = {
-  bookDetailHook: BookDetailHook
+  bookDetail?:          BookDetail
 }
 
 /**
@@ -34,43 +36,27 @@ type BookDetailViewProps = {
  * @param bookDetailHook {@link BookDetailHook} see also {@link BookDetailApi}
  * @returns 
  */
-const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
+const BookDetailView = ({bookDetail}:BookDetailViewProps) => {
   const { notify, loginRequired } = useToast()
-
+  const [cyfrUser] = useCyfrUserContext()
+  
   const [activeTab, setActiveTab] = useState(0)
   const selected = (tab:number) => `cursor-pointer hover:text-secondary transition-colors duration-300 ${activeTab === tab ? 'h-subtitle' : 'text-info'}`
+  
+  const [back, setBack] = useState<string|null|undefined>(bookDetail?.back)
 
-  const {bookDetail, query, state, relations, api} = bookDetailHook
+  // const {bookDetail, query, state, relations, api} = bookDetailHook
+  
+  const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
-  const { 
-    // READ-ONLY
-    id, createdAt, isAuthor,
-    // mutable states
-    updatedAt, setUpdatedAt,
-    startedAt, setStartedAt,
-    completeAt, setCompleteAt,
-    active, setActive,
-    status, setStatus,
-    prospect, setProspect,
-    fiction, setFiction,
-    title, setTitle,
-    slug, setSlug,
-    coverId, setCoverId,
-    genreId, setGenreId,
-    hook, setHook,
-    synopsis, setSynopsis,
-    back, setBack,
-    galleryId, setGalleryId
-  }:BookDetailState = state
-
-  const {
-    // RELATIONS, READ-ONLY
-    genre, gallery, authors, cover, follows, likes, shares, chapters, characters, categories 
+  // const {
+  //   // RELATIONS, READ-ONLY
+  //   genre, gallery, authors, cover, follows, likes, shares, chapters, characters, categories 
     
-  }:BookRelations = relations
-
-  if (bookDetailHook.query.isLoading) return <Spinner />
-  if (bookDetailHook.query.error) return <ErrorPage error={bookDetailHook.query.error} />
+  // }:BookRelations = relations
+  // useEffect(() => {
+  //   setBack(bookDetail?.back)
+  // }, [bookDetail])
 
   const onGalleryUpsert = async (galleryId?:string) => {
     debug('onGalleryUpsert', galleryId)
@@ -82,16 +68,6 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
     // if (added) {
     //   notify(`You created a gallery ${bookDetail?.title}.`)
     // }
-  }
-
-  const updatePanel = async () => {
-    debug('updatePanel', back)
-    const success = await bookDetailHook.api.save(state.current)
-    if (success) {
-      notify('SAVED!!!!!!!!!!')
-    } else {
-      notify('No save.', 'warning')
-    }
   }
 
   const updateSynopsis = (html?: string | null) => {
@@ -106,14 +82,19 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
     router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
   }
 
-  const onSave = () => {
-    // bookApi.save()
-    // invalidate()
+  const onSave = async () => {
+    // @ts-ignore
+    const success = await api.save({...bookDetail,back})
+    if (success) {
+      notify('Saved!')
+    } else {
+      notify('There was a problem saving', 'warning')
+    }
   }
 
-  return (
+  return  bookDetail ? 
     <div>
-      <BookDetailHeader bookDetailHook={bookDetailHook} />
+      <BookDetailHeader bookDetail={bookDetail} />
 
         <div>
           <Tab.Group vertical onChange={setActiveTab}>
@@ -130,12 +111,12 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
                 <div className="my-4 font-ibarra">
                     {isAuthor ? (
                       <InlineTextarea
-                        content={back}
+                        content={bookDetail.back}
                         setContent={setBack}
-                        onSave={updatePanel}
-                      />
+                        onSave={onSave}
+                        />
                     ) : 
-                      <HtmlContent content={back}/>
+                    <HtmlContent content={bookDetail.back??''}/>
                     }
                 </div>
               </Tab.Panel>
@@ -143,16 +124,15 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
               {/* SYNOPSIS */}
               <Tab.Panel>
                 <div className="my-4">
-                  <h3>Synopsis</h3>
                   <div className="font-ibarra">
                     {isAuthor ? (
                       <InlineTextarea
-                        content={synopsis}
-                        setContent={setSynopsis}
-                        onSave={updateSynopsis}
+                        content={bookDetail.synopsis}
+                        // setContent={setSynopsis}
+                        onSave={onSave}
                       />
                     ) : (
-                      <HtmlContent content={synopsis} />
+                      <HtmlContent content={bookDetail.synopsis??''} />
                     )}
                   </div>
                 </div>
@@ -161,10 +141,15 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
               {/* CHAPTERS */}
               <Tab.Panel>
                 <div className="my-4">
-                  <h3>Chapters {isAuthor && <OpenChapterModalButton variant="plus" />}</h3>
-                    {isAuthor && <CreateChapterModal bookDetailHook={bookDetailHook} onSave={onSave} />}
+                  <h3>Chapters </h3>
                   <div className="flex space-x-4">
-                    <ChapterList bookDetailHook={bookDetailHook} onSelect={editChapter} />
+                  {isAuthor && 
+                    <>
+                      <OpenChapterModalButton variant="plus" />
+                      <CreateChapterModal bookDetail={bookDetail} onSave={onSave} />
+                    </>
+                  }
+                    <ChapterList chapters={bookDetail.chapters??[]} onSelect={editChapter} />
                   </div>
                 </div>
               </Tab.Panel>
@@ -173,9 +158,9 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
               <Tab.Panel>                
                 <div className="my-4">
                   <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
-                    {isAuthor && <CreateCharacterModal bookDetailHook={bookDetailHook} />}
+                    {/* {isAuthor && <CreateCharacterModal bookDetailHook={bookDetailHook} />} */}
                     <div className="flex space-x-4">
-                    <CharacterList characters={characters} />
+                    <CharacterList characters={bookDetail.characters} />
                   </div>
                 </div>
 
@@ -184,20 +169,21 @@ const BookDetailView = ({bookDetailHook}:BookDetailViewProps) => {
               {/* GALLERY */}
               <Tab.Panel>
                 <div className="my-4">
-                  <h3>Gallery {isAuthor && gallery===undefined ? <OpenGalleryModalPlus /> : <span>{PhotoIcon}</span> }</h3>
+                  <h3>Gallery {isAuthor && bookDetail.gallery===undefined ? <OpenGalleryModalPlus /> : <span>{PhotoIcon}</span> }</h3>
                   <div>
-                  {(gallery || isAuthor) && (
+                  {(bookDetail.gallery || isAuthor) && (
                     <GalleryCreateModal onUpsert={onGalleryUpsert} />
                   )}
                   </div>
-                  <GalleryPhotoswipe gallery={gallery} />
+                  <GalleryPhotoswipe gallery={bookDetail.gallery} />
                 </div>
               </Tab.Panel>
             </Tab.Panels>
           </Tab.Group>
         </div>
-    </div>    
-  )
+        {jsonBlock(bookDetail)}
+    </div>
+    : <div className='m-auto w-32 h-32' ><Spinner /></div>
 }
 
 export default BookDetailView

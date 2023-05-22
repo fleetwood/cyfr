@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
-import useBookDetail from "../../hooks/useBookDetail"
-import { GenreStub } from "../../prisma/prismaContext"
+import useBookQuery from "../../hooks/useBookQuery"
+import { GenreStub, UserStub } from "../../prisma/prismaContext"
 import BookDetailView from "../containers/Books/BookDetailView"
 import Footer from "../containers/Footer"
 import LeftColumn from "../containers/LeftColumn"
@@ -17,8 +17,9 @@ export type BookDetailLayoutProps = {
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const bookDetailHook = useBookDetail(props.bookId, cyfrUser)
-  const {bookDetail, query, state, api} = bookDetailHook
+  // const bookDetailHook = useBookDetail(props.bookId, cyfrUser)
+  const {data , isLoading, error} = useBookQuery(props.bookId)
+  const bookDetail = data
   
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -48,9 +49,9 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
         <Section
           className="box-border snap-y min-h-full"
           sectionTitle={bookDetail?.title}
-          subTitle={bookDetail?.authors?.flatMap(a => a.name).join(' and ')}
+          subTitle={bookDetail?.authors?.flatMap((a:UserStub) => a.name).join(' and ')}
         >
-          <BookDetailView bookDetailHook={bookDetailHook} />
+          <BookDetailView bookDetail={bookDetail} />
         </Section>
         <Footer />
       </main>

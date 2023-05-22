@@ -7,6 +7,7 @@ type ErrorPageProps = {
     error?:     any
     message?:   string
     code?:      string
+    variant?:   'page' | 'component'
 }
 
 const ErrorPage = (props:ErrorPageProps) => {
@@ -14,10 +15,17 @@ const ErrorPage = (props:ErrorPageProps) => {
     const errorTitle = props.error?.code ?? props.code ?? '404'
     const MoreInfo = () => <>{props.message ? props.message : <><h3>404 or smth</h3><p>Weird.</p></>}</>
 
-    return (
-    <StaticLayout pageTitle={errorTitle} sectionTitle={errorTitle} subTitle={errorMessage}>
-      <MoreInfo />
-      <JsonBlock data={props} />
-    </StaticLayout>
-  )}
+    return props.variant === 'page' ? (
+      <StaticLayout pageTitle={errorTitle} sectionTitle={errorTitle} subTitle={errorMessage}>
+        <MoreInfo />
+        <JsonBlock data={props} />
+      </StaticLayout>
+    )
+    : (
+      <>
+        <MoreInfo />
+        <JsonBlock data={props} />
+      </>
+    )
+}
 export default ErrorPage  

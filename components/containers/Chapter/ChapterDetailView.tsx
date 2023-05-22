@@ -10,8 +10,9 @@ import EZButton from "../../ui/ezButton"
 import Spinner from "../../ui/spinner"
 import CharacterList from "../Characters/CharacterList"
 import ChapterNav from "./ChapterNav"
+import HtmlContent from "../../ui/htmlContent"
 
-const {debug} = useDebug('ChapterDetailComponent')
+const {debug, jsonBlock} = useDebug('ChapterDetailComponent')
 
 type ChapterDetailComponentProps = {
   chapterDetailHook:  ChapterDetailHook
@@ -60,7 +61,7 @@ const ChapterDetailComponent = ({chapterDetailHook, view}:ChapterDetailComponent
             <h4>Characters</h4>
             <CharacterList characters={chapterDetail.characters} />
           </div>
-          {ReactHtmlParser(chapterDetail.content??'')}
+          <HtmlContent content={chapterDetail.content} />
           <div>
             <ChapterNav bookDetail={bookDetail} chapters={bookDetail.chapters??[]} currentChapter={chapterDetail} />
           </div>
@@ -92,11 +93,12 @@ const ChapterDetailComponent = ({chapterDetailHook, view}:ChapterDetailComponent
             <div className="font-bold text-lg">Chapter</div>
             <CharacterList characters={chapterDetail?.characters} />
           </div>
-          {ReactHtmlParser(chapterDetail?.content??'')}
+          <HtmlContent content={chapterDetail.content} />
         </div>
       }
 
       {/* TODO Add Gallery stuff cuz chapters need mood board yo */}
+      {jsonBlock(chapterDetail)}
     </div>
   )
 }
