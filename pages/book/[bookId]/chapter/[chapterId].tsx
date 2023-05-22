@@ -2,25 +2,23 @@ import { Dispatch, SetStateAction, useState } from "react"
 import ChapterDetailLayout from "../../../../components/layouts/chapter/ChapterDetailLayout"
 import ChapterReadLayout from "../../../../components/layouts/chapter/ChapterReadLayout"
 import ChapterReviewLayout from "../../../../components/layouts/chapter/ChapterReviewLayout"
-import useDebug from "../../../../hooks/useDebug"
-import { BookDetail, ChapterDetail, GenreStub, PrismaBook, PrismaChapter, PrismaGenre } from "../../../../prisma/prismaContext"
-import useChapterDetail, { ChapterDetailHook } from "../../../../hooks/useChapterDetail"
 import useCyfrUser from "../../../../hooks/useCyfrUser"
+import useDebug from "../../../../hooks/useDebug"
+import { ChapterDetail, GenreStub, PrismaChapter, PrismaGenre } from "../../../../prisma/prismaContext"
+import ErrorPage from "../../../404"
 
 const {debug, info} = useDebug('pages/book/[bookId]/chapter/[chapterId]')
 
 export type ChapterServersideProps = {
-  bookDetail: BookDetail
-  chapterId:  string
-  genres:     GenreStub[]
-  v?:         string
+  chapterDetail:  ChapterDetail
+  genres:         GenreStub[]
+  v?:             string
 }
 
-export type ChapterLayoutProps = {
-  chapterDetailHook:  ChapterDetailHook
-  genres:             GenreStub[]
-  setView:            Dispatch<SetStateAction<ChapterViews>>
-  view:               ChapterViews
+export type ChapterLayoutProps = ChapterServersideProps & {
+  setView:        Dispatch<SetStateAction<ChapterViews>>
+  view:           ChapterViews
+  showEdit?:      boolean
 }
 
 export enum ChapterViews {
@@ -31,22 +29,21 @@ export enum ChapterViews {
 }
 
 export async function getServerSideProps(context: any) {
-  const {bookId, chapterId} = context.params
+  const {chapterId} = context.params
   const {v} = context.query
-  const bookDetail = await PrismaBook.detail(bookId)
+  const chapterDetail = await PrismaChapter.detail(chapterId)
   const genres = await PrismaGenre.stubs()
 
   return {
     props: {
-      bookDetail,
-      chapterId,
+      chapterDetail,
       genres,
       v
     }
   }
 }
 
-const ChapterDetailPage = ({bookDetail, chapterId, genres, v}:ChapterServersideProps) => {
+const ChapterDetailPage = ({chapterDetail, genres, v}:ChapterServersideProps) => {
   const view = v && v === 'edit' ? ChapterViews.EDIT
     : v && v === 'read' ? ChapterViews.READ
     : v && v === 'review' ? ChapterViews.REVIEW
@@ -54,12 +51,14 @@ const ChapterDetailPage = ({bookDetail, chapterId, genres, v}:ChapterServersideP
 
   const [chapterView, setChapterView] = useState(view)
   const [cyfrUser] = useCyfrUser()
-  const chapterDetailHook = useChapterDetail({bookDetail, chapterId, cyfrUser})
   
-  return (
-    chapterView == ChapterViews.DETAIL ? <ChapterDetailLayout view={chapterView} setView={setChapterView} chapterDetailHook={chapterDetailHook} genres={genres} /> 
-    : chapterView === ChapterViews.READ ? <ChapterReadLayout view={chapterView} setView={setChapterView} chapterDetailHook={chapterDetailHook} genres={genres} /> 
-    : <ChapterReviewLayout view={chapterView} setView={setChapterView} chapterDetailHook={chapterDetailHook} genres={genres} />
-)}
+  return chapterDetail ? (
+    chapterView == ChapterViews.DETAIL ? <ChapterDetailLayout view={chapterView} setView={setChapterView} chapterDetail={chapterDetail} genres={genres} showEdit /> 
+    : chapterView === ChapterViews.READ ? <ChapterReadLayout view={chapterView} setView={setChapterView} chapterDetail={chapterDetail} genres={genres} showEdit /> 
+    : <ChapterReviewLayout view={chapterView} setView={setChapterView} chapterDetail={chapterDetail} genres={genres} showEdit />
+) : (
+  <ErrorPage error={{message: 'Did not load the chapter detail'}} />
+)
+}
 
 export default ChapterDetailPage

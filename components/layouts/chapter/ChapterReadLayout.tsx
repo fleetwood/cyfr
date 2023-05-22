@@ -7,10 +7,11 @@ import Navbar from "../../containers/Navbar"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import { HamburgerIcon } from "../../ui/icons"
+import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
+import { isAuthor } from "../../../prisma/api/book"
 
-const ChapterReadLayout = (props:ChapterLayoutProps) => {
+const ChapterReadLayout = ({chapterDetail, view, setView, showEdit = false}:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, chapterDetail} = props.chapterDetailHook
 
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -23,6 +24,8 @@ const ChapterReadLayout = (props:ChapterLayoutProps) => {
     const position = mainRef?.current?.scrollTop
     setScrollActive(current => position && position > 120 || false)
   }
+
+  const {book} = chapterDetail
 
   return (
     <div className="drawer">
@@ -41,15 +44,15 @@ const ChapterReadLayout = (props:ChapterLayoutProps) => {
             />
 
             <div className="absolute right-0">
-              <ChapterViewSelector setView={props.setView} view={props.view} />
+              <ChapterViewSelector setView={setView} view={view} showEdit />
             </div>
 
             <div className="toast toast-top toast-center w-4/6 mt-12 z-10">
               {toasts.map((toast) => toast.toast)}
             </div>
             <div className="box-border snap-y min-h-full">
-              <h3><Link href={`/book/${bookDetail?.slug}`}>{bookDetail?.title}</Link></h3>
-              {/* <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} /> */}
+              <h3><Link href={`/book/${book?.slug}`}>{book?.title}</Link></h3>
+              <ChapterDetailView chapterDetail={chapterDetail} view={view} showEdit />
             </div>
           </main>
         </div>

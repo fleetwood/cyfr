@@ -13,9 +13,8 @@ import useDebug from "../../../hooks/useDebug"
 
 const {debug, jsonBlock} = useDebug('ChapterDetailLayout')
 
-const ChapterDetailLayout = ({chapterDetailHook, genres, view, setView}:ChapterLayoutProps) => {
+const ChapterDetailLayout = ({chapterDetail, genres, view, setView}:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const { bookDetail } = chapterDetailHook
   
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -42,11 +41,11 @@ const ChapterDetailLayout = ({chapterDetailHook, genres, view, setView}:ChapterL
         <div className="toast toast-top toast-center w-4/6 mt-10 z-12 p-0">
           {toasts.map((toast) => toast.toast)}
         </div>
-          {bookDetail && chapterDetailHook && 
+          {chapterDetail && 
           <div className="box-border snap-y min-h-full flex-1">
-            <h3><Link href={`/book/${bookDetail?.slug}`}>{bookDetail?.title}</Link></h3>
+            <h3><Link href={`/book/${chapterDetail.book?.slug}`}>{chapterDetail.book?.title}</Link></h3>
             <ChapterViewSelector setView={setView} view={view} />
-            <ChapterDetailView chapterDetailHook={chapterDetailHook} view={view} />
+            <ChapterDetailView chapterDetail={chapterDetail} view={view} />
           </div>
           }
         <Footer />

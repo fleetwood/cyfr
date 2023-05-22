@@ -2,12 +2,15 @@ import { Chapter, ChapterDetail, ChapterStub, PrismaBook, Share, ShareDeleteProp
 import useDebug from "../../hooks/useDebug"
 import { now, sortChapters } from "../../utils/helpers"
 
-const {debug, info, fileMethod} = useDebug('entities/prismaChapter')
+const {debug, info, fileMethod} = useDebug('entities/prismaChapter', 'DEBUG')
 
 const detail = async (id: string): Promise<ChapterDetail | null> => {
   debug('detail', id)
   try {
-    return await prisma.chapter.findUnique({where: {id}}) as ChapterDetail
+    const result:ChapterDetail[] =  await prisma.$queryRaw`SELECT * FROM v_chapter_detail where id = ${id}`
+    if (result[0]) {
+      return result[0]
+    }
     throw { code: fileMethod('detail'), message: `Error finding chapter for ${id}!`}
   } catch (error) {
     debug('detail ERROR', error)

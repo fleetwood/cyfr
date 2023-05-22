@@ -16,7 +16,7 @@ export type ChapterStub = Chapter & {
  * @property characters {@link Character} TODO: should be a CharacterStub
  */
 export type ChapterDetail = Chapter & {
-  book:         BookDetail
+  book:         BookStub
   gallery?:     GalleryStub
   characters?:  CharacterStub[]
 }

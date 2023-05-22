@@ -118,4 +118,5 @@ export type BookDetailApi = {
   sortChapters:   (changedChapter: Chapter) => Promise<Boolean>
   updateChapter:  (chapter: Chapter) => Promise<boolean>
   updateGenre:    (genreId: string) => Promise<boolean>
+  isAuthor:       (bookDetail: BookDetail, cyfrUser?: CyfrUser) => boolean
 }

@@ -37,18 +37,23 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
           <div>Shared {timeDifference((item.updatedAt || "").toString())}</div>
         </div>
       }
-      {(item.post || item.gallery) && (
         <div className="">
+          {(item.post || item.gallery) && 
             <div>
-                <Avatar shadow={true} user={originalAuthor} sz="sm" />
+              <Avatar shadow={true} user={originalAuthor} sz="sm" />
             </div>
+          }
+          {item.book && 
+            <div>
+              <AvatarList users={originalAuthors} sz="sm" />
+            </div>
+          }
           <div>
             <Link href={link} className="text-primary underline">
               <span>{label}</span>
             </Link>
           </div>
         </div>
-      )}
     </div>
   )
 }

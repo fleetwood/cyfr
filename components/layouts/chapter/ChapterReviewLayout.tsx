@@ -8,13 +8,13 @@ import Navbar from "../../containers/Navbar"
 import RightColumn from "../../containers/RightColumn"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
+import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
 
-const ChapterReviewLayout = (props:ChapterLayoutProps) => {
+const ChapterReviewLayout = ({chapterDetail, view, setView, showEdit = false}:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, chapterDetail} = props.chapterDetailHook
+  const {book} = chapterDetail
   const {notify} = useToast()
   //todo: This should be handled by a commune...
-  // const isAuthor = (bookDetail?.author`s||[]).filter((a:UserStub) => a.id === cyfrUser?.id).length > 0
   
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -46,10 +46,10 @@ const ChapterReviewLayout = (props:ChapterLayoutProps) => {
         </div>
         <div className="box-border snap-y min-h-full">
           <div className="absolute right-0">
-              <ChapterViewSelector setView={props.setView} view={props.view} />
+              <ChapterViewSelector setView={setView} view={view} showEdit />
           </div>
-          <h3><Link href={`/book/${bookDetail?.slug}`}>{bookDetail?.title}</Link></h3>
-          {/* <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} /> */}
+          <h3><Link href={`/book/${book?.slug}`}>{book?.title}</Link></h3>
+          <ChapterDetailView chapterDetail={chapterDetail} view={view} showEdit />
         </div>
         <Footer />
       </main>
