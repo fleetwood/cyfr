@@ -38,7 +38,7 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
         </div>
       }
         <div className="">
-          {(item.post || item.gallery) && 
+          {(item.post && !item.gallery) && 
             <div>
               <Avatar shadow={true} user={originalAuthor} sz="sm" />
             </div>
@@ -48,11 +48,18 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
               <span className="font-semibold pr-2">By</span><AvatarList users={originalAuthors} sz="sm" />
             </div>
           }
+          {item.gallery && 
+            <div className="flex">
+              <span className="font-semibold pr-2">By</span><Avatar user={originalAuthor} sz="sm" />
+            </div>
+          }
+          {(!item.book && !item.gallery) &&
           <div>
             <Link href={link} className="text-primary underline">
               <span>{label}</span>
             </Link>
           </div>
+          }
         </div>
     </div>
   )
