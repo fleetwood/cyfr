@@ -1,5 +1,6 @@
 import useDebug from "../../../hooks/useDebug"
 import ErrorPage from "../../../pages/404"
+import BookApi from "../../../prisma/api/book"
 import { BookCategory, BookDetail, BookDetailHook } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import {
@@ -58,6 +59,8 @@ type BookDetailHeaderProps = {
 const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
+  const {share, follow, like} = BookApi()
+  const bookId = bookDetail.id
 
   const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
@@ -73,11 +76,10 @@ const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
       loginRequired()
       return null
     }
-    // const result = await bookApi.follow(cyfrUser.id)
-    // if (result) {
-    //   notify(`You are now following ${bookDetail?.title}. Nice!`)
-    //   invalidate()
-    // }
+    const result = await follow(bookId, cyfrUser.id)
+    if (result) {
+      notify(`You are now following ${bookDetail?.title}. Nice!`)
+    }
   }
 
   const onShare = async () => {
@@ -85,11 +87,10 @@ const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
       loginRequired()
       return null
     }
-    // const result = await bookApi.share(cyfrUser.id)
-    // if (result) {
-    //   notify(`You shared ${bookDetail?.title}!`)
-    //   invalidate()
-    // }
+    const result = await share(bookId, cyfrUser.id)
+    if (result) {
+      notify(`You shared ${bookDetail?.title}!`)
+    }
   }
 
   const onLike = async () => {
@@ -97,11 +98,10 @@ const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
       loginRequired()
       return null
     }
-    // const result = await bookApi.like(cyfrUser.id)
-    // if (result) {
-    //   notify(`You liked ${bookDetail?.title}.`)
-    //   invalidate()
-    // }
+    const result = await like(bookId, cyfrUser.id)
+    if (result) {
+      notify(`You liked ${bookDetail?.title}.`)
+    }
   }
 
   const updateHook = (content:string) => {

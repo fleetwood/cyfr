@@ -109,11 +109,11 @@ export type BookDetailHook = BookDetail & {
 }
 
 export type BookDetailApi = {
-  addChapter:     (title: string, order: number) => Promise<any>
-  addGallery:     (galleryId?: string) => Promise<any>
-  follow:         (followerId: string, isFan?: boolean) => Promise<boolean>
-  like:           (userId: string) => Promise<boolean>
-  share:          (userId: string) => Promise<boolean>
+  addChapter:     (bookId: string, title: string, order: number) => Promise<any>
+  addGallery:     (bookId: string, galleryId?: string) => Promise<any>
+  follow:         (bookId: string, followerId: string, isFan?: boolean) => Promise<boolean>
+  like:           (bookId: string, userId: string) => Promise<boolean>
+  share:          (bookId: string, userId: string) => Promise<boolean>
   save:           (detail?:BookDetail) => Promise<boolean>
   sortChapters:   (changedChapter: Chapter) => Promise<Boolean>
   updateChapter:  (chapter: Chapter) => Promise<boolean>

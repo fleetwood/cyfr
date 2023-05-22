@@ -28,7 +28,7 @@ const FeedItem = ({ item }: FeedItemProps) => {
             {item.post && <PostStubView post={item.post} />}
             {item.image && <ImageStubView image={item.image} />}
             {item.gallery && <GalleryStubView gallery={item.gallery} />}
-            {item.book && <BookStubView book={item.book} />}
+            {item.book && <BookStubView book={item.book} variant="feed" />}
             {item.character && <CharacterStubView character={item.character} />}
         </div>
         <FeedFooter item={item} />

@@ -2,11 +2,12 @@ import Link from "next/link";
 import useDebug from "../../../hooks/useDebug";
 import { BookDetail, BookStub, Image } from "../../../prisma/prismaContext";
 import { cloudinary } from "../../../utils/cloudinary";
-import { isBookAuthor, uniqueKey } from "../../../utils/helpers";
+import { uniqueKey } from "../../../utils/helpers";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import Avatar from "../../ui/avatar";
 import { CheckBadge } from "../../ui/icons";
 import JsonBlock from "../../ui/jsonBlock";
+import { isAuthor } from "../../../prisma/api/book";
 
 const {debug} = useDebug('BookCover')
 
@@ -48,7 +49,7 @@ const BookImage = ({cover, title, width, owner}:{cover: Image|null, title: strin
  */
 const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true, authorAvatars=true}:BookCoverProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const isOwner = isBookAuthor(book,cyfrUser)
+  const isOwner = isAuthor(book,cyfrUser)
   const cover = book.cover || null
   const width = (variant === BookCoverVariant.FULL && cover !== null)
     ? cover.width

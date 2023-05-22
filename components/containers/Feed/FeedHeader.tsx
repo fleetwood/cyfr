@@ -44,8 +44,8 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
             </div>
           }
           {item.book && 
-            <div>
-              <AvatarList users={originalAuthors} sz="sm" />
+            <div className="flex">
+              <span className="font-semibold pr-2">By</span><AvatarList users={originalAuthors} sz="sm" />
             </div>
           }
           <div>

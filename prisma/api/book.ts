@@ -11,17 +11,19 @@ const noBookDetail = (method: string) => {
   return false
 }
 
+const NotImplemented = {code: 500, message: 'Not implemented'}
+
 export const isAuthor = (bookDetail:BookDetail, cyfrUser?:CyfrUser) => cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
-const BookApi = (bookDetail:BookDetail|null):BookDetailApi => {
+const BookApi = ():BookDetailApi => {
   const follow = async (
+    bookId: string, 
     followerId: string,
     isFan = false
   ) => {
-    if (!bookDetail) return noBookDetail("follow")
     const upsert = await (
       await sendApi("book/follow", {
-        bookId: bookDetail.id,
+        bookId,
         followerId,
         isFan,
       })
@@ -34,11 +36,10 @@ const BookApi = (bookDetail:BookDetail|null):BookDetailApi => {
     }
   }
 
-  const like = async (userId: string) => {
-    if (!bookDetail) return noBookDetail("like")
+  const like = async (bookId:string, userId: string) => {
     const upsert = await (
       await sendApi("book/like", {
-        bookId: bookDetail.id,
+        bookId,
         authorId: userId,
       })
     ).data
@@ -65,11 +66,10 @@ const BookApi = (bookDetail:BookDetail|null):BookDetailApi => {
   //   )
   // }
 
-  const share = async (userId: string) => {
-    if (!bookDetail) return noBookDetail("share")
+  const share = async (bookId:string, userId: string) => {
     const upsert = await (
       await sendApi("book/share", {
-        bookId: bookDetail.id,
+        bookId: bookId,
         authorId: userId,
       })
     ).data
@@ -133,22 +133,22 @@ const BookApi = (bookDetail:BookDetail|null):BookDetailApi => {
     genreId: string
   ): Promise<boolean> => {
     debug("updateGenre", genreId)
-    const bd = { ...bookDetail, genreId }
-    const upsert = await (await sendApi("book/upsert", bd)).data
-    if (upsert.result) {
-      debug("result", { ...upsert.result })
-      return true
-    } else {
-      debug("Did not get right result?", upsert)
-      return false
-    }
+    throw NotImplemented
+    // const bd = { ...bookDetail, genreId }
+    // const upsert = await (await sendApi("book/upsert", bd)).data
+    // if (upsert.result) {
+    //   debug("result", { ...upsert.result })
+    //   return true
+    // } else {
+    //   debug("Did not get right result?", upsert)
+    //   return false
+    // }
   }
 
-  const addGallery = async (galleryId?: string) => {
-    if (!bookDetail) return noBookDetail("addGallery")
+  const addGallery = async (bookId: string, galleryId?: string) => {
     if (!galleryId) return false
     const result = await (
-      await sendApi("/book/addGallery", { galleryId, bookId: bookDetail.id })
+      await sendApi("/book/addGallery", { galleryId, bookId })
     ).data
     if (result.result) {
       return result.result
@@ -160,24 +160,26 @@ const BookApi = (bookDetail:BookDetail|null):BookDetailApi => {
 
   const sortChapters = async (changedChapter: Chapter): Promise<Boolean> => {
     debug("sortChapters")
-    if (!bookDetail) return noBookDetail("sortChapters")
-    const result = await sendApi("/chapter/sort", {
-      currentChapters: bookDetail.chapters,
-      changedChapter,
-    })
-    if (result) {
-      return true
-    }
-    debug("sortChapters FAIL")
-    return false
+    throw NotImplemented
+    // if (!bookDetail) return noBookDetail("sortChapters")
+    // const result = await sendApi("/chapter/sort", {
+    //   currentChapters: bookDetail.chapters,
+    //   changedChapter,
+    // })
+    // if (result) {
+    //   return true
+    // }
+    // debug("sortChapters FAIL")
+    // return false
   }
 
   const addChapter = async (
+    bookId: string,
     title: string,
     order: number
   ) => {
-    if (!bookDetail) return noBookDetail("addChapter")
-    const props = { bookId: bookDetail.id, title, order }
+    throw NotImplemented
+    const props = { bookId, title, order }
     const result = await (await sendApi("/book/addChapter", props)).data
     if (result.result) {
       return result.result
@@ -190,15 +192,17 @@ const BookApi = (bookDetail:BookDetail|null):BookDetailApi => {
   const updateChapter = async (
     chapter: Chapter
   ): Promise<boolean> => {
-    if (!bookDetail) return noBookDetail("saveChapter")
-    debug("saveChapter", { title: chapter.title })
-    const result = await (await sendApi("/chapter/upsert", chapter)).data
-    if (result.result) {
-      return true
-    } else {
-      debug("Did not get right result?")
-      return false
-    }
+    throw NotImplemented
+
+    // if (!bookDetail) return noBookDetail("saveChapter")
+    // debug("saveChapter", { title: chapter.title })
+    // const result = await (await sendApi("/chapter/upsert", chapter)).data
+    // if (result.result) {
+    //   return true
+    // } else {
+    //   debug("Did not get right result?")
+    //   return false
+    // }
   }
 
   return {
