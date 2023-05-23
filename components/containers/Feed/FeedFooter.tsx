@@ -5,7 +5,8 @@ import PostFooter from "../Post/PostFooter"
 import GalleryFooter from "../Gallery/GalleryFooter"
 import BookFooter from "../Books/BookFooter"
 import CharacterFooter from "../Characters/CharacterFooter"
-const { debug } = useDebug("PostItemFooter")
+import useFeed, { FeedTypes } from "../../../hooks/useFeed"
+const { debug } = useDebug("PostItemFooter", 'DEBUG')
 
 type FeedFooterProps = {
   item: MainFeed
@@ -13,12 +14,18 @@ type FeedFooterProps = {
 const FeedFooter = ({ item }: FeedFooterProps) => {
   const {post, gallery, image, book, character} = item
 
+  const { invalidateFeed } = useFeed('main')
+  const onInvalidate = () => {
+    debug('invalidateFeed')
+    invalidateFeed('main')
+  }
+  
   return (
     <>
-      {post && <PostFooter post={post} />}
-      {gallery && <GalleryFooter gallery={gallery} />}
-      {book && <BookFooter book={book} />}
-      {character && <CharacterFooter character={character} />}
+      {post && <PostFooter post={post} onUpdate={onInvalidate} />}
+      {gallery && <GalleryFooter gallery={gallery} onUpdate={onInvalidate} />}
+      {book && <BookFooter bookDetail={book} onUpdate={onInvalidate} />}
+      {character && <CharacterFooter character={character} onUpdate={onInvalidate} />}
     </>
 )}
 

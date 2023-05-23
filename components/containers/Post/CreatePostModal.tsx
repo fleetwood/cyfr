@@ -24,7 +24,7 @@ const CreatePostModal = (): JSX.Element => {
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [valid, setIsValid] = useState<boolean>(false)
-  const { createPost, invalidateFeed } = useFeed({ type: "post" })
+  const { createPost, invalidateFeed } = useFeed('post')
   const [images, setImages] = useState<Image[]>([])
 
   const onFilesComplete = async(files: Image[]) => {

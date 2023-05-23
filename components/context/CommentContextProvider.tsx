@@ -22,7 +22,7 @@ export const useCommentContext = () => useContext(CommentContext)
 
 const CommentProvider = ({ children }: CommentProviderProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {commentOnPost, invalidateFeed} = useFeed({type: 'post'})
+  const {commentOnPost, invalidateFeed} = useFeed('post')
   const {notify} = useToast()
   
   const commentPostModal = 'commentPostModal'

@@ -2,10 +2,15 @@ import React from 'react'
 import { CharacterDetail, CharacterStub } from '../../../prisma/prismaContext'
 
 type CharacterFooterProps = {
-    character: CharacterDetail | CharacterStub
+    character:    CharacterDetail | CharacterStub
+    onUpdate?:  () => void
 }
 
-const CharacterFooter = ({character}:CharacterFooterProps) => {
+const CharacterFooter = ({character, onUpdate}:CharacterFooterProps) => {
+  const update = () => {
+    onUpdate ? onUpdate() : {}
+  }
+  
   return (
     <>
         <div>Likes: {character.likes.length}</div>

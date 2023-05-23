@@ -21,7 +21,7 @@ type SendMessageDetailProps = {
 
 const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetailProps) => {
     const {notify} = useToast()
-    const {sendMessage, invalidateFeed} = useFeed({type: 'inbox'})
+    const {sendMessage, invalidateFeed} = useFeed('inbox')
    const [party, setParty] = useState<User|null>(null)
    const [search, setSearch] = useState<string>('')
    const [message, setMessage] = useState<string|null>(null)

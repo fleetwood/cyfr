@@ -32,35 +32,25 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
   return (
     <div className="pb-2">
       {isShare &&
-        <div className="border-b border-dashed border-base-content">
-          <Avatar shadow={true} user={item.author} sz="sm" />
-          <div>Shared {timeDifference((item.updatedAt || "").toString())}</div>
+        <div className="border-b border-dashed border-base-content flex space-x-2 pb-2 mb-2">
+            <Avatar shadow={true} user={item.author} sz="sm" />
+            <div>Shared {timeDifference((item.updatedAt || "").toString())}</div>
         </div>
       }
-        <div className="">
-          {(item.post && !item.gallery) && 
-            <div>
-              <Avatar shadow={true} user={originalAuthor} sz="sm" />
-            </div>
-          }
-          {item.book && 
-            <div className="flex">
-              <span className="font-semibold pr-2">By</span><AvatarList users={originalAuthors} sz="sm" />
-            </div>
-          }
-          {item.gallery && 
-            <div className="flex">
-              <span className="font-semibold pr-2">By</span><Avatar user={originalAuthor} sz="sm" />
-            </div>
-          }
-          {(!item.book && !item.gallery) &&
-          <div>
-            <Link href={link} className="text-primary underline">
-              <span>{label}</span>
-            </Link>
-          </div>
-          }
-        </div>
+      <div className="flex space-x-2 pb-2 mb-2">
+        {/* POSTS and GALLERIES have only one author */}
+        {(item.post || item.gallery) && 
+          <Avatar shadow={true} user={originalAuthor} sz="sm" />
+        }
+        {/* BOOKS can have multiple authors */}
+        {item.book && 
+          <AvatarList users={originalAuthors} sz="sm" />
+        }
+
+        <Link href={link} className="text-primary underline">
+          <span>{label}</span>
+        </Link>
+      </div>
     </div>
   )
 }

@@ -31,7 +31,7 @@ const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const { notify } = useToast()
   
-  const { invalidateFeed } = useFeed({ type: "gallery" })
+  const { invalidateFeed } = useFeed('gallery')
 
   return (
     <>

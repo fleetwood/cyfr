@@ -2,25 +2,26 @@ import { useCommentContext } from "../../context/CommentContextProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
 import ShrinkableIconButton from "../../ui/shrinkableIconButton"
-import { LoggedIn } from "../../ui/toasty"
 
 import useDebug from "../../../hooks/useDebug"
-import useFeed, { FeedTypes } from "../../../hooks/useFeed"
+import useFeed from "../../../hooks/useFeed"
 import { GalleryDetail, GalleryStub } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import AvatarList from "../../ui/avatarList"
 
 type GalleryFooterProps = {
-  gallery: GalleryDetail | GalleryStub
+  gallery:    GalleryDetail | GalleryStub
+  onUpdate?:  () => void
 }
 
 const {debug} = useDebug('components/containers/Gallery/GalleryFooter')
 
 const GalleryFooter = ({
-  gallery
+  gallery,
+  onUpdate
 }: GalleryFooterProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const { shareGallery, likeGallery, invalidateFeed } = useFeed({type: 'gallery'  })
+  const { shareGallery, likeGallery, invalidateFeed } = useFeed('gallery')
   const { notify, loginRequired } = useToast()
   const { setCommentId, showComment, hideComment } = useCommentContext()
 
@@ -32,11 +33,17 @@ const GalleryFooter = ({
     return true
   }
 
+  const update = () => {
+    invalidateFeed('gallery')
+    onUpdate ?  onUpdate() : {}
+  }
+
   const handleComment = async () => {
     if (!isLoggedIn()) return
     debug('handleComment')
     setCommentId(gallery.id)
     showComment()
+    update()
   }
 
   const handleLike = async () => {
@@ -49,7 +56,7 @@ const GalleryFooter = ({
     })
     if (liked) {
       notify("You liked this gallery!")
-      invalidateFeed()
+      update()
       return
     }
     notify(`Uh. Ya that didn't work. Weird.`,'warning')
@@ -65,7 +72,7 @@ const GalleryFooter = ({
     })
     if (shared) {
       notify("You shared this gallery!!!")
-      invalidateFeed()
+      update()
       return
     }
     notify(`Uh. Ya that didn't work. Weird.`,'warning')

@@ -12,11 +12,9 @@ export const inboxFeedQuery = ['feed', { type: 'inbox'}]
 
 const {debug} = useDebug("useFeed","DEBUG")
 
-export type FeedTypes = {
-  type: 'main'|'post'|'gallery'|'inbox'
-}
+export type FeedTypes = 'main'|'post'|'gallery'|'inbox'
 
-export const useFeed = ({type}:FeedTypes) => {
+export const useFeed = (type:FeedTypes) => {
   const qc = useQueryClient()
   const [feed, setFeed] = useState<any[]>([])
 
@@ -127,7 +125,7 @@ export const useFeed = ({type}:FeedTypes) => {
   const sendMessage = async (props:UpsertInboxProps) => await send('user/inbox/send', props)
 
   const invalidateFeed = (t?:FeedTypes) => {
-    const queryKey = t ? ['feed', {type: t.type}] : ['feed']
+    const queryKey = t ? ['feed', {type: t}] : ['feed']
     const q = {queryKey}
     debug(`invalidateFeed`,{queryKey})
     qc.invalidateQueries({queryKey})

@@ -12,7 +12,7 @@ const {debug, jsonBlock} = useDebug('pages/index')
 type HomePageProps = {}
 
 const HomePage = (props:HomePageProps) => {
-  const {feed} = useFeed({type: 'main'})
+  const {feed} = useFeed('main')
 
   const CyfrHome = 
     <div className="flex">
