@@ -7,7 +7,7 @@ import {
     ResponseError,
     ResponseResult,
 } from "../../../types/response"
-const { todo, err } = useDebug("api/book/follow")
+const { debug, err } = useDebug("api/book/follow")
 
 export default async function handle(
   req: NextApiRequest,
@@ -18,13 +18,14 @@ export default async function handle(
   try {
     const result = await PrismaBook.follow({bookId, followerId, isFan})
     if (result) {
+      debug('handle', result)
       res.status(200).json({ result })
     } else {
       throw { code: "api/book/follow", message: `No results from Follow` }
     }
   } catch (e: Error | ResponseError | any) {
-    err("FAIL", e)
     const error = GetResponseError(e)
+    debug('handle FAIL', {e, error})
     res.status(500).json({ error })
   }
 }
