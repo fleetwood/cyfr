@@ -8,7 +8,7 @@ import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import { HamburgerIcon } from "../../ui/icons"
 import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
-import { isAuthor } from "../../../prisma/api/book"
+import { isAuthor } from "../../../prisma/api/bookApi"
 
 const ChapterReadLayout = ({chapterDetail, view, setView, showEdit = false}:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()

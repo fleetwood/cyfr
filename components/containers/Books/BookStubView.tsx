@@ -1,6 +1,6 @@
 import { useRouter } from "next/router"
 import useDebug from "../../../hooks/useDebug"
-import { isAuthor } from "../../../prisma/api/book"
+import { isAuthor } from "../../../prisma/api/bookApi"
 import { BookStub } from "../../../prisma/prismaContext"
 import { uniqueKey } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"

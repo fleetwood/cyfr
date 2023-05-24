@@ -1,8 +1,6 @@
 import {
   Gallery,
   Image,
-  Like,
-  Share,
   User,
   UserStub
 } from "../prismaContext";

@@ -1,7 +1,6 @@
 import useDebug from "../../../hooks/useDebug"
-import ErrorPage from "../../../pages/404"
-import BookApi from "../../../prisma/api/book"
-import { BookCategory, BookDetail, BookDetailHook } from "../../../prisma/prismaContext"
+import BookApi from "../../../prisma/api/bookApi"
+import { BookCategory, BookDetail, UserFollow } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import {
   uuid,
@@ -14,11 +13,11 @@ import HtmlContent from "../../ui/htmlContent"
 import {
   FireIcon,
   FollowIcon,
+  HeartIcon,
   QuestionMarkIcon,
   ShareIcon
 } from "../../ui/icons"
 import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
-import Spinner from "../../ui/spinner"
 import Toggler from "../../ui/toggler"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
@@ -59,10 +58,13 @@ type BookDetailHeaderProps = {
 const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {share, follow, like} = BookApi()
+  const {shareBook, followBook, likeBook} = BookApi()
   const bookId = bookDetail.id
+  const engageProps = cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
 
   const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
+
+  const fans = (bookDetail.follows??[]).filter((f:UserFollow) => f.isFan === true)
 
   const statusOptions: KeyVal[] = [
     { key: "DRAFT" },
@@ -71,34 +73,35 @@ const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
     { key: "PUBLISHED" },
   ]
 
-  const onFollow = async () => {
+  const onFollow = async (isFan=false) => {
     if (!cyfrUser) {
       loginRequired()
       return null
     }
-    const result = await follow(bookId, cyfrUser.id)
+    const result = await followBook({bookId, isFan, followerId: cyfrUser.id})
     if (result) {
-      notify(`You are now following ${bookDetail?.title}. Nice!`)
+      notify(`You are now ${isFan ? 'stanning' : 'following'} ${bookDetail?.title}. Nice!`)
     }
   }
 
   const onShare = async () => {
-    if (!cyfrUser) {
+    if (!engageProps) {
       loginRequired()
       return null
     }
-    const result = await share(bookId, cyfrUser.id)
+    // the share author, not the book author
+    const result = await shareBook(engageProps)
     if (result) {
       notify(`You shared ${bookDetail?.title}!`)
     }
   }
 
   const onLike = async () => {
-    if (!cyfrUser) {
+    if (!engageProps) {
       loginRequired()
       return null
     }
-    const result = await like(bookId, cyfrUser.id)
+    const result = await likeBook(engageProps)
     if (result) {
       notify(`You liked ${bookDetail?.title}.`)
     }
@@ -264,9 +267,10 @@ const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <BookInfo label="Likes" icon={HeartIcon} onClick={onLike} info={bookDetail.likes?.length || 0} />
         <BookInfo label="Shares" icon={ShareIcon} onClick={onShare} info={bookDetail.shares?.length || 0} />
         <BookInfo label="Follows" icon={FollowIcon} onClick={onFollow} info={bookDetail.follows?.length || 0} />
-        <BookInfo label="Fans" icon={FireIcon} info='NI' />
+        <BookInfo label="Fans" icon={FireIcon} onClick={() => onFollow(true)} info={fans.length || 0} />
         <BookInfo label="Comments" variant={'NI'} />
         <BookInfo label="Reads" variant={'NI'} />
         <BookInfo label="Reviews" variant={'NI'} />

@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
-import { sendApi } from "../../utils/api"
-import { BookDetail, BookDetailApi, Chapter, CyfrUser } from "../prismaContext"
+import { NotImplemented, sendApi } from "../../utils/api"
+import { BookDetail, BookEngageProps, BookFollowProps, Chapter, CyfrUser } from "../prismaContext"
 
 const { debug, info, err } = useDebug("prisma/api/book", "DEBUG")
 
@@ -11,42 +11,36 @@ const noBookDetail = (method: string) => {
   return false
 }
 
-const NotImplemented = {code: 500, message: 'Not implemented'}
-
 export const isAuthor = (bookDetail:BookDetail, cyfrUser?:CyfrUser) => cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
-const BookApi = ():BookDetailApi => {
-  const follow = async (
-    bookId: string, 
-    followerId: string,
-    isFan = false
-  ) => {
-    const upsert = await (
-      await sendApi("book/follow", {
-        bookId,
-        followerId,
-        isFan,
-      })
-    ).data
-    if (upsert.result) {
+const BookApi = () => {
+
+  const followBook = async (props:BookFollowProps) => {
+    const follow = await sendApi("book/follow", props)
+    if (follow.data) {
       return true
     } else {
-      debug("Did not get right result?", upsert.result)
+      debug("right result?", follow)
       return false
     }
   }
 
-  const like = async (bookId:string, userId: string) => {
-    const upsert = await (
-      await sendApi("book/like", {
-        bookId,
-        authorId: userId,
-      })
-    ).data
-    if (upsert.result) {
+  const shareBook = async (props: BookEngageProps):Promise<boolean> => {
+    const share = await (await sendApi("book/share", props)).data
+    if (share.result) {
       return true
     } else {
-      debug("Did not get right result?", upsert.result)
+      debug("Did not get right result?", share.result)
+      return false
+    }
+  }
+
+  const likeBook = async (props: BookEngageProps):Promise<boolean>  => {
+    const like = await (await sendApi("book/like", props)).data
+    if (like.result) {
+      return true
+    } else {
+      debug("Did not get right result?", like.result)
       return false
     }
   }
@@ -64,50 +58,6 @@ const BookApi = ():BookDetailApi => {
   //   if (autoSave) (
   //     save()
   //   )
-  // }
-
-  const share = async (bookId:string, userId: string) => {
-    const upsert = await (
-      await sendApi("book/share", {
-        bookId: bookId,
-        authorId: userId,
-      })
-    ).data
-    if (upsert.result) {
-      return true
-    } else {
-      debug("Did not get right result?", upsert.result)
-      return false
-    }
-  }
-
-  // const saveRelations = async (
-  //   bookDetail: BookDetail,
-  //   relation: BookApiRelations
-  // ) => {
-  //   if (!bookDetail) return noBookDetail("saveRelations")
-  //   const props =
-  //     relation === "Chapter"
-  //       ? bookDetail?.chapters
-  //       : relation === "Character"
-  //       ? bookDetail?.characters
-  //       : relation === "Gallery"
-  //       ? bookDetail?.gallery
-  //       : undefined
-  //   const api = `${relation.toLowerCase()}/upsert`
-  //   if (!props) {
-  //     info("Unable to determine save relations", { relation, props })
-  //     return false
-  //   }
-  //   debug("saveRelations", { relation, props })
-  //   const upsert = await (await sendApi(api, props)).data
-  //   if (upsert.result) {
-  //     debug("result", { ...upsert.result })
-  //     return true
-  //   } else {
-  //     debug("Did not get right result?", upsert)
-  //     return false
-  //   }
   // }
 
   const save = async (detail?:BookDetail) => {
@@ -206,9 +156,9 @@ const BookApi = ():BookDetailApi => {
   }
 
   return {
-    follow,
-    like,
-    share,
+    followBook,
+    likeBook,
+    shareBook,
     save,
     isAuthor,
     updateGenre,

@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import ChapterApi from "../prisma/api/chapter"
+import ChapterApi from "../prisma/api/chapterApi"
 import { BookDetail, ChapterDetail, ChapterDetailApi, ChapterDetailState, CyfrUser } from "../prisma/prismaContext"
 import { RocketQuery } from "../types/props"
-import { getApi, sendApi } from "../utils/api"
+import { sendApi } from "../utils/api"
 import { now } from "../utils/helpers"
 import useDebug from "./useDebug"
 

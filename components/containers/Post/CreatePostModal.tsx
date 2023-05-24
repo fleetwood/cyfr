@@ -8,6 +8,7 @@ import RemirrorEditor from "../../forms/SocialTextarea"
 import { CyfrLogo } from "../../ui/icons"
 import { LoggedIn } from "../../ui/toasty"
 import { Image } from "./../../../prisma/prismaContext"
+import PostApi from "../../../prisma/api/postApi"
 
 const {debug} = useDebug("components/containers/Post/CreatePost")
 const createPostModal = 'createPostModal'
@@ -24,7 +25,8 @@ const CreatePostModal = (): JSX.Element => {
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [valid, setIsValid] = useState<boolean>(false)
-  const { createPost, invalidateFeed } = useFeed('post')
+  const { invalidateFeed } = useFeed('post')
+  const {createPost } = PostApi()
   const [images, setImages] = useState<Image[]>([])
 
   const onFilesComplete = async(files: Image[]) => {

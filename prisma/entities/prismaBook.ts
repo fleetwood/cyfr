@@ -3,8 +3,8 @@ import { GenericResponseError, ResponseError } from "../../types/response"
 import { dedupe, now } from '../../utils/helpers'
 import {
   Book,
-  BookDeleteProps,
   BookDetail,
+  BookEngageProps,
   BookFollowProps,
   BookStub,
   BookUpsertProps,
@@ -353,9 +353,9 @@ const addGallery = async(props:{bookId:string, galleryId:string}):Promise<BookDe
  * This is a redirect to {@link PrismaChapter.sort}
  * @returns 
  */
-const sortChapters =async (currentChapers:Chapter[], changedChapter:Chapter) => PrismaChapter.sort(currentChapers,changedChapter)
+const sortChapters = async (currentChapers:Chapter[], changedChapter:Chapter) => PrismaChapter.sort(currentChapers,changedChapter)
 
-const deleteBook = async ({bookId,authorId,}: BookDeleteProps): Promise<Book | undefined> => {
+const deleteBook = async ({bookId,authorId}:BookEngageProps): Promise<Book | undefined> => {
   try {
     debug("deleteBook", { bookId, authorId })
     todo("deleteBook", "Make sure author deleting the book is an owner.")

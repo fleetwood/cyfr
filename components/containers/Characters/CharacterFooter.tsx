@@ -10,11 +10,11 @@ const CharacterFooter = ({character, onUpdate}:CharacterFooterProps) => {
   const update = () => {
     onUpdate ? onUpdate() : {}
   }
-  
+
   return (
     <>
-        <div>Likes: {character.likes.length}</div>
-        <div>Shares: {character.shares.length}</div>
+      <div>Likes: {character.likes.length}</div>
+      <div>Shares: {character.shares.length}</div>
     </>
   )
 }

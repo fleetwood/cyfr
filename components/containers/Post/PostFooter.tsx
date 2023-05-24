@@ -8,6 +8,7 @@ import useFeed from "../../../hooks/useFeed"
 import { PostDetail, PostStub, UserStub } from "../../../prisma/prismaContext"
 
 import useDebug from "../../../hooks/useDebug"
+import PostApi from "../../../prisma/api/postApi"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 const { debug } = useDebug("PostItemFooter", 'DEBUG')
 
@@ -20,11 +21,11 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   const likes:UserStub[] = post?.likes?.filter(f=>f!==null)||[]
   const shares:UserStub[] = post?.shares?.filter(f=>f!==null)||[]
   const comments:PostStub[] = []
-  const { sharePost, likePost, invalidateFeed } = useFeed('post')
+  const { invalidateFeed } = useFeed('post')
   const { notify, loginRequired } = useToast()
   const { setCommentId, showComment, hideComment } = useCommentContext()
+  const {sharePost, likePost} = PostApi()
 
-  
   const isLoggedIn = () => {
     if (!cyfrUser) {
       loginRequired()

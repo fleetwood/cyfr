@@ -23,9 +23,8 @@ const noChapterDetail = (method: string) => {
  * @returns
  */
 const ChapterApi = (): ChapterDetailApi => {
-  const save = async (
-    chapter: ChapterDetail
-  ): Promise<ChapterDetail | null> => {
+
+  const save = async (chapter: ChapterDetail): Promise<ChapterDetail | null> => {
     debug("upsert", chapter)
     const result = await sendApi("chapter/upsert", { chapter })
     if (result) {

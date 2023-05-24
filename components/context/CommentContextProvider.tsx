@@ -4,6 +4,7 @@ import { useToast } from "./ToastContextProvider"
 
 import useDebug from "../../hooks/useDebug"
 import { useCyfrUserContext } from "./CyfrUserProvider"
+import PostApi from "../../prisma/api/postApi"
 const {debug} = useDebug("CommentContextProvider")
 
 type CommentProviderProps = {
@@ -22,7 +23,8 @@ export const useCommentContext = () => useContext(CommentContext)
 
 const CommentProvider = ({ children }: CommentProviderProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {commentOnPost, invalidateFeed} = useFeed('post')
+  const {invalidateFeed} = useFeed('post')
+  const {commentOnPost} = PostApi()
   const {notify} = useToast()
   
   const commentPostModal = 'commentPostModal'

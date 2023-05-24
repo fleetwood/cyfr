@@ -21,14 +21,15 @@ export const useFeed = (type:FeedTypes) => {
   const [commentId, setCommentId] = useState<string|null>(null)
 
   const getMainFeed = async ():Promise<MainFeed[]|null> => {
-    const result = await getApi(`feed/main`)
+    const result = await getApi<MainFeed[]|null>(`feed/main`)
     debug('getMainFeed')
     try {
       return result.map((r:any) => {
         // aggregating mainFeed requires a UNION ALL between post and shares
         // in V_feed_main, which in turn requires casting the json_agg records
-        // to ::text   so here we have to parse those records back to json
+        // to `::text`   
         //
+        // so here we have to parse those records back to json
         // oy.
         return {
           ...r,
@@ -103,25 +104,6 @@ export const useFeed = (type:FeedTypes) => {
     return null
   }
 
-  const createPost = async (props: PostCreateProps) => await send("post/create", props)
-
-  const sharePost = async (props: PostEngageProps) => await send("post/share", props)
-
-  const likePost = async (props: PostEngageProps) => await send("post/like", props)
-
-  const createGallery = async (props: GalleryCreateProps) => await send("gallery/create", props)
-
-  const shareGallery = async (props: GalleryEngageProps) => await send("gallery/share", props)
-
-  const likeGallery = async (props: GalleryEngageProps) => await send("gallery/like", props)
-
-  /**
-   * 
-   * @param props commentId, authorId, content
-   * @returns 
-   */
-  const commentOnPost = async (props:PostCommentProps) => await send("post/comment", props)
-
   const sendMessage = async (props:UpsertInboxProps) => await send('user/inbox/send', props)
 
   const invalidateFeed = (t?:FeedTypes) => {
@@ -132,11 +114,10 @@ export const useFeed = (type:FeedTypes) => {
   }
   
   return {feed, 
-    createPost, sharePost, likePost, commentOnPost, 
-    createGallery, shareGallery, likeGallery,
     commentId, setCommentId, 
     sendMessage,
-    invalidateFeed}
+    invalidateFeed
+  }
 }
 
 export default useFeed

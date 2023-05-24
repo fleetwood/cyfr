@@ -7,7 +7,7 @@ import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import Avatar from "../../ui/avatar";
 import { CheckBadge } from "../../ui/icons";
 import JsonBlock from "../../ui/jsonBlock";
-import { isAuthor } from "../../../prisma/api/book";
+import { isAuthor } from "../../../prisma/api/bookApi";
 
 const {debug} = useDebug('BookCover')
 
