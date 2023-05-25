@@ -7,8 +7,13 @@ import LeftColumn from "../containers/LeftColumn"
 import Navbar from "../containers/Navbar"
 import RightColumn from "../containers/RightColumn"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
-import { useToast } from "../context/ToastContextProvider"
 import Section from "../ui/section"
+import Toasts from "../ui/toasts"
+import Spinner from "../ui/spinner"
+import ErrorPage from "../../pages/404"
+import useDebug from "../../hooks/useDebug"
+
+const {debug} = useDebug('components/layouts/BookDetailLayout', 'DEBUG')
 
 export type BookDetailLayoutProps = {
   bookId: string
@@ -18,16 +23,20 @@ export type BookDetailLayoutProps = {
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
   // const bookDetailHook = useBookDetail(props.bookId, cyfrUser)
-  const {data , isLoading, error} = useBookQuery(props.bookId)
+  const {data , isLoading, error, invalidate} = useBookQuery(props.bookId)
   const bookDetail = data
   
   const [scrollActive, setScrollActive] = useState(false)
-  const {toasts} = useToast()
   const mainRef = useRef<HTMLElement>(null)
 
   const handleScroll = (e:any) => {
     const position = mainRef?.current?.scrollTop
     setScrollActive(() => position && position > 120 || false)
+  }
+
+  const update = () => {
+    debug('update')
+    invalidate()
   }
 
   return (
@@ -42,16 +51,15 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
         ref={mainRef}
       >
         <Navbar className="min-w-full transition-all duration-200 ease-out" pageScrolled={scrollActive} />
-
-        <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
-          {toasts.map((toast) => toast.toast)}
-        </div>
+        <Toasts />
         <Section
           className="box-border snap-y min-h-full"
           sectionTitle={bookDetail?.title}
           subTitle={bookDetail?.authors?.flatMap((a:UserStub) => a.name).join(' and ')}
         >
-          <BookDetailView bookDetail={bookDetail} />
+          {error && <ErrorPage />}
+          {isLoading && <Spinner />}
+          {!isLoading && <BookDetailView bookSlug={bookDetail.slug} onUpdate={update} />}
         </Section>
         <Footer />
       </main>

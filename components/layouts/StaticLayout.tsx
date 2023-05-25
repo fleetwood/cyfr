@@ -5,6 +5,7 @@ import Navbar from "../containers/Navbar";
 import RightColumn from "../containers/RightColumn";
 import { useToast } from "../context/ToastContextProvider";
 import Section from "../ui/section";
+import Toasts from "../ui/toasts";
 
 type MainLayoutProps = {
   sectionTitle: string | ReactNode;
@@ -15,7 +16,6 @@ type MainLayoutProps = {
 
 const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
   const [scrollActive, setScrollActive] = useState(false);
-  const { toasts } = useToast()
   const mainRef = useRef<HTMLElement>(null);
 
   const handleScroll = (e: any) => {
@@ -42,10 +42,7 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
                   className="min-w-full transition-all duration-200 ease-out"
                   pageScrolled={scrollActive}
                 />
-
-                <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
-                  {toasts.map((toast) => toast.toast)}
-                </div>
+                <Toasts />
 
                 <Section
                   className="box-border snap-y min-h-full"

@@ -6,8 +6,10 @@ type ToastProviderProps = {
   children?: ReactNode
 }
 
+export type ToastNotifyType = "info" | "success" | "warning"
+
 type ToastProviderType = {
-  notify:         (message:ReactNode|string, type?: "info" | "success" | "warning") => void
+  notify:         (message:ReactNode|string, type?: ToastNotifyType) => void
   slice:          (key: string) => void
   toasts:         ToastyElement[]
   loginRequired:  () => void
@@ -30,7 +32,7 @@ const ToastProvider = ({ children }: ToastProviderProps) => {
     )
   }
 
-  const notify = (message:ReactNode|string, type?: "info" | "success" | "warning") => {
+  const notify = (message:ReactNode|string, type?: ToastNotifyType) => {
     const toastId = uuid()
     const toast = {
       toastId,

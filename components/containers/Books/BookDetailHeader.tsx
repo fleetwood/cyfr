@@ -1,3 +1,5 @@
+import { useState } from "react"
+import useBookQuery from "../../../hooks/useBookQuery"
 import useDebug from "../../../hooks/useDebug"
 import BookApi from "../../../prisma/api/bookApi"
 import { BookCategory, BookDetail, UserFollow } from "../../../prisma/prismaContext"
@@ -7,7 +9,7 @@ import {
   ymd
 } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { useToast } from "../../context/ToastContextProvider"
+import { ToastNotifyType, useToast } from "../../context/ToastContextProvider"
 import { InlineTextarea, TailwindSelectInput } from "../../forms"
 import HtmlContent from "../../ui/htmlContent"
 import {
@@ -19,8 +21,9 @@ import {
 } from "../../ui/icons"
 import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
 import Toggler from "../../ui/toggler"
+import { BookDetailViewProps } from "./BookDetailView"
 
-const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
+const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader", 'DEBUG')
 
 type BookInfoProps = {
   className?:       string
@@ -51,20 +54,18 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
   </div>
 )}
 
-type BookDetailHeaderProps = {
-  bookDetail:  BookDetail
-}
-
-const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
+const BookDetailHeader = ({bookSlug, onUpdate}:BookDetailViewProps) => {
+  const {data, isLoading, error, invalidate} = useBookQuery(bookSlug)
+  const [bookDetail, setBookDetail] = useState<BookDetail>(data)
+  
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
   const {shareBook, followBook, likeBook} = BookApi()
-  const bookId = bookDetail.id
-  const engageProps = cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
+  const engageProps = bookDetail && cyfrUser ? {bookId: bookDetail.id, authorId: cyfrUser.id} : undefined
 
   const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
-  const fans = (bookDetail.follows??[]).filter((f:UserFollow) => f.isFan === true)
+  const fans = (bookDetail?.follows??[]).filter((f:UserFollow) => f.isFan === true)
 
   const statusOptions: KeyVal[] = [
     { key: "DRAFT" },
@@ -73,15 +74,22 @@ const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
     { key: "PUBLISHED" },
   ]
 
+  const update = (message:string, type:ToastNotifyType = 'info') => {
+    debug('update')
+    notify(message,type)
+    // invalidate()
+    onUpdate ?  onUpdate() : {}
+  }
+
   const onFollow = async (isFan=false) => {
-    if (!cyfrUser) {
+    if (!bookSlug || !cyfrUser) { 
       loginRequired()
       return null
     }
-    const result = await followBook({bookId, isFan, followerId: cyfrUser.id})
-    if (result) {
-      notify(`You are now ${isFan ? 'stanning' : 'following'} ${bookDetail?.title}. Nice!`)
-    }
+    const result = await followBook({bookId: bookSlug, isFan, followerId: cyfrUser.id})
+    result 
+      ? update(`You are now ${isFan ? 'stanning' : 'following'} ${bookDetail?.title}. Nice!`)
+      : update('Ya that dint work', 'warning')
   }
 
   const onShare = async () => {
@@ -91,9 +99,9 @@ const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
     }
     // the share author, not the book author
     const result = await shareBook(engageProps)
-    if (result) {
-      notify(`You shared ${bookDetail?.title}!`)
-    }
+    result 
+      ? update(`You shared ${bookDetail?.title}.`)
+      : update('Ya that dint work', 'warning')
   }
 
   const onLike = async () => {
@@ -102,9 +110,10 @@ const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
       return null
     }
     const result = await likeBook(engageProps)
-    if (result) {
-      notify(`You liked ${bookDetail?.title}.`)
-    }
+    
+    result 
+      ? update(`You liked ${bookDetail?.title}.`)
+      : update('Ya that dint work', 'warning')
   }
 
   const updateHook = (content:string) => {
@@ -159,7 +168,7 @@ const BookDetailHeader = ({bookDetail}:BookDetailHeaderProps) => {
             </div>
           ) : (
             <span className="font-semibold text-primary-content mr-4">
-              {bookDetail.genre.title}
+              {bookDetail.genre?.title}
             </span>
           )}
           {/* TODO Categories view is broken in db */}

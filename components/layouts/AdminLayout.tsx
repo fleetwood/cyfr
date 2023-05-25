@@ -3,6 +3,7 @@ import Footer from "../containers/Footer";
 import LeftColumn from "../containers/LeftColumn";
 import { useToast } from "../context/ToastContextProvider";
 import Section from "../ui/section";
+import Toasts from "../ui/toasts";
 
 type AdminLayoutProps = {
   sectionTitle: string | ReactNode;
@@ -28,9 +29,7 @@ const AdminLayout = ({
             role="main"
             className="w-full min-h-screen flex-grow m-0 overflow-auto scrollbar-hide relative"
           >
-            <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
-              {toasts.map((toast) => toast.toast)}
-            </div>
+            <Toasts />
             <Section
               className="box-border snap-y min-h-full"
               sectionTitle={sectionTitle}

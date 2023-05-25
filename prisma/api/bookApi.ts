@@ -1,5 +1,5 @@
 import useDebug from "../../hooks/useDebug"
-import { NotImplemented, sendApi } from "../../utils/api"
+import { NotImplemented, getApi, sendApi } from "../../utils/api"
 import { BookDetail, BookEngageProps, BookFollowProps, Chapter, CyfrUser } from "../prismaContext"
 
 const { debug, info, err } = useDebug("prisma/api/book", "DEBUG")
@@ -155,6 +155,16 @@ const BookApi = () => {
     // }
   }
 
+  const detail = async (bookId:string):Promise<BookDetail|null> => {
+    const book = await getApi(`book/${bookId}`)
+    if (book.result) {
+      return book.result as BookDetail
+    } else {
+      debug("Did not get right result?")
+      return null
+    }
+  }
+
   return {
     followBook,
     likeBook,
@@ -165,7 +175,8 @@ const BookApi = () => {
     addGallery,
     sortChapters,
     addChapter,
-    updateChapter
+    updateChapter,
+    detail
   }
 }
 

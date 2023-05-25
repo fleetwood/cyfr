@@ -1,8 +1,9 @@
 import { Tab } from "@headlessui/react"
 import router from "next/router"
-import { Fragment, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
+import useBookQuery from "../../../hooks/useBookQuery"
 import useDebug from "../../../hooks/useDebug"
-import { BookDetail, BookDetailHook, Chapter } from "../../../prisma/prismaContext"
+import { BookDetail, Chapter } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import { InlineTextarea } from "../../forms"
@@ -24,19 +25,17 @@ const { jsonBlock, debug } = useDebug(
   "DEBUG"
 )
 
-type BookDetailViewProps = {
-  bookDetail?:          BookDetail
+export type BookDetailViewProps = {
+  bookSlug:   string
+  onUpdate?:  () => void
 }
 
-/**
- * 
- * @param bookDetailHook {@link BookDetailHook} see also {@link BookDetailApi}
- * @returns 
- */
-const BookDetailView = ({bookDetail}:BookDetailViewProps) => {
+const BookDetailView = ({bookSlug, onUpdate}:BookDetailViewProps) => {
+  const {data, isLoading, error, invalidate} = useBookQuery(bookSlug)
+  const [bookDetail, setBookDetail] = useState<BookDetail>(data)
+
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  
   const [activeTab, setActiveTab] = useState(0)
   const selected = (tab:number) => `cursor-pointer hover:text-secondary transition-colors duration-300 ${activeTab === tab ? 'h-subtitle' : 'text-info'}`
   
@@ -54,6 +53,12 @@ const BookDetailView = ({bookDetail}:BookDetailViewProps) => {
   // useEffect(() => {
   //   setBack(bookDetail?.back)
   // }, [bookDetail])
+
+  const update = async () => {
+    debug('update')
+    // invalidate()
+    if (onUpdate) onUpdate()
+  }
 
   const onGalleryUpsert = async (galleryId?:string) => {
     debug('onGalleryUpsert', galleryId)
@@ -89,9 +94,11 @@ const BookDetailView = ({bookDetail}:BookDetailViewProps) => {
     }
   }
 
+  useEffect(() => {setBookDetail(data)}, [data])
+
   return  bookDetail ? 
     <div>
-      <BookDetailHeader bookDetail={bookDetail} />
+      <BookDetailHeader bookSlug={bookDetail.slug} onUpdate={update} />
 
         <div>
           <Tab.Group vertical onChange={setActiveTab}>
@@ -180,7 +187,10 @@ const BookDetailView = ({bookDetail}:BookDetailViewProps) => {
         </div>
         {jsonBlock(bookDetail)}
     </div>
-    : <div className='m-auto w-32 h-32' ><Spinner /></div>
+    : <div className='m-auto w-32 h-32' >
+        <h2>loading....</h2>
+        <Spinner />
+      </div>
 }
 
 export default BookDetailView
