@@ -1,6 +1,7 @@
+import { useState } from "react"
 import useDebug from "../../../hooks/useDebug"
 import BookApi from "../../../prisma/api/bookApi"
-import { BookCategory, UserFollow } from "../../../prisma/prismaContext"
+import { BookCategory, BookDetail, BookStatus, UserFollow } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import {
   uuid,
@@ -55,7 +56,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {shareBook, followBook, likeBook} = BookApi()
+  const {shareBook, followBook, likeBook, save} = BookApi()
   const bookId = bookDetail.id
   const engageProps = bookDetail && cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
@@ -71,9 +72,9 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
     { key: "PUBLISHED" },
   ]
 
-  const update = (message:string, type:ToastNotifyType = 'info') => {
-    debug('update')
-    notify(message,type)
+  const updated = (message:string, type:ToastNotifyType = 'info', showNotice = true) => {
+    debug('updated')
+    showNotice ? notify(message,type) : {}
     onUpdate ?  onUpdate() : {}
   }
 
@@ -86,8 +87,8 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
     }
     const result = await followBook({bookId, followerId: cyfrUser.id, isFan: fan===true})
     result 
-      ? update(`You are now ${fan === true ? 'stanning' : 'following'} ${bookDetail?.title}. Nice!`)
-      : update('Ya that dint work', 'warning')
+      ? updated(`You are now ${fan === true ? 'stanning' : 'following'} ${bookDetail?.title}. Nice!`)
+      : updated('Ya that dint work', 'warning')
   }
 
   const onShare = async () => {
@@ -98,8 +99,8 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
     // the share author, not the book author
     const result = await shareBook(engageProps)
     result 
-      ? update(`You shared ${bookDetail?.title}.`)
-      : update('Ya that dint work', 'warning')
+      ? updated(`You shared ${bookDetail?.title}.`)
+      : updated('Ya that dint work', 'warning')
   }
 
   const onLike = async () => {
@@ -110,29 +111,34 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
     const result = await likeBook(engageProps)
     
     result 
-      ? update(`You liked ${bookDetail?.title}.`)
-      : update('Ya that dint work', 'warning')
+      ? updated(`You liked ${bookDetail?.title}.`)
+      : updated('Ya that dint work', 'warning')
   }
 
-  const updateHook = (content:string) => {
-    // bookApi.update({ props: { hook: content.toString() }, autoSave: true})
+  const update = async (props: any, showNotice=true) => {
+    try {
+      const saved = await save({...bookDetail, ...props})
+      if (saved) {
+        updated('Saved!','info', showNotice)
+      } else {
+        updated('That dint work', 'warning', showNotice)
+      } 
+    } catch (error) {
+      notify('Ya that totally broke', 'warning')
+    }
   }
 
-  const updateActive = (value: boolean) => {
-    // bookApi.update({ props: { active: value }, autoSave: true})
-  }
+  const [hook, setHook] = useState<string|null>(bookDetail?.hook)
+  const updateHook = async () => update({hook})
 
-  const updateProspect = (value: boolean) => {
-    // bookApi.update({props: { prospect: value }, autoSave: true})
-  }
+  const [active, setactive] = useState<boolean>(bookDetail?.active)
+  const updateActive = () => update({active})
 
-  const updateFiction = (value: boolean) => {
-    // bookApi.update({props: { fiction: value }, autoSave: true})
-  }
+  const updateProspect = (bool:Boolean) => update({prospect: bool}, false)
+  
+  const updateFiction = (bool:Boolean) => update({fiction: bool}, false)
 
-  const updateStatus = (value: string) => {
-    // bookApi.update({props: { status: value as BookStatus }, autoSave: true})
-  }
+  const updateStatus = (value:string) => update({status: value as BookStatus || 'DRAFT'}, false)
 
   const updateGenre = (value: string) => {
     // bookApi.updateGenre(value)
@@ -198,8 +204,8 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
           {isAuthor ? (
             <InlineTextarea
               content={bookDetail.hook}
-              setContent={updateHook}
-              onSave={() => notify('This was changed from bookApi to bookDetail')}
+              setContent={setHook}
+              onSave={updateHook}
             />
           ) : (
             <HtmlContent content={bookDetail.hook??''} />

@@ -19,6 +19,7 @@ import CharacterList from "../Characters/CharacterList"
 import GalleryCreateModal, { OpenGalleryModalPlus } from "../Gallery/GalleryCreateModal"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import BookDetailHeader from "./BookDetailHeader"
+import BookApi from "../../../prisma/api/bookApi"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -33,13 +34,18 @@ export type BookViewProps = {
 const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
   const {data, isLoading, error, invalidate} = useBookQuery(bookSlug)
   const [bookDetail, setBookDetail] = useState<BookDetail>(data)
+  const {save} = BookApi()
 
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
+
+  // For Tabs
   const [activeTab, setActiveTab] = useState(0)
   const selected = (tab:number) => `cursor-pointer hover:text-secondary transition-colors duration-300 ${activeTab === tab ? 'h-subtitle' : 'text-info'}`
   
+
   const [back, setBack] = useState<string|null|undefined>(bookDetail?.back)
+  const [synopsis, setSynopsis] = useState<string|null|undefined>(bookDetail?.synopsis)
 
   // const {bookDetail, query, state, relations, api} = bookDetailHook
   
@@ -86,7 +92,11 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
 
   const onSave = async () => {
     // @ts-ignore
-    const success = await api.save({...bookDetail,back})
+    const success = await save({
+      ...bookDetail
+      ,back: back ||''
+      ,synopsis: synopsis || ''
+    })
     if (success) {
       notify('Saved!')
     } else {
@@ -132,7 +142,7 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
                     {isAuthor ? (
                       <InlineTextarea
                         content={bookDetail.synopsis}
-                        // setContent={setSynopsis}
+                        setContent={setSynopsis}
                         onSave={onSave}
                       />
                     ) : (
@@ -188,7 +198,6 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
         {jsonBlock(bookDetail)}
     </div>
     : <div className='m-auto w-32 h-32' >
-        <h2>loading....</h2>
         <Spinner />
       </div>
 }
