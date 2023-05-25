@@ -14,7 +14,7 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<unknown>>
 ) {
   try {
-    const {id} = req.body.body
+    const {id} = req.body
     debug('handle',{id})
     const result = await PrismaCharacter.stub(id)
     if (result) {

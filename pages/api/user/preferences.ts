@@ -9,10 +9,10 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<User>>
 ) {
-  todo('handle','Why is this posting req.body.body????')
-  debug("handle", req.body.body)
+  todo('handle','Why is this posting req.body????')
+  debug("handle", req.body)
   try {
-    const { id, name, image } = req.body.body
+    const { id, name, image } = req.body
     const result = await PrismaUser.updatePreferences({id, name, image});
     if (result) {
       debug("got result!!")

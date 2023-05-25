@@ -4,7 +4,7 @@ import { BookDetail } from "../prisma/prismaContext"
 import { getApi } from "../utils/api"
 import useDebug from "./useDebug"
 
-const { debug, info } = useDebug("useBookQuery", 'DEBUG')
+const { debug, info } = useDebug("useBookQuery")
 
 type RktBookQuery = {
   data:       any

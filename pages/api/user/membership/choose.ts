@@ -10,9 +10,9 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<UserFeed|null>>
 ) {
-  todo('handle','Why is this posting req.body.body????')
+  todo('handle','Why is this posting req.body????')
   const code = fileMethod('choose')
-  const { audience, cadence } = req.body.body
+  const { audience, cadence } = req.body
   try {
     const user = await PrismaUser.userInSessionReq(req)
     debug('choose', {user: user?.name, plan: audience, cadence})

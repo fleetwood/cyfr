@@ -13,7 +13,7 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<unknown>>
 ) {
   try {
-    const character = req.body.body
+    const character = req.body
     debug('handle', character)
     const result = await PrismaCharacter.upsert(character)
     if (result) {

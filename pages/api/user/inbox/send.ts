@@ -21,7 +21,7 @@ export default async function handle(
       res.end()
       return
     } else {
-      const { threadId, userId, partyId, messages} = req.body.body
+      const { threadId, userId, partyId, messages} = req.body
       const result = await PrismaComment.upsertInbox({threadId, userId, partyId, messages})
       debug(`result:`, {userId, partyId, messages, result})
       res.status(200).json({result})

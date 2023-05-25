@@ -7,14 +7,16 @@ import {
     ResponseError,
     ResponseResult,
 } from "../../../types/response"
-const { debug, err } = useDebug("api/book/follow")
+const { debug, err } = useDebug("api/book/follow", 'DEBUG')
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<Follow>>
 ) {
   // TODO Unfollow/Unfan
-  const { bookId, followerId, isFan = false } = req.body.body
+  const {body} = req
+  const { bookId, followerId, isFan = false } = body
+  debug('handle', {bookId, followerId, isFan, body})
   try {
     const result = await PrismaBook.follow({bookId, followerId, isFan})
     if (result) {

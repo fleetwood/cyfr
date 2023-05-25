@@ -7,8 +7,8 @@ const {debug, info} = useDebug("api/chat/message/send")
 
 export default async function sendMessage(req: NextApiRequest,res: NextApiResponse) {
   try {
-    const message = req.body.body
-    debug(`sendMessage`,{req: req.body.body, message})
+    const message = req.body
+    debug(`sendMessage`,{req: req.body, message})
     const result = await PrismaChat.sendMessage(message)
 
     if (result) {

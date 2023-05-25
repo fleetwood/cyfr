@@ -1,8 +1,8 @@
-import { Chapter, ChapterDetail, ChapterStub, PrismaBook, Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
 import useDebug from "../../hooks/useDebug"
 import { now, sortChapters } from "../../utils/helpers"
+import { Chapter, ChapterDetail, ChapterStub } from "../prismaContext"
 
-const {debug, info, fileMethod} = useDebug('entities/prismaChapter', 'DEBUG')
+const {debug, info, fileMethod} = useDebug('entities/prismaChapter')
 
 const detail = async (id: string): Promise<ChapterDetail | null> => {
   debug('detail', id)

@@ -14,7 +14,7 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<Share>>
 ) {
   // TODO Unshare
-  const { bookId, authorId } = req.body.body
+  const { bookId, authorId } = req.body
   try {
     const result = await PrismaBook.share({bookId, authorId})
     if (result) {

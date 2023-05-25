@@ -1,16 +1,16 @@
-import { PostStub } from "../../../prisma/prismaContext";
+import { PostStub } from "../../../prisma/prismaContext"
 
-import useDebug from "../../../hooks/useDebug";
-import HtmlContent from "../../ui/htmlContent";
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe";
-const { debug, jsonBlock } = useDebug("MainFeedItem", "DEBUG");
+import useDebug from "../../../hooks/useDebug"
+import HtmlContent from "../../ui/htmlContent"
+import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
+const { debug, jsonBlock } = useDebug("MainFeedItem")
 
 type PostFeedItemProps = {
-  post: PostStub;
-};
+  post: PostStub
+}
 
 const PostStubView = ({ post }: PostFeedItemProps) => {
-  const comments: any[] = [];
+  const comments: any[] = []
 
   return post ? (
     <div>
@@ -26,7 +26,7 @@ const PostStubView = ({ post }: PostFeedItemProps) => {
     </div>
   ) : (
     <></>
-  );
-};
+  )
+}
 
-export default PostStubView;
+export default PostStubView

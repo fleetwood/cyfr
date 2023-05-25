@@ -12,7 +12,7 @@ export default async function handle(
     req: NextApiRequest,
     res: NextApiResponse<ResponseResult<Like>>
   ) {
-    const { galleryId, authorId } = req.body.body as GalleryEngageProps
+    const { galleryId, authorId } = req.body as GalleryEngageProps
     try {
       const result = await PrismaGallery.like({galleryId, authorId})
       if (result) {

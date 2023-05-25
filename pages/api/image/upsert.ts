@@ -10,15 +10,15 @@ const {debug, fileMethod, err} = useDebug('api/image')
 
 /**
  * 
- * @param req.body.body: {@link ImageUpsertProps} 
+ * @param req.body: {@link ImageUpsertProps} 
  * @param res 
  */
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<Image>>
 ) {
-  const props = req.body.body as ImageUpsertProps
-  debug('handle', {...req.body.body, props})
+  const props = req.body as ImageUpsertProps
+  debug('handle', {...req.body, props})
   try {
     const result = await PrismaImage.upsert(props)
     if (result) {

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import useBookQuery from "../../hooks/useBookQuery"
-import { GenreStub, UserStub } from "../../prisma/prismaContext"
+import { BookDetail, GenreStub, UserStub } from "../../prisma/prismaContext"
 import BookDetailView from "../containers/Books/BookDetailView"
 import Footer from "../containers/Footer"
 import LeftColumn from "../containers/LeftColumn"
@@ -18,6 +18,11 @@ const {debug} = useDebug('components/layouts/BookDetailLayout', 'DEBUG')
 export type BookDetailLayoutProps = {
   bookId: string
   genres: GenreStub[]
+}
+
+export type BookDetailProps = {
+  bookDetail: BookDetail
+  onUpdate?:  () => void
 }
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {

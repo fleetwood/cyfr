@@ -14,7 +14,7 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<unknown>>
 ) {
   try {
-    const {chapter} = req.body.body
+    const {chapter} = req.body
     debug('handle', {chapter})
     const result = await PrismaChapter.upsert(chapter)
     if (result) {

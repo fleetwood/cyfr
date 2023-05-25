@@ -7,14 +7,16 @@ import {
     ResponseError,
     ResponseResult,
 } from "../../../types/response"
-const { todo, err } = useDebug("api/book/like")
+const { debug, todo, err } = useDebug("api/book/like",'DEBUG')
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<Like>>
 ) {
   // TODO Unlike/Unfan
-  const { bookId, authorId } = req.body.body
+  const { body } = req
+  const { bookId, authorId } = body
+  debug('handle', {bookId, authorId, body})
   try {
     const result = await PrismaBook.like({bookId, authorId})
     if (result) {

@@ -25,12 +25,12 @@ const { jsonBlock, debug } = useDebug(
   "DEBUG"
 )
 
-export type BookDetailViewProps = {
+export type BookViewProps = {
   bookSlug:   string
   onUpdate?:  () => void
 }
 
-const BookDetailView = ({bookSlug, onUpdate}:BookDetailViewProps) => {
+const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
   const {data, isLoading, error, invalidate} = useBookQuery(bookSlug)
   const [bookDetail, setBookDetail] = useState<BookDetail>(data)
 
@@ -56,7 +56,7 @@ const BookDetailView = ({bookSlug, onUpdate}:BookDetailViewProps) => {
 
   const update = async () => {
     debug('update')
-    // invalidate()
+    invalidate()
     if (onUpdate) onUpdate()
   }
 
@@ -98,7 +98,7 @@ const BookDetailView = ({bookSlug, onUpdate}:BookDetailViewProps) => {
 
   return  bookDetail ? 
     <div>
-      <BookDetailHeader bookSlug={bookDetail.slug} onUpdate={update} />
+      <BookDetailHeader bookDetail={bookDetail} onUpdate={update} />
 
         <div>
           <Tab.Group vertical onChange={setActiveTab}>

@@ -11,7 +11,7 @@ export default async function handle(
     req: NextApiRequest,
     res: NextApiResponse<ResponseResult<Share>>
   ) {
-    const { galleryId, authorId } = req.body.body as GalleryEngageProps
+    const { galleryId, authorId } = req.body as GalleryEngageProps
     try {
       const result = await PrismaGallery.share({galleryId, authorId})
       if (result) {

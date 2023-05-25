@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import AdminLayout from "../components/layouts/AdminLayout";
-import useDebug from "../hooks/useDebug";
+import { useEffect, useState } from "react"
+import AdminLayout from "../components/layouts/AdminLayout"
+import useDebug from "../hooks/useDebug"
 
-const { debug, info, fileMethod } = useDebug("test", "DEBUG");
+const { debug, info, fileMethod } = useDebug("test")
 
 const Test = ({}) => {
 
@@ -42,19 +42,19 @@ const Test = ({}) => {
             className="btn btn-sm btn-primary"
             onClick={() => setCurrentStep((c) => c - 1)}
           >
-            &lt;
+            &lt
           </button>
           <button
             disabled={currentStep >= steps.length - 1}
             className="btn btn-sm btn-primary"
             onClick={() => setCurrentStep((c) => c + 1)}
           >
-            &gt;
+            &gt
           </button>
         </div>
       </div>
     </AdminLayout>
-  );
-};
+  )
+}
 
-export default Test;
+export default Test

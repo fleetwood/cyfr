@@ -12,7 +12,7 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<Gallery>>
 ) {
-  const { galleryId, authorId, title, description, images, files } = req.body.body
+  const { galleryId, authorId, title, description, images, files } = req.body
   debug(`handle`,{ galleryId, authorId, title, description, images, files })
   try {
     const gallery = await PrismaGallery.upsertGallery({ galleryId, authorId, title, description, images, files })

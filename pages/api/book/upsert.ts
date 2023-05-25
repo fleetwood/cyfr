@@ -12,7 +12,7 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<BookDetail>>
 ) {
-  const props:BookUpsertProps = req.body.body
+  const props:BookUpsertProps = req.body
   try {
     debug('handle',props)
     const result = await PrismaBook.upsert(props)

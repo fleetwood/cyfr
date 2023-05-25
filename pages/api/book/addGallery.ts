@@ -1,33 +1,33 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { BookDetail, Follow, PrismaBook } from "../../../prisma/prismaContext";
+import { NextApiRequest, NextApiResponse } from "next"
+import { BookDetail, PrismaBook } from "../../../prisma/prismaContext"
 
-import useDebug from "../../../hooks/useDebug";
+import useDebug from "../../../hooks/useDebug"
 import {
   GetResponseError,
   ResponseError,
   ResponseResult,
-} from "../../../types/response";
-const { debug, err } = useDebug("api/book/addGallery", "DEBUG");
+} from "../../../types/response"
+const { debug, err } = useDebug("api/book/addGallery")
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<BookDetail>>
 ) {
-  const { galleryId, bookId } = req.body.body;
+  const { galleryId, bookId } = req.body
   debug("handle", {galleryId, bookId})
   try {
-    const result = await PrismaBook.addGallery({galleryId, bookId});
+    const result = await PrismaBook.addGallery({galleryId, bookId})
     if (result) {
-      res.status(200).json({ result });
+      res.status(200).json({ result })
     } else {
       throw {
         code: "api/book/addGallery",
         message: `No results from addGallery`,
-      };
+      }
     }
   } catch (e: Error | ResponseError | any) {
-    err("FAIL", e);
-    const error = GetResponseError(e);
-    res.status(500).json({ error });
+    err("FAIL", e)
+    const error = GetResponseError(e)
+    res.status(500).json({ error })
   }
 }

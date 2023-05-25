@@ -2,7 +2,7 @@ import React from 'react'
 import { valToLabel } from '../../../utils/helpers'
 import { HeartIcon, ShareIcon, UserIcon, ReplyIcon, BookIcon, StarIcon, DollarIcon, FollowIcon, FireIcon } from '../../ui/icons'
 import { BookDetail, BookStub, UserFollow } from '../../../prisma/prismaContext'
-import { useToast } from '../../context/ToastContextProvider'
+import { ToastNotifyType, useToast } from '../../context/ToastContextProvider'
 import { useCyfrUserContext } from '../../context/CyfrUserProvider'
 import BookApi from '../../../prisma/api/bookApi'
 import ShrinkableIconLabel from '../../ui/shrinkableIconLabel'
@@ -17,30 +17,30 @@ const BookFooter = ({bookDetail, onUpdate}:BookFooterProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const {shareBook, followBook, likeBook} = BookApi()
   const bookId = bookDetail.id
-  const data = {bookId}
   const engageProps = cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
+  const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
 
   const numLikes = (bookDetail.likes?.length??0).toString()
   const numShares = (bookDetail.shares?.length??0).toString()
   const numFollows = (bookDetail.follows?.length??0).toString()
   const numFans = ((bookDetail.follows??[]).filter((f:UserFollow) => f.isFan === true).length).toString()
 
-  const update = () => {
-    onUpdate ? onUpdate() : {}
+  const update = (message:string, type:ToastNotifyType = 'info') => {
+    notify(message,type)
+    onUpdate ?  onUpdate() : {}
   }
 
-  const onFan = async () => onFollow(true)
+  const onFan = () => onFollow(true)
 
-  const onFollow = async (isFan=false) => {
-    if (!cyfrUser) {
+  const onFollow = async (fan=false) => {
+    if (!followProps) { 
       loginRequired()
       return null
     }
-    const result = await followBook({bookId, followerId: cyfrUser.id, isFan})
-    if (result) {
-      notify(`You are now following ${bookDetail?.title}. Nice!`)
-      update()
-    }
+    const result = await followBook({bookId, followerId: cyfrUser.id, isFan: fan===true})
+    result 
+      ? update(`You are now ${fan === true ? 'stanning' : 'following'} ${bookDetail?.title}. Nice!`)
+      : update('Ya that dint work', 'warning')
   }
 
   const onShare = async () => {
@@ -48,11 +48,11 @@ const BookFooter = ({bookDetail, onUpdate}:BookFooterProps) => {
       loginRequired()
       return null
     }
+    // the share author, not the book author
     const result = await shareBook(engageProps)
-    if (result) {
-      notify(`You shared ${bookDetail?.title}!`)
-      update()
-    }
+    result 
+      ? update(`You shared ${bookDetail?.title}.`)
+      : update('Ya that dint work', 'warning')
   }
 
   const onLike = async () => {
@@ -61,11 +61,12 @@ const BookFooter = ({bookDetail, onUpdate}:BookFooterProps) => {
       return null
     }
     const result = await likeBook(engageProps)
-    if (result) {
-      notify(`You liked ${bookDetail?.title}.`)
-      update()
-    }
+    
+    result 
+      ? update(`You liked ${bookDetail?.title}.`)
+      : update('Ya that dint work', 'warning')
   }
+
 
   return (
     <div className="flex space-x-4">
@@ -77,7 +78,7 @@ const BookFooter = ({bookDetail, onUpdate}:BookFooterProps) => {
       />
     <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label={numShares} icon={ShareIcon} onClick={onShare} />
     <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label={numFollows} icon={FollowIcon} onClick={onFollow} />
-    <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label={numFans} icon={FireIcon} onClick={() => onFollow(true)} />
+    <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label={numFans} icon={FireIcon} onClick={onFan} />
     <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label='(NI)' icon={ReplyIcon} />
     <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label='(NI)' icon={BookIcon} />
     <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label='(NI)' icon={StarIcon} />

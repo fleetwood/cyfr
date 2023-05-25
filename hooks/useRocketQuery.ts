@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "react-query"
 import { getApi, sendApi } from "../utils/api"
 import useDebug from "./useDebug"
 
-const {debug} = useDebug("useRocketQuery","DEBUG")
+const {debug} = useDebug("useRocketQuery")
 
 export type RocketQueryProps = {
   name:   string | string[]

@@ -6,7 +6,7 @@ const {debug, info} = useDebug("api/chat/connect")
 
 export default async function ConnectToChat(req: NextApiRequest,res: NextApiResponse) {
   try {
-    const users = req.body.body.users
+    const users = req.body.users
     debug(`ConnectToChat`,users)
     const result = await PrismaChat.connectToChat({ users })
 

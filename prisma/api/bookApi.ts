@@ -2,7 +2,7 @@ import useDebug from "../../hooks/useDebug"
 import { NotImplemented, getApi, sendApi } from "../../utils/api"
 import { BookDetail, BookEngageProps, BookFollowProps, Chapter, CyfrUser } from "../prismaContext"
 
-const { debug, info, err } = useDebug("prisma/api/book", "DEBUG")
+const { debug, info, err } = useDebug("prisma/api/book", 'DEBUG')
 
 debug("BookApi")
 
@@ -15,9 +15,10 @@ export const isAuthor = (bookDetail:BookDetail, cyfrUser?:CyfrUser) => cyfrUser 
 
 const BookApi = () => {
 
-  const followBook = async (props:BookFollowProps) => {
-    const follow = await sendApi("book/follow", props)
-    if (follow.data) {
+  const followBook = async (props:BookFollowProps):Promise<boolean> => {
+    debug('followBook', props)
+    const follow = await (await sendApi("book/follow", {...props})).data
+    if (follow) {
       return true
     } else {
       debug("right result?", follow)

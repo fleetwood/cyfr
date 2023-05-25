@@ -8,7 +8,7 @@ export const apiUrl = (url: string) =>
 
 const postData = (body: any) => {
   return {
-    body,
+    ...body,
     headers: {
       "Content-Type": "application/json",
     },
@@ -25,7 +25,7 @@ export const getApi = async <T> (url: string): Promise<T|any> => {
 
 export const sendApi = async (url: string, body: any) => {
   const sendTo = apiUrl(url)
-  const post = postData(body)
+  const post = postData({...body})
   return axios.post(sendTo, post)
 }
 

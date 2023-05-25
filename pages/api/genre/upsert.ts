@@ -12,7 +12,7 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<GenreFeed>>
 ) {
-  const { title, description, fiction } = req.body.body
+  const { title, description, fiction } = req.body
   try {
     debug('handle', {title, description, fiction})
     const result = await PrismaGenre.upsertGenre({title, description, fiction})

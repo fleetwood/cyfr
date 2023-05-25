@@ -12,7 +12,7 @@ export default async function handle(
     req: NextApiRequest,
     res: NextApiResponse<ResponseResult<Like>>
   ) {
-    const { postId, authorId } = req.body.body as PostEngageProps
+    const { postId, authorId } = req.body as PostEngageProps
     try {
       const result = await PrismaPost.likePost({postId, authorId})
       if (result) {

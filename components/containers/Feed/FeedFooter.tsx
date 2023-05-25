@@ -6,7 +6,7 @@ import GalleryFooter from "../Gallery/GalleryFooter"
 import BookFooter from "../Books/BookFooter"
 import CharacterFooter from "../Characters/CharacterFooter"
 import useFeed, { FeedTypes } from "../../../hooks/useFeed"
-const { debug } = useDebug("PostItemFooter", 'DEBUG')
+const { debug } = useDebug("PostItemFooter")
 
 type FeedFooterProps = {
   item: MainFeed

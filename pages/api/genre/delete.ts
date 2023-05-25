@@ -11,8 +11,8 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<Genre>>
 ) {
-  todo('Why is this posting req.body.body????')
-  const { title } = req.body.body
+  todo('Why is this posting req.body????')
+  const { title } = req.body
   try {
     const result = await PrismaGenre.deleteGenre({title})
     if (result) {

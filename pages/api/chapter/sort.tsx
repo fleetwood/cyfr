@@ -13,7 +13,7 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<Chapter[]>>
 ) {
   try {
-  const {currentChapters, changedChapter} = req.body.body
+  const {currentChapters, changedChapter} = req.body
   
     debug('handle',{currentChapters,changedChapter})
     const result = await PrismaChapter.sort(currentChapters,changedChapter)

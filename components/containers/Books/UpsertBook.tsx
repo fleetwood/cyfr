@@ -30,7 +30,7 @@ import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import { cloudinary } from "../../../utils/cloudinary"
 import Link from "next/link"
 
-const { debug } = useDebug("components/containers/Books/UpsertBook", "DEBUG")
+const { debug } = useDebug("components/containers/Books/UpsertBook")
 
 type UpsertBookProps = {
   book?: BookDetail

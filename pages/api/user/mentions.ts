@@ -10,7 +10,7 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<User[]>>
 ) {
-  todo('handle','Why is this posting req.body.body????')
+  todo('handle','Why is this posting req.body????')
   try {
     const user = await PrismaUser.userInSessionReq(req)
     const search:string|undefined = req.query.search as string

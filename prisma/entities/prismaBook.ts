@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import { GenericResponseError, ResponseError } from "../../types/response"
-import { dedupe, now } from '../../utils/helpers'
+import { dedupe } from '../../utils/helpers'
 import {
   Book,
   BookDetail,
@@ -18,7 +18,7 @@ import {
   prisma
 } from "../prismaContext"
 
-const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook")
+const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
 
 const detail = async (idOrTitleOrSlug:string) => {
   try {
@@ -152,6 +152,7 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
 const follow = async (props:BookFollowProps): Promise<Follow> => {
   // TODO cannot follow your own stuff
   const {followerId, bookId, isFan} = props;
+  debug('follow', props)
   try {
     // we have to do this crazy little dance because composites in Follow model
     const exists = await prisma.follow.findFirst({

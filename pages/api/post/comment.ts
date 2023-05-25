@@ -7,8 +7,8 @@ export default async function handle(
     req: NextApiRequest,
     res: NextApiResponse<ResponseResult<Post>>
   ) {
-    todo('Why is this posting req.body.body????')
-    const { commentId, authorId, content } = req.body.body
+    todo('Why is this posting req.body????')
+    const { commentId, authorId, content } = req.body
     try {
       const result = await PrismaPost.commentOnPost({commentId, authorId, content})
       if (result) {

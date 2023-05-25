@@ -10,7 +10,7 @@ export default async function handle(
 ) {
   try {
     const session = await getSession({ req });
-    const { userId, threadId } = req.body.body
+    const { userId, threadId } = req.body
     
     if (
       session === null ||

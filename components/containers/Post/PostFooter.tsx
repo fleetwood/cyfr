@@ -10,7 +10,7 @@ import { PostDetail, PostStub, UserStub } from "../../../prisma/prismaContext"
 import useDebug from "../../../hooks/useDebug"
 import PostApi from "../../../prisma/api/postApi"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-const { debug } = useDebug("PostItemFooter", 'DEBUG')
+const { debug } = useDebug("PostItemFooter")
 
 type PostFooterProps = {
   post: PostDetail | PostStub

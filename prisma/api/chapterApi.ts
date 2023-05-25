@@ -10,7 +10,7 @@ import {
   Share,
 } from "../prismaContext"
 
-const { debug, info, err } = useDebug("hooks/useChapterApi", "DEBUG")
+const { debug, info, err } = useDebug("hooks/useChapterApi")
 const noChapterDetail = (method: string) => {
   debug(method, `There is no chapterDetail present in useChapterApi...`)
   return false

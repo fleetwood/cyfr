@@ -1,8 +1,6 @@
-import { useState } from "react"
-import useBookQuery from "../../../hooks/useBookQuery"
 import useDebug from "../../../hooks/useDebug"
 import BookApi from "../../../prisma/api/bookApi"
-import { BookCategory, BookDetail, UserFollow } from "../../../prisma/prismaContext"
+import { BookCategory, UserFollow } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import {
   uuid,
@@ -11,6 +9,7 @@ import {
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { ToastNotifyType, useToast } from "../../context/ToastContextProvider"
 import { InlineTextarea, TailwindSelectInput } from "../../forms"
+import { BookDetailProps } from "../../layouts/BookDetailLayout"
 import HtmlContent from "../../ui/htmlContent"
 import {
   FireIcon,
@@ -21,9 +20,8 @@ import {
 } from "../../ui/icons"
 import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
 import Toggler from "../../ui/toggler"
-import { BookDetailViewProps } from "./BookDetailView"
 
-const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader", 'DEBUG')
+const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
 type BookInfoProps = {
   className?:       string
@@ -54,14 +52,13 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
   </div>
 )}
 
-const BookDetailHeader = ({bookSlug, onUpdate}:BookDetailViewProps) => {
-  const {data, isLoading, error, invalidate} = useBookQuery(bookSlug)
-  const [bookDetail, setBookDetail] = useState<BookDetail>(data)
-  
+const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
   const {shareBook, followBook, likeBook} = BookApi()
-  const engageProps = bookDetail && cyfrUser ? {bookId: bookDetail.id, authorId: cyfrUser.id} : undefined
+  const bookId = bookDetail.id
+  const engageProps = bookDetail && cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
+  const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
 
   const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
@@ -77,18 +74,19 @@ const BookDetailHeader = ({bookSlug, onUpdate}:BookDetailViewProps) => {
   const update = (message:string, type:ToastNotifyType = 'info') => {
     debug('update')
     notify(message,type)
-    // invalidate()
     onUpdate ?  onUpdate() : {}
   }
 
-  const onFollow = async (isFan=false) => {
-    if (!bookSlug || !cyfrUser) { 
+  const onFan = () => onFollow(true)
+
+  const onFollow = async (fan=false) => {
+    if (!followProps) { 
       loginRequired()
       return null
     }
-    const result = await followBook({bookId: bookSlug, isFan, followerId: cyfrUser.id})
+    const result = await followBook({bookId, followerId: cyfrUser.id, isFan: fan===true})
     result 
-      ? update(`You are now ${isFan ? 'stanning' : 'following'} ${bookDetail?.title}. Nice!`)
+      ? update(`You are now ${fan === true ? 'stanning' : 'following'} ${bookDetail?.title}. Nice!`)
       : update('Ya that dint work', 'warning')
   }
 
@@ -279,7 +277,7 @@ const BookDetailHeader = ({bookSlug, onUpdate}:BookDetailViewProps) => {
         <BookInfo label="Likes" icon={HeartIcon} onClick={onLike} info={bookDetail.likes?.length || 0} />
         <BookInfo label="Shares" icon={ShareIcon} onClick={onShare} info={bookDetail.shares?.length || 0} />
         <BookInfo label="Follows" icon={FollowIcon} onClick={onFollow} info={bookDetail.follows?.length || 0} />
-        <BookInfo label="Fans" icon={FireIcon} onClick={() => onFollow(true)} info={fans.length || 0} />
+        <BookInfo label="Fans" icon={FireIcon} onClick={onFan} info={fans.length || 0} />
         <BookInfo label="Comments" variant={'NI'} />
         <BookInfo label="Reads" variant={'NI'} />
         <BookInfo label="Reviews" variant={'NI'} />
