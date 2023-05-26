@@ -15,7 +15,7 @@ type TogglerParams = {
 
 const Toggler = ({trueLabel, falseLabel, checked, setChecked, labelClassName, variant = 'neutral'}:TogglerParams) =>
   <div className="flex place-items-center relative">
-    {trueLabel && <span className={`w-1/3 text-${variant} ${labelClassName} ${checked ? '':'text-opacity-50'}`}>{trueLabel}</span>}
+    {trueLabel && <span className={`w-1/3 text-center text-${variant} ${labelClassName} ${checked ? '':'text-opacity-50'}`}>{trueLabel}</span>}
     <Switch
       checked={checked}
       onChange={setChecked}
@@ -40,7 +40,7 @@ const Toggler = ({trueLabel, falseLabel, checked, setChecked, labelClassName, va
           transition-all duration-200 ease-in-out`}
         />
     </Switch>
-    {falseLabel && <span className={`w-1/3 text-${variant} ${labelClassName} ${!checked ? '':'text-opacity-50'}`}>{falseLabel}</span>}
+    {falseLabel && <span className={`w-1/3 text-center text-${variant} ${labelClassName} ${!checked ? '':'text-opacity-50'}`}>{falseLabel}</span>}
     {level==='DEBUG' && <span className="mx-2 px-2 text-sm text-info-content bg-info">Checked: {checked.toString()}</span>}
   </div>
 

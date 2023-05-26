@@ -133,7 +133,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
   const updateHook = async () => update({hook})
 
   const [active, setactive] = useState<boolean>(bookDetail?.active)
-  const updateActive = () => update({active})
+  const updateActive = (bool:Boolean) => update({active: bool}, false)
 
   const updateProspect = (bool:Boolean) => update({prospect: bool}, false)
   
@@ -270,7 +270,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
                 setChecked={updateProspect}
                 falseLabel="No Agents"
                 trueLabel="Allow Agents"
-                labelClassName='text-sm'
+                labelClassName='text-xs'
               />
             </div>
           ) : (
@@ -291,7 +291,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
               setChecked={updateActive}
               falseLabel="Not Visible"
               trueLabel="Visible"
-              labelClassName='text-sm'
+              labelClassName='text-xs'
             />
           ) : (
             <span className="text-secondary">
