@@ -1,23 +1,18 @@
+import { useState } from "react"
 import useDebug from "../../../hooks/useDebug"
+import ErrorPage from "../../../pages/404"
 import BookApi from "../../../prisma/api/bookApi"
-import { BookCategory, UserFollow } from "../../../prisma/prismaContext"
+import { BookCategory, BookStatus, UserFollow } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
-import {
-  uuid
-} from "../../../utils/helpers"
+import { now, uuid } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { ToastNotifyType, useToast } from "../../context/ToastContextProvider"
+import { InlineTextarea, TailwindSelectInput } from "../../forms"
+import TailwindDatepicker from "../../forms/TailwindDatepicker"
 import { BookDetailProps } from "../../layouts/BookDetailLayout"
-import HtmlContent from "../../ui/htmlContent"
-import {
-  FireIcon,
-  FollowIcon,
-  HeartIcon,
-  QuestionMarkIcon,
-  ShareIcon
-} from "../../ui/icons"
+import { FireIcon, FollowIcon, HeartIcon, QuestionMarkIcon, ShareIcon } from "../../ui/icons"
 import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
-import BookAuthorHeader from "./BookAuthorHeader"
+import Toggler from "../../ui/toggler"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -50,7 +45,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
   </div>
 )}
 
-const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
+const BookAuthorHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
   const {shareBook, followBook, likeBook, save} = BookApi()
@@ -59,6 +54,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
 
   const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
+  if (!isAuthor) return <ErrorPage message="You are not authorized to do that." />
 
   const fans = (bookDetail?.follows??[]).filter((f:UserFollow) => f.isFan === true)
 
@@ -112,57 +108,132 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
       : updated('Ya that dint work', 'warning')
   }
 
-  return bookDetail ? 
-    isAuthor ? (
-      <BookAuthorHeader bookDetail={bookDetail} onUpdate={onUpdate} />
-    ) : (
+  const update = async (props: any, showNotice=true) => {
+    try {
+      const saved = await save({...bookDetail, ...props})
+      if (saved) {
+        updated('Saved!','info', showNotice)
+      } else {
+        updated('That dint work', 'warning', showNotice)
+      } 
+    } catch (error) {
+      notify('Ya that totally broke', 'warning')
+    }
+  }
+
+  const [hook, setHook] = useState<string|null>(bookDetail?.hook)
+  const updateHook = async () => update({hook})
+
+  const [active, setactive] = useState<boolean>(bookDetail?.active)
+  const updateActive = (bool:Boolean) => update({active: bool}, false)
+
+  const updateProspect = (bool:Boolean) => update({prospect: bool}, false)
+  
+  const updateFiction = (bool:Boolean) => update({fiction: bool}, false)
+
+  const updateStatus = (value:string) => update({status: value as BookStatus || 'DRAFT'}, false)
+  
+  const [completedAt, setCompletedAt] = useState<Date|null>(bookDetail?.completeAt)
+  const updateCompletedAt = (value:Date|null) => {
+    const d = value ?? ''
+    debug('updateCompletedAt', {value, d})
+    update({completeAt: d}, true)
+  }
+
+  const updateGenre = (value: string) => {
+    // bookApi.updateGenre(value)
+  }
+
+  return bookDetail ? (
     <div>
       <div>
-        <div>{bookDetail?.fiction ? "FICTION" : "NON-FICTION"}</div>
+        <div>
+          <label className="font-semibold w-[50%]">Fiction/Nonfiction</label>
+          <Toggler
+            checked={bookDetail?.fiction??false}
+            setChecked={updateFiction}
+            trueLabel="FICTION"
+            falseLabel="NON-FICTION"
+          />
+        </div>
         <div className="flex">
-          <span className="font-semibold text-primary-content mr-4">
-            {bookDetail.genre?.title}
-          </span>
-            
+          <div>
+            <label className="font-semibold w-[50%]">Genre (TODO)</label>
+            <TailwindSelectInput
+              value={bookDetail?.genre.title}
+              setValue={updateGenre}
+              options={[]}
+            />
+          </div>
           {/* TODO Categories view is broken in db */}
-          {bookDetail.categories?.filter(c => c!==null).map((cat:BookCategory) => (
-            <span className="italic mr-2" key={uuid()}>
-              {cat.title}
-            </span>
-          ))}
+          <div>
+            <label className="font-semibold w-[50%]">Categories</label>
+            <div>
+              <p className="text-xs">
+                TODO: Create categories upsert. Don't forget to include
+                existing categories, and the ability to create new ones.
+              </p>
+              {bookDetail.categories?.filter(c => c!==null).map((cat:BookCategory) => (
+                <span className="italic mr-2" key={uuid()}>
+                  {cat.title}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
         <div>{bookDetail.words} words</div>
         <div className="font-ibarra">
-          <HtmlContent content={bookDetail.hook??''} />
+          <InlineTextarea
+            content={bookDetail.hook}
+            setContent={setHook}
+            onSave={updateHook}
+          />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <div className=" px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
-          <div className="flex justify-between">
-            <label className="font-semibold w-[50%]">Status</label>
-            <span className="text-secondary">{bookDetail.status}</span>
+        <div className=" px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">  
+          <label className="font-semibold w-[50%]">Status</label>
+          <div className="py-2">
+            <TailwindSelectInput
+              options={statusOptions}
+              value={bookDetail.status?.toString()}
+              setValue={updateStatus}
+              className="text-sm"
+            />  
           </div>
         </div>
-          <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
-            <label className="font-semibold w-[50%]">Completed</label>
-            <span className="text-secondary">
-              {/* {completedAt?ymd(completedAt):'TBD'} */}
-            </span>
+
+        <div className="px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
+          <label className="font-semibold w-[50%]">Completed</label>
+          <div className="min-w-full py-2">
+            {/* <Datepicker value={completedAt??null} onChange={updateCompletedAt} /> */}
+            <TailwindDatepicker value={completedAt??now()} onChange={updateCompletedAt} />
           </div>
-        <div
-          className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
+        </div>
+        <div className='px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg'>
           <label className="font-semibold w-[50%]">Prospecting</label>
-          <span className="text-secondary">
-            {bookDetail.prospect ? "YES" : "NO"}
-          </span>
+          <div className="py-2">
+            <Toggler
+              checked={bookDetail.prospect}
+              setChecked={updateProspect}
+              falseLabel="No Agents"
+              trueLabel="Allow Agents"
+              labelClassName='text-xs'
+            />
+          </div>
         </div>
-        <div
-          className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
+        <div className='px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg'>
           <label className="font-semibold w-[50%]">Public</label>
-          <span className="text-secondary">
-            {bookDetail.active ? "PUBLIC" : "HIDDEN"}
-          </span>
+          <div className="py-2">
+            <Toggler
+              checked={bookDetail.active}
+              setChecked={updateActive}
+              falseLabel="Not Visible"
+              trueLabel="Visible"
+              labelClassName='text-xs'
+            />
+          </div>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
@@ -177,10 +248,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
       </div>
     </div>
   )
-  : // no book detail
-  <> 
-    <p>Should throw an error here.</p>
-  </>
+  : <><p>Weird, didn't get no book detail....</p></>
 }
 
-export default BookDetailHeader
+export default BookAuthorHeader
