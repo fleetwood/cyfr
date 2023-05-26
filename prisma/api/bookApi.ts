@@ -63,8 +63,8 @@ const BookApi = () => {
 
   const save = async (detail?:BookDetail) => {
     if (!detail) return noBookDetail("save")
-    const {back, synopsis, active, prospect, fiction, title, slug, words} = detail
-    debug("save", {back, synopsis, active, prospect, fiction, title, slug, words})
+    const {back, synopsis, active, prospect, fiction, title, slug, words, completeAt} = detail
+    debug("save", {back, synopsis, active, prospect, fiction, title, slug, words, completeAt})
     const upsert = await (await sendApi("book/upsert", detail)).data
     if (upsert.result) {
       const b = upsert.result
@@ -72,6 +72,7 @@ const BookApi = () => {
         fiction: b.fiction,
         prospect: b.prospect,
         active: b.active,
+        completeAt: b.completeAt
       })
       return true
     } else {

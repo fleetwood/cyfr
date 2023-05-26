@@ -36,7 +36,7 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
   const [bookDetail, setBookDetail] = useState<BookDetail>(data)
   const {save} = BookApi()
 
-  const { notify, loginRequired } = useToast()
+  const { notify } = useToast()
   const [cyfrUser] = useCyfrUserContext()
 
   // For Tabs
@@ -46,19 +46,7 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
 
   const [back, setBack] = useState<string|null|undefined>(bookDetail?.back)
   const [synopsis, setSynopsis] = useState<string|null|undefined>(bookDetail?.synopsis)
-
-  // const {bookDetail, query, state, relations, api} = bookDetailHook
-  
   const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
-
-  // const {
-  //   // RELATIONS, READ-ONLY
-  //   genre, gallery, authors, cover, follows, likes, shares, chapters, characters, categories 
-    
-  // }:BookRelations = relations
-  // useEffect(() => {
-  //   setBack(bookDetail?.back)
-  // }, [bookDetail])
 
   const update = async () => {
     debug('update')
@@ -76,11 +64,6 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
     // if (added) {
     //   notify(`You created a gallery ${bookDetail?.title}.`)
     // }
-  }
-
-  const updateSynopsis = (html?: string | null) => {
-    // bookApi.update({props:{ synopsis: html?.toString()}, autoSave: true})
-    // setSaveReady(true)
   }
 
   const editChapter =(chapter:Chapter) => {
@@ -195,7 +178,7 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
             </Tab.Panels>
           </Tab.Group>
         </div>
-        {jsonBlock(bookDetail)}
+        {/* {jsonBlock(bookDetail)} */}
     </div>
     : <div className='m-auto w-32 h-32' >
         <Spinner />

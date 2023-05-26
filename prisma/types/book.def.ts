@@ -25,6 +25,7 @@ export type BookUpsertProps = {
   cover?:       string
   title:        string,
   slug?:        string,
+  completeAt?:  Date|null,
   active:       boolean,
   fiction:      boolean,
   prospect:     boolean,

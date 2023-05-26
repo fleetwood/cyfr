@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import { GenericResponseError, ResponseError } from "../../types/response"
-import { dedupe } from '../../utils/helpers'
+import { dedupe, now } from '../../utils/helpers'
 import {
   Book,
   BookDetail,
@@ -18,7 +18,7 @@ import {
   prisma
 } from "../prismaContext"
 
-const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
+const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook")
 
 const detail = async (idOrTitleOrSlug:string) => {
   try {
@@ -29,9 +29,12 @@ const detail = async (idOrTitleOrSlug:string) => {
         OR LOWER(slug) = LOWER(${idOrTitleOrSlug})
       `
     if (result.length>0) {
-      return result[0] as BookDetail
+      const book = result[0] as BookDetail
+      const {id, title, active, completeAt, updatedAt} = book
+      debug('detail', {id, title, active, completeAt, updatedAt})
+      return book;
     }
-    throw { code: fileMethod("details"), message: "No book was returned!" }
+    throw { code: fileMethod("detail"), message: "No book was returned!" }
   } catch (error) {
     info('details FAIL', error)
     throw(error)
@@ -106,10 +109,10 @@ const byUser = async (id: string): Promise<BookDetail[]> => {
 
 const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
     try {
-        const {id, title, slug, hook, synopsis, back, status, active, fiction, prospect, words} = props
+        const {id, title, slug, hook, synopsis, back, status, active, fiction, prospect, words, completeAt} = props
         const data =  {
           title,
-          slug: encodeURIComponent(slug || title.replaceAll(' ','-')).toLowerCase(),
+          slug: encodeURIComponent((slug || title).replaceAll(' ','-')).toLowerCase(),
           hook,
           synopsis,
           back,
@@ -118,6 +121,8 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
           prospect,
           fiction,
           words,
+          completeAt,
+          updatedAt: now(),
           authors: {
             connect: dedupe(props.authors.map(a => { return {id: a.id}}),'id')
           },
@@ -127,24 +132,35 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
             }
           }
         }
-
-        debug('upsert', data)
-        todo('createBook',`
-            2. if a cover hasn't been uploaded, obtain the default for the genre
-            4. categories, oy
+        debug('upsert PROPS', {id, title, slug, status, active, words, completeAt})
+        todo('upsert',`
+            1. if a cover hasn't been uploaded, obtain the default for the genre
+            2. categories, oy
         `)
         const result = id 
-          ? prisma.book.update({
-            where: {id}, 
+          ? await prisma.book.update({
+            where: {id},
             data
           })
-          : prisma.book.create({data})
+          : await prisma.book.create({data})
         if (result) {
-          return result as unknown as BookDetail
+          const book  = result as unknown as BookDetail
+          debug('upsert SUCCESS', {
+            result,
+            id: book.id, 
+            title: book.title, 
+            slug: book.slug, 
+            status: book.status, 
+            active: book.active, 
+            words: book.words, 
+            completeAt: book.completeAt,
+            updatedAt: book.updatedAt
+          })
+          return book
         }
         throw({code: fileMethod('createBook'), message: 'Not yet implemented'})
     } catch (error) {
-        info('createBook', {error})
+        info('upsert ERROR', {error})
         throw(error)
     }
 }

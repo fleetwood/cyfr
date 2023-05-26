@@ -1,15 +1,16 @@
 import { useState } from "react"
 import useDebug from "../../../hooks/useDebug"
 import BookApi from "../../../prisma/api/bookApi"
-import { BookCategory, BookDetail, BookStatus, UserFollow } from "../../../prisma/prismaContext"
+import { BookCategory, BookStatus, UserFollow } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import {
-  uuid,
-  ymd
+  now,
+  uuid
 } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { ToastNotifyType, useToast } from "../../context/ToastContextProvider"
 import { InlineTextarea, TailwindSelectInput } from "../../forms"
+import TailwindDatepicker from "../../forms/TailwindDatepicker"
 import { BookDetailProps } from "../../layouts/BookDetailLayout"
 import HtmlContent from "../../ui/htmlContent"
 import {
@@ -139,6 +140,13 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
   const updateFiction = (bool:Boolean) => update({fiction: bool}, false)
 
   const updateStatus = (value:string) => update({status: value as BookStatus || 'DRAFT'}, false)
+  
+  const [completedAt, setCompletedAt] = useState<Date|null>(bookDetail?.completeAt)
+  const updateCompletedAt = (value:Date|null) => {
+    const d = value ?? ''
+    debug('updateCompletedAt', {value, d})
+    update({completeAt: d}, true)
+  }
 
   const updateGenre = (value: string) => {
     // bookApi.updateGenre(value)
@@ -222,6 +230,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
                 options={statusOptions}
                 value={bookDetail.status?.toString()}
                 setValue={updateStatus}
+                className="text-sm"
               />
             </div>
           ) : (
@@ -232,12 +241,22 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
           )}
         </div>
 
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
-          <label className="font-semibold w-[50%]">Completed</label>
-          <span className="text-secondary">
-            {bookDetail.completeAt ? ymd(new Date(bookDetail.completeAt)) : "TBD"}
-          </span>
-        </div>
+        {isAuthor ? (
+          <div className="px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
+            <label className="font-semibold w-[50%]">Completed</label>
+            <div className="min-w-full mb-2">
+              {/* <Datepicker value={completedAt??null} onChange={updateCompletedAt} /> */}
+              <TailwindDatepicker value={completedAt??now()} onChange={updateCompletedAt} />
+            </div>
+          </div>
+          ) : (
+          <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
+            <label className="font-semibold w-[50%]">Completed</label>
+            <span className="text-secondary">
+              {/* {completedAt?ymd(completedAt):'TBD'} */}
+            </span>
+          </div>
+          )}
         <div
           className={`${
             isAuthor ? "" : "flex justify-between"
@@ -251,6 +270,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
                 setChecked={updateProspect}
                 falseLabel="No Agents"
                 trueLabel="Allow Agents"
+                labelClassName='text-sm'
               />
             </div>
           ) : (
@@ -271,6 +291,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
               setChecked={updateActive}
               falseLabel="Not Visible"
               trueLabel="Visible"
+              labelClassName='text-sm'
             />
           ) : (
             <span className="text-secondary">
