@@ -9,6 +9,7 @@ import {
   Gallery,
   Share,
 } from "../prismaContext"
+import {isAuthor} from './../../utils/helpers/book'
 
 const { debug, info, err } = useDebug("hooks/useChapterApi")
 const noChapterDetail = (method: string) => {
@@ -16,13 +17,7 @@ const noChapterDetail = (method: string) => {
   return false
 }
 
-/**
- * Obtains the ChapterDetail from Web API.
- * @param chapterId: string
- * @param cyfrUser?:  {@link CyfrUser}
- * @returns
- */
-const ChapterApi = (): ChapterDetailApi => {
+const ChapterApi = () => {
 
   const save = async (chapter: ChapterDetail): Promise<ChapterDetail | null> => {
     debug("upsert", chapter)
@@ -62,7 +57,8 @@ const ChapterApi = (): ChapterDetailApi => {
     save,
     sort,
     share,
-    addGallery
+    addGallery,
+    isAuthor
   }
 }
 

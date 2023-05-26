@@ -9,6 +9,21 @@ type ChapterViewSelectorProps = {
   showEdit?:  boolean
 }
 
+const viewToString = (view?:ChapterViews) => {
+  switch (view) {
+    case ChapterViews.DETAIL:
+      return 'DETAIL'
+    case ChapterViews.EDIT:
+      return 'EDIT'
+    case ChapterViews.READ:
+      return 'READ'
+    case ChapterViews.REVIEW:
+      return 'REVIEW'
+    default:
+      return 'UNKNOWN'
+  }
+}
+
 const ChapterViewSelector = ({view, setView, showEdit=false}:ChapterViewSelectorProps) => 
   <div className="flex space-x-2">
     {view!==ChapterViews.DETAIL &&
@@ -23,5 +38,6 @@ const ChapterViewSelector = ({view, setView, showEdit=false}:ChapterViewSelector
     {showEdit && view !== ChapterViews.EDIT &&
       <ShrinkableIconButton className="rounded-lg p-2" label="Edit" icon={FeatherIcon} onClick={() => setView(ChapterViews.EDIT)} />
     }
+    <span>{viewToString(view)}</span>
   </div>
 export default ChapterViewSelector

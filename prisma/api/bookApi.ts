@@ -1,6 +1,7 @@
 import useDebug from "../../hooks/useDebug"
 import { NotImplemented, getApi, sendApi } from "../../utils/api"
-import { BookDetail, BookEngageProps, BookFollowProps, Chapter, CyfrUser } from "../prismaContext"
+import { BookDetail, BookEngageProps, BookFollowProps, BookStub, Chapter, ChapterDetail, ChapterStub, CyfrUser, User, UserStub } from "../prismaContext"
+import {isAuthor} from './../../utils/helpers/book'
 
 const { debug, info, err } = useDebug("prisma/api/book", 'DEBUG')
 
@@ -10,8 +11,6 @@ const noBookDetail = (method: string) => {
   debug(method, "bookDetail is null")
   return false
 }
-
-export const isAuthor = (bookDetail:BookDetail, cyfrUser?:CyfrUser) => cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
 const BookApi = () => {
 

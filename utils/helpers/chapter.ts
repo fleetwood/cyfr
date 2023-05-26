@@ -1,4 +1,5 @@
 import { Chapter } from "../../prisma/prismaContext";
+export { isAuthor } from "./book";
 
 /**
  * Takes a chapter with a new chapter order, and resorts the current
