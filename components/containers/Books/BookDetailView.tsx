@@ -106,6 +106,7 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
               {/* BACK PANEL */}
               <Tab.Panel>
                 <div className="my-4 font-ibarra">
+                    <label>Back Panel</label>
                     {isAuthor ? (
                       <InlineTextarea
                         content={bookDetail.back}

@@ -7,12 +7,14 @@ import { KeyVal } from "../../../types/props"
 import { now, uuid } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { ToastNotifyType, useToast } from "../../context/ToastContextProvider"
-import { InlineTextarea, TailwindSelectInput } from "../../forms"
+import { InlineTextarea, TailwindInput, TailwindSelectInput } from "../../forms"
 import TailwindDatepicker from "../../forms/TailwindDatepicker"
 import { BookDetailProps } from "../../layouts/BookDetailLayout"
 import { FireIcon, FollowIcon, HeartIcon, QuestionMarkIcon, ShareIcon } from "../../ui/icons"
 import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
 import Toggler from "../../ui/toggler"
+import { title } from "process"
+import EZButton from "../../ui/ezButton"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -121,6 +123,9 @@ const BookAuthorHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
     }
   }
 
+  const [title, setTitle] = useState<string|null>(bookDetail?.title)
+  const updateTitle = async () => update({title})
+
   const [hook, setHook] = useState<string|null>(bookDetail?.hook)
   const updateHook = async () => update({hook})
 
@@ -147,6 +152,17 @@ const BookAuthorHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
   return bookDetail ? (
     <div>
       <div>
+        <div className="p-2 mb-2 mr-4 border border-opacity-50 border-neutral rounded-lg">
+          <label className="font-semibold">Hook</label>
+          <div className="font-ibarra flex space-x-4">
+            <TailwindInput
+              type="text"
+              value={title}
+              setValue={setTitle}
+              />
+            <EZButton label="SAVE" variant="secondary" onClick={updateTitle} />
+          </div>
+        </div>
         <div>
           <label className="font-semibold w-[50%]">Fiction/Nonfiction</label>
           <Toggler
@@ -182,17 +198,21 @@ const BookAuthorHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
           </div>
         </div>
         <div>{bookDetail.words} words</div>
-        <div className="font-ibarra">
-          <InlineTextarea
-            content={bookDetail.hook}
-            setContent={setHook}
-            onSave={updateHook}
-          />
+        <div className="p-2 mb-2 mr-4 border border-opacity-50 border-neutral rounded-lg">
+          <label className="font-semibold">Hook</label>
+          <div className="font-ibarra flex space-x-4">
+            <TailwindInput
+              type="text"
+              value={hook}
+              setValue={setHook}
+              />
+            <EZButton label="SAVE" variant="secondary" onClick={updateHook} />
+          </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <div className=" px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">  
+        <div className="px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">  
           <label className="font-semibold w-[50%]">Status</label>
           <div className="py-2">
             <TailwindSelectInput
