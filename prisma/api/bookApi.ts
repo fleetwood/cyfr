@@ -129,7 +129,6 @@ const BookApi = () => {
     title: string,
     order: number
   ) => {
-    throw NotImplemented
     const props = { bookId, title, order }
     const result = await (await sendApi("/book/addChapter", props)).data
     if (result.result) {

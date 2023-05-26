@@ -1,6 +1,5 @@
 import { useRouter } from "next/router"
 import useDebug from "../../../hooks/useDebug"
-import { isAuthor } from "../../../prisma/api/bookApi"
 import { BookStub } from "../../../prisma/prismaContext"
 import { uniqueKey } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
@@ -8,6 +7,7 @@ import Avatar from "../../ui/avatar"
 import HtmlContent from "../../ui/htmlContent"
 import BookCover, { BookCoverVariant } from "./BookCover"
 import Link from "next/link"
+import BookApi from "../../../prisma/api/bookApi"
 
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent')
 
@@ -18,10 +18,6 @@ type BookComponentProps = {
 }
 
 const BookStubView = ({book, authorAvatars, variant='stub'}: BookComponentProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const isOwner = isAuthor(book, cyfrUser)
-  const router = useRouter()
-
   const isStub = variant === "stub"
   const isFeed = variant === 'feed'
   const isDetail = variant === 'detail'

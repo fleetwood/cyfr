@@ -1,13 +1,14 @@
-import React, { FormEvent, useRef, useState } from 'react'
+import { FormEvent, useRef, useState } from 'react'
 import useDebug from '../../../hooks/useDebug'
+import BookApi from '../../../prisma/api/bookApi'
+import { BookDetail, Chapter } from '../../../prisma/prismaContext'
 import { useCyfrUserContext } from '../../context/CyfrUserProvider'
 import { useToast } from '../../context/ToastContextProvider'
-import { LoggedIn } from '../../ui/toasty'
-import Spinner from '../../ui/spinner'
 import { TailwindInput } from '../../forms'
 import EZButton from '../../ui/ezButton'
-import { BookDetail, BookDetailHook, Chapter } from '../../../prisma/prismaContext'
-const {debug} = useDebug("components/containers/Chapter/CreateChapterModal")
+import Spinner from '../../ui/spinner'
+import { LoggedIn } from '../../ui/toasty'
+const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", 'DEBUG')
 
 const createChapterModal = 'createChapterModal'
 
@@ -33,6 +34,8 @@ type CreateChapterModalType = {
 const CreateChapterModal = ({bookDetail, onSave}:CreateChapterModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
   const { notify } = useToast()
+  const {addChapter} = BookApi()
+
   const [valid, setIsValid] = useState<boolean>(false)
   const container = useRef<HTMLDivElement>(null)
 
@@ -46,7 +49,8 @@ const CreateChapterModal = ({bookDetail, onSave}:CreateChapterModalType) => {
       debug(`handleSubmit: sth is disabled....`, { cyfrUser, chapterTitle })
       return
     }
-    const result = false; // await addChapter(chapterTitle!, chapterOrder)
+    debug('handleSubmit', {book: bookDetail.id, chapterTitle, chapterOrder})
+    const result = await addChapter(bookDetail.id, chapterTitle!, chapterOrder)
     if (result) {
       notify(`${chapterTitle} was added ${bookDetail?.title}!`)
       closeModal()

@@ -36,7 +36,7 @@ const ChapterEditView = ({chapterDetail, onSave}:ChapterEditViewProps) => {
         <WritingFocusedEditor content={chapterDetail.content} setContent={() => {}} words={chapterDetail.words} setWords={() => {}} onSave={onSave} />
         </div>
     </div> 
-    : <ErrorPage message='You are not authorized to perform that action!' />
+    : <ErrorPage message='You do not have edit permissions.' />
 )}
 
 export default ChapterEditView

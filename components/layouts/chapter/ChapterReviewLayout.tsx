@@ -9,15 +9,13 @@ import RightColumn from "../../containers/RightColumn"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
+import Toasts from "../../ui/toasts"
 
-const ChapterReviewLayout = ({chapterDetail, view, setView, showEdit = false}:ChapterLayoutProps) => {
+const ChapterReviewLayout = ({chapterDetail, view, setView}:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const {book} = chapterDetail
-  const {notify} = useToast()
-  //todo: This should be handled by a commune...
   
   const [scrollActive, setScrollActive] = useState(false)
-  const {toasts} = useToast()
   const mainRef = useRef<HTMLElement>(null)
 
   const handleScroll = (e:any) => {
@@ -40,16 +38,13 @@ const ChapterReviewLayout = ({chapterDetail, view, setView, showEdit = false}:Ch
         ref={mainRef}
       >
         <Navbar className="min-w-full transition-all duration-200 ease-out" pageScrolled={scrollActive} />
-
-        <div className="toast toast-top toast-center w-4/6 mt-12 z-10 p-0">
-          {toasts.map((toast) => toast.toast)}
-        </div>
+        <Toasts />
         <div className="box-border snap-y min-h-full">
           <div className="absolute right-0">
-              <ChapterViewSelector setView={setView} view={view} showEdit />
+            <ChapterViewSelector chapter={chapterDetail} setView={setView} view={view} />
           </div>
           <h3><Link href={`/book/${book?.slug}`}>{book?.title}</Link></h3>
-          <ChapterDetailView chapterDetail={chapterDetail} view={view} showEdit />
+          <ChapterDetailView chapterDetail={chapterDetail} view={view} />
         </div>
         <Footer />
       </main>

@@ -1,20 +1,20 @@
 import Link from "next/link"
 import { useRef, useState } from "react"
 import { ChapterLayoutProps } from "../../../pages/book/[bookId]/chapter/[chapterId]"
-import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
+import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
+import ChapterViewSelector, { currentView } from "../../containers/Chapter/ChapterViewSelector"
 import LeftColumn from "../../containers/LeftColumn"
 import Navbar from "../../containers/Navbar"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { useToast } from "../../context/ToastContextProvider"
 import { HamburgerIcon } from "../../ui/icons"
-import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
-import { isAuthor } from "../../../prisma/api/bookApi"
+import Toasts from "../../ui/toasts"
+import ChapterEditView from "../../containers/Chapter/ChapterEditView"
 
-const ChapterReadLayout = ({chapterDetail, view, setView, showEdit = false}:ChapterLayoutProps) => {
+const ChapterReadLayout = ({chapterDetail, view, setView}:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
+  const {readView, editView} = currentView(view)
 
   const [scrollActive, setScrollActive] = useState(false)
-  const {toasts} = useToast()
   const mainRef = useRef<HTMLElement>(null)
 
   const sideBarDrawer = 'sideBarDrawer'
@@ -34,25 +34,22 @@ const ChapterReadLayout = ({chapterDetail, view, setView, showEdit = false}:Chap
         
         <div className="w-full min-h-screen max-h-screen flex flex-col sm:flex-row flex-wrap sm:flex-nowrap flex-grow">
           <main
-            role="main"
+            role="main" ref={mainRef} onScroll={handleScroll} 
             className="w-full min-h-screen flex-grow m-0 overflow-auto scrollbar-hide relative"
-            onScroll={handleScroll}
-            ref={mainRef}
-          >
+            >
             <Navbar className="min-w-full transition-all duration-200 ease-out"
               leftChildren={<label htmlFor={sideBarDrawer} className="btn drawer-button">{HamburgerIcon}</label>}
             />
 
             <div className="absolute right-0">
-              <ChapterViewSelector setView={setView} view={view} showEdit />
+              <ChapterViewSelector chapter={chapterDetail} setView={setView} view={view} />
             </div>
+            <Toasts />
 
-            <div className="toast toast-top toast-center w-4/6 mt-12 z-10">
-              {toasts.map((toast) => toast.toast)}
-            </div>
             <div className="box-border snap-y min-h-full">
               <h3><Link href={`/book/${book?.slug}`}>{book?.title}</Link></h3>
-              <ChapterDetailView chapterDetail={chapterDetail} view={view} showEdit />
+              {readView && <ChapterDetailView chapterDetail={chapterDetail} view={view} />}
+              {editView && <ChapterEditView chapterDetail={chapterDetail} />}
             </div>
           </main>
         </div>

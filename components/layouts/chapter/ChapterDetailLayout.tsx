@@ -10,11 +10,14 @@ import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
 import useDebug from "../../../hooks/useDebug"
+import ChapterApi from "../../../prisma/api/chapterApi"
 
 const {debug, jsonBlock} = useDebug('ChapterDetailLayout')
 
 const ChapterDetailLayout = ({chapterDetail, genres, view, setView}:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
+  const {isAuthor} = ChapterApi()
+  const showEdit = isAuthor({chapter: chapterDetail, cyfrUser})
   
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -44,7 +47,7 @@ const ChapterDetailLayout = ({chapterDetail, genres, view, setView}:ChapterLayou
           {chapterDetail && 
           <div className="box-border snap-y min-h-full flex-1">
             <h3><Link href={`/book/${chapterDetail.book?.slug}`}>{chapterDetail.book?.title}</Link></h3>
-            <ChapterViewSelector setView={setView} view={view} />
+            <ChapterViewSelector chapter={chapterDetail} setView={setView} view={view} />
             <ChapterDetailView chapterDetail={chapterDetail} view={view} />
           </div>
           }

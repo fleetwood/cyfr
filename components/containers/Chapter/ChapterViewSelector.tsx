@@ -1,43 +1,46 @@
 import { Dispatch, SetStateAction } from "react";
 import { ChapterViews } from "../../../pages/book/[bookId]/chapter/[chapterId]";
+import ChapterApi from "../../../prisma/api/chapterApi";
+import { ChapterDetail, ChapterStub } from "../../../prisma/prismaContext";
+import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import { ChapterDetailIcon, FeatherIcon, ReadsIcon, StarIcon } from "../../ui/icons";
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 
 type ChapterViewSelectorProps = {
-  view:       ChapterViews
-  setView:    Dispatch<SetStateAction<ChapterViews>>
-  showEdit?:  boolean
+  view:     ChapterViews
+  setView:  Dispatch<SetStateAction<ChapterViews>>
+  chapter:  ChapterStub|ChapterDetail
 }
 
-const viewToString = (view?:ChapterViews) => {
-  switch (view) {
-    case ChapterViews.DETAIL:
-      return 'DETAIL'
-    case ChapterViews.EDIT:
-      return 'EDIT'
-    case ChapterViews.READ:
-      return 'READ'
-    case ChapterViews.REVIEW:
-      return 'REVIEW'
-    default:
-      return 'UNKNOWN'
+export const currentView = (view?:ChapterViews) => {
+  return {
+    detailView: view === ChapterViews.DETAIL,
+    editView:   view === ChapterViews.EDIT,
+    readView:   view === ChapterViews.READ,
+    reviewView: view === ChapterViews.REVIEW
   }
 }
 
-const ChapterViewSelector = ({view, setView, showEdit=false}:ChapterViewSelectorProps) => 
-  <div className="flex space-x-2">
-    {view!==ChapterViews.DETAIL &&
-      <ShrinkableIconButton className="rounded-lg p-2" label="Detail" icon={ChapterDetailIcon} onClick={() => setView(ChapterViews.DETAIL)} />
+const ChapterViewSelector = ({chapter, view, setView}:ChapterViewSelectorProps) => {
+  const [cyfrUser] = useCyfrUserContext()
+  const {isAuthor} = ChapterApi()
+  const showEdit = isAuthor({chapter, cyfrUser})
+  const {detailView, editView, readView, reviewView} = currentView(view)
+  return (
+  <div className="flex">
+    {!detailView &&
+      <ShrinkableIconButton className="hover:bg-secondary hover:text-secondary-content rounded-lg p-2" labelClassName="text-neutral" label="Detail" icon={ChapterDetailIcon} onClick={() => setView(ChapterViews.DETAIL)} />
     }
-    {view!==ChapterViews.READ  && view !== ChapterViews.EDIT &&
-      <ShrinkableIconButton className="rounded-lg p-2" label="Read" icon={ReadsIcon} onClick={() => setView(ChapterViews.READ)} />
+    {!readView &&
+      <ShrinkableIconButton className="hover:bg-secondary hover:text-secondary-content rounded-lg p-2" labelClassName="text-neutral" label="Read" icon={ReadsIcon} onClick={() => setView(ChapterViews.READ)} />
     }
-    {view !== ChapterViews.REVIEW  && view !== ChapterViews.EDIT &&
-      <ShrinkableIconButton className="rounded-lg p-2" label="Review" icon={StarIcon} onClick={() => setView(ChapterViews.REVIEW)} />
+    {!reviewView &&
+      <ShrinkableIconButton className="hover:bg-secondary hover:text-secondary-content rounded-lg p-2" labelClassName="text-neutral" label="Review" icon={StarIcon} onClick={() => setView(ChapterViews.REVIEW)} />
     }
-    {showEdit && view !== ChapterViews.EDIT &&
-      <ShrinkableIconButton className="rounded-lg p-2" label="Edit" icon={FeatherIcon} onClick={() => setView(ChapterViews.EDIT)} />
+    {showEdit && !editView &&
+      <ShrinkableIconButton className="hover:bg-secondary hover:text-secondary-content rounded-lg p-2" labelClassName="text-neutral" label="Edit" icon={FeatherIcon} onClick={() => setView(ChapterViews.EDIT)} />
     }
-    <span>{viewToString(view)}</span>
+    {/* <span>{viewToString(view)} {showEdit === true ? 'true' : 'false'}</span> */}
   </div>
+)}
 export default ChapterViewSelector
