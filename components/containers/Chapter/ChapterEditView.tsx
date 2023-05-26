@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { TailwindInput } from '../../forms'
 import WritingFocusedEditor from '../../forms/WritingFocusedEditor'
 import EZButton from '../../ui/ezButton'
@@ -7,6 +7,10 @@ import { ChapterDetail } from '../../../prisma/types'
 import { useCyfrUserContext } from '../../context/CyfrUserProvider'
 import ChapterApi from '../../../prisma/api/chapterApi'
 import ErrorPage from '../../../pages/404'
+import useDebug from '../../../hooks/useDebug'
+import { useToast } from '../../context/ToastContextProvider'
+
+const {debug} = useDebug('components/containers/Chapter/ChapterEditView', 'DEBUG')
 
 type ChapterEditViewProps = {
     chapterDetail:ChapterDetail
@@ -15,15 +19,36 @@ type ChapterEditViewProps = {
 
 const ChapterEditView = ({chapterDetail, onSave}:ChapterEditViewProps) => {
     const [cyfrUser] = useCyfrUserContext()
-    const {isAuthor} = ChapterApi()
+    const {isAuthor, save} = ChapterApi()
+    const {notify} = useToast()
+
+    const [words, setWords] = useState(chapterDetail.words)
+    const [title, setTitle] = useState(chapterDetail.title)
+    const [content, setContent] = useState(chapterDetail.content)
+
+    const onUpdate = async () => {
+        debug('onUpdate', {words, title, content})
+        const result = await save({
+            ...chapterDetail,
+            words,
+            title,
+            content
+        })
+        if (result) {
+            notify(`${title} saved!`)
+            onSave ? onSave() : {}
+        } else {
+            notify('wellhell', 'warning')
+        }
+    }
 
     //this should be a commune
   return  (
     isAuthor({chapter: chapterDetail, cyfrUser}) ? 
     <div>
-        <EZButton disabled={false} label="Save" onClick={onSave} />
+        <EZButton disabled={title?.length<1} label="Save" onClick={onUpdate} />
         <h2>
-        <TailwindInput type="text" value={chapterDetail.title} setValue={() => {}} />
+        <TailwindInput type="text" value={title} setValue={setTitle} />
         </h2>
         <div>
         <h4>Characters</h4>
@@ -33,7 +58,7 @@ const ChapterEditView = ({chapterDetail, onSave}:ChapterEditViewProps) => {
         <CharacterList characters={chapterDetail?.characters} />
         </div>
         <div className="relative max-h-max">
-        <WritingFocusedEditor content={chapterDetail.content} setContent={() => {}} words={chapterDetail.words} setWords={() => {}} onSave={onSave} />
+        <WritingFocusedEditor content={content} setContent={setContent} words={words} setWords={setWords} onSave={onUpdate} />
         </div>
     </div> 
     : <ErrorPage message='You do not have edit permissions.' />
