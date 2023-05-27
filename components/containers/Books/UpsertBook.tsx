@@ -123,7 +123,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
 
   useEffect(() => {
     const getGenres = async () => {
-      const genres = await getApi("/genre/list")
+      const genres = await getApi("/genre/stubs")
       if (genres && genres.result) {
         const g = genres.result
         setGenreList(() => g)

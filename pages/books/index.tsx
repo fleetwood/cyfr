@@ -56,7 +56,7 @@ const BooksPage = ({genres}: BooksPageProps) => {
           </div>
           <div className="grid grid-cols-3 justify-between gap-2 py-4">
             {visibleBooks.filter(b => b !== null).map((book) => (
-                <BookCover book={book} key={uniqueKey(book)} />
+              <BookCover book={book} key={uniqueKey(book)} />
             ))}
           </div>
         </div>

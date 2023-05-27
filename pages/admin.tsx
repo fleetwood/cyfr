@@ -34,7 +34,7 @@ const AdminPage = ({}) => {
     }
 
     const getGenres = async () => {
-      const genreList = await getApi('genre/list')
+      const genreList = await getApi('genre/stubs')
       if (genreList.result) {
         setGenres(() => genreList.result)
       }
