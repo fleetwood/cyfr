@@ -93,7 +93,6 @@ model Gallery {
   book_gallery      Book?      @relation("book_gallery")
   character_gallery Character? @relation("character_gallery")
   chapter_gallery   Chapter?   @relation("chapter_gallery")
-  genre_gallery     Genre?     @relation("genre_gallery")
 }
 
 model Image {
@@ -114,7 +113,24 @@ model Image {
   post      Post?    @relation("post_images", fields: [postId], references: [id])
   likes     Like[]   @relation("image_likes")
   shares    Share[]  @relation("image_shares")
-  cover     Book?    @relation("book_cover")
+  cover     Cover?   @relation("cover_image")
+}
+
+model Cover {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
+  active    Boolean   @default(true)
+  title     String?
+  authorId  String
+  height    Int?      @default(0)
+  width     Int?      @default(0)
+  bookId    String?   @unique
+  book      Book?     @relation("book_cover", fields: [bookId], references: [id])
+  imageId   String    @unique
+  image     Image     @relation("cover_image", fields: [imageId], references: [id])
+  genreId   String?
+  genre     Genre?    @relation("genre_covers", fields: [genreId], references: [id])
 }
 
 model Like {
@@ -263,15 +279,14 @@ model Membership {
 }
 
 model Genre {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-  slug          String @unique
-  title       String   @unique
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now())
+  slug        String    @unique
+  title       String    @unique
   description String
   books       Book[]   @relation("book_genre")
-  galleryId   String?  @unique
-  gallery     Gallery? @relation("genre_gallery", fields: [galleryId], references: [id])
+  covers      Cover[]  @relation("genre_covers")
 }
 
 model BookCategory {
@@ -295,8 +310,7 @@ model Book {
   fiction    Boolean        @default(true)
   title      String         @unique
   slug       String         @unique
-  coverId    String?        @unique
-  cover      Image?         @relation("book_cover", fields: [coverId], references: [id])
+  cover      Cover?         @relation("book_cover")
   genreId    String
   genre      Genre          @relation("book_genre", fields: [genreId], references: [id])
   categories BookCategory[] @relation("book_categories")

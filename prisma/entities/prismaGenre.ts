@@ -1,5 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import {
+  Cover,
   Gallery,
   Genre,
   GenreDeleteProps,
@@ -71,16 +72,21 @@ const stub = async (idOrSlugOrName: string): Promise<GenreDetail> => {
   }
 }
 
-const gallery = async (byGenre?: string): Promise<Gallery | null> => {
+const covers = async (byGenre?: string): Promise<Cover[] | null> => {
   try {
-    const results: (Genre & { gallery: Gallery | null }) | null =
-      await prisma.genre.findFirst({
+    const results: (Cover[]) | null =
+      await prisma.cover.findMany({
+        where: {
+          active: true,
+          genreId: byGenre
+        },
         include: {
-          gallery: true,
+          book: true,
+          image: true
         },
       })
     if (results) {
-      return results.gallery
+      return results
     }
     throw {
       code: fileMethod("covers"),
@@ -149,7 +155,7 @@ export const PrismaGenre = {
   details,
   stub,
   stubs,
-  gallery,
+  covers,
   upsertGenre,
   deleteGenre,
 }
