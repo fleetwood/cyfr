@@ -8,7 +8,13 @@ const useDebug = (fileName:string, level:DebugProps=__logLevel__ as unknown as D
   const lineBreak = (char:string='.',label?:string) => Array(10).map((a,i) => label && i === 5 ? label : char).join()
   const methodData = (data?:any) => data ? lineBreak()+stringify({ ...(data || null) }) : ``
 
-  const stringify = (data:any) => JSON.stringify(data, null, 2)
+  const stringify = (data:any) => {
+    try {
+      return JSON.stringify(data, null, 2)
+    } catch (error) {
+      return {reason: 'Ojbect could not be stringified', error}
+    }
+  }
 
   const log = (method: string, t?: any) => console.log(`
 ${lineBreak()}

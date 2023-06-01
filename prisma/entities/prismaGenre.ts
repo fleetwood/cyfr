@@ -23,7 +23,7 @@ const details = async (): Promise<GenreDetail[]> => {
     `) as GenreDetail[]
   } catch (error) {
     info("details", { error })
-    throw { code: fileMethod("byId"), message: "No genre was returned!" }
+    throw { code: fileMethod("details"), message: "No genre was returned!" }
   }
 }
 
@@ -39,20 +39,25 @@ const detail = async (idOrSlugOrName: string): Promise<GenreDetail> => {
     `) as GenreDetail
   } catch (error) {
     info("detail", { error })
-    throw { code: fileMethod("byId"), message: "No genre was returned!" }
+    throw { code: fileMethod("detail"), message: "No genre was returned!" }
   }
 }
 
-const stubs = async (): Promise<GenreStub[]> => {
+const stubs = async (): Promise<any> => {
   try {
     debug("stubs")
-    return (await prisma.$queryRaw`
+    const results = await prisma.$queryRaw`
       SELECT * 
       FROM v_genre_stub
-    `) as GenreStub[]
+    `
+    if (results) {
+      debug('stubs', results)
+      return results
+    }
+    throw {code: 'prismaGenre.stubs', message: 'Results were null'}
   } catch (error) {
-    info("stubs", { error })
-    throw { code: fileMethod("byId"), message: "No genre was returned!" }
+    debug("stubs", { error })
+    throw { code: fileMethod("stubs"), message: "No genre was returned!" }
   }
 }
 
@@ -61,14 +66,14 @@ const stub = async (idOrSlugOrName: string): Promise<GenreDetail> => {
     debug("stub", idOrSlugOrName)
     return (await prisma.$queryRaw`
       SELECT * 
-      FROM v_genre_stub
-      WHERE detail.id = ${idOrSlugOrName}
-      OR    LOWER(detail.name) = LOWER(${idOrSlugOrName})
-      OR    LOWER(detail.slug) = LOWER(${idOrSlugOrName})
+      FROM v_genre_stub s
+      WHERE s.id = ${idOrSlugOrName}
+      OR    LOWER(s.name) = LOWER(${idOrSlugOrName})
+      OR    LOWER(s.slug) = LOWER(${idOrSlugOrName})
     `) as GenreStub
   } catch (error) {
     info("stub", { error })
-    throw { code: fileMethod("byId"), message: "No genre was returned!" }
+    throw { code: fileMethod("stub"), message: "No genre was returned!" }
   }
 }
 

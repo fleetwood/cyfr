@@ -14,9 +14,9 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<Follow>>
 ) {
   // TODO Unfollow/Unfan
-  const { followingId, followerId, isFan = false } = req.body
+  const { followingId, followerId, isFan = false, active = true } = req.body
   try {
-    const result = await PrismaUser.follow({followingId, followerId, isFan})
+    const result = await PrismaUser.follow({followingId, followerId, isFan, active})
     if (result) {
       res.status(200).json({ result })
     } else {

@@ -11,7 +11,6 @@ export default async function handle(
     req: NextApiRequest,
     res: NextApiResponse<ResponseResult<Post>>
   ) {
-    todo('Why is this posting req.body????')
     const { postId, authorId,  } = req.body
     try {
       const result = await PrismaPost.sharePost({postId, authorId})

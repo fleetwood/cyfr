@@ -45,7 +45,7 @@ const ChatList = () => {
   return cyfrUser ? (
     <div className={`flex flex-col space-y-2`}>
         <h2 className="h-subtitle">Chat</h2>
-        {cyfrUser.messagable && cyfrUser.messagable.map(u => 
+        {cyfrUser.canMessage && cyfrUser.canMessage.map(u => 
             <div key={uniqueKey('chatList',cyfrUser,u)}
                 className="btn bg-opacity-10 hover:bg-opacity-25 bg-primary border-0 text-start"
                 onClick={() => addRoom(u)}

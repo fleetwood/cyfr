@@ -10,9 +10,9 @@ import {
   CyfrUser, Follow,
   UserFollowProps,
   prisma, User, UserFeed,
-  UserFeedInclude, UserStub
+  UserFeedInclude, UserStub, UserDetail
 } from "../prismaContext";
-const { fileMethod, debug, todo, info:debugInfo, err } = useDebug("entities/prismaUser");
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG');
 
 type AllPostQueryParams = {
   limit?: Number;
@@ -91,37 +91,57 @@ const userInfo = async (id:string): Promise<any> => {
   }
 }
 
-const detail = async (idOrNameOrEmail:string): Promise<CyfrUser | null> => {
-  debug('getCyfrUser', {idOrNameOrEmail})
+const detail = async (idOrNameOrEmail:string): Promise<any> => {
   try {
     if (!idOrNameOrEmail) {
       return null;
     }
-    const user:any[] = await prisma.$queryRaw`SELECT f_cyfrUser(${idOrNameOrEmail}) as "cyfrUser"`;
-    if (!user) {
-        throw {
-          code: fileMethod("getCyfrUser"),
-          message: `Did not find user for ${idOrNameOrEmail}`,
-        }
+    debug('detail', {idOrNameOrEmail})
+    const user:UserDetail[] = await prisma.$queryRaw`
+    SELECT * 
+    FROM v_cyfruser
+    WHERE id = ${idOrNameOrEmail}
+      OR LOWER(name) = LOWER(${idOrNameOrEmail})
+      OR LOWER(email) = LOWER(${idOrNameOrEmail})`
+  
+    if (user[0]) {
+      debug('found user')
+      return user[0];
     }
-    return user[0].cyfrUser as CyfrUser;
+    debug('detail: Did not find a user', idOrNameOrEmail)
+    return null
+
   } catch (error) {
-    debugInfo(`getCyfrUser FAIL`, error);
+    info(`detail FAIL`, error);
     throw error;
   }
 }
 
-const canMention = async (id: string, search?: string):Promise<any> => {
+type MentionSearchProps = {
+  search?:  string
+  all?:     boolean
+}
+const canMention = async ({search, all = false}:MentionSearchProps):Promise<any> => {
   try {
-    todo(
-      "canMention",
-      "Remove this in favor of a property in cyrUserContext...."
-    );
-    const mentions = await prisma.$queryRaw`SELECT * from f_can_Mention(${id})`
-    debug('mentions', {mentions})
-    return mentions || []
+    if (search) {
+      debug('canMention', {search, all})
+      return await prisma.$queryRaw`
+        SELECT v.* 
+        from v_user_info v 
+        WHERE LOWER(v.name) LIKE LOWER(${`%${search}%`})
+        order by v.name
+        limit 50
+      `
+    }
+    debug('no search term')
+    return await prisma.$queryRaw`
+      SELECT v.* 
+      from v_user_info v 
+      order by v.name
+      limit 50
+    `
   } catch (error) {
-    debugInfo(`canMention broke`, error);
+    info(`canMention broke`, error);
     throw error;
   }
 };
@@ -144,7 +164,7 @@ const userInSessionContext = async (context: GetSessionParams | undefined): Prom
     const session = await getSession(context);
     return detail(session?.user?.email||'')
   } catch (error) {
-    debugInfo(fileMethod("userInSessionContext"), { error });
+    info(fileMethod("userInSessionContext"), { error });
     return null;
   }
 };
@@ -206,7 +226,7 @@ const userCurrentlyOnline = async (id: string) => {
     }
     return user._count.sessions > 0;
   } catch (error) {
-    debugInfo(`userCurrentlyOnline error`);
+    info(`userCurrentlyOnline error`);
     return null;
   }
 };

@@ -14,7 +14,6 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<Post>>
 ) {
-  todo('Why is this posting req.body????')
   debug('handle', {...req.body})
   const { content, authorId, images } = req.body
   try {

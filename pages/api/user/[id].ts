@@ -8,7 +8,7 @@ const {debug, stringify, fileMethod} = useDebug('api/user/[id]')
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<CyfrUser|null>>
+  res: NextApiResponse
 ) {
   const id = req.query.id?.toString() || ""
   try {

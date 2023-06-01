@@ -4,7 +4,7 @@ import { ResponseResult } from "../../../types/response"
 import useDebug from "../../../hooks/useDebug"
 const {stringify, todo, err} = useDebug('api/post/all')
 
-export default async function handle(req: NextApiRequest, res: NextApiResponse<ResponseResult<Post[]>>) {
+export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   todo('handler','Pagination')
   const skip = parseInt(req.query.c ? req.query.c.toString() : "0")
   try {

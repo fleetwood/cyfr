@@ -1,7 +1,7 @@
 import { InferGetServerSidePropsType } from "next";
 import BookStubView from "../../../components/containers/Books/BookStubView";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { PrismaUser } from "../../../prisma/prismaContext";
+import { PrismaUser, UserDetail } from "../../../prisma/prismaContext";
 import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
 import UpsertBook from "../../../components/containers/Books/UpsertBook";
 import { useCyfrUserApi } from "../../../hooks/useCyfrUser";
@@ -16,7 +16,11 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-const UserBooksPage = ({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) => {  
+type UserBooksPageProps = {
+  user: UserDetail
+}
+
+const UserBooksPage = ({ user }:UserBooksPageProps) => {  
   const [cyfrUser] = useCyfrUserContext()
   const {invalidateUser} = useCyfrUserApi()
   const title = `Books by ${user ? user.name : 'Nobody'}`

@@ -1,19 +1,5 @@
 import { BookStub, Follow, Gallery, GalleryStub, Image, Membership, Post, PostStub, User } from "./../prismaContext"
 
-/**
- * This is complaining if imported from Post.defs that it can't be
- * accessed before initialization. Prolly a different issues, but
- * this will work for now.
- */
-const PostFeedInclude = {
-  author:         true,
-  comment:        true,
-  images:         true,
-  post_comments:  { include: { author: true } },
-  likes:          { include: { author: true } },
-  shares:         { include: { author: true } },
-}
-
 export type UserFeed = User & {
   _count:       { sessions: number }
   membership?:  Membership
@@ -38,66 +24,19 @@ export const UserFeedInclude = {
 export type UserDetail = User & {
   membership?:  Membership,
   posts:        PostStub[]
-  messagable:   UserStub[]
-  canMention:   UserStub[]
+  canMessage:   UserStub[]
   follows:      UserFollow[]
   followers:    UserFollow[]
-  images:       (Image & { _count: { likes: number, shares: number}})[]
   galleries:    GalleryStub[]
   books:        BookStub[]
 }
 
-export const UserDetailInclude = {
-    _count: {
-      select: {
-        likes: true,
-        sessions: true,
-        shares: true
-      }
-    },
-    membership: true,
-    posts: {
-      include: PostFeedInclude
-    },
-    books: true,
-    images: {
-      include: {
-        _count: { 
-          select: {
-            likes: true,
-            shares: true,
-          }
-        }
-    }},
-    galleries: {
-      include: {
-        images: {
-          include: {
-            _count: {
-              select: {
-              likes: true,
-              shares: true
-            }}
-          }
-        },
-        likes: true,
-        shares: true,
-      }
-    },
-    following: {
-      select: {
-        follower: true
-      }
-    },
-    follower: { 
-      select: {
-        following: true
-      }
-    }
-}
-
 export type CyfrUser = UserDetail & {
-  
+  postCount:      Number
+  followerCount:  Number
+  fanCount:       Number
+  followCount:    Number
+  stanCount:      Number
 }
 
 export type UserStub = {
@@ -134,7 +73,9 @@ export type UserFollow = UserStub & {
   isFan?: boolean
 }
 
-export const UserFollowSelect = {
-  ...UserStubSelect,
-  isFan: true
+export type UserEngageProps = {
+  followerId:   String
+  followingId:  String
+  isFan?:       Boolean
+  active?:      Boolean
 }

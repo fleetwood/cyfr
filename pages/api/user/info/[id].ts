@@ -7,7 +7,7 @@ const {debug, stringify, fileMethod} = useDebug('api/user/stub/[id]')
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<any>>
+  res: NextApiResponse
 ) {
   const id = req.query.id?.toString() || ""
   debug('handle', id)

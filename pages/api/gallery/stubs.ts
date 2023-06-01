@@ -13,7 +13,6 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<ResponseResult<GalleryStub[]>>
 ) {
-  todo('handle','Why is this posting req.body????')
   try {
     const result = await PrismaGallery.stubs()
     if (result) {

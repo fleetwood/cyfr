@@ -1,12 +1,12 @@
 import { Book, BookCategory, BookStub, Gallery, Genre, ImageStub, User } from "../prismaContext"
 
 export type GenreStub = Genre & {
-    covers:     ImageStub[]
+    covers:     any[]
     books:      BookStub[]
 }
 
 export type GenreDetail = Genre & {
-    covers:     ImageStub[]
+    covers:     any[]
     books:      BookStub[]
 }
 

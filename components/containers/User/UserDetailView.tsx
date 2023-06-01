@@ -18,7 +18,6 @@ type UserDetailViewProps = {
 const UserDetailView = ({ userId }: UserDetailViewProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const { currentUser, followers, follows, fans, stans, followUser, stanUser, invalidateUser } = useUserDetail({id: userId})
-  const isOwner = cyfrUser && currentUser && cyfrUser.id === currentUser.id
   const { notify } = useToast()
   const [activeTab, setActiveTab] = useState("Posts")
 
@@ -187,7 +186,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
         <div>
           <h2 className="subtitle">Books</h2>
           <div className="bg-base-100 my-4 p-4 rounded-md">
-            {currentUser?.books.map(book => (
+            {currentUser?.books?.map(book => (
               <BookCover book={book} key={book.id} />
             ))}
           </div>

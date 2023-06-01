@@ -8,7 +8,7 @@ const file = fileMethod("handle")
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<any>>
+  res: NextApiResponse
 ) {
   const limit = Number(req.query.limit || 100)
   const offset = Number(req.query.offset || 0)
