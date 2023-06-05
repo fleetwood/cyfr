@@ -1,8 +1,11 @@
-import useDebug from "../../hooks/useDebug"
-import { now } from "../../utils/helpers"
+import useDebug from "hooks/useDebug"
 import {
-  Book, Chapter, Gallery, GalleryCreateProps, GalleryDetail, GalleryEngageProps, GalleryStub, GalleryStubInclude, GalleryUpsertProps, ImageUpsertProps, Like, Share
-} from "../prismaContext"
+  Book, Chapter, Gallery, GalleryCreateProps,
+  GalleryDetail,
+  GalleryDetailInclude, GalleryEngageProps,
+  GalleryUpsertProps, ImageUpsertProps, Like, Share
+} from "prisma/prismaContext"
+import { now } from "utils/helpers"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGallery')
 
@@ -18,8 +21,8 @@ export type GalleryAddImageProps = {
  */
 const userGalleries = async (authorId: string): Promise<Gallery[]> => await prisma.gallery.findMany({where: {authorId}})
 
-const details = async () : Promise<Gallery[]> => await prisma.gallery.findMany()
-const detail = async (id: string): Promise<Gallery|null> => await prisma.gallery.findUnique({where: {id}})
+const details = async () : Promise<GalleryDetail[]> => await prisma.gallery.findMany({include: GalleryDetailInclude})
+const detail = async (id: string): Promise<GalleryDetail|null> => await prisma.gallery.findUnique({where: {id}, include: GalleryDetailInclude})
 
 const stubs = async () : Promise<Gallery[]> => await prisma.gallery.findMany()
 const stub = async (id: string): Promise<Gallery|null> => await prisma.gallery.findUnique({where: {id}})

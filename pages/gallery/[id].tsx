@@ -1,22 +1,22 @@
-import GalleryDetailView from "../../components/containers/Gallery/GalleryDetailView";
-import MainLayout from "../../components/layouts/MainLayout";
-import { PrismaGallery } from "../../prisma/entities/prismaGallery";
-import { GalleryDetail } from "../../prisma/types";
+import GalleryDetailView from "components/containers/Gallery/GalleryDetailView"
+import MainLayout from "components/layouts/MainLayout"
+import { PrismaGallery } from "prisma/entities/prismaGallery"
+import { GalleryDetail } from "prisma/types"
 
 export async function getServerSideProps(context: any) {
-  const galleryId = context.params.id;
-  const gallery = await PrismaGallery.detail(galleryId);
+  const galleryId = context.params.id
+  const gallery = await PrismaGallery.detail(galleryId)
 
   return {
     props: {
       gallery,
     },
-  };
+  }
 }
 
 type GalleryDetailPageProps = {
-  gallery: GalleryDetail;
-};
+  gallery: GalleryDetail
+}
 
 const GalleryDetailPage = ({ gallery }: GalleryDetailPageProps) => {
   return (
@@ -26,7 +26,7 @@ const GalleryDetailPage = ({ gallery }: GalleryDetailPageProps) => {
     >
       <GalleryDetailView gallery={gallery} />
     </MainLayout>
-  );
-};
+  )
+}
 
-export default GalleryDetailPage;
+export default GalleryDetailPage

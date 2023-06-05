@@ -1,4 +1,6 @@
 import {
+  EngageInclude,
+  EngageList,
   Gallery,
   Image,
   User,
@@ -50,29 +52,16 @@ export const GalleryStubInclude = {
 }
 
 export type GalleryDetail = Gallery & {
-  // TODO add shares and likes back in to the gallery
   author: User
-  shares: UserStub[]
-  likes: UserStub[]
+  shares: EngageList[]
+  likes:  EngageList[]
   images: any[]
 }
 
 export const GalleryDetailInclude = {
-  author: {
-    include: {
-      galleries: true,
-      follower: true,
-      _count: {
-        select: {
-          posts: true,
-          images: true,
-          galleries: true,
-        },
-      },
-    },
-  },
-  shares: { include: { author: true } },
-  likes: { include: { author: true } },
+  author: true,
+  shares: EngageInclude,
+  likes: EngageInclude,
   images: {
     include: ImageFeedInclude,
   },
