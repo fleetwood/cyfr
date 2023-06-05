@@ -1,16 +1,19 @@
-import GalleryCreateModal from "../../../components/containers/Gallery/GalleryCreateModal";
-import GalleryDetailView from "../../../components/containers/Gallery/GalleryDetailView";
-import MainLayout from "../../../components/layouts/MainLayout";
+import GalleryCreateModal from "../../../components/containers/Gallery/GalleryCreateModal"
+import MainLayout from "../../../components/layouts/MainLayout"
 import {
-  GalleryDetail,
+  Gallery,
   PrismaGallery, PrismaUser
-} from "../../../prisma/prismaContext";
+} from "../../../prisma/prismaContext"
 
-import { InferGetServerSidePropsType } from "next";
-import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
+import { InferGetServerSidePropsType } from "next"
+import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider"
+import useDebug from "../../../hooks/useDebug"
+import JsonBlock from "../../../components/ui/jsonBlock"
+
+const {jsonBlock} = useDebug('pages/user/id/gallery', 'DEBUG')
 
 export async function getServerSideProps(context: any) {
-  const user = await PrismaUser.userInSessionContext(context);
+  const user = await PrismaUser.userInSessionContext(context)
   const galleries = user ? await PrismaGallery.userGalleries(user.id) : []
 
   return {
@@ -18,7 +21,7 @@ export async function getServerSideProps(context: any) {
       galleries,
       user,
     },
-  };
+  }
 }
 
 const UserGalleryPage = ({ user, galleries }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -30,13 +33,14 @@ const UserGalleryPage = ({ user, galleries }: InferGetServerSidePropsType<typeof
       {cyfrUser && cyfrUser.id === user?.id && 
         <GalleryCreateModal  />
       }
-      {galleries.map((gallery:GalleryDetail) => (
-        <div className="relative" key={`user:${user?.id}-gallery:${gallery.id}`}>
+        {/* <div className="relative" key={`user:${user?.id}-gallery:${gallery.id}`}>
           <GalleryDetailView gallery={gallery} />
-        </div>
+        </div> */}
+      {galleries.map((gallery:Gallery) => (
+          <JsonBlock data={gallery} />
       ))}
     </div>
   </MainLayout>
-)};
+)}
 
-export default UserGalleryPage;
+export default UserGalleryPage

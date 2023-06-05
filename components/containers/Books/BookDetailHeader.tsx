@@ -53,7 +53,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {shareBook, followBook, likeBook, save} = useBookApi()
+  const {share, follow, like, save} = useBookApi()
   const bookId = bookDetail.id
   const engageProps = bookDetail && cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
@@ -82,7 +82,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
       loginRequired()
       return null
     }
-    const result = await followBook({bookId, followerId: cyfrUser.id, isFan: fan===true})
+    const result = await follow({bookId, followerId: cyfrUser.id, isFan: fan===true})
     result 
       ? updated(`You are now ${fan === true ? 'stanning' : 'following'} ${bookDetail?.title}. Nice!`)
       : updated('Ya that dint work', 'warning')
@@ -94,7 +94,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
       return null
     }
     // the share author, not the book author
-    const result = await shareBook(engageProps)
+    const result = await share(engageProps)
     result 
       ? updated(`You shared ${bookDetail?.title}.`)
       : updated('Ya that dint work', 'warning')
@@ -105,7 +105,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
       loginRequired()
       return null
     }
-    const result = await likeBook(engageProps)
+    const result = await like(engageProps)
     
     result 
       ? updated(`You liked ${bookDetail?.title}.`)

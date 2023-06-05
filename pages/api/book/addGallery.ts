@@ -11,7 +11,7 @@ const { debug, err } = useDebug("api/book/addGallery")
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<BookDetail>>
+  res: NextApiResponse
 ) {
   const { galleryId, bookId } = req.body
   debug("handle", {galleryId, bookId})

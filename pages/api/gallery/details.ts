@@ -12,7 +12,7 @@ const {todo, err} = useDebug(filename)
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<GalleryDetail[]>>
+  res: NextApiResponse
 ) {
   try {
     const result = await PrismaGallery.details()

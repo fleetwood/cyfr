@@ -24,7 +24,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   const { invalidateFeed } = useFeed('post')
   const { notify, loginRequired } = useToast()
   const { setCommentId, showComment, hideComment } = useCommentContext()
-  const {sharePost, likePost} = usePostApi()
+  const {share, like} = usePostApi()
 
   const isLoggedIn = () => {
     if (!cyfrUser) {
@@ -51,7 +51,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
     if (!isLoggedIn()) return
 
     debug(`handleLike`)
-    const liked = await likePost({ postId: post.id, authorId: cyfrUser!.id })
+    const liked = await like({ postId: post.id, authorId: cyfrUser!.id })
     if (liked) {
       notify("You liked this post!!!!!!!!!!!", "success")
       update()
@@ -64,7 +64,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
     if (!isLoggedIn()) return
 
     debug(`handleShare`)
-    const shared = await sharePost({ postId: post.id, authorId: cyfrUser!.id })
+    const shared = await share({ postId: post.id, authorId: cyfrUser!.id })
     if (shared) {
       notify("You shared this post", "success")
       update()

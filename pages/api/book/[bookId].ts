@@ -8,7 +8,7 @@ const { err, stringify } = useDebug(filename);
 const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   const { bookId }: { bookId?: string } = req.query;
   try {
-    const result = await PrismaBook.detail(bookId || "");
+    const result = await PrismaBook.detail({id: bookId});
     if (result) {
       res.status(200).json({ result });
     } else {

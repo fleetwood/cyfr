@@ -11,7 +11,7 @@ const {todo, err} = useDebug("prismaComment")
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<GalleryStub[]>>
+  res: NextApiResponse
 ) {
   try {
     const result = await PrismaGallery.stubs()

@@ -14,13 +14,13 @@ const { debug, todo, err } = useDebug("api/gallery/[id]")
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<GalleryDetail>>
+  res: NextApiResponse
 ) {
   const id = req.query.id?.toString() || ""
   try {
-    const gallery = await PrismaGallery.detail(id)
-    if (gallery) {
-      res.status(200).json({ result: gallery })
+    const result = await PrismaGallery.detail(id)
+    if (result) {
+      res.status(200).json({ result })
     } else {
       throw { code: "api/gallery/create", message: "Failed to create gallery" }
     }
