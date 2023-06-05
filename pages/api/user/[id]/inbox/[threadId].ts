@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
-import { CommentThread, PrismaComment, PrismaUser } from "../../../../prisma/prismaContext";
-import { ResponseResult } from "../../../../types/response";
-import { todo } from "../../../../utils/log";
+import { CommentThread, PrismaComment, PrismaUser } from "../../../../../prisma/prismaContext";
+import { ResponseResult } from "../../../../../types/response";
+import { todo } from "../../../../../utils/log";
 
 export default async function handle(
   req: NextApiRequest,
@@ -10,7 +10,7 @@ export default async function handle(
 ) {
   try {
     const session = await getSession({ req });
-    const { userId, threadId } = req.body
+    const { id, threadId } = req.body
     
     if (
       session === null ||
@@ -24,7 +24,7 @@ export default async function handle(
     } else {
       // log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nYES USER in session.... ${JSON.stringify(session, null, 2)}`)
       todo('This should only get inbox that the user is included in')
-      const result = PrismaComment.threadById(userId, threadId) as unknown as CommentThread
+      const result = PrismaComment.threadById(id, threadId) as unknown as CommentThread
       if (!result) {
         res.status(200).json({});
         res.end();

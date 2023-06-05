@@ -1,6 +1,7 @@
-import ShrinkableIconLink from "../ui/shrinkableIconLink";
-import { ClipbardIcon, PhotoIcon, QuestionMarkIcon, FeatherIcon, GearIcon, DatabaseIcon, HouseIcon } from '../ui/icons';
-import { __prod__ } from "../../utils/constants";
+
+import ShrinkableIconLink from 'components/ui/shrinkableIconLink';
+import { ClipbardIcon, PhotoIcon, QuestionMarkIcon, FeatherIcon, GearIcon, DatabaseIcon, HouseIcon } from 'components/ui/icons';
+import { __prod__ } from "utils/constants";
 
 const LeftColumn = () => {
   return (

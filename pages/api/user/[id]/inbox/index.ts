@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import useDebug from "../../../../hooks/useDebug"
-import { CommentThread, PrismaComment, PrismaUser } from "../../../../prisma/prismaContext"
-import { ResponseResult } from "../../../../types/response"
+import useDebug from "../../../../../hooks/useDebug"
+import { CommentThread, PrismaComment, PrismaUser } from "../../../../../prisma/prismaContext"
+import { ResponseResult } from "../../../../../types/response"
 const {debug} = useDebug('api/user/inbox')
 
 export default async function handle(

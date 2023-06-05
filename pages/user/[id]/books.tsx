@@ -1,10 +1,12 @@
 import { InferGetServerSidePropsType } from "next";
 import BookStubView from "../../../components/containers/Books/BookStubView";
 import MainLayout from "../../../components/layouts/MainLayout";
-import { PrismaUser, UserDetail } from "../../../prisma/prismaContext";
+import { Book, PrismaUser, UserDetail } from "../../../prisma/prismaContext";
 import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
 import UpsertBook from "../../../components/containers/Books/UpsertBook";
 import { useCyfrUserApi } from "../../../hooks/useCyfrUser";
+import { useState } from "react";
+import JsonBlock from "../../../components/ui/jsonBlock";
 
 export async function getServerSideProps(context: any) {
   const user = await PrismaUser.detail(context.query.id)
@@ -23,13 +25,15 @@ type UserBooksPageProps = {
 const UserBooksPage = ({ user }:UserBooksPageProps) => {  
   const [cyfrUser] = useCyfrUserContext()
   const {invalidateUser} = useCyfrUserApi()
-  const title = `Books by ${user ? user.name : 'Nobody'}`
+  const [books, setBooks] = useState<Book[]>([])
+  const title = `Books by ${user ? user.name : 'Somebody'}`
   const isOwner = user && cyfrUser ? user.id === cyfrUser.id : false
 
   return user ? (
     <MainLayout pageTitle={title} sectionTitle={title}>
       <div className="flex flex-col space-y-4">
-        {user.books && user.books.map(book => <BookStubView book={book} key={book.id} authorAvatars={false} />)}
+        {/* {books && books.map((book:Book) => <BookStubView book={book} key={book.id} authorAvatars={false} />)} */}
+        {books && books.map((book:Book) => <JsonBlock data={book} key={book.id} />)}
       </div>
       {isOwner && <UpsertBook onUpsert={() => invalidateUser()} />}
     </MainLayout>

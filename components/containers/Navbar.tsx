@@ -1,12 +1,12 @@
-import { signOut } from "next-auth/react";
-import Link from "next/link";
-import { useState, useEffect, ReactNode } from "react";
-import { useCyfrUserContext } from "../context/CyfrUserProvider";
-import Avatar from "../ui/avatar";
-import { BookIcon, CyfrLogo, HouseIcon, UserIcon } from "../ui/icons";
-import ShrinkableIconLink from "../ui/shrinkableIconLink";
-import ShrinkableLink from "../ui/shrinkableLink";
-import { onlyFans, uniqueKey } from "../../utils/helpers";
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import Avatar from "components/ui/avatar"
+import { CyfrLogo, HouseIcon, BookIcon, UserIcon } from "components/ui/icons"
+import ShrinkableIconLink from "components/ui/shrinkableIconLink"
+import ShrinkableLink from "components/ui/shrinkableLink"
+import { signOut } from "next-auth/react"
+import Link from "next/link"
+import { useState, useEffect, ReactNode } from "react"
+import { uniqueKey, onlyFans } from "utils/helpers"
 
 type NavbarProps = {
   className?: string
@@ -14,7 +14,7 @@ type NavbarProps = {
   pageScrolled?: boolean
   leftChildren?: ReactNode
   rightChildren?: ReactNode
-};
+}
 
 const Navbar = ({
   className,
@@ -23,8 +23,8 @@ const Navbar = ({
   rightChildren,
   pageScrolled: active,
 }: NavbarProps) => {
-  const [cyfrUser] = useCyfrUserContext();
-  const [isPageScrolled, setIsPageScrolled] = useState(false);
+  const [cyfrUser] = useCyfrUserContext()
+  const [isPageScrolled, setIsPageScrolled] = useState(false)
   const [showDropDown, setShowDropDown ] = useState(false)
 
   const userUrl = cyfrUser ? cyfrUser.name : ''
@@ -33,7 +33,7 @@ const Navbar = ({
 
   useEffect(() => {
     setIsPageScrolled(active||false)
-  }, [active]);
+  }, [active])
 
   return (
     <>
@@ -129,7 +129,7 @@ const Navbar = ({
         
       </nav>
     </>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

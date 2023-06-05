@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import { getApi, sendApi } from "../../utils/api"
-import { UserEngageProps, UserFollowProps, UserStub } from "../prismaContext"
+import { Book, UserEngageProps, UserFollowProps, UserStub } from "../prismaContext"
 
 const {debug} = useDebug('prisma/api/userApi', 'DEBUG')
 
@@ -25,9 +25,12 @@ const UserApi = () => {
     return []
   }
 
+  const books = async (id:String):Promise<Book[]> => await (await getApi(`user/books/${id}`)).data
+
   return {
     followUser,
-    mentions
+    mentions,
+    books
   }
 }
 

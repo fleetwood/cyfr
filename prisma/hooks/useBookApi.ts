@@ -3,7 +3,7 @@ import { NotImplemented, getApi, sendApi } from "../../utils/api"
 import { isAuthor } from '../../utils/helpers/book'
 import { BookDetail, BookEngageProps, BookFollowProps, Chapter } from "../prismaContext"
 
-const { debug, info, err } = useDebug("hooks/useBookApi", 'DEBUG')
+const { debug, fileMethod } = useDebug("hooks/useBookApi", 'DEBUG')
 
 debug("BookApi")
 
@@ -44,7 +44,7 @@ const useBookApi = () => {
     genreId: string
   ): Promise<boolean> => {
     debug("updateGenre", genreId)
-    throw NotImplemented
+    throw NotImplemented(fileMethod('updateGenre'))
   }
 
   const addGallery = async (bookId: string, galleryId?: string) => {
@@ -61,8 +61,7 @@ const useBookApi = () => {
   }
 
   const sortChapters = async (changedChapter: Chapter): Promise<Boolean> => {
-    debug("sortChapters")
-    throw NotImplemented
+    throw NotImplemented(fileMethod('sortChapters'))
     // if (!bookDetail) return noBookDetail("sortChapters")
     // const result = await sendApi("/chapter/sort", {
     //   currentChapters: bookDetail.chapters,
@@ -90,11 +89,7 @@ const useBookApi = () => {
     }
   }
 
-  const updateChapter = async (
-    chapter: Chapter
-  ): Promise<boolean> => {
-    throw NotImplemented
-  }
+  const updateChapter = async (chapter: Chapter): Promise<boolean> => {throw NotImplemented(fileMethod('updateChapter'))}
 
   const detail = async (bookId:string):Promise<BookDetail|null> => await (await getApi(`book/${bookId}`)).data
 

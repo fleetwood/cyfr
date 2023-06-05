@@ -16,6 +16,7 @@
     "incremental": true,
     "sourceMap": true,
     "outDir": "dist",
+    "baseUrl": "."
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

@@ -92,10 +92,7 @@ const userInfo = async (id:string): Promise<any> => {
   }
 }
 
-
-const detail = async (idOrNameOrEmail:string): Promise<any> => {
-  throw NotImplemented
-}
+const detail = async (id:string): Promise<any> => await prisma.user.findUnique({where: {id}})
 
 const cyfrUser = async (idOrNameOrEmail:string): Promise<CyfrUser|null> => {
   try {
@@ -150,7 +147,7 @@ const canMention = async ({search, all = false}:MentionSearchProps):Promise<any>
     info(`canMention broke`, error);
     throw error;
   }
-};
+}
 
 const userInSessionReq = async (
   req: NextApiRequest
@@ -163,7 +160,7 @@ const userInSessionReq = async (
     debug('userInSessionReq FAIL', e)
     return null;
   }
-};
+}
 
 const userInSessionContext = async (context: GetSessionParams | undefined): Promise<CyfrUser | null> => {
   try {
@@ -173,7 +170,7 @@ const userInSessionContext = async (context: GetSessionParams | undefined): Prom
     info(fileMethod("userInSessionContext"), { error });
     return null;
   }
-};
+}
 
 const setMembership = async (
   userId: string,
@@ -262,6 +259,8 @@ const updatePreferences = async ({
   }
 };
 
+const books = async (id:string) => NotImplemented(fileMethod('books'))
+
 export const PrismaUser = {
   allUsersQuery,
   cyfrUser,
@@ -274,6 +273,7 @@ export const PrismaUser = {
   setMembership,
   updatePreferences,
   canMention,
+  books
 };
 
 

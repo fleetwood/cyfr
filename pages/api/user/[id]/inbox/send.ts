@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { getSession } from "next-auth/react"
-import useDebug from "../../../../hooks/useDebug"
-import { CommentThread, PrismaComment, PrismaUser } from "../../../../prisma/prismaContext"
-import { ResponseResult } from "../../../../types/response"
+import useDebug from "hooks/useDebug"
+import { CommentThread, PrismaComment, PrismaUser } from "prisma/prismaContext"
+import { ResponseResult } from "types/response"
 const {debug, err} = useDebug('api/user/inbox/send')
 
 export default async function handle(
