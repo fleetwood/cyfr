@@ -1,6 +1,6 @@
 import Link from "next/link";
 import useDebug from "../../../hooks/useDebug";
-import BookApi from "../../../prisma/api/bookApi";
+import useBookApi from "../../../prisma/hooks/useBookApi";
 import { BookDetail, BookStub, Image } from "../../../prisma/prismaContext";
 import { cloudinary } from "../../../utils/cloudinary";
 import { uniqueKey } from "../../../utils/helpers";
@@ -48,7 +48,7 @@ const BookImage = ({cover, title, width, owner}:{cover: Image|null, title: strin
  */
 const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true, authorAvatars=true}:BookCoverProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {isAuthor} = BookApi()
+  const {isAuthor} = useBookApi()
   const isOwner = isAuthor({book,cyfrUser})
   const cover = book.cover || null
   const width = (variant === BookCoverVariant.FULL && cover !== null)

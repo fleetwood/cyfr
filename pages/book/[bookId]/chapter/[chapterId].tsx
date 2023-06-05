@@ -6,7 +6,7 @@ import useCyfrUser from "../../../../hooks/useCyfrUser"
 import useDebug from "../../../../hooks/useDebug"
 import { ChapterDetail, GenreStub, PrismaChapter, PrismaGenre } from "../../../../prisma/prismaContext"
 import ErrorPage from "../../../404"
-import ChapterApi from "../../../../prisma/api/chapterApi"
+import useChapterApi from "../../../../prisma/hooks/useChapterApi"
 import { currentView } from "../../../../components/containers/Chapter/ChapterViewSelector"
 
 const {debug, info} = useDebug('pages/book/[bookId]/chapter/[chapterId]')

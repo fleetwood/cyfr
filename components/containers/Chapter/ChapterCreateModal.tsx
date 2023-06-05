@@ -1,6 +1,6 @@
 import { FormEvent, useRef, useState } from 'react'
 import useDebug from '../../../hooks/useDebug'
-import BookApi from '../../../prisma/api/bookApi'
+import useBookApi from '../../../prisma/hooks/useBookApi'
 import { BookDetail, Chapter } from '../../../prisma/prismaContext'
 import { useCyfrUserContext } from '../../context/CyfrUserProvider'
 import { useToast } from '../../context/ToastContextProvider'
@@ -34,7 +34,7 @@ type CreateChapterModalType = {
 const CreateChapterModal = ({bookDetail, onSave}:CreateChapterModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
   const { notify } = useToast()
-  const {addChapter} = BookApi()
+  const {addChapter} = useBookApi()
 
   const [valid, setIsValid] = useState<boolean>(false)
   const container = useRef<HTMLDivElement>(null)

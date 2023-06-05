@@ -10,13 +10,13 @@ import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
 import useDebug from "../../../hooks/useDebug"
-import ChapterApi from "../../../prisma/api/chapterApi"
+import useChapterApi from "../../../prisma/hooks/useChapterApi"
 
 const {debug, jsonBlock} = useDebug('ChapterDetailLayout')
 
 const ChapterDetailLayout = ({chapterDetail, genres, view, setView}:ChapterLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {isAuthor} = ChapterApi()
+  const {isAuthor} = useChapterApi()
   const showEdit = isAuthor({chapter: chapterDetail, cyfrUser})
   
   const [scrollActive, setScrollActive] = useState(false)

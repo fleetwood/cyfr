@@ -4,25 +4,9 @@ import { now, sortChapters } from "../../utils/helpers"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaCharacter')
 
-const detail = async (id: string): Promise<CharacterDetail | null> => {
-  debug('detail', id)
-  try {
-    return await prisma.character.findUnique({where: {id}}) as CharacterDetail
-  } catch (error) {
-    debug('detail ERROR', error)
-    throw error
-  }
-}
+const detail = async (id: string): Promise<Character | null> => await prisma.character.findUnique({where: {id}})
 
-const stub = async (id: string): Promise<CharacterStub | null> => {
-  debug('stub', id)
-  try {
-    return await prisma.character.findUnique({where: {id}}) as CharacterStub
-  } catch (error) {
-    debug('stub ERROR', error)
-    throw error
-  }
-}
+const stub = async (id: string): Promise<Character | null> => await prisma.character.findUnique({where: {id}})
 
 const upsert = async (character:CharacterUpsertProps) => {
   debug('upsert', character)

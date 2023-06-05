@@ -7,7 +7,7 @@ import Avatar from "../../ui/avatar"
 import HtmlContent from "../../ui/htmlContent"
 import BookCover, { BookCoverVariant } from "./BookCover"
 import Link from "next/link"
-import BookApi from "../../../prisma/api/bookApi"
+import useBookApi from "../../../prisma/hooks/useBookApi"
 
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent')
 

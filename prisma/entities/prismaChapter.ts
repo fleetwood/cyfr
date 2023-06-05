@@ -4,30 +4,9 @@ import { Chapter, ChapterDetail, ChapterStub } from "../prismaContext"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaChapter')
 
-const detail = async (id: string): Promise<ChapterDetail | null> => {
-  debug('detail', id)
-  try {
-    const result:ChapterDetail[] =  await prisma.$queryRaw`SELECT * FROM v_chapter_detail where id = ${id}`
-    if (result[0]) {
-      return result[0]
-    }
-    throw { code: fileMethod('detail'), message: `Error finding chapter for ${id}!`}
-  } catch (error) {
-    debug('detail ERROR', error)
-    throw error
-  }
-}
+const detail = async (id: string): Promise<Chapter|null> => await prisma.chapter.findFirst({where:{id}})
 
-const stub = async (id: string): Promise<ChapterStub | null> => {
-  debug('stub', id)
-  try {
-    return await prisma.chapter.findUnique({where: {id}}) as ChapterStub
-    throw { code: fileMethod('detail'), message: `Error finding chapter for ${id}!`}
-  } catch (error) {
-    debug('stub ERROR', error)
-    throw error
-  }
-}
+const stub = async (id: string): Promise<Chapter|null> => await prisma.chapter.findFirst({where:{id}})
 
 const upsert = async (chapter:Chapter) => {
   debug('upsert', chapter)

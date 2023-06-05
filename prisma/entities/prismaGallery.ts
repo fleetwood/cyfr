@@ -1,7 +1,7 @@
 import useDebug from "../../hooks/useDebug"
 import { now } from "../../utils/helpers"
 import {
-  Book, Chapter, GalleryCreateProps, GalleryDetail, GalleryEngageProps, GalleryStub, GalleryStubInclude, GalleryUpsertProps, ImageUpsertProps, Like, Share
+  Book, Chapter, Gallery, GalleryCreateProps, GalleryDetail, GalleryEngageProps, GalleryStub, GalleryStubInclude, GalleryUpsertProps, ImageUpsertProps, Like, Share
 } from "../prismaContext"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGallery')
@@ -16,75 +16,13 @@ export type GalleryAddImageProps = {
  * @param authorId :string
  * @returns `json`
  */
-const userGalleries = async (authorId: string): Promise<GalleryDetail[]> => {
-  debug('userGalleries', {authorId})
-  try {
-    const result = await prisma.$queryRaw`select * from v_gallery_detail WHERE "authorId" = ${authorId}`
-    if (result) {
-      return result as GalleryDetail[]
-    }
-    throw {code: fileMethod, message: 'Could not find galleries for that user id'}
-  } catch (error) {
-    throw error
-  }
-}
+const userGalleries = async (authorId: string): Promise<Gallery[]> => await prisma.gallery.findMany({where: {authorId}})
 
-const details = async () : Promise<GalleryDetail[]> => {
-  debug("details")
-  try {
-    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_gallery_detail`
-    if (result) return result as GalleryDetail[]
-    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
-  } catch (error) {
-    info(`getDetail ERROR`, error)
-    throw error
-  }
-}
-const stubs = async () : Promise<GalleryStub[]> => {
-  debug("details")
-  try {
-    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_gallery_stub`
-    if (result) return result as GalleryStub[]
-    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
-  } catch (error) {
-    info(`getDetail ERROR`, error)
-    throw error
-  }
-}
+const details = async () : Promise<Gallery[]> => await prisma.gallery.findMany()
+const detail = async (id: string): Promise<Gallery|null> => await prisma.gallery.findUnique({where: {id}})
 
-/**
- * Using `f_gallery_detail` FNX
- * @param galleryId: string
- * @returns: {@link GalleryDetail}
- */
-const detail = async (galleryId: string): Promise<GalleryDetail> => {
-  debug("getDetail", { galleryId })
-  try {
-    const result:any[] = await prisma.$queryRaw`SELECT * FROM f_gallery_detail(${galleryId})`
-    if (result[0]) return result[0] as GalleryDetail
-    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
-  } catch (error) {
-    info(`getDetail ERROR`, error)
-    throw error
-  }
-}
-
-/**
- * Using `v_gallery_stub` 
- * @param galleryId: string
- * @returns: {@link GalleryDetail}
- */
-const stub = async (galleryId: string): Promise<GalleryStub> => {
-  debug("getDetail", { galleryId })
-  try {
-    const result = await prisma.$queryRaw`SELECT * FROM v_gallery_stub WHERE "id" = ${galleryId}`
-    if (result) return result as GalleryStub
-    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
-  } catch (error) {
-    info(`getDetail ERROR`, error)
-    throw error
-  }
-}
+const stubs = async () : Promise<Gallery[]> => await prisma.gallery.findMany()
+const stub = async (id: string): Promise<Gallery|null> => await prisma.gallery.findUnique({where: {id}})
 
 /**
  * Params {@link GalleryEngageProps}

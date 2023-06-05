@@ -20,70 +20,19 @@ import {
 
 const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook")
 
-const detail = async (idOrTitleOrSlug:string) => {
-  try {
-    const result:any[] = await prisma.$queryRaw`SELECT * 
-      FROM v_book_detail 
-      WHERE id = ${idOrTitleOrSlug}
-        OR LOWER(title) = LOWER(${idOrTitleOrSlug})
-        OR LOWER(slug) = LOWER(${idOrTitleOrSlug})
-      `
-    if (result.length>0) {
-      const book = result[0] as BookDetail
-      const {id, title, active, completeAt, updatedAt} = book
-      debug('detail', {id, title, active, completeAt, updatedAt})
-      return book;
-    }
-    throw { code: fileMethod("detail"), message: "No book was returned!" }
-  } catch (error) {
-    info('details FAIL', error)
-    throw(error)
-  }
+type BookQueryProps = {
+  id?:    string
+  name?:  string
+  email?: string
+  slug?:  string
 }
+const detail = async (props:BookQueryProps):Promise<Book|null> => await prisma.book.findUnique({ where: { ...props }})
 
-const details = async ():Promise<BookDetail[]> => {
-  try {
-    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_book_detail`
-    if (result.length>0) {
-      return result[0] as BookDetail[]
-    }
-    throw { code: fileMethod("details"), message: "No book was returned!" }
-  } catch (error) {
-    info('details FAIL', error)
-    throw(error)
-  }
-}
+const details = async ():Promise<Book[]> => await prisma.book.findMany()
 
-const stub = async (idOrTitleOrSlug:string) => {
-  try {
-    const result:any[] = await prisma.$queryRaw`SELECT * 
-      FROM v_book_stub 
-      WHERE id = ${idOrTitleOrSlug}
-        OR LOWER(title) = LOWER(${idOrTitleOrSlug})
-        OR LOWER(slug) = LOWER(${idOrTitleOrSlug})
-      `
-    if (result.length>0) {
-      return result[0] as BookStub
-    }
-    throw { code: fileMethod("stub"), message: "No book was returned!" }
-  } catch (error) {
-    info('stubs FAIL', error)
-    throw(error)
-  }
-}
+const stub = async (props:BookQueryProps):Promise<Book|null> => await prisma.book.findUnique({ where: { ...props }})
 
-const stubs = async ():Promise<BookStub[]> => {
-  try {
-    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_book_stub`
-    if (result.length>0) {
-      return result[0] as BookStub[]
-    }
-    throw { code: fileMethod("stubs"), message: "No book was returned!" }
-  } catch (error) {
-    info('stubs FAIL', error)
-    throw(error)
-  }
-}
+const stubs = async ():Promise<Book[]> => await prisma.book.findMany()
 
 const byUser = async (id: string): Promise<BookDetail[]> => {
   try {
@@ -305,7 +254,7 @@ const share = async (props:ShareProps): Promise<Share> => {
   }
 }
 
-const addChapter = async(props:{bookId:string, title:string, order: number}):Promise<BookDetail> => {
+const addChapter = async(props:{bookId:string, title:string, order: number}):Promise<Book> => {
   try {
     const {bookId, title, order} = props
     const update = {
@@ -322,11 +271,7 @@ const addChapter = async(props:{bookId:string, title:string, order: number}):Pro
       }
     }
     debug('addChapter',{bookId, update})
-    const result = await prisma.book.update(update)
-    if (result) {
-      return detail(bookId)
-    }
-    throw new Error('Failed to obtain a result')
+    return await prisma.book.update(update)
   } catch (error) {
     debug(`addChapter ERROR`, {
       ...{ props },
@@ -336,7 +281,7 @@ const addChapter = async(props:{bookId:string, title:string, order: number}):Pro
   }
 }
 
-const addGallery = async(props:{bookId:string, galleryId:string}):Promise<BookDetail> => {
+const addGallery = async(props:{bookId:string, galleryId:string}):Promise<Book> => {
   try {
     const {galleryId, bookId} = props
     const update = {
@@ -352,11 +297,7 @@ const addGallery = async(props:{bookId:string, galleryId:string}):Promise<BookDe
       }
     }
     debug('addGallery',{bookId, update})
-    const result = await prisma.book.update(update)
-    if (result) {
-      return detail(bookId)
-    }
-    throw new Error('Failed to obtain a result')
+    return await prisma.book.update(update)
   } catch (error) {
     debug(`addGallery ERROR`, {
       ...{ props },

@@ -12,6 +12,7 @@ import {
   prisma, User, UserFeed,
   UserFeedInclude, UserStub, UserDetail
 } from "../prismaContext";
+import { NotImplemented } from "../../utils/api";
 const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG');
 
 type AllPostQueryParams = {
@@ -91,13 +92,18 @@ const userInfo = async (id:string): Promise<any> => {
   }
 }
 
+
 const detail = async (idOrNameOrEmail:string): Promise<any> => {
+  throw NotImplemented
+}
+
+const cyfrUser = async (idOrNameOrEmail:string): Promise<CyfrUser|null> => {
   try {
     if (!idOrNameOrEmail) {
       return null;
     }
-    debug('detail', {idOrNameOrEmail})
-    const user:UserDetail[] = await prisma.$queryRaw`
+    debug('cyfrUser', {idOrNameOrEmail})
+    const user:CyfrUser[] = await prisma.$queryRaw`
     SELECT * 
     FROM v_cyfruser
     WHERE id = ${idOrNameOrEmail}
@@ -108,11 +114,11 @@ const detail = async (idOrNameOrEmail:string): Promise<any> => {
       debug('found user')
       return user[0];
     }
-    debug('detail: Did not find a user', idOrNameOrEmail)
+    debug('cyfrUser: Did not find a user', idOrNameOrEmail)
     return null
 
   } catch (error) {
-    info(`detail FAIL`, error);
+    info(`cyfrUser FAIL`, error);
     throw error;
   }
 }
@@ -148,11 +154,11 @@ const canMention = async ({search, all = false}:MentionSearchProps):Promise<any>
 
 const userInSessionReq = async (
   req: NextApiRequest
-): Promise<any | null> => {
+): Promise<CyfrUser | null> => {
   try {
     const session = await getSession({ req });
     debug('userInSessionReq', session)
-    return detail(session?.user?.email||'')
+    return cyfrUser(session?.user?.email||'')
   } catch (e) {
     debug('userInSessionReq FAIL', e)
     return null;
@@ -162,7 +168,7 @@ const userInSessionReq = async (
 const userInSessionContext = async (context: GetSessionParams | undefined): Promise<CyfrUser | null> => {
   try {
     const session = await getSession(context);
-    return detail(session?.user?.email||'')
+    return cyfrUser(session?.user?.email||'')
   } catch (error) {
     info(fileMethod("userInSessionContext"), { error });
     return null;
@@ -258,6 +264,7 @@ const updatePreferences = async ({
 
 export const PrismaUser = {
   allUsersQuery,
+  cyfrUser,
   detail,
   userInfo,
   userInSessionContext,

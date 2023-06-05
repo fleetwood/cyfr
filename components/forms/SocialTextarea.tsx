@@ -26,7 +26,7 @@ import {
 import data from "svgmoji/emoji.json"
 import useDebug from "../../hooks/useDebug"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
-import UserApi from "../../prisma/api/userApi"
+import UserApi from "../../prisma/hooks/userApi"
 import { UserStub } from "../../prisma/prismaContext"
 
 const {debug, todo} = useDebug("SocialTextArea", 'DEBUG')
@@ -108,9 +108,10 @@ const SocialTextarea = ({
   const get = async () => {
     const list = await mentions(search)
     if (list) {
-      setMentionList((m) => (list ?? [])
-        .map(m => {return {id: m.id, label: m.name}}
-      ))
+      debug('get', list)
+      // setMentionList((m) => (list ?? [])
+      //   .map(m => {return {id: m.id, label: m.name}}
+      // ))
     }
     return;
   }

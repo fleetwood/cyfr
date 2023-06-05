@@ -1,5 +1,5 @@
 import useDebug from "../../../hooks/useDebug"
-import BookApi from "../../../prisma/api/bookApi"
+import useBookApi from "../../../prisma/hooks/useBookApi"
 import { BookCategory, UserFollow } from "../../../prisma/prismaContext"
 import { KeyVal } from "../../../types/props"
 import {
@@ -53,7 +53,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {shareBook, followBook, likeBook, save} = BookApi()
+  const {shareBook, followBook, likeBook, save} = useBookApi()
   const bookId = bookDetail.id
   const engageProps = bookDetail && cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined

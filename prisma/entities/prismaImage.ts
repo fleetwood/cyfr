@@ -2,53 +2,11 @@ import { Image, Like, ImageDetail,ImageFeed, ImageDeleteProps, ImageEngageProps,
 import useDebug from "../../hooks/useDebug"
 const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage')
 
-const detail = async (id: string): Promise<ImageDetail | null> => {
-  try {
-    const image = await prisma.$queryRaw`SELECT * FROM v_image_detail WHERE "id" = ${id}`
-    if (image) {
-      return image as ImageDetail
-    }
-    throw({ code: "images/byId", message: "No images were returned!" })
-  } catch (error) {
-    throw { code: "images/byId", message: "No images were returned!" }
-  }
-}
+const detail = async (id: string): Promise<Image | null> => await prisma.image.findUnique({where: {id}})
+const details = async (): Promise<Image[]> => await prisma.image.findMany()
 
-const details = async (): Promise<ImageDetail[]> => {
-  try {
-    const image = await prisma.$queryRaw`SELECT * FROM v_image_detail`
-    if (image) {
-      return image as ImageDetail[]
-    }
-    throw({ code: "images/byId", message: "No images were returned!" })
-  } catch (error) {
-    throw { code: "images/byId", message: "No images were returned!" }
-  }
-}
-const stub = async (id: string): Promise<ImageStub | null> => {
-  try {
-    const image = await prisma.$queryRaw`SELECT * FROM v_image_stub WHERE "id" = ${id}`
-    if (image) {
-      return image as ImageStub
-    }
-    throw({ code: "images/byId", message: "No images were returned!" })
-  } catch (error) {
-    throw { code: "images/byId", message: "No images were returned!" }
-  }
-}
-
-const stubs = async (): Promise<ImageStub[]> => {
-  try {
-    const image = await prisma.$queryRaw`SELECT * FROM v_image_stub`
-    if (image) {
-      return image as ImageStub[]
-    }
-    throw({ code: "images/byId", message: "No images were returned!" })
-  } catch (error) {
-    throw { code: "images/byId", message: "No images were returned!" }
-  }
-}
-
+const stub = async (id: string): Promise<Image | null> => await prisma.image.findUnique({where: {id}})
+const stubs = async (): Promise<Image[]> => await prisma.image.findMany()
 
 const upsert = async (props: ImageUpsertProps): Promise<Image> => {
   debug('upsert', props)

@@ -1,6 +1,6 @@
 import useDebug from "../../../hooks/useDebug"
 import { ChapterViews } from '../../../pages/book/[bookId]/chapter/[chapterId]'
-import ChapterApi from "../../../prisma/api/chapterApi"
+import useChapterApi from "../../../prisma/hooks/useChapterApi"
 import { ChapterDetail } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
@@ -20,7 +20,7 @@ type ChapterDetailViewProps = {
 const ChapterDetailView = ({chapterDetail, view}:ChapterDetailViewProps) => {
   const {notify} = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {isAuthor} = ChapterApi()
+  const {isAuthor} = useChapterApi()
   const showEdit = isAuthor({chapter: chapterDetail, cyfrUser})
   const {detailView, reviewView, editView, readView} = currentView(view)
 

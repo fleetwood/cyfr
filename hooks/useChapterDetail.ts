@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import ChapterApi from "../prisma/api/chapterApi"
+import useChapterApi from "../prisma/hooks/useChapterApi"
 import { BookDetail, ChapterDetail, ChapterDetailApi, ChapterDetailState, CyfrUser } from "../prisma/prismaContext"
 import { RocketQuery } from "../types/props"
 import { sendApi } from "../utils/api"
@@ -59,7 +59,7 @@ const useChapterDetail = ({bookDetail, chapterId, cyfrUser}:ChapterDetailProps):
 
   const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
-  const api = ChapterApi()
+  const api = useChapterApi()
 
   const getChapterDetail = async () => {
     if (!chapterId) return null

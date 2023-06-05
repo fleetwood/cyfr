@@ -12,6 +12,7 @@ export default async function handle(
 ) {
   try {
     const result = await PrismaUser.userInSessionReq(req)
+    debug('result', result)
     res.status(200).json({ result })
   } catch (e: Error | ResponseError | any) {
     err(`FAIL`, e)

@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { ChapterViews } from "../../../pages/book/[bookId]/chapter/[chapterId]";
-import ChapterApi from "../../../prisma/api/chapterApi";
+import useChapterApi from "../../../prisma/hooks/useChapterApi";
 import { ChapterDetail, ChapterStub } from "../../../prisma/prismaContext";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import { ChapterDetailIcon, FeatherIcon, ReadsIcon, StarIcon } from "../../ui/icons";
@@ -23,7 +23,7 @@ export const currentView = (view?:ChapterViews) => {
 
 const ChapterViewSelector = ({chapter, view, setView}:ChapterViewSelectorProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {isAuthor} = ChapterApi()
+  const {isAuthor} = useChapterApi()
   const showEdit = isAuthor({chapter, cyfrUser})
   const {detailView, editView, readView, reviewView} = currentView(view)
   return (

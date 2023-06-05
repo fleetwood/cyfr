@@ -5,7 +5,7 @@ import EZButton from '../../ui/ezButton'
 import CharacterList from '../Characters/CharacterList'
 import { ChapterDetail } from '../../../prisma/types'
 import { useCyfrUserContext } from '../../context/CyfrUserProvider'
-import ChapterApi from '../../../prisma/api/chapterApi'
+import useChapterApi from '../../../prisma/hooks/useChapterApi'
 import ErrorPage from '../../../pages/404'
 import useDebug from '../../../hooks/useDebug'
 import { useToast } from '../../context/ToastContextProvider'
@@ -19,7 +19,7 @@ type ChapterEditViewProps = {
 
 const ChapterEditView = ({chapterDetail, onSave}:ChapterEditViewProps) => {
     const [cyfrUser] = useCyfrUserContext()
-    const {isAuthor, save} = ChapterApi()
+    const {isAuthor, save} = useChapterApi()
     const {notify} = useToast()
 
     const [words, setWords] = useState(chapterDetail.words)

@@ -14,68 +14,11 @@ import {
 
 const { debug, info, fileMethod } = useDebug("entities/prismaGenre")
 
-const details = async (): Promise<GenreDetail[]> => {
-  try {
-    debug("details")
-    return (await prisma.$queryRaw`
-      SELECT * 
-      FROM v_genre_detail
-    `) as GenreDetail[]
-  } catch (error) {
-    info("details", { error })
-    throw { code: fileMethod("details"), message: "No genre was returned!" }
-  }
-}
+const details = async (): Promise<Genre[]> => await prisma.genre.findMany()
+const detail = async (id:string): Promise<Genre|null> => await prisma.genre.findUnique({where: {id}})
 
-const detail = async (idOrSlugOrName: string): Promise<GenreDetail> => {
-  try {
-    debug("detail", idOrSlugOrName)
-    return (await prisma.$queryRaw`
-      SELECT * 
-      FROM v_genre_detail detail
-      WHERE detail.id = ${idOrSlugOrName}
-      OR    LOWER(detail.name) = LOWER(${idOrSlugOrName})
-      OR    LOWER(detail.slug) = LOWER(${idOrSlugOrName})
-    `) as GenreDetail
-  } catch (error) {
-    info("detail", { error })
-    throw { code: fileMethod("detail"), message: "No genre was returned!" }
-  }
-}
-
-const stubs = async (): Promise<any> => {
-  try {
-    debug("stubs")
-    const results = await prisma.$queryRaw`
-      SELECT * 
-      FROM v_genre_stub
-    `
-    if (results) {
-      debug('stubs', results)
-      return results
-    }
-    throw {code: 'prismaGenre.stubs', message: 'Results were null'}
-  } catch (error) {
-    debug("stubs", { error })
-    throw { code: fileMethod("stubs"), message: "No genre was returned!" }
-  }
-}
-
-const stub = async (idOrSlugOrName: string): Promise<GenreDetail> => {
-  try {
-    debug("stub", idOrSlugOrName)
-    return (await prisma.$queryRaw`
-      SELECT * 
-      FROM v_genre_stub s
-      WHERE s.id = ${idOrSlugOrName}
-      OR    LOWER(s.name) = LOWER(${idOrSlugOrName})
-      OR    LOWER(s.slug) = LOWER(${idOrSlugOrName})
-    `) as GenreStub
-  } catch (error) {
-    info("stub", { error })
-    throw { code: fileMethod("stub"), message: "No genre was returned!" }
-  }
-}
+const stubs = async (): Promise<Genre[]> => await prisma.genre.findMany()
+const stub = async (id:string): Promise<Genre|null> => await prisma.genre.findUnique({where: {id}})
 
 const covers = async (byGenre?: string): Promise<Cover[] | null> => {
   try {

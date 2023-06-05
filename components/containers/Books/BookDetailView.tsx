@@ -19,7 +19,7 @@ import CharacterList from "../Characters/CharacterList"
 import GalleryCreateModal, { OpenGalleryModalPlus } from "../Gallery/GalleryCreateModal"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import BookDetailHeader from "./BookDetailHeader"
-import BookApi from "../../../prisma/api/bookApi"
+import useBookApi from "../../../prisma/hooks/useBookApi"
 import ErrorPage from "../../../pages/404"
 
 const { jsonBlock, debug } = useDebug(
@@ -35,7 +35,7 @@ export type BookViewProps = {
 const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
   const {data, isLoading, error, invalidate} = useBookQuery(bookSlug)
   const [bookDetail, setBookDetail] = useState<BookDetail>(data)
-  const {save} = BookApi()
+  const {save} = useBookApi()
 
   const { notify } = useToast()
   const [cyfrUser] = useCyfrUserContext()

@@ -5,7 +5,7 @@ import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 
 import useDebug from "../../../hooks/useDebug"
 import useFeed from "../../../hooks/useFeed"
-import GalleryApi from "../../../prisma/api/galleryApi"
+import useGalleryApi from "../../../prisma/hooks/useGalleryApi"
 import { GalleryDetail, GalleryStub } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import AvatarList from "../../ui/avatarList"
@@ -23,7 +23,7 @@ const GalleryFooter = ({
 }: GalleryFooterProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const { invalidateFeed } = useFeed('gallery')
-  const {likeGallery, shareGallery} = GalleryApi()
+  const {like, share} = useGalleryApi()
   const { notify, loginRequired } = useToast()
   const { setCommentId, showComment, hideComment } = useCommentContext()
 
@@ -52,7 +52,7 @@ const GalleryFooter = ({
     if (!isLoggedIn()) return
 
     debug('handleLike')
-    const liked = await likeGallery({
+    const liked = await like({
       galleryId: gallery.id,
       authorId: cyfrUser!.id,
     })
@@ -68,7 +68,7 @@ const GalleryFooter = ({
     if (!isLoggedIn()) return
 
     debug(`handleShare`)
-    const shared = await shareGallery({
+    const shared = await share({
       galleryId: gallery.id,
       authorId: cyfrUser!.id,
     })
