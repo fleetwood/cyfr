@@ -73,7 +73,7 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
           completeAt,
           updatedAt: now(),
           authors: {
-            connect: dedupe(props.authors.map(a => { return {id: a.id}}),'id')
+            connect: dedupe((props.authors??[]).filter(a => a !== null).map(a => { return {id: a.id}}),'id')
           },
           genre: {
             connect: {

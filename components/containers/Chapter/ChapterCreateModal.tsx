@@ -1,13 +1,14 @@
+import { useCyfrUserContext } from 'components/context/CyfrUserProvider'
+import { useToast } from 'components/context/ToastContextProvider'
+import { TailwindInput } from 'components/forms'
+import EZButton from 'components/ui/ezButton'
+import Spinner from 'components/ui/spinner'
+import { LoggedIn } from 'components/ui/toasty'
+import useDebug from 'hooks/useDebug'
+import { useBookApi } from 'prisma/hooks/useBookApi'
+import { BookDetail, Chapter } from 'prisma/prismaContext'
 import { FormEvent, useRef, useState } from 'react'
-import useDebug from '../../../hooks/useDebug'
-import useBookApi from '../../../prisma/hooks/useBookApi'
-import { BookDetail, Chapter } from '../../../prisma/prismaContext'
-import { useCyfrUserContext } from '../../context/CyfrUserProvider'
-import { useToast } from '../../context/ToastContextProvider'
-import { TailwindInput } from '../../forms'
-import EZButton from '../../ui/ezButton'
-import Spinner from '../../ui/spinner'
-import { LoggedIn } from '../../ui/toasty'
+
 const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", 'DEBUG')
 
 const createChapterModal = 'createChapterModal'
@@ -34,7 +35,7 @@ type CreateChapterModalType = {
 const CreateChapterModal = ({bookDetail, onSave}:CreateChapterModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
   const { notify } = useToast()
-  const {addChapter} = useBookApi()
+  const {addChapter} = useBookApi
 
   const [valid, setIsValid] = useState<boolean>(false)
   const container = useRef<HTMLDivElement>(null)

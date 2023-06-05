@@ -1,12 +1,11 @@
-import Link from "next/link";
-import useDebug from "../../../hooks/useDebug";
-import useBookApi from "../../../prisma/hooks/useBookApi";
-import { BookDetail, BookStub, Image } from "../../../prisma/prismaContext";
-import { cloudinary } from "../../../utils/cloudinary";
-import { uniqueKey } from "../../../utils/helpers";
-import { useCyfrUserContext } from "../../context/CyfrUserProvider";
-import Avatar from "../../ui/avatar";
-import { CheckBadge } from "../../ui/icons";
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import Avatar from "components/ui/avatar"
+import { CheckBadge } from "components/ui/icons"
+import useDebug from "hooks/useDebug"
+import Link from "next/link"
+import { BookDetail, BookStub, Image } from "prisma/prismaContext"
+import { cloudinary } from "utils/cloudinary"
+import { isAuthor, uniqueKey } from "utils/helpers"
 
 const {debug} = useDebug('BookCover')
 
@@ -48,7 +47,6 @@ const BookImage = ({cover, title, width, owner}:{cover: Image|null, title: strin
  */
 const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true, authorAvatars=true}:BookCoverProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const {isAuthor} = useBookApi()
   const isOwner = isAuthor({book,cyfrUser})
   const cover = book.cover || null
   const width = (variant === BookCoverVariant.FULL && cover !== null)

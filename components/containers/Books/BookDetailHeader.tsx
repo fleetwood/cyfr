@@ -1,22 +1,14 @@
-import useDebug from "../../../hooks/useDebug"
-import useBookApi from "../../../prisma/hooks/useBookApi"
-import { BookCategory, UserFollow } from "../../../prisma/prismaContext"
-import { KeyVal } from "../../../types/props"
-import {
-  uuid
-} from "../../../utils/helpers"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { ToastNotifyType, useToast } from "../../context/ToastContextProvider"
-import { BookDetailProps } from "../../layouts/BookDetailLayout"
-import HtmlContent from "../../ui/htmlContent"
-import {
-  FireIcon,
-  FollowIcon,
-  HeartIcon,
-  QuestionMarkIcon,
-  ShareIcon
-} from "../../ui/icons"
-import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import { ToastNotifyType, useToast } from "components/context/ToastContextProvider"
+import { BookDetailProps } from "components/layouts/BookDetailLayout"
+import HtmlContent from "components/ui/htmlContent"
+import { FireIcon, FollowIcon, HeartIcon, QuestionMarkIcon, ShareIcon } from "components/ui/icons"
+import ShrinkableIconLabel from "components/ui/shrinkableIconLabel"
+import useDebug from "hooks/useDebug"
+import { useBookApi } from "prisma/hooks/useBookApi"
+import { BookCategory, UserFollow } from "prisma/prismaContext"
+import { KeyVal } from "types/props"
+import { uuid } from "utils/helpers"
 import BookAuthorHeader from "./BookAuthorHeader"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
@@ -53,7 +45,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {share, follow, like, save} = useBookApi()
+  const {share, follow, like, save} = useBookApi
   const bookId = bookDetail.id
   const engageProps = bookDetail && cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined

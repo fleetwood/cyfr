@@ -1,20 +1,19 @@
 import { useState } from "react"
-import useDebug from "../../../hooks/useDebug"
-import ErrorPage from "../../../pages/404"
-import useBookApi from "../../../prisma/hooks/useBookApi"
-import { BookCategory, BookStatus, UserFollow } from "../../../prisma/prismaContext"
-import { KeyVal } from "../../../types/props"
-import { now, uuid } from "../../../utils/helpers"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { ToastNotifyType, useToast } from "../../context/ToastContextProvider"
-import { InlineTextarea, TailwindInput, TailwindSelectInput } from "../../forms"
-import TailwindDatepicker from "../../forms/TailwindDatepicker"
-import { BookDetailProps } from "../../layouts/BookDetailLayout"
-import { FireIcon, FollowIcon, HeartIcon, QuestionMarkIcon, ShareIcon } from "../../ui/icons"
-import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
-import Toggler from "../../ui/toggler"
-import { title } from "process"
-import EZButton from "../../ui/ezButton"
+import useDebug from "hooks/useDebug"
+import ErrorPage from "pages/404"
+import { BookCategory, BookStatus, UserFollow } from "prisma/prismaContext"
+import { KeyVal } from "types/props"
+import { now, uuid } from "utils/helpers"
+import ShrinkableIconLabel from "components/ui/shrinkableIconLabel"
+import { FireIcon, FollowIcon, HeartIcon, QuestionMarkIcon, ShareIcon } from "components/ui/icons"
+import { ToastNotifyType, useToast } from "components/context/ToastContextProvider"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import { useBookApi } from "prisma/hooks/useBookApi"
+import { BookDetailProps } from "components/layouts/BookDetailLayout"
+import { TailwindInput, TailwindSelectInput } from "components/forms"
+import EZButton from "components/ui/ezButton"
+import Toggler from "components/ui/toggler"
+import TailwindDatepicker from "components/forms/TailwindDatepicker"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -50,7 +49,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 const BookAuthorHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {share, follow, like, save} = useBookApi()
+  const {share, follow, like, save} = useBookApi
   const bookId = bookDetail.id
   const engageProps = bookDetail && cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined

@@ -1,11 +1,9 @@
-import React from 'react'
-import { valToLabel } from '../../../utils/helpers'
-import { HeartIcon, ShareIcon, UserIcon, ReplyIcon, BookIcon, StarIcon, DollarIcon, FollowIcon, FireIcon } from '../../ui/icons'
-import { BookDetail, BookStub, UserFollow } from '../../../prisma/prismaContext'
-import { ToastNotifyType, useToast } from '../../context/ToastContextProvider'
-import { useCyfrUserContext } from '../../context/CyfrUserProvider'
-import useBookApi from '../../../prisma/hooks/useBookApi'
-import ShrinkableIconLabel from '../../ui/shrinkableIconLabel'
+import { useCyfrUserContext } from 'components/context/CyfrUserProvider'
+import { ToastNotifyType, useToast } from 'components/context/ToastContextProvider'
+import { BookIcon, DollarIcon, FireIcon, FollowIcon, HeartIcon, ReplyIcon, ShareIcon, StarIcon } from 'components/ui/icons'
+import ShrinkableIconLabel from 'components/ui/shrinkableIconLabel'
+import { useBookApi } from 'prisma/hooks/useBookApi'
+import { BookDetail, BookStub, UserFollow } from 'prisma/prismaContext'
 
 type BookFooterProps = {
   bookDetail: BookDetail|BookStub
@@ -15,7 +13,7 @@ type BookFooterProps = {
 const BookFooter = ({bookDetail, onUpdate}:BookFooterProps) => {
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {share, follow, like} = useBookApi()
+  const {share, follow, like} = useBookApi
   const bookId = bookDetail.id
   const engageProps = cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined

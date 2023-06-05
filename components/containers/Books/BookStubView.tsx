@@ -1,13 +1,10 @@
-import { useRouter } from "next/router"
-import useDebug from "../../../hooks/useDebug"
-import { BookStub } from "../../../prisma/prismaContext"
-import { uniqueKey } from "../../../utils/helpers"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import Avatar from "../../ui/avatar"
-import HtmlContent from "../../ui/htmlContent"
-import BookCover, { BookCoverVariant } from "./BookCover"
+import Avatar from "components/ui/avatar"
+import HtmlContent from "components/ui/htmlContent"
+import useDebug from "hooks/useDebug"
 import Link from "next/link"
-import useBookApi from "../../../prisma/hooks/useBookApi"
+import { BookStub } from "prisma/prismaContext"
+import { uniqueKey } from "utils/helpers"
+import BookCover, { BookCoverVariant } from "./BookCover"
 
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent')
 

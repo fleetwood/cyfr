@@ -1,39 +1,38 @@
-import { useEffect, useState } from "react"
-import { ItemProps } from "react-photoswipe-gallery"
-import useDebug from "../../../hooks/useDebug"
-import Image from 'next/image'
+import useDebug from "hooks/useDebug"
 import {
+  Book,
   BookCategory,
   BookDetail,
   BookStatus,
+  BookUpsertProps,
   Chapter,
   Character,
+  Cover,
   Gallery,
   GalleryStub,
-  User,
-  UserStub,
-} from "../../../prisma/prismaContext"
-import { KeyVal } from "../../../types/props"
-import { getApi, sendApi } from "../../../utils/api"
-import { uuid } from "../../../utils/helpers"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import Dropzone from "../../forms/Dropzone"
-import { CompleteFile } from "../../forms/Dropzone/types.defs"
+  UserStub
+} from "prisma/prismaContext"
+import { useEffect, useState } from "react"
+import { ItemProps } from "react-photoswipe-gallery"
+import { KeyVal } from "types/props"
+import { getApi, sendApi } from "utils/api"
+import { uuid } from "utils/helpers"
 
-import { useToast } from "../../context/ToastContextProvider"
-import AutoInput from "../../forms/AutoInput"
-import TailwindInput from "../../forms/TailwindInput"
-import TailwindTextarea from "../../forms/TailwindTextarea"
-import EZButton from "../../ui/ezButton"
-import Toggler from "../../ui/toggler"
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
-import { cloudinary } from "../../../utils/cloudinary"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import { useToast } from "components/context/ToastContextProvider"
+import { AutoInput, TailwindInput, TailwindTextarea } from "components/forms"
+import Dropzone, { CompleteFile } from "components/forms/Dropzone"
+import EZButton from "components/ui/ezButton"
+import Toggler from "components/ui/toggler"
 import Link from "next/link"
+import { cloudinary } from "utils/cloudinary"
+import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
+import { useBookApi } from "prisma/hooks/useBookApi"
 
 const { debug } = useDebug("components/containers/Books/UpsertBook")
 
 type UpsertBookProps = {
-  book?: BookDetail
+  book?: Book
   link?: boolean
   onUpsert?: Function
 }
@@ -41,6 +40,7 @@ type UpsertBookProps = {
 const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const { notify } = useToast()
+  const {upsert} = useBookApi
 
   const [genreList, setGenreList] = useState<any[]>([])
   const [coverGallery, setCoverGallery] = useState<Gallery | null>()
@@ -48,24 +48,19 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   const [title, setTitle] = useState<string | null>(book?.title || null)
   const [active, setActive] = useState<boolean>(book?.active || false)
   const [prospect, setProspect] = useState<boolean>(book?.prospect || false)
+  const [fiction, setFiction] = useState<boolean>(book?.fiction || true)
   const [status, setStatus] = useState<BookStatus>(book?.status || "DRAFT")
-  // const [cover, setCover] = useState<string|null>(book?.cover || null)
+  // const [cover, setCover] = useState<Cover|null>(book?.cover || null)
   const [genreId, setGenreId] = useState<string | null>(book?.genreId || null)
-  const [categories, setCategories] = useState<BookCategory[]>(
-    book?.categories || []
-  )
+  // const [categories, setCategories] = useState<BookCategory[]>(book?.categories || [])
   const [hook, setHook] = useState<string | null>(book?.hook || null)
-  const [synopsis, setSynopsis] = useState<string | null>(
-    book?.synopsis || null
-  )
+  const [synopsis, setSynopsis] = useState<string | null>(book?.synopsis || null)
   const [back, setBack] = useState<string | null>(book?.back || null)
   const [words, setWords] = useState<number>(book?.words || 0)
-  const [authors, setAuthors] = useState<UserStub[]>(book?.authors || [])
-  const [chapters, setChapters] = useState<Chapter[]>(book?.chapters || [])
-  const [characters, setCharacters] = useState<Character[]>(
-    book?.characters || []
-  )
-  const [gallery, setGallery] = useState<GalleryStub | null>(book?.gallery || null)
+  // const [authors, setAuthors] = useState<UserStub[]>(book?.authors || [])
+  // const [chapters, setChapters] = useState<Chapter[]>(book?.chapters || [])
+  // const [characters, setCharacters] = useState<Character[]>(book?.characters || [])
+  // const [gallery, setGallery] = useState<GalleryStub | null>(book?.gallery || null)
   const [images, setImages] = useState<string[]>([])
 
   const [showEditor, setShowEditor] = useState<boolean>(false)
@@ -74,30 +69,32 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   }
 
   const saveBook = async () => {
-    const bookProps = {
-      title,
+    const bookProps:BookUpsertProps = {
+      ...book,
+      title: title!,
       active,
       prospect,
       status,
-      genreId,
-      categories,
-      hook,
-      synopsis,
-      back,
+      fiction,
+      genreId: genreId!,
+      // categories,
+      hook: hook ?? '',
+      synopsis: synopsis ?? '',
+      back: back ?? '',
       words,
-      authors,
+      // cover,
+      // authors: authors!,
     //   chapters,
     //   characters,
     //   gallery,
     }
-    const upsert = await (await sendApi("book/upsert", bookProps)).data
-    if (upsert.result) {
-        const book = upsert.result
-        notify(`Created ${book.title}! Happy writing!!`)
+    const result = await upsert(bookProps)
+    if (result) {
+        notify(`Created ${title}! Happy writing!!`)
         if (onUpsert) onUpsert(book)
     }
     else {
-        debug('Did not get right result?', upsert.result)
+        debug('Did not get right result?', bookProps)
         notify(`Ya that dint work`,'warning')
     }
   }
@@ -130,13 +127,13 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
       }
     }
     getGenres()
-    setAuthors(() => cyfrUser 
-      ? [
-          ...authors,
-          {id: cyfrUser.id, name: cyfrUser.name, image: cyfrUser.image} as UserStub
-        ]
-      : authors
-    )
+    // setAuthors(() => cyfrUser 
+    //   ? [
+    //       ...authors,
+    //       {id: cyfrUser.id, name: cyfrUser.name, image: cyfrUser.image} as UserStub
+    //     ]
+    //   : authors
+    // )
   }, [])
 
   return (
@@ -214,16 +211,17 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
       )}
       {!showEditor && book && (
         <>
-            <div>Cover: {book.cover?.url ? <img src={cloudinary.thumb({url: book.cover.url, width: 100})} width={100} /> : <span>No Cover</span>}</div>
-            <div>{book.genre.title}</div>
+            {/* <div>Cover: {book.cover?.url ? <img src={cloudinary.thumb({url: book.cover.url, width: 100})} width={100} /> : <span>No Cover</span>}</div> */}
+            <div>Cover: <span>TO DO</span></div>
+            <div>GENRE: <span>TO DO</span></div>
             <div>Status: {book.status}</div>
             <div>Word count: {book.words}</div>
             <div>Active: {book.active ? 'Yes' : 'Hidden'}</div>
             <div>Agents: {book.prospect ? 'Will consider' : 'Not looking for representation'}</div>
             <div>{book.hook}</div>
             <div>{book.synopsis}</div>
-            <div>Chapters</div>
-            <div>Characters</div>
+            <div>Chapters: <span>TO DO</span></div>
+            <div>Characters: <span>TO DO</span></div>
         </>
       )}
       <div className="flex justify-between my-4">

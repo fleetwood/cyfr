@@ -1,26 +1,24 @@
 import { Tab } from "@headlessui/react"
 import router from "next/router"
 import { Fragment, useEffect, useState } from "react"
-import useBookQuery from "../../../hooks/useBookQuery"
-import useDebug from "../../../hooks/useDebug"
-import { BookDetail, Chapter } from "../../../prisma/prismaContext"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { useToast } from "../../context/ToastContextProvider"
-import { InlineTextarea } from "../../forms"
-import HtmlContent from "../../ui/htmlContent"
-import {
-  PhotoIcon
-} from "../../ui/icons"
-import Spinner from "../../ui/spinner"
+import useBookQuery from "hooks/useBookQuery"
+import useDebug from "hooks/useDebug"
+import { BookDetail, Chapter } from "prisma/prismaContext"
+import ErrorPage from "pages/404"
+import { useBookApi } from "prisma/hooks/useBookApi"
+import { useToast } from "components/context/ToastContextProvider"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import { InlineTextarea } from "components/forms"
+import HtmlContent from "components/ui/htmlContent"
+import { PhotoIcon } from "components/ui/icons"
+import Spinner from "components/ui/spinner"
+import BookDetailHeader from "components/containers/Books/BookDetailHeader"
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
-import ChapterList from "../Chapter/ChapterList"
-import { OpenCharacterModalPlus } from "../Characters/CharacterCreateModal"
-import CharacterList from "../Characters/CharacterList"
-import GalleryCreateModal, { OpenGalleryModalPlus } from "../Gallery/GalleryCreateModal"
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
-import BookDetailHeader from "./BookDetailHeader"
-import useBookApi from "../../../prisma/hooks/useBookApi"
-import ErrorPage from "../../../pages/404"
+import ChapterList from "components/containers/Chapter/ChapterList"
+import { OpenCharacterModalPlus } from "components/containers/Characters/CharacterCreateModal"
+import CharacterList from "components/containers/Characters/CharacterList"
+import GalleryPhotoswipe from "components/containers/Gallery/GalleryPhotoswipe"
+import GalleryCreateModal, { OpenGalleryModalPlus } from "components/containers/Gallery/GalleryCreateModal"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -35,7 +33,7 @@ export type BookViewProps = {
 const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
   const {data, isLoading, error, invalidate} = useBookQuery(bookSlug)
   const [bookDetail, setBookDetail] = useState<BookDetail>(data)
-  const {save} = useBookApi()
+  const {save} = useBookApi
 
   const { notify } = useToast()
   const [cyfrUser] = useCyfrUserContext()

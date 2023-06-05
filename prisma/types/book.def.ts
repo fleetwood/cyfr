@@ -22,21 +22,20 @@ export type BookDetail = Book & BookRelations
 
 export type BookUpsertProps = {
   id?:          string|null
-  cover?:       string
   title:        string,
   slug?:        string,
   completeAt?:  Date|null,
   active:       boolean,
   fiction:      boolean,
   prospect:     boolean,
-  authors:      User[]|CyfrUser[],
   genreId:      string,
   status?:      BookStatus|null,
-  categories?:  BookCategory[] | null,
   back?:        string,
   hook?:        string,
   synopsis?:    string
   words?:       number
+  categories?:  BookCategory[] | null,
+  authors?:      User[]|CyfrUser[],
 }
 
 export type BookCreateProps = {
