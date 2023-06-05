@@ -16,7 +16,6 @@ const useGalleryApi = () => {
     createGallery,
     share,
     like,
-    // commentOnGallery
   }
 }
 
