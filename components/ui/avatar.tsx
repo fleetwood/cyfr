@@ -113,7 +113,7 @@ const Avatar = ({
                 <div className="flex flex-col p-2">
                   <div className="flex odd:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Posts</div>
-                    <div>{(userInfo.posts??[]).length}</div>
+                    <div>(userInfo.posts??[]).length</div>
                   </div>
                   <div className="flex odd:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Books</div>
@@ -121,26 +121,26 @@ const Avatar = ({
                   </div>
                   <div className="flex odd:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Galleries</div>
-                    <div>{(userInfo.galleries??[]).length}</div>
+                    <div>(userInfo.galleries??[]).length</div>
                   </div>   
                 </div>
 
                 <div className="flex flex-col p-2">
                   <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Followers</div>
-                    <div>{(userInfo.followers??[]).length}</div>
+                    <div>(userInfo.followers??[]).length</div>
                   </div>
                   <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Fans</div>
-                    <div>{(userInfo.followers?.filter(f => f.isFan === true)??[]).length}</div>
+                    <div>(userInfo.followers?.filter(f =&gt; f.isFan === true)??[]).length</div>
                   </div>
                   <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Follows</div>
-                    <div>{(userInfo.follows??[]).length}</div>
+                    <div>(userInfo.follows??[]).length</div>
                   </div>
                   <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Stans</div>
-                    <div>{(userInfo.follows?.filter(f => f.isFan === true)??[]).length}</div>
+                    <div>(userInfo.follows?.filter(f =&gt; f.isFan === true)??[]).length</div>
                   </div>
                 </div>
 

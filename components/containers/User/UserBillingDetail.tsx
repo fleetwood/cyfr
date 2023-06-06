@@ -1,11 +1,11 @@
-import { Audience } from "@prisma/client";
-import { useState } from "react";
-import { useCyfrUserApi } from "../../../hooks/useCyfrUser";
-import useDebug from "../../../hooks/useDebug";
-import { sendApi } from "../../../utils/api";
-import { uniqueKey } from "../../../utils/helpers";
-import { useCyfrUserContext } from "../../context/CyfrUserProvider";
-import { CheckBadge } from "../../ui/icons";
+import { Audience } from "@prisma/client"
+import { useState } from "react"
+import useDebug from "hooks/useDebug"
+import { sendApi } from "utils/api"
+import { uniqueKey } from "utils/helpers"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import { CheckBadge } from "components/ui/icons"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 
 const {debug} = useDebug("UserBillingDetail")
 
@@ -68,8 +68,7 @@ const plans:PlanType[] = [
 ]
 
 const UserBillingDetail = () => {
-    const [cyfrUser] = useCyfrUserContext()
-    const {invalidateUser} = useCyfrUserApi()
+    const [cyfrUser, isLoading, error, invalidate] = useCyfrUserContext()
     const initialPlan = cyfrUser.membership ? plans.find(p => p.audience === cyfrUser.membership!.level) : plans[0]
     const [plan, setPlan] = useState<PlanType>(initialPlan || plans[0])
 
@@ -77,11 +76,12 @@ const UserBillingDetail = () => {
 
     const choosePlan = async (plan:PlanType, cadence: string) => {
         debug('choosePlan', {plan: plan.audience.toString(), cadence})
+        // TODO: move this to user api
         const user = await sendApi('user/membership/choose', {audience: plan.audience, cadence})
         if (user && user.data.result) {
             debug('choosePlan', {result: user.data.result})
         }
-        invalidateUser()
+        invalidate()
     }
 
   return (
@@ -151,6 +151,6 @@ const UserBillingDetail = () => {
             }
         </div>
     </div>
-  );
-};
-export default UserBillingDetail;
+  )
+}
+export default UserBillingDetail

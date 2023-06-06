@@ -4,7 +4,6 @@ import MainLayout from "../../../components/layouts/MainLayout";
 import { Book, PrismaUser, UserDetail } from "../../../prisma/prismaContext";
 import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
 import UpsertBook from "../../../components/containers/Books/UpsertBook";
-import { useCyfrUserApi } from "../../../hooks/useCyfrUser";
 import { useState } from "react";
 import JsonBlock from "../../../components/ui/jsonBlock";
 
@@ -23,8 +22,7 @@ type UserBooksPageProps = {
 }
 
 const UserBooksPage = ({ user }:UserBooksPageProps) => {  
-  const [cyfrUser] = useCyfrUserContext()
-  const {invalidateUser} = useCyfrUserApi()
+  const [cyfrUser, isLoading, error, invalidate] = useCyfrUserContext()
   const [books, setBooks] = useState<Book[]>([])
   const title = `Books by ${user ? user.name : 'Somebody'}`
   const isOwner = user && cyfrUser ? user.id === cyfrUser.id : false
@@ -35,7 +33,7 @@ const UserBooksPage = ({ user }:UserBooksPageProps) => {
         {/* {books && books.map((book:Book) => <BookStubView book={book} key={book.id} authorAvatars={false} />)} */}
         {books && books.map((book:Book) => <JsonBlock data={book} key={book.id} />)}
       </div>
-      {isOwner && <UpsertBook onUpsert={() => invalidateUser()} />}
+      {isOwner && <UpsertBook onUpsert={() => invalidate()} />}
     </MainLayout>
   ) : (
     <MainLayout sectionTitle="Books">

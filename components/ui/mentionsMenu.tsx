@@ -33,7 +33,7 @@ const MentionsMenu = ({onSelect, show = true, type='MENTION'}:MentionsMenuProps)
         setIsLoading(() => true)
         const list = type === 'MENTION' 
             ? await mentions(search)
-            : cyfrUser.canMessage.filter(u => u.name.toLowerCase().indexOf((search??'').toLowerCase()) >= 0)
+            : [] // TODO: cyfrUser.canMessage.filter(u => u.name.toLowerCase().indexOf((search??'').toLowerCase()) >= 0)
         setList(() => list)
         setIsLoading(() => false)
     }

@@ -10,9 +10,10 @@ import {
   CyfrUser, Follow,
   UserFollowProps,
   prisma, User, UserFeed,
-  UserFeedInclude, UserStub, UserDetail
+  UserFeedInclude, UserStub, UserDetail, CyfrUserInclude
 } from "../prismaContext";
 import { NotImplemented } from "../../utils/api";
+import { CyfrLogo } from "components/ui/icons";
 const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG');
 
 type AllPostQueryParams = {
@@ -94,24 +95,20 @@ const userInfo = async (id:string): Promise<any> => {
 
 const detail = async (id:string): Promise<any> => await prisma.user.findUnique({where: {id}})
 
-const cyfrUser = async (idOrNameOrEmail:string): Promise<CyfrUser|null> => {
+const cyfrUser = async (email:string): Promise<CyfrUser|null> => {
   try {
-    if (!idOrNameOrEmail) {
+    if (!email) {
       return null;
     }
-    debug('cyfrUser', {idOrNameOrEmail})
-    const user:CyfrUser[] = await prisma.$queryRaw`
-    SELECT * 
-    FROM v_cyfruser
-    WHERE id = ${idOrNameOrEmail}
-      OR LOWER(name) = LOWER(${idOrNameOrEmail})
-      OR LOWER(email) = LOWER(${idOrNameOrEmail})`
-  
-    if (user[0]) {
-      debug('found user')
-      return user[0];
+    debug('cyfrUser', {email})
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: CyfrUserInclude
+    })
+    if (user) {
+      return user as unknown as CyfrUser
     }
-    debug('cyfrUser: Did not find a user', idOrNameOrEmail)
+    debug('cyfrUser: Did not find a user', email)
     return null
 
   } catch (error) {

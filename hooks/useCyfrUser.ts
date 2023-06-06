@@ -7,8 +7,6 @@ import { __cyfr_refetch__ } from "../utils/constants"
 import useDebug from "./useDebug"
 const {debug, info, fileMethod} = useDebug("useCyfrUser")
 
-const cyfrUserQuery = "cyfrUserQuery"
-
 export async function getCyfrUser() {
   debug(`getCyfrUser`)
   const data = await getApi(`/me`)
@@ -21,13 +19,13 @@ export async function getCyfrUser() {
   }
 }
 
-export type useCyfrUserProps = {
-  data?: CyfrUser
-  isLoading: boolean
-  error: unknown
-}[]
-
-const useCyfrUser = ():[CyfrUser,boolean,unknown] => {
+const useCyfrUser = ():[
+  data:       CyfrUser,
+  isLoading:  boolean,
+  error:      unknown,
+  invalidate: () => Promise<void>
+] => {
+  const cyfrUserQuery = "cyfrUserQuery"
   const qc = useQueryClient()
   const [refetchInterval, setRefetchInterval] = useState(__cyfr_refetch__)
 
@@ -50,39 +48,11 @@ const useCyfrUser = ():[CyfrUser,boolean,unknown] => {
     }
   }
 
+  const invalidate = async () => qc.invalidateQueries(cyfrUserQuery)
+ 
   const query = useQuery(cyfrUserQuery, getCyfrUser, {onSettled})
 
-  return [query.data, query.status === "loading", query.error]
-}
-
-export const useCyfrUserApi = () => {
-  const qc = useQueryClient()
-  const invalidateUser = () => {
-    debug('invalidateUser')
-    qc.invalidateQueries([cyfrUserQuery])
-  }
-  
-  const updateUser = async (data:CyfrUser) => {
-    debug('updateUser', data)
-    try {
-      const {id, name, image} = data
-      const result = await sendApi('/user/preferences', {id,name,image})
-      if (result.status === 200) {
-        const data = result.data
-        debug('updateUser', {message: 'Success. This should be invalidating the user at this point.', result: {...data.id, ...data.name, ...data.image}})
-        invalidateUser()
-        return result
-      }
-      else {
-        throw ({code: fileMethod('updateUser'), message: result.data.message})
-      }
-    } catch (error) {
-      info(`updateUser ERROR`,error)
-      return ({code: fileMethod('updateUser'), message: 'That dint work'})
-    }
-  }
-
-  return { invalidateUser, updateUser }
+  return [query.data, query.status === "loading", query.error, invalidate]
 }
 
 export default useCyfrUser

@@ -7,10 +7,10 @@ type CyfrUserProviderProps = {
 }
 
 export const CyfrUserContext = createContext({} as any)
-export const useCyfrUserContext = ():[cyfrUser:CyfrUser, loading:boolean, error:unknown] => useContext(CyfrUserContext)
+export const useCyfrUserContext = ():[cyfrUser:CyfrUser, loading:boolean, error:unknown, invalidate: () => void] => useContext(CyfrUserContext)
 
 const CyfrUserProvider = ({ children }: CyfrUserProviderProps) => {
-  const value:[CyfrUser, boolean, unknown] = useCyfrUser()
+  const value:[CyfrUser, boolean, unknown, () => void] = useCyfrUser()
   return (
     <CyfrUserContext.Provider value={value}>
       {children}

@@ -8,7 +8,6 @@ import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
 import TailwindInput from "../components/forms/TailwindInput"
 import MainLayout from "../components/layouts/MainLayout"
 import { SaveIcon } from "../components/ui/icons"
-import { useCyfrUserApi } from "../hooks/useCyfrUser"
 import useDebug from "../hooks/useDebug"
 import { useSession } from "../lib/next-auth-react-query"
 import { PrismaUser } from "../prisma/entities/prismaUser"
@@ -29,8 +28,7 @@ type AccountProps = {
 
 const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [session] = useSession({required: true, redirectTo: '/login'})  
-  const [cyfrUser] = useCyfrUserContext()
-  const {updateUser, invalidateUser}=useCyfrUserApi()
+  const [cyfrUser, isLoading, error, invalidate] = useCyfrUserContext()
   const [activeTab, setActiveTab] = useState('Preferences' )
   const [cyfrName, setCyfrName] = useState<string|null>(null)
 
@@ -42,14 +40,14 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
       ...cyfrUser,
       name: cyfrName
     } as unknown as CyfrUser
-    updateUser(newCyfrUser)
-      .then(r => {
-        debug(`onNameChange complete`)
-        invalidateUser()
-      })
-      .catch(e => {
-        info(`onNameChange error`,e)
-      })
+    // updateUser(newCyfrUser)
+    //   .then(r => {
+    //     debug(`onNameChange complete`)
+    //     invalidate()
+    //   })
+    //   .catch(e => {
+    //     info(`onNameChange error`,e)
+    //   })
   }
 
   const onFileComplete = async (files:CompleteFile[]) => {
@@ -60,13 +58,13 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
         ...cyfrUser,
         image: file.secure_url
       } as unknown as CyfrUser
-      const result = await updateUser(newCyfrUser)
-      if (result) {
-        invalidateUser()
-      }
-      else {
-        info(`onFileComplete error`,{file})
-      }
+      // const result = await updateUser(newCyfrUser)
+      // if (result) {
+      //   invalidateUser()
+      // }
+      // else {
+      //   info(`onFileComplete error`,{file})
+      // }
     }
   }
 

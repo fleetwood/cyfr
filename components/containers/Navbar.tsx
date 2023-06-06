@@ -5,6 +5,7 @@ import ShrinkableIconLink from "components/ui/shrinkableIconLink"
 import ShrinkableLink from "components/ui/shrinkableLink"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
+import { Book } from "prisma/prismaContext"
 import { useState, useEffect, ReactNode } from "react"
 import { uniqueKey, onlyFans } from "utils/helpers"
 
@@ -90,9 +91,9 @@ const Navbar = ({
                   <ul className="px-4 py-2 bg-primary bg-opacity-90 rounded-l-lg">
                     {/* <h3 className="w-[100%]"><Link href={`/user/${userUrl}/books`} className='min-w-full rounded-lg hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Books</Link></h3> */}
                     {/* <ul className="col-1 p-2 text-primary-content mt-2 space-y-2"> */}
-                      {cyfrUser.books?.map(book => (
+                      {/* {cyfrUser.books?.map((book:Book) => (
                       <li key={uniqueKey(book)}><Link className="hover:bg-opacity-100 hover:bg-primary hover:drop-shadow-md" href={`/book/${book.slug}`}>{book.title}</Link></li>
-                      ))}
+                      ))} */}
                     {/* </ul> */}
                   </ul>
                   <ul className="p-2 text-secondary-content mt-2 space-y-2">
@@ -106,9 +107,9 @@ const Navbar = ({
                   </ul>
 
                   <ul className="p-2 text-secondary-content mt-2 space-y-2">
-                    <li><span><b>Posts</b> {cyfrUser.posts?.length}</span></li>
-                    <li><span><b>Followers</b> {cyfrUser.followers?.length}</span></li>
-                    <li><span><b>Fans</b> {onlyFans(cyfrUser.followers??[]).length} </span></li>
+                    <li><span><b>Posts</b> cyfrUser.posts?.length</span></li>
+                    <li><span><b>Followers</b> cyfrUser.followers?.length</span></li>
+                    <li><span><b>Fans</b> onlyFans(cyfrUser.followers??[]).length </span></li>
                     <li><span><b>Reads</b> [NI]</span></li>
                     <li><span><b>Reviews</b> [NI]</span></li>
                   </ul>
