@@ -131,11 +131,9 @@ export const CyfrUserInclude = {
         not: null
       }
     },
-    // orderBy: {
-    //   following: {
-    //     name: 'asc'
-    //   }
-    // },
+    orderBy: {
+      createdAt: 'ASC'
+    },
     take: 20,
     select: {
       isFan: true,
