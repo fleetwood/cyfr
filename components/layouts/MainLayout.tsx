@@ -7,6 +7,7 @@ import RightColumn from "../containers/RightColumn"
 import { useToast } from "../context/ToastContextProvider"
 import Section from "../ui/section"
 import Toasts from "../ui/toasts"
+import CreateCommentModal from "components/containers/Comment/CreateCommentModal"
 
 type MainLayoutProps = {
   sectionTitle: string | ReactNode
@@ -57,6 +58,7 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
                 <RightColumn />
               </div>
               <CreatePostModal />
+              <CreateCommentModal />
             </div>
       //     </div>
       //   </div>

@@ -29,7 +29,7 @@ import { useCyfrUserContext } from "../context/CyfrUserProvider"
 import UserApi from "../../prisma/hooks/userApi"
 import { UserStub } from "../../prisma/prismaContext"
 
-const {debug, todo} = useDebug("SocialTextArea", 'DEBUG')
+const {debug, todo} = useDebug("SocialTextArea")
 
 type MentionItem = { id: string, label: string }
 

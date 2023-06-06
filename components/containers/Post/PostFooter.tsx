@@ -10,6 +10,7 @@ import { PostDetail, PostStub, UserStub } from "../../../prisma/prismaContext"
 import useDebug from "../../../hooks/useDebug"
 import usePostApi from "../../../prisma/hooks/usePostApi"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
 const { debug } = useDebug("PostItemFooter")
 
 type PostFooterProps = {
@@ -102,14 +103,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
       </div>
 
       <div className="font-semibold uppercase">
-        <ShrinkableIconButton
-          icon={ReplyIcon}
-          className="bg-opacity-0 hover:shadow-none"
-          iconClassName="text-primary"
-          labelClassName="text-primary"
-          label={`Comment (${comments.length})`}
-          onClick={() => handleComment()}
-        />
+        <CreateCommentFooterButton postId={post.id} comments={(post.post_comments??[]).length} />
         {/* <AvatarList
           users={(post.post_comments || []).map((a) => a.author)}
           sz="xs"

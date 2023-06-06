@@ -22,6 +22,8 @@ const HomePage = (props:HomePageProps) => {
   return (
     <MainLayout sectionTitle={CyfrHome} subTitle="The Creative Site">
       <CreatePostModalButton />
+      <CreatePostModalButton />
+      <CreatePostModalButton />
       {feed && feed.map((item:MainFeed) => <FeedItem item={item} key={uniqueKey(item)} />)}
     </MainLayout>
   )

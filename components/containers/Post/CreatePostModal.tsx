@@ -33,6 +33,12 @@ const CreatePostModal = (): JSX.Element => {
     setImages((current) => [...current, ...files])
   }
 
+  const toggleModal = (show?:boolean) => {
+    const createModal = document.getElementById(createPostModal)
+    // @ts-ignore
+    createModal!.checked = show || false
+  }
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!valid) {
@@ -54,9 +60,8 @@ const CreatePostModal = (): JSX.Element => {
       setImages(() => [])
       invalidateFeed()
     }
-    const createModal = document.getElementById(createPostModal)
-    // @ts-ignore
-    createModal!.checked = false
+
+    toggleModal()
   }
 
   return (
