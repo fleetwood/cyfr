@@ -83,17 +83,51 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
 const userInfo = async (id:string): Promise<any> => {
   debug('userInfo', {id})
   try {
-    const result:any[] = await prisma.$queryRaw<any[]>`select * from "v_user_info" where name = ${'Fleetwood'}`
-    if (result[0]) {
-      return result[0]
-    }
+    const result = await prisma.user.findUnique({
+      where: { id },
+      include: {
+        membership: true,
+        galleries: {
+          where: {
+            visible: true
+          }
+        },
+        books: {
+          where: {
+            active: true
+          }
+        },
+        _count: {
+          select: {
+          posts: true,
+          follower: true,
+          following: true
+        }}
+      }
+    })
+
+    if (result) return result
+    
     throw {code: fileMethod, message: 'Could not find info for that user id'}
   } catch (error) {
     throw error
   }
 }
 
-const detail = async (id:string): Promise<any> => await prisma.user.findUnique({where: {id}})
+export type UserDetailProps = {
+  id?:    string
+  name?:  string
+  email?: string
+  slug?:  string
+}
+const detail = async (props:UserDetailProps): Promise<any> => {
+  const {id, name, email, slug} = props
+  const where = name ? { name: name}
+    : email ? { email: email}
+    : slug ? { slug : slug }
+    : { id : id}
+  return await prisma.user.findUnique({where: where})
+}
 
 const cyfrUser = async (email:string): Promise<CyfrUser|null> => {
   try {
@@ -106,6 +140,7 @@ const cyfrUser = async (email:string): Promise<CyfrUser|null> => {
       include: CyfrUserInclude
     })
     if (user) {
+      debug('success', user)
       return user as unknown as CyfrUser
     }
     debug('cyfrUser: Did not find a user', email)

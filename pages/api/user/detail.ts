@@ -1,8 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 
-import useDebug from "../../../../hooks/useDebug"
-import { CyfrUser, PrismaUser } from "../../../../prisma/prismaContext"
-import { ResponseResult } from "../../../../types/response"
+import useDebug from "hooks/useDebug"
+import { PrismaUser } from "prisma/prismaContext"
 
 const {debug, stringify, fileMethod} = useDebug('api/user/[id]')
 

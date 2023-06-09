@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import { getApi, sendApi } from "../../utils/api"
-import { Book, UserEngageProps, UserFollowProps, UserStub } from "../prismaContext"
+import { Book, UserDetailProps, UserEngageProps, UserFollowProps, UserStub } from "../prismaContext"
 
 const {debug} = useDebug('prisma/api/userApi', 'DEBUG')
 
@@ -16,6 +16,8 @@ const UserApi = () => {
     }
   }
 
+  const detail = async (props: UserDetailProps) => await (await sendApi('user/detail', props))
+
   const mentions = async (search:string|undefined):Promise<UserStub[]> => {
     debug('mentions', search)
     const list = await (await sendApi(`user/mentions`,{search,all:search===undefined})).data
@@ -25,12 +27,16 @@ const UserApi = () => {
     return []
   }
 
+  const info = async (id: string) => await (await getApi(`user/${id}/info`)).data
+
   const books = async (id:String):Promise<Book[]> => await (await getApi(`user/books/${id}`)).data
 
   return {
     followUser,
     mentions,
-    books
+    books,
+    info,
+    detail
   }
 }
 

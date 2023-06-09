@@ -5,6 +5,7 @@ import ShrinkableIconLink from "components/ui/shrinkableIconLink"
 import ShrinkableLink from "components/ui/shrinkableLink"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
+import UserApi from "prisma/hooks/userApi"
 import { Book } from "prisma/prismaContext"
 import { useState, useEffect, ReactNode } from "react"
 import { uniqueKey, onlyFans } from "utils/helpers"
@@ -25,6 +26,8 @@ const Navbar = ({
   pageScrolled: active,
 }: NavbarProps) => {
   const [cyfrUser] = useCyfrUserContext()
+  const [userInfo, setUserInfo] = useState()
+  const {info} = UserApi()
   const [isPageScrolled, setIsPageScrolled] = useState(false)
   const [showDropDown, setShowDropDown ] = useState(false)
 
@@ -32,9 +35,21 @@ const Navbar = ({
 
   const linkClass = 'rounded-lg hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'
 
+  const getInfo = async () => {
+    if (!cyfrUser) return
+    const result = await info(cyfrUser.id)
+    if (result) {
+      setUserInfo(() => result)
+    }
+  }
+
   useEffect(() => {
     setIsPageScrolled(active||false)
   }, [active])
+
+  useEffect(() => {
+    getInfo()
+  }, [cyfrUser])
 
   return (
     <>
@@ -84,7 +99,6 @@ const Navbar = ({
                 <Avatar user={cyfrUser} sz='sm' link={false} variant={['no-profile']} />
               </label>
 
-
               <div className={`dropdown-content w-full top-full drop-shadow-lg bg-secondary bg-opacity-90 rounded-lg`}>
               
                 <div className="grid lg:grid-cols-3 gap-6">
@@ -106,6 +120,7 @@ const Navbar = ({
                     <li><Link href={`#`} className={linkClass} onClick={() => signOut()} >Log Out</Link></li>
                   </ul>
 
+                  {userInfo &&
                   <ul className="p-2 text-secondary-content mt-2 space-y-2">
                     <li><span><b>Posts</b> cyfrUser.posts?.length</span></li>
                     <li><span><b>Followers</b> cyfrUser.followers?.length</span></li>
@@ -113,9 +128,10 @@ const Navbar = ({
                     <li><span><b>Reads</b> [NI]</span></li>
                     <li><span><b>Reviews</b> [NI]</span></li>
                   </ul>
+                  }
                 </div>
               
-            </div>
+              </div>
 
             </div>
           ) : (

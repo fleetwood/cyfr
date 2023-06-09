@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import useDebug from "../../../../hooks/useDebug"
-import { ResponseResult } from "../../../../types/response"
 import { PrismaUser } from "../../../../prisma/prismaContext"
 
 const {debug, stringify, fileMethod} = useDebug('api/user/stub/[id]')
@@ -12,7 +11,7 @@ export default async function handle(
   const id = req.query.id?.toString() || ""
   debug('handle', id)
   try {
-    const result = await PrismaUser.detail(id)
+    const result = await PrismaUser.userInfo(id)
     if (!result)  {
       debug('handle ERROR')
       throw { code: fileMethod('handle'), message: `No results for (${id})` }

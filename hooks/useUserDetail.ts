@@ -2,27 +2,22 @@ import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
 import { getApi, sendApi } from "../utils/api"
 import { UserFollowProps } from "../prisma/types/follow.def"
-import { UserDetail } from "../prisma/prismaContext"
+import { UserDetail, UserDetailProps } from "../prisma/prismaContext"
 import useDebug from "./useDebug"
+import UserApi from "prisma/hooks/userApi"
 const {debug, info} = useDebug('useUserDetails')
 
+
+const {detail} = UserApi()
 export const userDetailQuery = "userDetailQuery"
 
-async function getUser(userid:String) {
-  const data = await getApi(`user/${userid}`)
-  if (data.result) {
-    const user = data.result
-    return user
-  }
-  return null
-}
+const  getUser = async (userid:string) => await( await detail({id: userid})).data
 
-export type UserDetailHookProps = {
+export type UserDetailHookProps = UserDetailProps & {
   user?:  UserDetail
-  id?: String
 }
 
-const useUserDetail = ({user, id}:UserDetailHookProps) => {
+const useUserDetail = ({user, id, name, email, slug}:UserDetailHookProps) => {
   const [currentUser, setCurrentUser] = useState<UserDetail>()
   const qc = useQueryClient()
   
@@ -45,7 +40,7 @@ const useUserDetail = ({user, id}:UserDetailHookProps) => {
         }
         if (data) {
           debug(`onSettled() success`)
-          setCurrentUser(() => data as UserDetail)
+          setCurrentUser(() => data)
         }
       }
     }

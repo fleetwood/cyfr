@@ -1,18 +1,19 @@
 import { useState } from "react"
-import useUserDetail from "../../../hooks/useUserDetail"
-import { UserFollow } from "../../../prisma/prismaContext"
-import { uniqueKey } from '../../../utils/helpers'
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { useToast } from "../../context/ToastContextProvider"
-import Avatar from "../../ui/avatar"
-import { FireIcon, HeartIcon } from "../../ui/icons"
-import ShrinkableIconButton from "../../ui/shrinkableIconButton"
+import useUserDetail from "hooks/useUserDetail"
+import { UserFollow } from "prisma/prismaContext"
+import { uniqueKey } from 'utils/helpers'
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import { useToast } from "components/context/ToastContextProvider"
+import ShrinkableIconButton from "components/ui/shrinkableIconButton"
+import { FireIcon, HeartIcon } from "components/ui/icons"
+import GalleryStubView from "../Gallery/GalleryStubView"
+import JsonBlock from "components/ui/jsonBlock"
 import BookCover from "../Books/BookCover"
 import PostStubView from "../Post/PostStubView"
-import GalleryStubView from "../Gallery/GalleryStubView"
+import Avatar from "components/ui/avatar"
 
 type UserDetailViewProps = {
-  userId: String
+  userId: string
 }
 
 const UserDetailView = ({ userId }: UserDetailViewProps) => {
@@ -174,8 +175,8 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
             {currentUser?.galleries && 
               currentUser.galleries.map(gallery => 
               <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
-                {/* <JsonBlock data={gallery} /> */}
-                <GalleryStubView gallery={gallery}/>
+                <JsonBlock data={gallery} />
+                {/* <GalleryStubView gallery={gallery}/> */}
               </div>
             )}
           </div>
@@ -187,7 +188,8 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
           <h2 className="subtitle">Books</h2>
           <div className="bg-base-100 my-4 p-4 rounded-md">
             {currentUser?.books?.map(book => (
-              <BookCover book={book} key={book.id} />
+              // <BookCover book={book} key={book.id} />
+              <JsonBlock data={book} key={book.id} />
             ))}
           </div>
         </div>
@@ -198,7 +200,8 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
           <h2 className="subtitle">Posts</h2>
           <div className="my-4">
           {currentUser?.posts?.map((post) => (
-              <PostStubView post={post} key={post.id} />
+              // <PostStubView post={post} key={post.id} />
+              <JsonBlock data={post} key={post.id} />
           ))}
           </div>
         </>
