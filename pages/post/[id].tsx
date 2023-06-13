@@ -1,27 +1,29 @@
+import usePostQuery from "hooks/usePostQuery";
 import GalleryPhotoswipe from "../../components/containers/Gallery/GalleryPhotoswipe";
 import PostFooter from "../../components/containers/Post/PostFooter";
 import MainLayout from "../../components/layouts/MainLayout";
 import Avatar from "../../components/ui/avatar";
 import HtmlContent from "../../components/ui/htmlContent";
-import { PostDetail, PrismaPost } from "../../prisma/prismaContext";
 import { timeDifference } from '../../utils/helpers';
 
 type PostDetailPageProps = {
-  post: PostDetail
+  postId: string
 }
 
 export async function getServerSideProps(context: any) {
-  const postid = context.params.id
-  const post = await PrismaPost.postDetail(postid)
+  const postId = context.params.id
 
   return {
     props: {
-      post,
+      postId,
     },
   }
 }
 
-const PostDetailPage = ({ post }:PostDetailPageProps) => {
+const PostDetailPage = ({ postId }:PostDetailPageProps) => {
+  const {data, isLoading, error, invalidate} = usePostQuery(postId)
+  const post = data
+
   return (post && 
     <MainLayout
       pageTitle={`${post.author.name}`}
@@ -33,20 +35,10 @@ const PostDetailPage = ({ post }:PostDetailPageProps) => {
         </div>
       </div>
       <div className="bg-base-100 rounded-lg p-4 relative">
-        <div className="absolute right-0 pr-4">
-          Posted {timeDifference((post.createdat || '').toString())}
-        </div>
-        <HtmlContent content={post.content!} /> 
-        {post.images?.length > 0 && post.images[0] !== null &&
-          <GalleryPhotoswipe images={post.images} />
-        }
-        {/* {post.post_comments && post.post_comments.map(c => (
-          <div className="text-base-content m-8 font-ibarra" key={uniqueKey('post-comment',post,c)}>
-            {ReactHtmlParser(c.content!)}
-          </div>
-          ))} */}
-         
-        <PostFooter post={post} />
+        <div className="flex justify-end pr-4">Posted {timeDifference((post.createdat || '').toString())}</div>
+        <HtmlContent className="clear-both" content={post.content!} /> 
+        {post.images?.length > 0 && post.images[0] !== null && <GalleryPhotoswipe images={post.images} />}
+        <PostFooter post={post} onUpdate={invalidate} />
       </div>
     </MainLayout>
   )

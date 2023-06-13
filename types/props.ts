@@ -9,7 +9,8 @@ export type KeyVal = {
   value?: string | number | null
 }
 
-export type RocketQuery = {
+export type RocketQuery<T> = {
+  data:         T
   isLoading:    boolean
   invalidate:   () => void
   error:        any

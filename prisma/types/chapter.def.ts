@@ -86,7 +86,7 @@ export type ChapterRelations = {
 
 export type ChapterDetailHook = {
   chapterDetail:  ChapterDetail | null
-  query:          RocketQuery
+  query:          RocketQuery<ChapterDetail>
   api:            ChapterDetailApi
   state:          ChapterDetailState
   relations:      ChapterRelations

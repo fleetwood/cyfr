@@ -3,6 +3,7 @@ import { GalleryDetail, MainFeed } from "./../../../prisma/prismaContext";
 import GalleryFooter from "./GalleryFooter";
 import GalleryPhotoswipe from "./GalleryPhotoswipe";
 import { cloudinary } from "../../../utils/cloudinary";
+import useGalleryQuery from "hooks/useGalleryQuery";
 
 type GalleryDetailViewProps = {
   gallery: GalleryDetail
@@ -10,6 +11,8 @@ type GalleryDetailViewProps = {
 
 const GalleryDetailView = ({gallery}: GalleryDetailViewProps) => {
   
+  const {invalidate} = useGalleryQuery(gallery.id)
+
   return (
     <div className="rounded-lg bg-base-300 text-base-content my-4">
       <div className="font-semibold">Gallery</div>
@@ -25,7 +28,7 @@ const GalleryDetailView = ({gallery}: GalleryDetailViewProps) => {
         <GalleryPhotoswipe gallery={gallery} />
       </div>
       <div className="min-w-full">
-        <GalleryFooter gallery={gallery} />
+        <GalleryFooter gallery={gallery} onUpdate={invalidate} />
       </div>
     </div>
 )}

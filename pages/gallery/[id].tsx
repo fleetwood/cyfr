@@ -1,5 +1,9 @@
+import { Spinner } from "@material-tailwind/react"
 import GalleryDetailView from "components/containers/Gallery/GalleryDetailView"
 import MainLayout from "components/layouts/MainLayout"
+import useGalleryQuery from "hooks/useGalleryQuery"
+import { useRouter } from "next/router"
+import ErrorPage from "pages/404"
 import { PrismaGallery } from "prisma/entities/prismaGallery"
 import { GalleryDetail } from "prisma/types"
 
@@ -18,13 +22,23 @@ type GalleryDetailPageProps = {
   gallery: GalleryDetail
 }
 
-const GalleryDetailPage = ({ gallery }: GalleryDetailPageProps) => {
+const GalleryDetailPage = () => {
+  const router = useRouter()
+  const { id } = router?.query
+  
+  const {data, isLoading, error} = useGalleryQuery(id! as string)
+
+  const gallery = data
+  const authorName = gallery?.author?.name ? `by ${gallery?.author?.name}` :``
+
   return (
     <MainLayout
-      subTitle={gallery.title || "Gallery"}
-      sectionTitle={gallery.author?.name || "Gallery"}
+      sectionTitle={gallery?.title || "Gallery"}
+      subTitle={authorName}
     >
-      <GalleryDetailView gallery={gallery} />
+      {error && <ErrorPage />}
+      {isLoading && <Spinner onResize={undefined} onResizeCapture={undefined} />}
+      {gallery && <GalleryDetailView gallery={gallery} />}
     </MainLayout>
   )
 }

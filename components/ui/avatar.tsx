@@ -68,7 +68,7 @@ const Avatar = ({
 
     setIsLoading(() => true)
     // get user infro from api
-    const info = await getApi(`/user/info/${user?.id}`)
+    const info = await getApi(`/user/${user?.id}/info`)
     
     if (info?.result) {
       debug('init', info)

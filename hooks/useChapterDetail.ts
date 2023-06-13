@@ -12,7 +12,7 @@ const { debug, info } = useDebug("hooks/useChapterDetail")
 export type ChapterDetailHook = {
   bookDetail:      BookDetail
   chapterDetail:   ChapterDetail|null
-  query:            RocketQuery
+  query:            RocketQuery<BookDetail>
   api:              ChapterDetailApi
   state:            ChapterDetailState
 }
@@ -23,7 +23,7 @@ type ChapterDetailProps = {
   cyfrUser:   CyfrUser
 }
 
-const useChapterDetail = ({bookDetail, chapterId, cyfrUser}:ChapterDetailProps):ChapterDetailHook => {
+const useChapterDetail = ({bookDetail, chapterId, cyfrUser}:ChapterDetailProps) => {
   debug('useChapterDetail', {book: bookDetail.title, chapterId, cyfrUser: cyfrUser?.name??'Not logged in'})
   const qc = useQueryClient()
   const [chapterDetail, setChapterDetail] = useState<ChapterDetail|null>(null)
@@ -98,31 +98,8 @@ const useChapterDetail = ({bookDetail, chapterId, cyfrUser}:ChapterDetailProps):
   return {
     chapterDetail,
     bookDetail,
-    api,
-    query: {
-      error, 
-      isLoading,
-      invalidate
-    },
-    // pass-thru properties
-    state: {
-      id, createdAt, 
-      updatedAt, setUpdatedAt,
-      active, setActive,
-      title, setTitle,
-      content, setContent,
-      order, setOrder,
-      words, setWords,
-      // RELATIONS
-      bookId, setBookId,
-      galleryId, setGalleryId,
-      isAuthor
-    },
-    // relations
-    relations: {
-      gallery, characters
-    }
-  } as ChapterDetailHook
+    api 
+  }
 }
 
 export default useChapterDetail
