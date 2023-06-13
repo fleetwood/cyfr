@@ -14,7 +14,7 @@ import {
 } from "../prismaContext";
 import { NotImplemented } from "../../utils/api";
 import { CyfrLogo } from "components/ui/icons";
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG');
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser");
 
 type AllPostQueryParams = {
   limit?: Number;

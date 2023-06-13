@@ -1,24 +1,22 @@
 import { Tab } from "@headlessui/react"
-import router from "next/router"
-import { Fragment, useEffect, useState } from "react"
-import useBookQuery from "hooks/useBookQuery"
-import useDebug from "hooks/useDebug"
-import { BookDetail, Chapter } from "prisma/prismaContext"
-import ErrorPage from "pages/404"
-import { useBookApi } from "prisma/hooks/useBookApi"
-import { useToast } from "components/context/ToastContextProvider"
-import { useCyfrUserContext } from "components/context/CyfrUserProvider"
-import { InlineTextarea } from "components/forms"
-import HtmlContent from "components/ui/htmlContent"
-import { PhotoIcon } from "components/ui/icons"
-import Spinner from "components/ui/spinner"
 import BookDetailHeader from "components/containers/Books/BookDetailHeader"
-import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
 import ChapterList from "components/containers/Chapter/ChapterList"
 import { OpenCharacterModalPlus } from "components/containers/Characters/CharacterCreateModal"
 import CharacterList from "components/containers/Characters/CharacterList"
-import GalleryPhotoswipe from "components/containers/Gallery/GalleryPhotoswipe"
 import GalleryCreateModal, { OpenGalleryModalPlus } from "components/containers/Gallery/GalleryCreateModal"
+import GalleryPhotoswipe from "components/containers/Gallery/GalleryPhotoswipe"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import { useToast } from "components/context/ToastContextProvider"
+import { InlineTextarea } from "components/forms"
+import HtmlContent from "components/ui/htmlContent"
+import { PhotoIcon } from "components/ui/icons"
+import useDebug from "hooks/useDebug"
+import router from "next/router"
+import ErrorPage from "pages/404"
+import { useBookApi } from "prisma/hooks/useBookApi"
+import { BookDetail, Chapter } from "prisma/prismaContext"
+import { Fragment, useState } from "react"
+import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -26,13 +24,11 @@ const { jsonBlock, debug } = useDebug(
 )
 
 export type BookViewProps = {
-  bookSlug:   string
+  bookDetail: BookDetail
   onUpdate?:  () => void
 }
 
-const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
-  const {data, isLoading, error, invalidate} = useBookQuery(bookSlug)
-  const [bookDetail, setBookDetail] = useState<BookDetail>(data)
+const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
   const {save} = useBookApi
 
   const { notify } = useToast()
@@ -43,14 +39,13 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
   const selected = (tab:number) => `cursor-pointer hover:text-secondary transition-colors duration-300 ${activeTab === tab ? 'h-subtitle' : 'text-info'}`
   
 
-  const [back, setBack] = useState<string|null|undefined>(bookDetail?.back)
-  const [synopsis, setSynopsis] = useState<string|null|undefined>(bookDetail?.synopsis)
-  const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
+  const [back, setBack] = useState<string|null|undefined>(bookDetail.back)
+  const [synopsis, setSynopsis] = useState<string|null|undefined>(bookDetail.synopsis)
+  const isAuthor = cyfrUser ? (bookDetail.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
 
   const update = async () => {
     debug('update')
-    invalidate()
-  if (onUpdate) onUpdate()
+    if (onUpdate) onUpdate()
   }
 
   const onGalleryUpsert = async (galleryId?:string) => {
@@ -62,7 +57,7 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
     // TODO add gallery
     // const added = await bookApi.addGallery(galleryId)
     // if (added) {
-    //   notify(`You created a gallery ${bookDetail?.title}.`)
+    //   notify(`You created a gallery ${bookDetail.title}.`)
     // }
   }
 
@@ -70,7 +65,7 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
     const v = isAuthor ? '?v=edit' : ''
     //TODO: Don't leave this page with unsaved changes
     //TODO: add slug to chapter as a compound key
-    router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
+    router.push(`/book/${bookDetail.slug}/chapter/${chapter.id}${v}`)
   }
 
   const onSave = async () => {
@@ -87,12 +82,10 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
     }
   }
 
-  useEffect(() => {setBookDetail(data)}, [data])
-
   // TODO this should be handled by commune
   if (bookDetail && bookDetail.active === false && isAuthor === false) return <ErrorPage message="You do not have permissions to perform that action" />
 
-  return  bookDetail? 
+  return (
     <div>
       <BookDetailHeader bookDetail={bookDetail} onUpdate={update} />
       <div>
@@ -181,11 +174,8 @@ const BookDetailView = ({bookSlug, onUpdate}:BookViewProps) => {
           </Tab.Panels>
         </Tab.Group>
       </div>
-      {/* {jsonBlock(bookDetail)} */}
+      {jsonBlock(bookDetail)}
     </div>
-    : <div className='m-auto w-32 h-32' >
-        <Spinner />
-      </div>
-}
+)}
 
 export default BookDetailView

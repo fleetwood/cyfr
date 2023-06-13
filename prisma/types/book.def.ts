@@ -1,7 +1,5 @@
-import { Dispatch, SetStateAction } from "react"
-import { Book, BookCategory, BookStatus, Chapter, ChapterStub, Character, CharacterStub, CyfrUser, Gallery, GalleryStub, Genre, GenreStub, Image, User, UserFollow, UserStub } from "../prismaContext"
-import { RocketQuery } from "../../types/props"
 import { UseQueryResult } from "react-query"
+import { Book, BookCategory, BookStatus, ChapterStub, CharacterStub, CyfrUser, GalleryStub, Genre, Image, User, UserFollow, UserStub } from "../prismaContext"
 
 export type BookRelations = {
   genre:        Genre
@@ -69,4 +67,12 @@ export type BookDetailHook = BookDetail & {
     invalidate: () => void
   }
   api:          any
+}
+
+export const BookDetailInclude = {
+  genre: true,
+  authors: true,
+  chapters: true,
+  characters: true,
+  gallery: true
 }

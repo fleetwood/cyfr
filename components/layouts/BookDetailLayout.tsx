@@ -16,8 +16,9 @@ import useDebug from "../../hooks/useDebug"
 const {debug} = useDebug('components/layouts/BookDetailLayout', 'DEBUG')
 
 export type BookDetailLayoutProps = {
-  bookId: string
-  genres: GenreStub[]
+  // bookId?:    string
+  bookSlug?:  string
+  genres:     GenreStub[]
 }
 
 export type BookDetailProps = {
@@ -28,8 +29,7 @@ export type BookDetailProps = {
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
   const [cyfrUser] = useCyfrUserContext()
   // const bookDetailHook = useBookDetail(props.bookId, cyfrUser)
-  const {data , isLoading, error, invalidate} = useBookQuery(props.bookId)
-  const bookDetail = data
+  const {data: bookDetail , isLoading, error, invalidate} = useBookQuery({bookSlug: props.bookSlug})
   
   const [scrollActive, setScrollActive] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
@@ -64,7 +64,7 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
         >
           {error && <ErrorPage />}
           {isLoading && <Spinner />}
-          {!isLoading && <BookDetailView bookSlug={bookDetail.slug} onUpdate={update} />}
+          {bookDetail && <BookDetailView bookDetail={bookDetail!} onUpdate={update} />}
         </Section>
         <Footer />
       </main>

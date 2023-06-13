@@ -4,7 +4,7 @@ import { BookDetail } from "../prisma/prismaContext"
 import { getApi } from "../utils/api"
 import useDebug from "./useDebug"
 
-const { debug, info } = useDebug("useBookQuery")
+const { debug, info } = useDebug("useBookQuery", 'DEBUG')
 
 type RktBookQuery = {
   data:       any
@@ -13,26 +13,32 @@ type RktBookQuery = {
   invalidate:   () => void
 }
 
-const useBookQuery = (bookId:string):RktBookQuery => {
+type UseBookQueryProps = {
+  bookId?:    string
+  bookSlug?:  string
+}
 
-  if (!bookId) {
-    debug('getBookDetail bookId is null')
+const useBookQuery = ({bookId, bookSlug}:UseBookQueryProps):RktBookQuery => {
+
+  if (!bookId && !bookSlug) {
+    debug('getBookDetail bookId and bookSlug are both null')
     return {
       data: {},
       isLoading: false,
       error: {
-        message: 'Param bookId is not available'
+        message: 'UseBookQueryProps not available'
       },
       invalidate: () => {}
     } as RktBookQuery
   }
 
   const qc = useQueryClient()
-  const bookQuery = ["bookDetail", `bookDetail-${bookId}`]
+  const bookQuery = ["bookDetail", `bookDetail-${bookId||bookSlug}`]
+  const url = bookSlug ? `/book/slug/${bookSlug}` : `/book/${bookId}`
 
   const getBookDetail = async () => {
-    debug(`getBookDetail  ${bookQuery}`, {url: `/book/${bookId}`})
-    const bookDetail = await getApi(`/book/${bookId}`)
+    debug('getBookDetail', {bookSlug, bookId, bookQuery, url})
+    const bookDetail = await getApi(url)
     return (bookDetail.result as BookDetail) || bookDetail.error || null
   }
 

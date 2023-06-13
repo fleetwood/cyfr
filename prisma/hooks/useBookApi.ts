@@ -35,6 +35,8 @@ const addGallery = async (bookId: string, galleryId?: string) => {
     }
 }
 
+const slugDetail = async (bookSlug:string):Promise<BookDetail|null> => await (await getApi(`book/slug/${bookSlug}`)).data
+
 const detail = async (bookId:string):Promise<BookDetail|null> => await (await getApi(`book/${bookId}`)).data
 
 const follow = async (props:BookFollowProps):Promise<boolean> => await (await sendApi("book/follow", props)).data
@@ -99,6 +101,7 @@ export const useBookApi = {
   addChapter
   , addGallery
   , detail
+  , slugDetail
   , follow
   , like
   , save

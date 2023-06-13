@@ -5,12 +5,12 @@ import { PrismaGenre } from "../../../prisma/prismaContext";
 const {debug, info} = useDebug('pages/book/[bookId]')
 
 export async function getServerSideProps(context: any) {
-  const {bookId, bookSlug} = context.params
+  const {bookSlug} = context.params
   const genres = await PrismaGenre.stubs()
 
   return {
     props:{
-      bookId: bookId||bookSlug,
+      bookSlug,
       genres
     }
   }

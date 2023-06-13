@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { useRef, useState } from "react"
-import { ChapterLayoutProps } from "../../../pages/book/[bookId]/chapter/[chapterId]"
+import { ChapterLayoutProps } from "../../../pages/book/[bookSlug]/chapter/[chapterId]"
 import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
 import ChapterViewSelector, { currentView } from "../../containers/Chapter/ChapterViewSelector"
 import LeftColumn from "../../containers/LeftColumn"

@@ -1,5 +1,5 @@
 import useDebug from "../../../hooks/useDebug"
-import { ChapterViews } from '../../../pages/book/[bookId]/chapter/[chapterId]'
+import { ChapterViews } from '../../../pages/book/[bookSlug]/chapter/[chapterId]'
 import useChapterApi from "../../../prisma/hooks/useChapterApi"
 import { ChapterDetail } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"

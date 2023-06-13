@@ -7,7 +7,9 @@ import { RocketQuery } from "types/props"
 
 const { debug, info } = useDebug("usePostQuery")
 
-const usePostQuery = (postId:string):RocketQuery<PostDetail> => {
+type PostRocketQuery = RocketQuery<PostDetail>
+
+const usePostQuery = (postId:string):PostRocketQuery => {
 
   if (!postId) {
     debug('getPostDetail postId is null')
@@ -18,7 +20,7 @@ const usePostQuery = (postId:string):RocketQuery<PostDetail> => {
         message: 'Param postId is not available'
       },
       invalidate: () => {}
-    } as RocketQuery<PostDetail>
+    } as PostRocketQuery
   }
 
   const qc = useQueryClient()
@@ -52,7 +54,7 @@ const usePostQuery = (postId:string):RocketQuery<PostDetail> => {
     }
   )
 
-  return {...query, invalidate} as RocketQuery<PostDetail>
+  return {...query, invalidate} as PostRocketQuery
 }
 
 export default usePostQuery

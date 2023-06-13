@@ -4,6 +4,7 @@ import { dedupe, now } from '../../utils/helpers'
 import {
   Book,
   BookDetail,
+  BookDetailInclude,
   BookEngageProps,
   BookFollowProps,
   BookStub,
@@ -26,7 +27,7 @@ type BookQueryProps = {
   email?: string
   slug?:  string
 }
-const detail = async (props:BookQueryProps):Promise<Book|null> => await prisma.book.findUnique({ where: { ...props }})
+const detail = async (props:BookQueryProps):Promise<Book|null> => await prisma.book.findUnique({ where: { ...props }, include: BookDetailInclude})
 
 const details = async ():Promise<Book[]> => await prisma.book.findMany()
 
