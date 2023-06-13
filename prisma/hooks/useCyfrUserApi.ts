@@ -3,7 +3,7 @@ import useDebug from "hooks/useDebug"
 import { CyfrUser } from "prisma/prismaContext"
 import { sendApi } from "utils/api"
 
-const {debug, info, fileMethod} = useDebug('/prisma/hooks/useCyfrUserApi', 'DEBUG')
+const {debug, info, fileMethod} = useDebug('/prisma/hooks/useCyfrUserApi')
 
 export const useCyfrUserApi = () => {
     const [cyfrUser, isLoading, error, invalidate] = useCyfrUser()

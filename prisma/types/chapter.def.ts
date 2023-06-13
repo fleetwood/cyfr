@@ -91,3 +91,17 @@ export type ChapterDetailHook = {
   state:          ChapterDetailState
   relations:      ChapterRelations
 }
+
+export const ChapterStubInclude = {
+  book: {
+    include: {
+      authors: true
+    }
+  },
+  gallery: true,
+  characters: true
+}
+
+export const ChapterDetailInclude = {
+  ...ChapterStubInclude
+}

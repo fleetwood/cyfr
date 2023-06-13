@@ -10,7 +10,7 @@ import {
   CyfrUser, Follow,
   UserFollowProps,
   prisma, User, UserFeed,
-  UserFeedInclude, UserStub, UserDetail, CyfrUserInclude
+  UserFeedInclude, UserStub, UserDetail, CyfrUserInclude, BookStubInclude
 } from "../prismaContext";
 import { NotImplemented } from "../../utils/api";
 import { CyfrLogo } from "components/ui/icons";
@@ -124,10 +124,29 @@ const detail = async (props:UserDetailProps): Promise<any> => {
   const {id, name, email, slug} = props
   const where = name ? { name: name}
     : email ? { email: email}
-    : slug ? { slug : slug }
+    : slug ? { slug : slug.toLowerCase() }
     : { id : id}
   return await prisma.user.findUnique({where: where})
 }
+const books = async (props:UserDetailProps): Promise<any> => {
+  const {id, name, email, slug} = props
+  const some = 
+      name ? { name: name}
+      : email ? { email: email}
+      : slug ? { slug : slug.toLowerCase() }
+      : { id : id}
+  debug('books', {props, some})
+  const books = await prisma.book.findMany({
+    where: { 
+      authors: {
+        some
+    }},
+    include: BookStubInclude
+  })
+  debug('result', books)
+  return books
+}
+
 
 const cyfrUser = async (email:string): Promise<CyfrUser|null> => {
   try {
@@ -290,8 +309,6 @@ const updatePreferences = async ({
     throw error;
   }
 };
-
-const books = async (id:string) => NotImplemented(fileMethod('books'))
 
 export const PrismaUser = {
   allUsersQuery,

@@ -11,7 +11,7 @@ export default async function handle(
 ) {
   try {
     const id = req.query.id!.toString()
-    const result = await PrismaUser.books(id)
+    const result = await PrismaUser.books({id})
     if (!result)  {
       throw { code: fileMethod('handle'), message: `No results for (${id})` }
     }

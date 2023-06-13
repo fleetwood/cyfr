@@ -1,12 +1,12 @@
 import useDebug from "../../hooks/useDebug"
 import { now, sortChapters } from "../../utils/helpers"
-import { Chapter, ChapterDetail, ChapterStub } from "../prismaContext"
+import { Chapter, ChapterDetail, ChapterDetailInclude, ChapterStub, ChapterStubInclude } from "../prismaContext"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaChapter')
 
-const detail = async (id: string): Promise<Chapter|null> => await prisma.chapter.findFirst({where:{id}})
+const detail = async (id: string): Promise<ChapterDetail|null> => await prisma.chapter.findFirst({where:{id}, include: ChapterDetailInclude}) as unknown as ChapterDetail
 
-const stub = async (id: string): Promise<Chapter|null> => await prisma.chapter.findFirst({where:{id}})
+const stub = async (id: string): Promise<ChapterStub|null> => await prisma.chapter.findFirst({where:{id}, include: ChapterStubInclude}) as unknown as ChapterStub
 
 const upsert = async (chapter:Chapter) => {
   debug('upsert', chapter)

@@ -10,7 +10,7 @@ import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider
 import useDebug from "../../../hooks/useDebug"
 import JsonBlock from "../../../components/ui/jsonBlock"
 
-const {jsonBlock} = useDebug('pages/user/id/gallery', 'DEBUG')
+const {jsonBlock} = useDebug('pages/user/id/gallery')
 
 export async function getServerSideProps(context: any) {
   const user = await PrismaUser.userInSessionContext(context)

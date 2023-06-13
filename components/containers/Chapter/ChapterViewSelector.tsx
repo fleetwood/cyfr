@@ -5,6 +5,9 @@ import { ChapterDetail, ChapterStub } from "../../../prisma/prismaContext";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import { ChapterDetailIcon, FeatherIcon, ReadsIcon, StarIcon } from "../../ui/icons";
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
+import useDebug from "hooks/useDebug";
+
+const {debug} = useDebug('components/containers/Chapter/ChapterViewSelector', 'DEBUG')
 
 type ChapterViewSelectorProps = {
   view:     ChapterViews
@@ -22,6 +25,7 @@ export const currentView = (view?:ChapterViews) => {
 }
 
 const ChapterViewSelector = ({chapter, view, setView}:ChapterViewSelectorProps) => {
+  debug('ChapterViewSelector', chapter)
   const [cyfrUser] = useCyfrUserContext()
   const {isAuthor} = useChapterApi()
   const showEdit = isAuthor({chapter, cyfrUser})

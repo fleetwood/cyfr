@@ -69,6 +69,20 @@ export type BookDetailHook = BookDetail & {
   api:          any
 }
 
+export const BookStubInclude = {
+  authors: true,
+  chapters: { select: {
+    active: true,
+    order: true,
+    title: true,
+    words: true
+  }},
+  _count: { select: {
+    likes: true,
+    shares: true,
+  }}
+}
+
 export const BookDetailInclude = {
   genre: true,
   authors: true,
