@@ -1,27 +1,33 @@
+
 import { useCyfrUserContext } from 'components/context/CyfrUserProvider'
 import { ToastNotifyType, useToast } from 'components/context/ToastContextProvider'
 import { BookIcon, DollarIcon, FireIcon, FollowIcon, HeartIcon, ReplyIcon, ShareIcon, StarIcon } from 'components/ui/icons'
 import ShrinkableIconLabel from 'components/ui/shrinkableIconLabel'
+import Spinner from 'components/ui/spinner'
 import { useBookApi } from 'prisma/hooks/useBookApi'
 import { BookDetail, BookStub, UserFollow } from 'prisma/prismaContext'
 
 type BookFooterProps = {
-  bookDetail: BookDetail|BookStub
-  onUpdate?:  () => void
+  bookStub?:    BookStub
+  bookDetail?:  BookDetail
+  onUpdate?:    () => void
 }
 
-const BookFooter = ({bookDetail, onUpdate}:BookFooterProps) => {
+const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
+  const book = bookDetail ?? bookStub
+  if (!book) return <Spinner size='sm' />
+
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
   const {share, follow, like} = useBookApi
-  const bookId = bookDetail.id
+  const bookId = book.id
   const engageProps = cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
-  const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
+  const followProps = book && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
 
-  const numLikes = (bookDetail.likes?.length??0).toString()
-  const numShares = (bookDetail.shares?.length??0).toString()
-  const numFollows = (bookDetail.follows?.length??0).toString()
-  const numFans = ((bookDetail.follows??[]).filter((f:UserFollow) => f.isFan === true).length).toString()
+  const numLikes = (book.likes?.length??0).toString()
+  const numShares = (book.shares?.length??0).toString()
+  const numFollows = (book.follows?.length??0).toString()
+  const numFans = ((book.follows??[]).filter((f:UserFollow) => f.isFan === true).length).toString()
 
   const update = (message:string, type:ToastNotifyType = 'info') => {
     notify(message,type)
@@ -37,7 +43,7 @@ const BookFooter = ({bookDetail, onUpdate}:BookFooterProps) => {
     }
     const result = await follow({bookId, followerId: cyfrUser.id, isFan: fan===true})
     result 
-      ? update(`You are now ${fan === true ? 'stanning' : 'following'} ${bookDetail?.title}. Nice!`)
+      ? update(`You are now ${fan === true ? 'stanning' : 'following'} ${book?.title}. Nice!`)
       : update('Ya that dint work', 'warning')
   }
 
@@ -49,7 +55,7 @@ const BookFooter = ({bookDetail, onUpdate}:BookFooterProps) => {
     // the share author, not the book author
     const result = await share(engageProps)
     result 
-      ? update(`You shared ${bookDetail?.title}.`)
+      ? update(`You shared ${book?.title}.`)
       : update('Ya that dint work', 'warning')
   }
 
@@ -61,7 +67,7 @@ const BookFooter = ({bookDetail, onUpdate}:BookFooterProps) => {
     const result = await like(engageProps)
     
     result 
-      ? update(`You liked ${bookDetail?.title}.`)
+      ? update(`You liked ${book?.title}.`)
       : update('Ya that dint work', 'warning')
   }
 
