@@ -17,6 +17,7 @@ import { useBookApi } from "prisma/hooks/useBookApi"
 import { BookDetail, Chapter } from "prisma/prismaContext"
 import { Fragment, useState } from "react"
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
+import Tabs from "components/ui/tabs"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -88,90 +89,76 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
     <div>
       <BookDetailHeader bookDetail={bookDetail} onUpdate={update} />
       <div>
-        <Tab.Group vertical onChange={setActiveTab}>
-          
-          <Tab.List className='space-x-4 bg-info-content p-1 rounded-lg flex flex-grow justify-evenly'>
-            {['Back','Synopsis','Chapters','Characters','Gallery'].map((t,i) => (
-              <Tab as={Fragment} key={`tab-${t}-${i}`}><h3 className={selected(i)}>{t}</h3></Tab>
-            ))}
-          </Tab.List>
-
-          <Tab.Panels>
-            {/* BACK PANEL */}
-            <Tab.Panel>
-              <div className="my-4 font-ibarra">
-                  <label>Back Panel</label>
-                  {isAuthor ? (
-                    <InlineTextarea
-                      content={bookDetail.back}
-                      setContent={setBack}
-                      onSave={onSave}
-                      />
-                  ) : 
-                  <HtmlContent content={bookDetail.back??''}/>
-                  }
-              </div>
-            </Tab.Panel>
-            
-            {/* SYNOPSIS */}
-            <Tab.Panel>
-              <div className="my-4">
-                <div className="font-ibarra">
-                  {isAuthor ? (
-                    <InlineTextarea
-                      content={bookDetail.synopsis}
-                      setContent={setSynopsis}
-                      onSave={onSave}
-                    />
-                  ) : (
-                    <HtmlContent content={bookDetail.synopsis??''} />
-                  )}
-                </div>
-              </div>
-            </Tab.Panel>
-            
-            {/* CHAPTERS */}
-            <Tab.Panel>
-              <div className="my-4">
-                <h3>Chapters </h3>
-                <div className="flex space-x-4">
-                {isAuthor && 
-                  <>
-                    <OpenChapterModalButton variant="plus" />
-                    <CreateChapterModal bookDetail={bookDetail} onSave={onSave} />
-                  </>
-                }
-                  <ChapterList chapters={bookDetail.chapters??[]} onSelect={editChapter} />
-                </div>
-              </div>
-            </Tab.Panel>
-
-            {/* CHARACTERS */}
-            <Tab.Panel>                
-              <div className="my-4">
-                <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
-                  {/* {isAuthor && <CreateCharacterModal bookDetailHook={bookDetailHook} />} */}
-                  <div className="flex space-x-4">
-                  <CharacterList characters={bookDetail.characters} />
-                </div>
-              </div>
-
-            </Tab.Panel>
-            
-            {/* GALLERY */}
-            <Tab.Panel>
-              <div className="my-4">
-                <h3>Gallery {isAuthor && bookDetail.gallery===undefined ? <OpenGalleryModalPlus /> : <span>{PhotoIcon}</span> }</h3>
-                <div>
-                {(bookDetail.gallery || isAuthor) && (
-                  <GalleryCreateModal onUpsert={onGalleryUpsert} />
+        <Tabs>
+          <>
+            <h3>Back</h3>
+            <div className="my-4 font-ibarra">
+              <label>Back Panel</label>
+              {isAuthor ? (
+                <InlineTextarea
+                  content={bookDetail.back}
+                  setContent={setBack}
+                  onSave={onSave}
+                  />
+              ) : 
+              <HtmlContent content={bookDetail.back??''}/>
+              }
+            </div>
+          </>
+          <>
+            <h3>Synopsis</h3>
+            <div className="my-4">
+              <div className="font-ibarra">
+                {isAuthor ? (
+                  <InlineTextarea
+                    content={bookDetail.synopsis}
+                    setContent={setSynopsis}
+                    onSave={onSave}
+                  />
+                ) : (
+                  <HtmlContent content={bookDetail.synopsis??''} />
                 )}
-                </div>
-                <GalleryPhotoswipe gallery={bookDetail.gallery} />
               </div>
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
+            </div>
+          </>
+          <>
+            <h3>Chapters</h3>
+            <div className="my-4">
+              <h3>Chapters </h3>
+              <div className="flex space-x-4">
+              {isAuthor && 
+                <>
+                  <OpenChapterModalButton variant="plus" />
+                  <CreateChapterModal bookDetail={bookDetail} onSave={onSave} />
+                </>
+              }
+                <ChapterList chapters={bookDetail.chapters??[]} onSelect={editChapter} />
+              </div>
+            </div>
+          </>
+          <>
+            <h3>Characters</h3>
+            <div className="my-4">
+              <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
+                {/* {isAuthor && <CreateCharacterModal bookDetailHook={bookDetailHook} />} */}
+                <div className="flex space-x-4">
+                <CharacterList characters={bookDetail.characters} />
+              </div>
+            </div>
+          </>
+          <>
+            <h3>Gallery</h3>
+            <div className="my-4">
+              <h3>Gallery {isAuthor && bookDetail.gallery===undefined ? <OpenGalleryModalPlus /> : <span>{PhotoIcon}</span> }</h3>
+              <div>
+              {(bookDetail.gallery || isAuthor) && (
+                <GalleryCreateModal onUpsert={onGalleryUpsert} />
+              )}
+              </div>
+              <GalleryPhotoswipe gallery={bookDetail.gallery} />
+            </div>
+          </>
+        </Tabs>
       </div>
       {jsonBlock(bookDetail)}
     </div>
