@@ -1,4 +1,3 @@
-import { Tab } from "@headlessui/react"
 import BookDetailHeader from "components/containers/Books/BookDetailHeader"
 import ChapterList from "components/containers/Chapter/ChapterList"
 import { OpenCharacterModalPlus } from "components/containers/Characters/CharacterCreateModal"
@@ -10,14 +9,14 @@ import { useToast } from "components/context/ToastContextProvider"
 import { InlineTextarea } from "components/forms"
 import HtmlContent from "components/ui/htmlContent"
 import { PhotoIcon } from "components/ui/icons"
+import Tabs from "components/ui/tabs"
 import useDebug from "hooks/useDebug"
 import router from "next/router"
 import ErrorPage from "pages/404"
 import { useBookApi } from "prisma/hooks/useBookApi"
 import { BookDetail, Chapter } from "prisma/prismaContext"
-import { Fragment, useState } from "react"
+import { useState } from "react"
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
-import Tabs from "components/ui/tabs"
 
 const { jsonBlock, debug } = useDebug(
   "components/Books/BookDetailComponent",
@@ -35,10 +34,6 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
   const { notify } = useToast()
   const [cyfrUser] = useCyfrUserContext()
 
-  // For Tabs
-  const [activeTab, setActiveTab] = useState(0)
-  const selected = (tab:number) => `cursor-pointer hover:text-secondary transition-colors duration-300 ${activeTab === tab ? 'h-subtitle' : 'text-info'}`
-  
   const [back, setBack] = useState<string|null|undefined>(bookDetail.back)
   const [synopsis, setSynopsis] = useState<string|null|undefined>(bookDetail.synopsis)
   const isAuthor = cyfrUser ? (bookDetail.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
@@ -93,7 +88,6 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
           <>
             <h3>Back</h3>
             <div className="my-4 font-ibarra">
-              <label>Back Panel</label>
               {isAuthor ? (
                 <InlineTextarea
                   content={bookDetail.back}

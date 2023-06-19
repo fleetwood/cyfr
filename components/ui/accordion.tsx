@@ -3,7 +3,7 @@ import {
     AccordionBody,
     AccordionHeader,
 } from "@material-tailwind/react";
-import { ReactFragment, ReactNode, useState } from "react";
+import { useState } from "react";
 
 const MaterialAccordion = (props: { children: any[] }) => {
   const [open, setOpen] = useState(0)

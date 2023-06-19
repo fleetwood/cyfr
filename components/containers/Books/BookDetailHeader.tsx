@@ -9,7 +9,8 @@ import { useBookApi } from "prisma/hooks/useBookApi"
 import { BookCategory, UserFollow } from "prisma/prismaContext"
 import { KeyVal } from "types/props"
 import { uuid } from "utils/helpers"
-import BookAuthorHeader from "./BookAuthorHeader"
+import BookEditHeader from "./BookEditHeader"
+import BookCover, { BookCoverVariant } from "./BookCover"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -106,10 +107,11 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
 
   return bookDetail ? 
     isAuthor ? (
-      <BookAuthorHeader bookDetail={bookDetail} onUpdate={onUpdate} />
+      <BookEditHeader bookDetail={bookDetail} onUpdate={onUpdate} />
     ) : (
     <div>
       <div>
+        <BookCover book={bookDetail} link={false} variant={BookCoverVariant.FULL} />
         <div>{bookDetail?.fiction ? "FICTION" : "NON-FICTION"}</div>
         <div className="flex">
           <span className="font-semibold text-primary-content mr-4">

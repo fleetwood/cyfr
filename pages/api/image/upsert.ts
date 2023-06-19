@@ -18,9 +18,11 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<Image>>
 ) {
   const props = req.body as ImageUpsertProps
-  debug('handle', {...req.body, props})
+  const {id, authorId, url, visible, height, width, title, galleryId, shareId, postId} = props
+  const imageUpsert = {id, authorId, url, visible, height, width, title, galleryId, shareId, postId};
+  debug('upsert', {...req.body, imageUpsert})
   try {
-    const result = await PrismaImage.upsert(props)
+    const result = await PrismaImage.upsert(imageUpsert)
     if (result) {
       res.status(200).json({result})
     } else {

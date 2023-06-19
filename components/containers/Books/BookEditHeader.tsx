@@ -10,10 +10,12 @@ import { ToastNotifyType, useToast } from "components/context/ToastContextProvid
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { useBookApi } from "prisma/hooks/useBookApi"
 import { BookDetailProps } from "components/layouts/BookDetailLayout"
-import { TailwindInput, TailwindSelectInput } from "components/forms"
+import { InlineTextarea, TailwindInput, TailwindSelectInput } from "components/forms"
 import EZButton from "components/ui/ezButton"
 import Toggler from "components/ui/toggler"
 import TailwindDatepicker from "components/forms/TailwindDatepicker"
+import BookCover, { BookCoverVariant } from "./BookCover"
+import BookEditCover from "./BookEditCover"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -46,7 +48,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
   </div>
 )}
 
-const BookAuthorHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
+const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
   const {share, follow, like, save} = useBookApi
@@ -152,7 +154,7 @@ const BookAuthorHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
     <div>
       <div>
         <div className="p-2 mb-2 mr-4 border border-opacity-50 border-neutral rounded-lg">
-          <label className="font-semibold">Hook</label>
+          <label className="font-semibold">Title</label>
           <div className="font-ibarra flex space-x-4">
             <TailwindInput
               type="text"
@@ -162,6 +164,7 @@ const BookAuthorHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
             <EZButton label="SAVE" variant="secondary" onClick={updateTitle} />
           </div>
         </div>
+        <BookEditCover book={bookDetail} onUpdate={onUpdate} />
         <div>
           <label className="font-semibold w-[50%]">Fiction/Nonfiction</label>
           <Toggler
@@ -199,14 +202,13 @@ const BookAuthorHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
         <div>{bookDetail.words} words</div>
         <div className="p-2 mb-2 mr-4 border border-opacity-50 border-neutral rounded-lg">
           <label className="font-semibold">Hook</label>
-          <div className="font-ibarra flex space-x-4">
-            <TailwindInput
-              type="text"
-              value={hook}
-              setValue={setHook}
+          <div className="font-ibarra flex space-x-4 my-2">
+            <InlineTextarea
+              content={hook}
+              setContent={setHook}
               />
-            <EZButton label="SAVE" variant="secondary" onClick={updateHook} />
           </div>
+          <EZButton label="SAVE" variant="secondary" onClick={updateHook} />
         </div>
       </div>
 
@@ -270,4 +272,4 @@ const BookAuthorHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
   : <><p>Weird, didn't get no book detail....</p></>
 }
 
-export default BookAuthorHeader
+export default BookEditHeader

@@ -1,5 +1,5 @@
 import { Tab } from "@headlessui/react";
-import { Fragment, ReactFragment, ReactNode, useState } from "react";
+import { Fragment, useState } from "react";
 import { uuid } from "utils/helpers";
 
 const Tabs = (props: { children: any[] }) => {

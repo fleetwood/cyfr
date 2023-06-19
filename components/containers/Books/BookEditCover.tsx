@@ -1,29 +1,21 @@
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
-import Avatar from "components/ui/avatar"
+import { Dropzone } from "components/forms"
 import { CheckBadge } from "components/ui/icons"
 import useDebug from "hooks/useDebug"
 import Link from "next/link"
 import { BookDetail, BookStub, Image } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
-import { isAuthor, uniqueKey } from "utils/helpers"
+import { isAuthor } from "utils/helpers"
 
-const {debug} = useDebug('BookCover')
-
-export enum BookCoverVariant {
-  THUMB = 100,
-  COVER = 250,
-  FULL = 1000
-}
+const {debug} = useDebug('BookEditCover', 'DEBUG')
 
 /**
  * @property book {@link BookDetail} | {@link BookStub}
  * @property variant {@link BookCoverVariant}
  */
 type BookCoverProps = {
-    book: BookDetail|BookStub
-    variant?: BookCoverVariant
-    link?: Boolean
-    authorAvatars?: Boolean
+    book:       BookDetail
+    onUpdate?:  () => void
 }
 
 const BookImage = ({cover, title, width, owner}:{cover: Image|null, title: string, width: number, owner?:boolean}) => { 
@@ -43,25 +35,30 @@ const BookImage = ({cover, title, width, owner}:{cover: Image|null, title: strin
  * @property variant {@link BookCoverVariant} 
  * @returns 
  */
-const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true}:BookCoverProps) => {
+const BookEditCover = ({book, onUpdate}:BookCoverProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const isOwner = isAuthor({book,cyfrUser})
   const cover = book.cover || null
-  const width = (variant === BookCoverVariant.FULL && cover !== null)
-    ? cover.width
-    : Number(variant) as number
+  
   debug('BookCover', {cyfrUser: cyfrUser?.name ?? 'No cyfrUser', isOwner})
 
-  const Booky = () => <BookImage cover={book.cover||null} title={book.title} width={width!} owner={isOwner} />
-
   return (
-    <div className="max-w-fit relative p-4">
-    {link 
-      ? <Link href={`/book/${book.slug ?? book.id}`}><Booky /></Link> 
-      : <Booky />
-    }
+    <div className="">
+      {cover &&
+        <BookImage cover={book.cover!} title={book.title} width={book.cover!.width!} owner={isOwner} />
+      }{!cover &&
+        <div className="border-dashed border-neutral border-2 w-full h-12">
+          No cover
+        </div>
+      }
+      <div className="flex justify-evenly w-full">
+        <div>
+          <Dropzone limit={1} />
+        </div>
+        <div>Find a Cover</div>
+      </div>
     {/* <JsonBlock data={book} /> */}
     </div>
 )}
 
-export default BookCover
+export default BookEditCover

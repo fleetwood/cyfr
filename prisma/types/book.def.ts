@@ -70,23 +70,29 @@ export type BookDetailHook = BookDetail & {
 }
 
 export const BookStubInclude = {
-  authors: true,
+  authors:  true,
+  cover:    true,
   chapters: { select: {
-    active: true,
-    order: true,
-    title: true,
-    words: true
+    active:   true,
+    order:    true,
+    title:    true,
+    words:    true
   }},
   _count: { select: {
-    likes: true,
-    shares: true,
+    likes:    true,
+    shares:   true,
+    follows:  true
   }}
 }
 
 export const BookDetailInclude = {
-  genre: true,
-  authors: true,
-  chapters: true,
+  genre:      true,
+  authors:    true,
+  cover:      true,
+  chapters:   true,
   characters: true,
-  gallery: true
+  gallery:    true,
+  likes:      true,
+  follows:    true,
+  shares:     true
 }

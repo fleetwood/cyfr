@@ -10,18 +10,15 @@ const stubs = async (): Promise<Image[]> => await prisma.image.findMany()
 
 const upsert = async (props: ImageUpsertProps): Promise<Image> => {
   debug('upsert', props)
+  const {url} = props
   try {
-    const image = await prisma.image.upsert({ 
-        where: { url: props.url },
-        create: props,
-        update: props
+    return await prisma.image.upsert({ 
+        where: { url },
+        create: {...props},
+        update: {...props}
       })
-    if (image) {
-      return image
-    }
-    throw({code: fileMethod('upsert'), message: 'prisma.image.upsert did not return a value'})
   } catch (error) {
-    info("createImage ERROR: ", {error})
+    info("upsert ERROR: ", error)
     throw error
   }
 }
