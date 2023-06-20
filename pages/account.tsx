@@ -116,6 +116,7 @@ const Account = ({user}: AccountProps) => {
               <UserDetailPage userId={cyfrUser.id} layout="none" />
             </div>
           </>
+          
         </Tabs>
         
       </>}
