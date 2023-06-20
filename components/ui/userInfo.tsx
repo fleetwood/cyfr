@@ -2,13 +2,13 @@ import React from 'react'
 import { CyfrUser, UserStub, v_author_stub } from '../../prisma/prismaContext'
 import Avatar from './avatar'
 import { uniqueKey, uuid } from '../../utils/helpers'
-import { AvatarSizeProps } from '../../utils/cloudinary'
+import { SizeProps } from '../../utils/cloudinary'
 
 export type UserInfoProps = {
     user: CyfrUser|UserStub|v_author_stub
     link?: boolean
     variant?: 'dark'
-    sz: AvatarSizeProps
+    sz: SizeProps
 }
 
 const UserInfo = ({user,link,sz,variant}:UserInfoProps) => {

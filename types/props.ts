@@ -4,6 +4,8 @@ export type classNameProps = {
   className?: string
 }
 
+export type SizeProps = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+
 export type KeyVal = {
   key: string
   value?: string | number | null

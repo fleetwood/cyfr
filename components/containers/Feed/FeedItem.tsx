@@ -25,11 +25,11 @@ const FeedItem = ({ item }: FeedItemProps) => {
     >
         <FeedHeader item={item} />
         <div className="p-4 mt-4 font-feed">
-            {item.post && <PostStubView post={item.post} />}
-            {item.image && <ImageStubView image={item.image} />}
-            {item.gallery && <GalleryStubView gallery={item.gallery} />}
-            {item.book && <BookStubView book={item.book} variant="feed" />}
-            {item.character && <CharacterStubView character={item.character} />}
+          {item.post && <PostStubView post={item.post} />}
+          {item.image && <ImageStubView image={item.image} />}
+          {item.gallery && <GalleryStubView gallery={item.gallery} />}
+          {item.book && <BookStubView book={item.book} size="sm" showFooter={false} />}
+          {item.character && <CharacterStubView character={item.character} />}
         </div>
         <FeedFooter item={item} />
     </div>

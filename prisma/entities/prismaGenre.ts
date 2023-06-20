@@ -1,6 +1,8 @@
 import useDebug from "../../hooks/useDebug"
 import {
+  BookStubInclude,
   Cover,
+  CoverStubInclude,
   Gallery,
   Genre,
   GenreDeleteProps,
@@ -9,6 +11,7 @@ import {
   GenreFeedInclude,
   GenreStub,
   GenreUpsertProps,
+  UserStubSelect,
   prisma,
 } from "../prismaContext"
 
@@ -17,7 +20,35 @@ const { debug, info, fileMethod } = useDebug("entities/prismaGenre")
 const details = async (): Promise<Genre[]> => await prisma.genre.findMany()
 const detail = async (id:string): Promise<Genre|null> => await prisma.genre.findUnique({where: {id}})
 
-const stubs = async (): Promise<Genre[]> => await prisma.genre.findMany()
+const stubs = async (): Promise<GenreStub[]> => await prisma.genre.findMany({
+  include: {
+    covers: true,
+    books: {
+      where: {
+        active: true
+      },
+      include: {
+        authors: {
+          select: UserStubSelect
+        },
+        categories: true,
+        cover: {
+          include: {
+            image: true,
+          }
+        },
+        _count: {
+          select: {
+            chapters: true,
+            follows: true,
+            likes: true,
+            shares: true
+          }
+        }
+      },
+    }
+  },
+}) as unknown as GenreStub[]
 const stub = async (id:string): Promise<Genre|null> => await prisma.genre.findUnique({where: {id}})
 
 const covers = async (byGenre?: string): Promise<Cover[] | null> => {
@@ -29,7 +60,7 @@ const covers = async (byGenre?: string): Promise<Cover[] | null> => {
           genreId: byGenre
         },
         include: {
-          book: true,
+          book: {include: BookStubInclude},
           image: true
         },
       })

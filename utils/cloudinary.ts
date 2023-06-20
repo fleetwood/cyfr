@@ -1,3 +1,4 @@
+import { SizeProps } from "types/props"
 import useDebug from "../hooks/useDebug"
 const {debug, info} = useDebug('utils/cloudinary')
 
@@ -87,14 +88,13 @@ const resize = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps
  */
 const scale = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps('c_scale', props))
 
-export type AvatarSizeProps = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 /**
  * Create a thumbnail of the uploaded image
  * @param url string
- * @param size {@link AvatarSizeProps}
+ * @param size {@link SizeProps}
  * @returns string
  */
-const avatar = (url:string, size: AvatarSizeProps) => cloudUrl(url, `t_avatar_${size}`)
+const avatar = (url:string, size: SizeProps) => cloudUrl(url, `t_avatar_${size}`)
 
 /**
  * Upload a file to cloudinary

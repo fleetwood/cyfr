@@ -6,6 +6,7 @@ import EZButton from "../../components/ui/ezButton";
 import useDebug from "../../hooks/useDebug";
 import { BookStub, GenreStub, PrismaGenre } from '../../prisma/prismaContext';
 import { uniqueKey } from "../../utils/helpers";
+import BookStubView from "components/containers/Books/BookStubView";
 
 const {debug, jsonBlock} = useDebug('books/index')
 
@@ -56,7 +57,7 @@ const BooksPage = ({genres}: BooksPageProps) => {
           </div>
           <div className="grid grid-cols-3 justify-between gap-2 py-4">
             {visibleBooks.filter(b => b !== null).map((book) => (
-              <BookCover book={book} key={uniqueKey(book)} />
+              <BookStubView book={book} key={uniqueKey(book)} showFooter={false} />
             ))}
           </div>
         </div>
