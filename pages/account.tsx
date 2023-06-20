@@ -11,7 +11,7 @@ import { useSession } from "lib/next-auth-react-query"
 import { CyfrUser, Image, PrismaUser } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
 import UserDetailPage from "./user/[id]"
-import Tabs from "components/ui/tabs"
+import Tabs, { TabClassNames } from "components/ui/tabs"
 const {debug, info} = useDebug('pages/account')
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
@@ -85,6 +85,13 @@ const Account = ({user}: AccountProps) => {
     }
   }, [])
 
+
+  const tabClasses:TabClassNames = {
+    list: 'border-b-8 border-accent flex space-x-2',
+    item: `py-2 rounded-md font-bold bg-warning text-sm text-warning-content grow mb-2`,
+    selected: `p-3 rounded-t-md font-bold bg-accent text-white text-lg grow rounded-b-none -mb-2`
+  }
+
   return (
     <MainLayout sectionTitle="Account" >
       {cyfrUser &&  <>
@@ -92,9 +99,9 @@ const Account = ({user}: AccountProps) => {
           Logout
         </button>
 
-        <Tabs variant="buttons">
+        <Tabs classNames={tabClasses}>
           <>
-            <span>Preferences</span>
+            <span>Profile</span>
             <div className="bg-base-300 rounded-md p-4 mt-4">
               <TailwindInput label="Display Name" type="text" inputClassName="input input-bordered focus:border-primary" value={cyfrName} setValue={setCyfrName} />
               <button className="btn btn-primary btn-sm" onClick={onNameChange}>{SaveIcon}</button>
@@ -111,7 +118,7 @@ const Account = ({user}: AccountProps) => {
           </>
 
           <>
-            <span>User</span>
+            <span>Stats</span>
             <div className="mt-12">
               <UserDetailPage userId={cyfrUser.id} layout="none" />
             </div>

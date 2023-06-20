@@ -5,26 +5,35 @@ import { uuid } from "utils/helpers";
 export type TabVariants = 'bar' | 'buttons'
 
 type TabProps = {
-    variant?: TabVariants 
-    children: any[]
+    variant?:       TabVariants 
+    classNames?:    TabClassNames
+    children:       any[]
 }
 
-const Tabs = ({variant = 'bar', children}:TabProps) => {
+export type TabClassNames = {
+    list:       string
+    item:       string
+    selected:   string
+}
+
+const Tabs = ({variant = 'bar', classNames, children}:TabProps) => {
     const [activeTab, setActiveTab] = useState(0)
 
-    const barListClass =        'space-x-4 bg-info-content p-1 rounded-lg flex flex-grow justify-evenly'
-    const barListItem =         'cursor-pointer hover:text-secondary transition-colors duration-300 text-info'
-    const barListItemSelected = 'cursor-pointer hover:text-secondary transition-colors duration-300 h-subtitle'
+    const barClasses:TabClassNames = {
+        list: 'space-x-4 bg-info-content p-1 rounded-lg flex flex-grow justify-evenly',
+        item: 'cursor-pointer hover:text-secondary transition-colors duration-300 text-info',
+        selected: 'cursor-pointer hover:text-secondary transition-colors duration-300 h-subtitle'
+    }
 
-    const buttonsListClass =        'border-b-8 border-secondary flex space-x-2'
-    const buttonListItem =          `btn btn-primary grow -mt-1`
-    const buttonListItemSelected =  `btn btn-secondary grow rounded-b-none mt-0`
+    const buttonsClasses:TabClassNames = {
+        list: 'border-b-8 border-secondary flex space-x-2',
+        item: `btn btn-primary grow -mt-1`,
+        selected: `btn btn-secondary grow rounded-b-none mt-0`
+    }
 
-    const listClass = variant === 'bar' ? barListClass : buttonsListClass
+    const classes = classNames !== undefined ? classNames : variant === 'bar' ? barClasses : buttonsClasses
     
-    const selectedButton = (tab:number) => activeTab === tab ? buttonListItemSelected : buttonListItem
-
-    const selectedBar = (tab:number) => activeTab === tab ? barListItemSelected : barListItem
+    const selected = (tab:number) => activeTab === tab ? classes.selected : classes.item
 
     const items = Array.isArray(children) ? children : [...children]
  
@@ -39,9 +48,9 @@ const Tabs = ({variant = 'bar', children}:TabProps) => {
       
   return (
     <Tab.Group vertical onChange={setActiveTab}>
-        <Tab.List className={listClass}>
+        <Tab.List className={classes.list}>
             {items.map((t,i) => (
-            <Tab key={`tab-${uuid()}`} className={variant === 'bar' ? selectedBar(i) : selectedButton(i) }>
+            <Tab key={`tab-${uuid()}`} className={selected(i)}>
                 <>{t.props.children[0]}</>
             </Tab>
             ))}
