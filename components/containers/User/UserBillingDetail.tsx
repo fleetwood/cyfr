@@ -103,53 +103,53 @@ const UserBillingDetail = () => {
           We’re working on a suite of tools to make writing a social effort, for everyone for free.
         </p>
         <div className="flex flex-col space-y-6 mt-6">
-            {plans.map(p => (
-                    <div className={`w-full py-4 px-6 transition-all duration-200 flex justify-between
-                        text-base leading-none text-base-content text-opacity-70 bg-base-100 rounded-md 
-                        cursor-pointer shadow border-l-8
-                        hover:shadow-lg hover:border-primary
-                        ${p === plan 
-                            ? 'border-secondary' 
-                            : 'border-base-100'}
-                    `}
-                    key={uniqueKey(cyfrUser,p)}
-                    onClick={() => setPlan(p)}
-                    >
-                        <h2 className="text-2xl font-semibold leading-6 text-base-content ">{p.label}</h2>
-                        {p.audience  === cyfrUser.membership?.level && <span className="text-success text-xl">{CheckBadge}</span>}
-                    </div>
-            ))}
+          {plans.map(p => (
+            <div className={`w-full py-4 px-6 transition-all duration-200 flex justify-between
+              text-base leading-none text-base-content text-opacity-70 bg-base-100 rounded-md 
+              cursor-pointer shadow border-l-8
+              hover:shadow-lg hover:border-primary
+              ${p === plan 
+                ? 'border-secondary' 
+                : 'border-base-100'}
+            `}
+            key={uniqueKey(cyfrUser,p)}
+            onClick={() => setPlan(p)}
+            >
+              <h2 className="text-2xl font-semibold leading-6 text-base-content ">{p.label}</h2>
+              {p.audience  === cyfrUser.membership?.level && <span className="text-success text-xl">{CheckBadge}</span>}
+            </div>
+          ))}
         </div>
       </div>
       <div className="xl:w-1/2 lg:w-7/12 relative w-full px-8 flex-grow">
-            <h2 className="text-2xl font-semibold leading-6 text-base-content">
-              {plan.label}
-            </h2>
-          <p className="md:w-80 text-base leading-6 mt-4 text-base-content text-opacity-70">
-            {plan.description}
-          </p>
-          <div className="md:flex justify-between space-x-4">
-            <div className="my-2 p-2 bg-base-100 rounded-md shadow flex-grow">
-                <p className="font-semibold">Monthly</p>
-                <h2 className="text-2xl font-semibold leading-6 text-base-content">${plan.price.monthly}/mo</h2>
-                <p className="my-2 text-sm flex-grow">{plan.cta.monthly}</p>
-                {plan.audience !== Audience.USER && 
-                    <button className="btn bg-base-content bottom-0" onClick={() => choosePlan(plan, 'monthly')}>Choose {plan.label} monthly</button>
-                }
-            </div>
-            <div className="my-2 p-2 bg-base-100 rounded-md shadow flex-grow">
-                <p className="font-semibold">Annually</p>
-                <h2 className="text-2xl font-semibold leading-6 text-primary">${plan.price.annually}/yr</h2>
-                <p className="my-2 text-sm flex-grow">{plan.cta.annually}</p>
-                {plan.audience !== Audience.USER && 
-                <button className="btn btn-success bottom-0" onClick={() => choosePlan(plan, 'annually')}>Choose {plan.label} annually</button>
-                }
-            </div>
-          </div>
-            {plan.audience === Audience.USER && 
-                <div><button className="btn bg-base-content" onClick={() => choosePlan(plan, 'free')}>Choose {plan.label}</button></div>
+        <h2 className="text-2xl font-semibold leading-6 text-base-content">
+          {plan.label}
+        </h2>
+        <p className="md:w-80 text-base leading-6 mt-4 text-base-content text-opacity-70">
+          {plan.description}
+        </p>
+        <div className="md:flex justify-between space-x-4">
+          <div className="my-2 p-2 bg-base-100 rounded-md shadow flex-grow">
+            <p className="font-semibold">Monthly</p>
+            <h2 className="text-2xl font-semibold leading-6 text-base-content">${plan.price.monthly}/mo</h2>
+            <p className="my-2 text-sm flex-grow">{plan.cta.monthly}</p>
+            {plan.audience !== Audience.USER && 
+                <button className="btn bg-base-content bottom-0" onClick={() => choosePlan(plan, 'monthly')}>Choose {plan.label} monthly</button>
             }
+          </div>
+          <div className="my-2 p-2 bg-base-100 rounded-md shadow flex-grow">
+              <p className="font-semibold">Annually</p>
+              <h2 className="text-2xl font-semibold leading-6 text-primary">${plan.price.annually}/yr</h2>
+              <p className="my-2 text-sm flex-grow">{plan.cta.annually}</p>
+              {plan.audience !== Audience.USER && 
+              <button className="btn btn-success bottom-0" onClick={() => choosePlan(plan, 'annually')}>Choose {plan.label} annually</button>
+              }
+          </div>
         </div>
+          {plan.audience === Audience.USER && 
+              <div><button className="btn bg-base-content" onClick={() => choosePlan(plan, 'free')}>Choose {plan.label}</button></div>
+          }
+      </div>
     </div>
   )
 }

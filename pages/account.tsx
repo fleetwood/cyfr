@@ -11,6 +11,7 @@ import { useSession } from "lib/next-auth-react-query"
 import { CyfrUser, Image, PrismaUser } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
 import UserDetailPage from "./user/[id]"
+import Tabs from "components/ui/tabs"
 const {debug, info} = useDebug('pages/account')
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
@@ -90,34 +91,33 @@ const Account = ({user}: AccountProps) => {
         <button className="btn btn-secondary my-12" onClick={() => signOut()}>
           Logout
         </button>
-        
-        <div className="border-b-8 border-secondary flex justify-between space-x-2">
-          <button className={`btn ${activeTabClass('Preferences')} w-[30%]`} onClick={() => setActiveTab("Preferences")}>Preferences</button>
-          <button className={`btn ${activeTabClass('Billing')} w-[30%]`} onClick={() => setActiveTab("Billing")}>Billing</button>
-          <button className={`btn ${activeTabClass("User")} w-[30%]`} onClick={() => setActiveTab("User")}>User</button>
-        </div>
 
-        {activeTab==="Preferences" &&
-          <div className="bg-base-300 rounded-md p-4 mt-4">
-            <TailwindInput label="Display Name" type="text" inputClassName="input input-bordered focus:border-primary" value={cyfrName} setValue={setCyfrName} />
-            <button className="btn btn-primary btn-sm" onClick={onNameChange}>{SaveIcon}</button>
-            <h3 className="h-title">Avatar</h3>
-            <Dropzone onDropComplete={onFileComplete} limit={1} >
-              <img src={cloudinary.resize({url: cyfrUser.image!, width: 200})} />
-            </Dropzone>
-          </div>
-        }
-        
-        {activeTab==="Billing" &&
-          <UserBillingDetail />
-        }
-              
-        {activeTab==="User" &&
-          <div className="mt-12">
-            <UserDetailPage userId={cyfrUser.id} layout="none" />
-          </div>
-        }
+        <Tabs variant="buttons">
+          <>
+            <span>Preferences</span>
+            <div className="bg-base-300 rounded-md p-4 mt-4">
+              <TailwindInput label="Display Name" type="text" inputClassName="input input-bordered focus:border-primary" value={cyfrName} setValue={setCyfrName} />
+              <button className="btn btn-primary btn-sm" onClick={onNameChange}>{SaveIcon}</button>
+              <h3 className="h-title">Avatar</h3>
+              <Dropzone onDropComplete={onFileComplete} limit={1} >
+                <img src={cloudinary.resize({url: cyfrUser.image!, width: 200})} />
+              </Dropzone>
+            </div>
+          </>
 
+          <>
+            <span>Billing</span>
+            <UserBillingDetail />
+          </>
+
+          <>
+            <span>User</span>
+            <div className="mt-12">
+              <UserDetailPage userId={cyfrUser.id} layout="none" />
+            </div>
+          </>
+        </Tabs>
+        
       </>}
     </MainLayout>
   )
