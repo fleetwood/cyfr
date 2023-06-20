@@ -1,6 +1,9 @@
-import { Tab } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
-import { uuid } from "utils/helpers";
+import { Tab } from "@headlessui/react"
+import useDebug from "hooks/useDebug"
+import { Fragment, useEffect, useState } from "react"
+import { uuid } from "utils/helpers"
+
+const {debug} = useDebug('Tabs', 'DEBUG')
 
 export type TabVariants = 'bar' | 'buttons'
 
@@ -36,11 +39,13 @@ const Tabs = ({variant = 'bar', classNames, children}:TabProps) => {
     const selected = (tab:number) => activeTab === tab ? classes.selected : classes.item
 
     const items = Array.isArray(children) ? children : [...children]
+
+    const keys = items.map(i => `${uuid()}`)
  
     useEffect(() => {
-        const tab = window.location.hash
+        const tab = window.location.hash.replace('#','')
         if (tab && tab.length > 0) {
-        //   setActiveTab(tab)
+            debug('useEffect tab', {tab, items: items.map(i => i.props.children[0])})
         } else {
         //   debug('useEffect', {hash: `Ain't no hash ${window.location}`})
         }
@@ -49,17 +54,17 @@ const Tabs = ({variant = 'bar', classNames, children}:TabProps) => {
   return (
     <Tab.Group vertical onChange={setActiveTab}>
         <Tab.List className={classes.list}>
-            {items.map((t,i) => (
-            <Tab key={`tab-${uuid()}`} className={selected(i)}>
+        {items.map((t,i) => (
+            <Tab key={'tab-'+keys[i]} className={selected(i)}>
                 <>{t.props.children[0]}</>
             </Tab>
-            ))}
+        ))}
         </Tab.List>
 
         <Tab.Panels>
-            {items.map((p,i) => (
-            <Tab.Panel>{p.props.children[1]}</Tab.Panel>
-            ))}
+        {items.map((p,i) => (
+            <Tab.Panel key={'panel-'+keys[i]}>{p.props.children[1]}</Tab.Panel>
+        ))}
         </Tab.Panels>
     </Tab.Group>
 )}
