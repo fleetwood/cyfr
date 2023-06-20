@@ -8,7 +8,9 @@ import {
   BookEngageProps,
   BookFollowProps,
   BookStub,
+  BookStubInclude,
   BookUpsertProps,
+  ChangeCoverProps,
   Chapter,
   Follow,
   Like,
@@ -308,6 +310,39 @@ const addGallery = async(props:{bookId:string, galleryId:string}):Promise<Book> 
   }
 }
 
+const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
+  try {
+    const {book, cover, image} = props
+    debug('changeCover', {book,cover,image})
+    if (book && cover) {
+        const result = await prisma.book.update({
+            where: { id: book.id},
+            data: { cover: {connect: {id: cover!.id}}},
+            include: BookStubInclude
+        })
+        return result as unknown as BookStub
+
+    } else if (book && image) {
+        const {height, width, authorId, id: imageId} = image!
+        const result = await prisma.book.update({
+            where: { id: book.id},
+            data: { cover: {
+                create: {
+                    title: book.title,
+                    height, width, authorId, imageId
+                }
+            }},
+            include: BookStubInclude
+        })
+        return result as unknown as BookStub
+    }
+
+    throw {code: 'Missing Props', message: 'Incorrect props for ChangeCover'}
+  } catch (e) {
+      throw e
+  }
+}
+
 /**
  * This is a redirect to {@link PrismaChapter.sort}
  * @returns 
@@ -325,4 +360,19 @@ const deleteBook = async ({bookId,authorId}:BookEngageProps): Promise<Book | und
   }
 }
 
-export const PrismaBook = { detail, details, stub, stubs, byUser, upsert, follow, like, share, addChapter,addGallery, sortChapters, deleteBook }
+export const PrismaBook = { 
+    detail
+  , details
+  , stub
+  , stubs
+  , byUser
+  , upsert
+  , follow
+  , like
+  , share
+  , addChapter
+  , addGallery
+  , sortChapters
+  , changeCover
+  , deleteBook 
+}

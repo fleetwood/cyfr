@@ -1,5 +1,6 @@
 import { ReactNode } from "react"
 import { FileError } from "react-dropzone"
+import { Image } from "prisma/prismaContext"
 
 export const fileTypes = ["JPG", "PNG", "GIF"]
 
@@ -38,13 +39,13 @@ export interface UploadableFile {
 
 export type DropzoneProps = {
   limit?: number
-  onDropComplete?: Function
-  onDropChange?: Function
+  onDropComplete?: (files:Image[]) => void
+  onDropChange?: (file:any) => void
   children?: ReactNode
 }
 
 export interface UploadFileViewProps {
   file: UploadableFile
-  onUploadComplete?: Function
-  onUploadChange?: Function
+  onUploadComplete?: (files:Image[]) => void
+  onUploadChange?: (file: any) => void
 }

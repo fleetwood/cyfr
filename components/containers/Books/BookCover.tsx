@@ -52,16 +52,16 @@ const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true}:BookCov
     : Number(variant) as number
   debug('BookCover', {cyfrUser: cyfrUser?.name ?? 'No cyfrUser', isOwner})
 
-  const Booky = () => <BookImage cover={book.cover||null} title={book.title} width={width!} owner={isOwner} />
+  const Booky = () => <BookImage cover={book.cover!.image} title={book.title} width={width!} owner={isOwner} />
 
-  return (
+  return book.cover ? (
     <div className="max-w-fit relative p-4">
     {link 
       ? <Link href={`/book/${book.slug ?? book.id}`}><Booky /></Link> 
       : <Booky />
     }
     {/* <JsonBlock data={book} /> */}
-    </div>
-)}
+    </div>) : <></>
+}
 
 export default BookCover

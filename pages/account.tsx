@@ -1,18 +1,15 @@
 import { GetSessionParams, signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 
-import { InferGetServerSidePropsType } from "next"
-import UserBillingDetail from "../components/containers/User/UserBillingDetail"
-import { useCyfrUserContext } from "../components/context/CyfrUserProvider"
-import Dropzone, { CompleteFile } from "../components/forms/Dropzone"
-import TailwindInput from "../components/forms/TailwindInput"
-import MainLayout from "../components/layouts/MainLayout"
-import { SaveIcon } from "../components/ui/icons"
-import useDebug from "../hooks/useDebug"
-import { useSession } from "../lib/next-auth-react-query"
-import { PrismaUser } from "../prisma/entities/prismaUser"
-import { CyfrUser } from "../prisma/types/user.def"
-import { cloudinary } from "../utils/cloudinary"
+import UserBillingDetail from "components/containers/User/UserBillingDetail"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import { Dropzone, TailwindInput } from "components/forms"
+import MainLayout from "components/layouts/StaticLayout"
+import { SaveIcon } from "components/ui/icons"
+import useDebug from "hooks/useDebug"
+import { useSession } from "lib/next-auth-react-query"
+import { CyfrUser, Image, PrismaUser } from "prisma/prismaContext"
+import { cloudinary } from "utils/cloudinary"
 import UserDetailPage from "./user/[id]"
 const {debug, info} = useDebug('pages/account')
 
@@ -26,7 +23,7 @@ type AccountProps = {
   user?: CyfrUser | undefined
 }
 
-const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Account = ({user}: AccountProps) => {
   const [session] = useSession({required: true, redirectTo: '/login'})  
   const [cyfrUser, isLoading, error, invalidate] = useCyfrUserContext()
   const [activeTab, setActiveTab] = useState('Preferences' )
@@ -50,13 +47,13 @@ const Account = ({user}: InferGetServerSidePropsType<typeof getServerSideProps>)
     //   })
   }
 
-  const onFileComplete = async (files:CompleteFile[]) => {
+  const onFileComplete = async (files:Image[]) => {
     const file = files[0]
-    if (file.secure_url) {
+    if (files[0]) {
       debug(`onFileComplete`,file)
       const newCyfrUser = {
         ...cyfrUser,
-        image: file.secure_url
+        image: files[0].url
       } as unknown as CyfrUser
       // const result = await updateUser(newCyfrUser)
       // if (result) {

@@ -1,11 +1,11 @@
 import { UseQueryResult } from "react-query"
-import { Book, BookCategory, BookStatus, ChapterStub, CharacterStub, CyfrUser, GalleryStub, Genre, Image, User, UserFollow, UserStub } from "../prismaContext"
+import { Book, BookCategory, BookStatus, ChapterStub, CharacterStub, Cover, CoverStub, CyfrUser, GalleryStub, Genre, Image, User, UserFollow, UserStub } from "../prismaContext"
 
 export type BookRelations = {
   genre:        Genre
   authors:      UserStub[]
   gallery?:     GalleryStub
-  cover?:       Image
+  cover?:       CoverStub
   follows?:     UserFollow[]
   likes?:       UserStub[]
   shares?:      UserStub[]
@@ -45,6 +45,12 @@ export type BookEngageProps = {
   authorId: string
 }
 
+export type ChangeCoverProps = {
+  book:   Book
+  cover?: Cover
+  image?: Image
+} 
+
 // TODO This does not account for startedAt and completeAt bc @#$@#$ Date -> String
 export type BookApiUpdate = {
   props: {
@@ -71,7 +77,11 @@ export type BookDetailHook = BookDetail & {
 
 export const BookStubInclude = {
   authors:  true,
-  cover:    true,
+  cover:    {
+    include: {
+      image: true
+    }
+  },
   chapters: { select: {
     active:   true,
     order:    true,
@@ -88,7 +98,11 @@ export const BookStubInclude = {
 export const BookDetailInclude = {
   genre:      true,
   authors:    true,
-  cover:      true,
+  cover:    {
+    include: {
+      image: true
+    }
+  },
   chapters:   true,
   characters: true,
   gallery:    true,

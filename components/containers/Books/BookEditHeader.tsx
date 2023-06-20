@@ -164,7 +164,7 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
             <EZButton label="SAVE" variant="secondary" onClick={updateTitle} />
           </div>
         </div>
-        <BookEditCover book={bookDetail} onUpdate={onUpdate} />
+        <BookEditCover book={bookDetail} onUpdate={() => updated('Cover updated!')} />
         <div>
           <label className="font-semibold w-[50%]">Fiction/Nonfiction</label>
           <Toggler
