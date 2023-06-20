@@ -2,7 +2,7 @@ import React from 'react'
 import { CyfrUser, UserStub, v_author_stub } from '../../prisma/prismaContext'
 import Avatar from './avatar'
 import { uniqueKey, uuid } from '../../utils/helpers'
-import { SizeProps } from '../../utils/cloudinary'
+import { SizeProps } from 'types/props'
 
 export type UserInfoProps = {
     user: CyfrUser|UserStub|v_author_stub

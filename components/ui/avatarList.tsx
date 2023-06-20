@@ -1,4 +1,4 @@
-import { SizeProps } from "../../utils/cloudinary";
+import { SizeProps } from "types/props";
 import { uuid } from "../../utils/helpers";
 import Avatar, { AvatarVariants } from "./avatar";
 

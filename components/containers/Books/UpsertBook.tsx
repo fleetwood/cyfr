@@ -10,6 +10,7 @@ import {
   Cover,
   Gallery,
   GalleryStub,
+  Image,
   UserStub
 } from "prisma/prismaContext"
 import { useEffect, useState } from "react"
@@ -99,8 +100,8 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
     }
   }
 
-  const onFilesComplete = async (files: CompleteFile[]) => {
-    const setFiles = files.flatMap((f) => f.secure_url)
+  const onFilesComplete = async (files: Image[]) => {
+    const setFiles = files.flatMap((f) => f.url)
     debug(`onFilesComplete`, setFiles)
     setImages((current) => [...current, ...setFiles])
   }

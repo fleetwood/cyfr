@@ -360,6 +360,29 @@ const deleteBook = async ({bookId,authorId}:BookEngageProps): Promise<Book | und
   }
 }
 
+const updateWordCount = async (bookId:string):Promise<Boolean> => {
+  try {
+    const book = await prisma.book.findFirstOrThrow({
+      where: {id: bookId},
+      include: {
+        chapters: true
+      }
+    })
+    const words = await prisma.book.update({
+      where: {id: bookId},
+      data: {
+        words: book.chapters.reduce((p:number, c:Chapter) => { return p + c.words }, 0)
+      }
+    })
+    if (words) {
+      return true
+    }
+    throw ({code: 'updateWordCount Fail', message: 'Update Word Count fail'})  
+  } catch (error) {
+    throw error
+  }
+}
+
 export const PrismaBook = { 
     detail
   , details
@@ -367,6 +390,7 @@ export const PrismaBook = {
   , stubs
   , byUser
   , upsert
+  , updateWordCount
   , follow
   , like
   , share

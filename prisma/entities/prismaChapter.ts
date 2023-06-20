@@ -1,6 +1,6 @@
 import useDebug from "../../hooks/useDebug"
 import { now, sortChapters } from "../../utils/helpers"
-import { Chapter, ChapterDetail, ChapterDetailInclude, ChapterStub, ChapterStubInclude } from "../prismaContext"
+import { Chapter, ChapterDetail, ChapterDetailInclude, ChapterStub, ChapterStubInclude, PrismaBook } from "../prismaContext"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaChapter')
 
@@ -34,9 +34,9 @@ const upsert = async (chapter:Chapter) => {
 
     if (result) {
       debug('upsert', result)
-      const sum = await prisma.$queryRaw`SELECT f_book_wordCount(${chapter.bookId})`
-      if (!sum) {
-        info('upsert (book)', 'Unable to update the book count for some reason....')
+      const words = await PrismaBook.updateWordCount(chapter.bookId)
+      if (!words) {
+        info('upsert (book)', 'Unable to updateWordCount for book....')
       }
       return result
     }
