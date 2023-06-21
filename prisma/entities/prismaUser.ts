@@ -1,50 +1,54 @@
-import { NextApiRequest } from "next";
-import { getSession, GetSessionParams } from "next-auth/react";
-import useDebug from "../../hooks/useDebug";
+import { NextApiRequest } from "next"
+import { getSession, GetSessionParams } from "next-auth/react"
+import useDebug from "../../hooks/useDebug"
 import {
   GenericResponseError,
   ResponseError
-} from "../../types/response";
+} from "../../types/response"
 import {
   Audience,
-  CyfrUser, Follow,
-  UserFollowProps,
+  AudienceLevels,
+  audienceToLevel,
+  BookStubInclude,
+  CyfrUser,
+  CyfrUserInclude,
+  Follow,
   prisma, User, UserFeed,
-  UserFeedInclude, UserStub, UserDetail, CyfrUserInclude, BookStubInclude
-} from "../prismaContext";
-import { NotImplemented } from "../../utils/api";
-import { CyfrLogo } from "components/ui/icons";
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser");
+  UserFeedInclude,
+  UserFollowProps,
+  UserStub
+} from "../prismaContext"
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser")
 
 type AllPostQueryParams = {
-  limit?: Number;
-  offset?: Number;
-};
+  limit?: Number
+  offset?: Number
+}
 
 const allUsersQuery = async ({
   limit = 100,
   offset = 0,
 }: AllPostQueryParams): Promise<any[] | []> => {
-  debug("allUsersQuery");
+  debug("allUsersQuery")
 
   try {
     return await prisma.$queryRaw`
     select * from userInfoAll() as "user"
-    `;
+    `
   } catch (error) {
-    err("allUsersQuery", { error, limit, offset });
-    throw { code: fileMethod("allUsersQuery"), message: "No posts were returned!" };
+    err("allUsersQuery", { error, limit, offset })
+    throw { code: fileMethod("allUsersQuery"), message: "No posts were returned!" }
   }
-};
+}
 
 const follow = async (props:UserFollowProps): Promise<Follow> => {
-  const {followerId, followingId, isFan} = props;
+  const {followerId, followingId, isFan} = props
   try {
     if (followerId === followingId) {
       throw {
         code: "user/error",
         message: `Sorry you can't follow yourself. That would be weird, and probably break physics.`,
-      };
+      }
     }
     // we have to do this crazy little dance because composites in Follow model
     const exists = await prisma.follow.findFirst({
@@ -70,15 +74,15 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
     if (!follow) {
       throw({code: fileMethod('follow'), message: 'Unable to follow user'})
     }
-    return follow;
+    return follow
   } catch (error) {
     debug(`follow ERROR`, {
       ...{ props },
       ...{ error },
-    });
-    throw GenericResponseError(error as unknown as ResponseError);
+    })
+    throw GenericResponseError(error as unknown as ResponseError)
   }
-};
+}
 
 const userInfo = async (id:string): Promise<any> => {
   debug('userInfo', {id})
@@ -151,7 +155,7 @@ const books = async (props:UserDetailProps): Promise<any> => {
 const cyfrUser = async (email:string): Promise<CyfrUser|null> => {
   try {
     if (!email) {
-      return null;
+      return null
     }
     debug('cyfrUser', {email})
     const user = await prisma.user.findUnique({
@@ -166,8 +170,8 @@ const cyfrUser = async (email:string): Promise<CyfrUser|null> => {
     return null
 
   } catch (error) {
-    info(`cyfrUser FAIL`, error);
-    throw error;
+    info(`cyfrUser FAIL`, error)
+    throw error
   }
 }
 
@@ -195,8 +199,8 @@ const canMention = async ({search, all = false}:MentionSearchProps):Promise<any>
       limit 50
     `
   } catch (error) {
-    info(`canMention broke`, error);
-    throw error;
+    info(`canMention broke`, error)
+    throw error
   }
 }
 
@@ -204,22 +208,22 @@ const userInSessionReq = async (
   req: NextApiRequest
 ): Promise<CyfrUser | null> => {
   try {
-    const session = await getSession({ req });
+    const session = await getSession({ req })
     debug('userInSessionReq', session)
     return cyfrUser(session?.user?.email||'')
   } catch (e) {
     debug('userInSessionReq FAIL', e)
-    return null;
+    return null
   }
 }
 
 const userInSessionContext = async (context: GetSessionParams | undefined): Promise<CyfrUser | null> => {
   try {
-    const session = await getSession(context);
+    const session = await getSession(context)
     return cyfrUser(session?.user?.email||'')
   } catch (error) {
-    info(fileMethod("userInSessionContext"), { error });
-    return null;
+    info(fileMethod("userInSessionContext"), { error })
+    return null
   }
 }
 
@@ -229,7 +233,7 @@ const setMembership = async (
   cadence: string
 ): Promise<UserFeed | null> => {
   try {
-    debug("setMembership", { userId, audience: audience, cadence });
+    debug("setMembership", { userId, audience: audience, cadence })
     const user = await prisma.user.update({
       where: {
         id: userId,
@@ -247,16 +251,16 @@ const setMembership = async (
         },
       },
       include: UserFeedInclude,
-    });
+    })
     if (user) {
-      return (user as unknown as UserFeed) || null;
+      return (user as unknown as UserFeed) || null
     }
-    debug("setMembership", "Null response when updating");
-    return null;
+    debug("setMembership", "Null response when updating")
+    return null
   } catch (e) {
-    throw e;
+    throw e
   }
-};
+}
 
 const userCurrentlyOnline = async (id: string) => {
   try {
@@ -271,19 +275,19 @@ const userCurrentlyOnline = async (id: string) => {
           },
         },
       },
-    });
+    })
     if (!user) {
       throw {
         code: fileMethod("userCurrentlyOnline"),
         message: `Did not find user for ${id}`,
-      };
+      }
     }
-    return user._count.sessions > 0;
+    return user._count.sessions > 0
   } catch (error) {
-    info(`userCurrentlyOnline error`);
-    return null;
+    info(`userCurrentlyOnline error`)
+    return null
   }
-};
+}
 
 const updatePreferences = async ({
   id,
@@ -298,20 +302,23 @@ const updatePreferences = async ({
         name, 
         slug: name.replaceAll(/[\W_]+/g,"-"),
         image },
-    });
+    })
     if (user) {
-      return user;
+      return user
     }
     debug('updatePreferences', 'no user')
-    throw { code: "Users.updatePreferences", message: "Error updating record" };
+    throw { code: "Users.updatePreferences", message: "Error updating record" }
   } catch (error) {
     err('updatePreferences', {error})
-    throw error;
+    throw error
   }
-};
+}
+
+const canAccess = async (audience:AudienceLevels, cyfrUser?:CyfrUser):Promise<boolean> => audienceToLevel((cyfrUser?.membership?.level??Audience.PUBLIC).toString()) >= audienceToLevel(audience)
 
 export const PrismaUser = {
   allUsersQuery,
+  canAccess,
   cyfrUser,
   detail,
   userInfo,
@@ -323,6 +330,6 @@ export const PrismaUser = {
   updatePreferences,
   canMention,
   books
-};
+}
 
 

@@ -1,22 +1,29 @@
-import { ReactNode } from "react";
-import { AudienceLevels, useAudience } from "../../hooks/useAudience";
-import useDebug from "../../hooks/useDebug";
+import useCyfrUser from "hooks/useCyfrUser"
+import { useRouter } from "next/router"
+import ErrorPage from "pages/404"
+import { ReactNode } from "react"
+import useDebug from "../../hooks/useDebug"
 const {debug} = useDebug('components/ui/allowContent')
 
 type AllowContentProps = {
   redirect?: string | undefined
   children: ReactNode
-  required: AudienceLevels
-//   router: NextRouter
+  required: any //Audience
 }
 
-const AllowContent = ({
-//   router,
-  required,
-  children
-}: AllowContentProps) => {
-    const {level, hasAccess} = useAudience(required)
-  return <>{hasAccess && (children)}</>
-};
+const AllowContent = ({redirect,required,children}: AllowContentProps) => {
+  const [cyfrUser] = useCyfrUser()
+  const level = cyfrUser?.membership?.level ?? null
+  const allowed = level !== null
+
+  if (allowed) {
+    return (<>{children}</>)
+  }
+  if (redirect) {
+    const router = useRouter()
+    router.push(redirect)
+  }
+  return <ErrorPage message="You do not have permission to view this content." />
+}
 
 export default AllowContent

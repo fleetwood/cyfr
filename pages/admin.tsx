@@ -1,23 +1,19 @@
 import Link from "next/link"
-import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import GenreAdmin from "../components/containers/Genre/GenreAdmin"
 import AdminLayout from "../components/layouts/AdminLayout"
 import { CyfrLogo } from "../components/ui/icons"
-import { AudienceLevels, useAudience } from "../hooks/useAudience"
 import useDebug from "../hooks/useDebug"
 import { useSession } from "../lib/next-auth-react-query"
 
+import { GenreStub } from "../prisma/prismaContext"
 import { getApi } from "../utils/api"
 import { uniqueKey } from "../utils/helpers"
-import { GenreStub } from "../prisma/prismaContext"
 
 const { debug, jsonBlock } = useDebug("admin page")
 
 const AdminPage = ({}) => {
   useSession({ required: true, redirectTo: "/" })
-  const router = useRouter()
-  const {hasAccess} = useAudience(AudienceLevels.OWNER)
   const [genres, setGenres] = useState<Array<GenreStub>>([])
   const [editGenre, setEditGenre] = useState<GenreStub|null>(null)
   
@@ -29,10 +25,6 @@ const AdminPage = ({}) => {
   )
 
   useEffect(() => {
-    if (!hasAccess) {
-      router.push('/')
-    }
-
     const getGenres = async () => {
       const genreList = await getApi('genre/stubs')
       if (genreList.result) {

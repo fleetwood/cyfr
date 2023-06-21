@@ -1,10 +1,12 @@
 import useDebug from "../../hooks/useDebug"
 import { getApi, sendApi } from "../../utils/api"
-import { Book, UserDetailProps, UserEngageProps, UserFollowProps, UserStub } from "../prismaContext"
+import { AudienceLevels, Book, CyfrUser, UserDetailProps, UserEngageProps, UserFollowProps, UserStub } from "../prismaContext"
 
 const {debug} = useDebug('prisma/api/userApi', 'DEBUG')
 
 const UserApi = () => {
+
+  const canAccess = async (level:AudienceLevels) => await (await sendApi("user/access", {level})).data.result === true
 
   const followUser = async (props: UserFollowProps):Promise<boolean>  => {
     const like = await (await sendApi("user/follow", props)).data
@@ -32,6 +34,7 @@ const UserApi = () => {
   const books = async (id:String):Promise<Book[]> => await (await getApi(`user/books/${id}`)).data
 
   return {
+    canAccess,
     followUser,
     mentions,
     books,

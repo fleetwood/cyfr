@@ -1,4 +1,4 @@
-import { Book, BookStub, Cover, Follow, Gallery, GalleryStub, Image, Membership, Post, PostStub, User } from "./../prismaContext"
+import { Book, BookStub, Follow, GalleryStub, Membership, Post, PostStub, User } from "./../prismaContext"
 
 export type UserFeed = User & {
   _count:       { sessions: number }
@@ -328,3 +328,6 @@ export type UserEngageProps = {
   isFan?:       Boolean
   active?:      Boolean
 }
+
+export type AudienceLevels = 'PUBLIC' | 'USER' | 'READER' | 'MEMBER' | 'MEMBER_EXP' | 'AGENT' | 'AGENT_EXP' | 'ADMIN' | 'OWNER'
+export const audienceToLevel = (level:string) => ['PUBLIC' , 'USER' , 'READER' , 'MEMBER' , 'MEMBER_EXP' , 'AGENT' , 'AGENT_EXP' , 'ADMIN' , 'OWNER'].indexOf(level)
