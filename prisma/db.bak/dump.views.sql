@@ -56,7 +56,6 @@ AS
                     a.fiction,
                     a.title,
                     a.slug,
-                    -- a."coverId",
                     a."genreId",
                     a.hook,
                     a.synopsis,
@@ -100,10 +99,10 @@ AS
     count(DISTINCT posts.id) AS posts,
     count(DISTINCT likes.id) AS likes,
     count(DISTINCT shares.id) AS shares,
-    count(DISTINCT follows.id) AS follows,
-    count(DISTINCT st.id) AS stans,
-    count(DISTINCT followers.id) AS followers,
-    count(DISTINCT fans.id) AS fans,
+    (count(DISTINCT follows.id))::integer AS follows,
+    (count(DISTINCT follows.id) FILTER (WHERE (follows."isFan" = true)))::integer AS stans,
+    (count(DISTINCT followers.id))::integer AS followers,
+    (count(DISTINCT followers.id) FILTER (WHERE (followers."isFan" = true)))::integer AS fans,
     ( SELECT json_agg(bks.*) AS books
            FROM ( SELECT a.id,
                     a."createdAt",
@@ -116,7 +115,6 @@ AS
                     a.fiction,
                     a.title,
                     a.slug,
-                    -- a."coverId",
                     a."genreId",
                     a.hook,
                     a.synopsis,
@@ -136,43 +134,46 @@ AS
                     f_user_galleries.description,
                     f_user_galleries.images
                    FROM f_user_galleries(u.id) f_user_galleries(id, createdat, updatedat, visible, title, description, images)) gal) AS galleries
-   FROM (((((((("User" u
+   FROM (((((("User" u
      LEFT JOIN "Membership" membership ON ((membership.id = u."membershipId")))
      LEFT JOIN "Post" posts ON (((posts."authorId" = u.id) AND (posts.visible = true))))
      LEFT JOIN "Like" likes ON ((likes."authorId" = u.id)))
      LEFT JOIN "Follow" follows ON ((follows."followerId" = u.id)))
-     LEFT JOIN "Follow" st ON (((st."followerId" = u.id) AND (st."isFan" = true))))
      LEFT JOIN "Follow" followers ON ((followers."followingId" = u.id)))
-     LEFT JOIN "Follow" fans ON (((fans."followingId" = u.id) AND (fans."isFan" = true))))
      LEFT JOIN "Share" shares ON (((shares."authorId" = u.id) AND (shares.visible = true))))
   GROUP BY u.id, u.email, membership.id);
-
-
 
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
-CREATE VIEW v_cover_stub AS
-(
-    SELECT cover.*
-        , to_json(usr) as "author"
-        , to_json(img) as "image"
-        , to_json(book) as "book"
-        , to_json(genre) as "genre"
-    FROM "Cover" cover
-    LEFT JOIN "Image" img ON cover."imageId" = img.id
-    LEFT JOIN "Genre" genre ON cover."genreId" = genre.id
-    LEFT JOIN "Book" book ON cover."bookId" = book.id
-    JOIN "User" usr ON cover."authorId" = usr.id
-)
+CREATE VIEW v_cover_stub
+AS
+( SELECT cover.id,
+    cover."createdAt",
+    cover."updatedAt",
+    cover.active,
+    cover."authorId",
+    cover."bookId",
+    cover."imageId",
+    cover."genreId",
+    to_json(usr.*) AS author,
+    to_json(img.*) AS image,
+    to_json(book.*) AS book,
+    to_json(genre.*) AS genre
+   FROM (((("Cover" cover
+     LEFT JOIN "Image" img ON ((cover."imageId" = img.id)))
+     LEFT JOIN "Genre" genre ON ((cover."genreId" = genre.id)))
+     LEFT JOIN "Book" book ON ((cover."bookId" = book.id)))
+     JOIN "User" usr ON ((cover."authorId" = usr.id))));
+
+
 
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
 CREATE VIEW v_book_detail
 AS
-( 
-  SELECT book.id,
+( SELECT book.id,
     book."createdAt",
     book."updatedAt",
     book."startedAt",
@@ -183,7 +184,6 @@ AS
     book.fiction,
     book.title,
     book.slug,
-    -- book."coverId",
     book."genreId",
     book.hook,
     book.synopsis,
@@ -271,8 +271,7 @@ AS
                   WHERE ((p."authorId" = u.id) AND (p.visible = true))) AS "postCount"
            FROM "User" u) authors ON ((authors.id = ub."B")))
      LEFT JOIN "Cover" cover ON ((cover."bookId" = book.id)))
-  GROUP BY book.id, genre.id, cover.id, gallery.id
-);
+  GROUP BY book.id, genre.id, cover.id, gallery.id);
 
 
 -- ////////////////////////////////////////////////
@@ -280,8 +279,7 @@ AS
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
 CREATE VIEW v_book_stub
 AS
-( 
-    SELECT book.id,
+( SELECT book.id,
     book."createdAt",
     book."updatedAt",
     book."startedAt",
@@ -328,7 +326,6 @@ AS
                     c."createdAt",
                     c."updatedAt",
                     c.active,
-                    c.content,
                     c.words,
                     c."bookId",
                     c."galleryId",
@@ -349,8 +346,6 @@ AS
                     "character".thumbnail,
                     "character".age,
                     "character".role,
-                    "character".description,
-                    "character".backstory,
                     "character".title,
                     "character".archetype,
                     "character"."galleryId",
@@ -371,21 +366,15 @@ AS
             u.email,
             u.image
            FROM "User" u) authors ON ((authors.id = ub."B")))
-
      LEFT JOIN "Cover" cover ON ((cover."bookId" = book.id)))
-
-  GROUP BY book.id, genre.id, cover.id
-  );
-
-
+  GROUP BY book.id, genre.id, cover.id);
 
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
 CREATE VIEW v_chapter_detail
 AS
-(
- SELECT chapter.id,
+( SELECT chapter.id,
     chapter."createdAt",
     chapter."updatedAt",
     chapter.active,
@@ -460,8 +449,8 @@ AS
           WHERE (ch_1.active = true)) ch ON ((ch.chapter_id = chapter.id)))
   WHERE (chapter.active = true)
   GROUP BY chapter.id
-  ORDER BY chapter."order"  
-);
+  ORDER BY chapter."order");
+
 
 
 -- ////////////////////////////////////////////////
@@ -517,7 +506,7 @@ AS
   GROUP BY chapter.id
   ORDER BY chapter."order");
   
-
+  
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
@@ -557,14 +546,18 @@ AS
      LEFT JOIN "Follow" follows ON ((follows."characterId" = characters.id)))
      LEFT JOIN "Follow" fans ON (((fans."characterId" = characters.id) AND (fans."isFan" = true))))
   GROUP BY characters.id, gallery.id, likes.id, shares.id, follows.id, fans.id);
- 
+  
 
+  
+
+     
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
 CREATE VIEW v_follower_stub
 AS
-( SELECT f.id,
+(
+     SELECT f.id,
     f."createdAt",
     f."updatedAt",
     f."isFan",
@@ -578,8 +571,9 @@ AS
    FROM ((("Follow" f
      LEFT JOIN "User" "user" ON ((f."followerId" = "user".id)))
      LEFT JOIN "Book" book ON ((f."bookId" = book.id)))
-     LEFT JOIN "Character" "character" ON ((f."characterId" = "character".id))));
-     
+     LEFT JOIN "Character" "character" ON ((f."characterId" = "character".id)))
+     );
+
 
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
@@ -627,7 +621,8 @@ AS
      LEFT JOIN "User" u ON ((g."authorId" = u.id)))
   WHERE (g.visible = true)
   GROUP BY g.id, u.id);
-  
+
+
 
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
@@ -654,38 +649,68 @@ AS
   WHERE (g.visible = true)
   GROUP BY g.id, u.id);
   
-
+  
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
 CREATE VIEW v_genre_all
 AS
-( 
-  SELECT genre.*
-    , json_agg(books) AS books
-    , ( SELECT (count("Book".id))::integer 
-        FROM "Book"
-        WHERE   "Book"."genreId" = genre.id
-        AND     "Book".active = true
-    ) AS totalbooks
-    , json_agg(cover) as covers
-FROM "Genre" genre    
-LEFT JOIN (
-    SELECT stub.*
-    FROM v_book_stub stub
-    WHERE stub.active = true
-    ORDER BY stub."createdAt" DESC
-) books ON books."genreId" = genre.id
-LEFT JOIN (
-    SELECT c.* 
-        , to_json(img) as "image"
-    FROM "Cover" c
-    LEFT JOIN "Image" img on c."imageId" = img.id
-) cover
-    ON cover."genreId" = genre.id
-GROUP BY genre.id
-ORDER BY genre.title
-);
+( SELECT genre.id,
+    genre."createdAt",
+    genre."updatedAt",
+    genre.slug,
+    genre.title,
+    genre.description,
+    json_agg(books.*) AS books,
+    ( SELECT (count("Book".id))::integer AS count
+           FROM "Book"
+          WHERE (("Book"."genreId" = genre.id) AND ("Book".active = true))) AS totalbooks,
+    json_agg(books.cover) AS covers
+   FROM (("Genre" genre
+     LEFT JOIN ( SELECT stub.id,
+            stub."createdAt",
+            stub."updatedAt",
+            stub."startedAt",
+            stub."completeAt",
+            stub.active,
+            stub.status,
+            stub.prospect,
+            stub.fiction,
+            stub.title,
+            stub.slug,
+            stub.hook,
+            stub.synopsis,
+            stub.back,
+            stub.words,
+            stub."galleryId",
+            stub."genreId",
+            stub.genre,
+            stub.authors,
+            stub.cover,
+            stub.likes,
+            stub.follows,
+            stub.shares,
+            stub.chapters,
+            stub.characters,
+            stub.categories
+           FROM v_book_stub stub
+          WHERE (stub.active = true)
+          ORDER BY stub."createdAt" DESC) books ON ((books."genreId" = genre.id)))
+     LEFT JOIN ( SELECT c.id,
+            c."createdAt",
+            c."updatedAt",
+            c.active,
+            c."authorId",
+            c."bookId",
+            c."imageId",
+            c."genreId",
+            to_json(img.*) AS image
+           FROM ("Cover" c
+             LEFT JOIN "Image" img ON ((c."imageId" = img.id)))) cover ON ((cover."genreId" = genre.id)))
+  GROUP BY genre.id
+  ORDER BY genre.title);
+
+
   
 
 -- ////////////////////////////////////////////////
@@ -693,42 +718,42 @@ ORDER BY genre.title
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
 CREATE VIEW v_genre_detail
 AS
-( 
-  SELECT genre.*
-    , json_agg(books) AS books
-    , (count((SELECT DISTINCT(id) FROM "Book" b WHERE b.active = true AND b."genreId" = genre.id ))) AS totalbooks
-FROM "Genre" genre
-LEFT JOIN ( 
-    SELECT v_book_detail.*
-    FROM v_book_detail
-    WHERE active = true
-    ORDER BY v_book_detail."createdAt" DESC
-    LIMIT 100
-) books ON books."genreId" = genre.id
-GROUP BY genre.id
-ORDER BY genre.title
-);
+( SELECT genre.id,
+    genre."createdAt",
+    genre."updatedAt",
+    genre.slug,
+    genre.title,
+    genre.description,
+    json_agg(books.*) AS books,
+    count(DISTINCT books.id) AS totalbooks
+   FROM ("Genre" genre
+     LEFT JOIN v_book_stub books ON ((books."genreId" = genre.id)))
+  GROUP BY genre.id
+  ORDER BY genre.title);
+
+
+
   
 
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
-CREATE VIEW v_genre_stub AS
-( 
-  SELECT genre.*
-    , json_agg(books) AS books
-    , (count((SELECT DISTINCT(id) FROM "Book" b WHERE b.active = true AND b."genreId" = genre.id ))) AS totalbooks
-  FROM "Genre" genre
-  LEFT JOIN ( 
-    SELECT v_book_detail.*
-    FROM v_book_detail
-    WHERE active = true
-    ORDER BY v_book_detail."createdAt" DESC
-    LIMIT 100
-  ) books ON books."genreId" = genre.id
+CREATE VIEW v_genre_stub
+AS
+( SELECT genre.id,
+    genre."createdAt",
+    genre."updatedAt",
+    genre.slug,
+    genre.title,
+    genre.description,
+    json_agg(books.*) AS books,
+    count(DISTINCT books.id) AS totalbooks
+   FROM ("Genre" genre
+     LEFT JOIN v_book_stub books ON (((books."genreId" = genre.id) AND (books.active = true))))
   GROUP BY genre.id
-  ORDER BY genre.title
-);
+  ORDER BY genre.title);
+
+
   
 
 -- ////////////////////////////////////////////////
@@ -763,7 +788,7 @@ AS
      LEFT JOIN "User" author ON ((author.id = l."authorId")))
   ORDER BY l."createdAt" DESC);
   
-
+  
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
@@ -783,6 +808,8 @@ AS
    FROM ("Like" l
      LEFT JOIN "User" author ON ((author.id = l."authorId")))
   ORDER BY l."createdAt" DESC);
+
+
 
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
@@ -827,7 +854,7 @@ AS
   GROUP BY p.id, u.id
   ORDER BY p."updatedAt" DESC);
   
-
+  
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
@@ -858,7 +885,7 @@ AS
      LEFT JOIN "Character" "character" ON (("character".id = l."characterId")))
   ORDER BY l."updatedAt" DESC);
   
-
+  
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
@@ -878,8 +905,8 @@ AS
    FROM ("Share" l
      LEFT JOIN "User" author ON ((author.id = l."authorId")))
   ORDER BY l."createdAt" DESC);
-
-
+  
+  
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
@@ -893,9 +920,8 @@ AS
      JOIN _user_books ub ON ((u.id = ub."B")))
      JOIN "Book" book ON ((ub."A" = book.id)))
      JOIN "Genre" genre ON ((book."genreId" = genre.id))));
-
-
-
+     
+     
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
@@ -905,13 +931,13 @@ AS
     usr.name,
     usr.email,
     usr.image,
-    count(DISTINCT p.id) AS posts,
-    count(DISTINCT f.id) AS followers,
-    count(DISTINCT f.id) FILTER (WHERE (f."isFan" = true)) AS fans,
-    count(DISTINCT ff.id) AS follows,
-    count(DISTINCT ff.id) FILTER (WHERE (ff."isFan" = true)) AS stans,
-    count(DISTINCT book."bookId") AS books,
-    count(DISTINCT gallery.id) AS galleries,
+    (count(DISTINCT p.id))::integer AS posts,
+    (count(DISTINCT f.id))::integer AS followers,
+    (count(DISTINCT f.id) FILTER (WHERE (f."isFan" = true)))::integer AS fans,
+    (count(DISTINCT ff.id))::integer AS follows,
+    (count(DISTINCT ff.id) FILTER (WHERE (ff."isFan" = true)))::integer AS stans,
+    (count(DISTINCT book."bookId"))::integer AS books,
+    (count(DISTINCT gallery.id))::integer AS galleries,
     to_json(membership.*) AS membership
    FROM (((((("User" usr
      LEFT JOIN ( SELECT u.id AS "userId",
@@ -925,6 +951,8 @@ AS
      LEFT JOIN "Follow" f ON ((f."followingId" = usr.id)))
      LEFT JOIN "Follow" ff ON ((ff."followerId" = usr.id)))
   GROUP BY usr.id, membership.id);
+  
+  
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
@@ -976,7 +1004,7 @@ AS
   WHERE (p.visible = true)
   GROUP BY p.id, u.id);
   
-
+  
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
@@ -1002,9 +1030,8 @@ AS
      LEFT JOIN "Image" image ON ((image.id = share."imageId")))
   WHERE (share.visible = true)
   ORDER BY share."updatedAt" DESC);
-
-
-
+  
+  
 -- ////////////////////////////////////////////////
 -- ////////////////////////////////////////////////
 -- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
@@ -1033,3 +1060,80 @@ UNION ALL
     (s."character")::text AS "character",
     (s.book)::text AS book
    FROM v_feed_share s);
+
+
+
+-- ////////////////////////////////////////////////
+-- ////////////////////////////////////////////////
+-- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
+CREATE VIEW v_canmessage
+AS
+( SELECT u.id,
+    u.name,
+    u.image,
+    x."followingId" AS messagerid
+   FROM (("Follow" x
+     JOIN "Follow" y ON (((y."followerId" = x."followingId") AND (y."followingId" = x."followerId"))))
+     JOIN "User" u ON ((u.id = x."followerId"))));
+
+
+
+-- ////////////////////////////////////////////////
+-- ////////////////////////////////////////////////
+-- Active: 1680234435741@@cyfr-db-digital-ocean-dev-do-user-13643467-0.b.db.ondigitalocean.com@25060@defaultdb@public
+CREATE VIEW v_cyfruser
+AS
+( SELECT usr.id,
+    usr.name,
+    usr.email,
+    usr.image,
+    usr.slug,
+    (count(posts.*))::integer AS postcount,
+    (count(DISTINCT followers."followerId"))::integer AS followercount,
+    (count(DISTINCT followers."followerId") FILTER (WHERE (followers."isFan" = true)))::integer AS fancount,
+    (count(DISTINCT follows."followingId"))::integer AS followcount,
+    (count(DISTINCT follows."followingId") FILTER (WHERE (follows."isFan" = true)))::integer AS stancount,
+    to_json(membership.*) AS membership,
+    json_agg(chat.*) AS canmessage,
+    json_agg(followers.*) AS followers,
+    json_agg(books.follows) AS following,
+    json_agg(galleries.*) AS galleries,
+    json_agg(books.*) AS books,
+    json_agg(posts.*) AS posts
+   FROM ((((((("User" usr
+     LEFT JOIN "Membership" membership ON ((membership.id = usr."membershipId")))
+     LEFT JOIN v_post_stub posts ON (((posts."authorId" = usr.id) AND (posts.visible = true))))
+     LEFT JOIN v_gallery_stub galleries ON (((galleries."authorId" = usr.id) AND (galleries.visible = true))))
+     LEFT JOIN v_following_stub followers ON ((followers."followingId" = usr.id)))
+     LEFT JOIN v_follower_stub follows ON ((follows."followerId" = usr.id)))
+     LEFT JOIN v_canmessage chat ON ((chat.messagerid = usr.id)))
+     LEFT JOIN ( SELECT b.id,
+            b."createdAt",
+            b."updatedAt",
+            b."startedAt",
+            b."completeAt",
+            b.active,
+            b.status,
+            b.prospect,
+            b.fiction,
+            b.title,
+            b.slug,
+            b.hook,
+            b.synopsis,
+            b.back,
+            b.words,
+            b."galleryId",
+            b."genreId",
+            b.genre,
+            b.authors,
+            b.cover,
+            b.likes,
+            b.follows,
+            b.shares,
+            b.chapters,
+            b.characters,
+            b.categories,
+            ub."B" AS authorid
+           FROM (v_book_stub b
+             JOIN _user_books ub ON ((ub."A" = b.id)))) books ON ((books.authorid = usr.id)))
+  GROUP BY usr.id, membership.id);

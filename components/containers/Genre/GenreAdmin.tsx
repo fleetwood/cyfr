@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import useDebug from "../../../hooks/useDebug"
-import { Gallery, GenreStub } from "../../../prisma/prismaContext"
+import { CoverStub, GenreStub } from "../../../prisma/prismaContext"
 import { sendApi } from "../../../utils/api"
 import { useToast } from "../../context/ToastContextProvider"
-import { CompleteFile } from "../../forms/Dropzone"
 import TailwindInput from "../../forms/TailwindInput"
+import CoverGenreEdit from "../Cover/CoverGenreEdit"
 const {debug } = useDebug('components/containers/Genre/AddGenre')
 
 type GenreAdminProps = {
@@ -14,8 +14,7 @@ type GenreAdminProps = {
 const GenreAdmin = ({editGenre}:GenreAdminProps) => {
     const [title, setTitle] = useState<string|null>(null)
     const [description, setDescription] = useState<string|null>(null)
-    const [gallery, setGallery] = useState<Gallery|null>(null)
-    const [images, setImages] = useState<string[]>([])  
+    const [covers, setCovers] = useState<CoverStub[]>([])
     const {notify} = useToast()
 
     useEffect(() => {
@@ -28,7 +27,7 @@ const GenreAdmin = ({editGenre}:GenreAdminProps) => {
             debug('addGenre', 'Not valid!')
             return
         }
-        const genre = await sendApi('genre/upsert', {title, description, gallery, images})
+        const genre = await sendApi('genre/upsert', {title, description, covers})
         if (genre.data.result) {
             debug('addGenre', {...genre.data.result})
             resetGenre()
@@ -39,6 +38,7 @@ const GenreAdmin = ({editGenre}:GenreAdminProps) => {
     const resetGenre = () => {
         setTitle(() => null)
         setDescription(() => null)
+        setCovers(() => [])
     }
 
     const deleteGenre = async () => {
@@ -46,11 +46,6 @@ const GenreAdmin = ({editGenre}:GenreAdminProps) => {
         resetGenre()
     }
     
-    const onFilesComplete = async (files: CompleteFile[]) => {
-      const setFiles = files.flatMap((f) => f.secure_url)
-      debug(`onFilesComplete`,setFiles)
-      setImages((current) => [...current, ...setFiles])
-    }
 
   return (
     <div className="m-4 p-4 rounded-lg border border-primary bg-base-200">
@@ -58,6 +53,7 @@ const GenreAdmin = ({editGenre}:GenreAdminProps) => {
             <h2>Edit Genres</h2>
             <TailwindInput type="text" label="Genre Title" placeholder="Make sure no typos! Title is used as a key" value={title} setValue={setTitle} />
             <TailwindInput type="text" label="Description" placeholder="Gotta give a description. HTMLInput forthcoming..." value={description} setValue={setDescription} />
+            {editGenre && <CoverGenreEdit label="Covers" genre={editGenre} />}
             {/* <GalleryUpsertForm label="Covers" gallery={gallery} className='pt-2' labelClassName="text-primary" variant='no-title' /> */}
             {/* <Toggler checked={fiction} setChecked={setFiction} trueLabel="Non-Fiction" falseLabel="Fiction" variant="primary" /> */}
             <div className="flex justify-between">

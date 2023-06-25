@@ -328,8 +328,7 @@ const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
             where: { id: book.id},
             data: { cover: {
                 create: {
-                    title: book.title,
-                    height, width, authorId, imageId
+                    authorId, imageId
                 }
             }},
             include: BookStubInclude

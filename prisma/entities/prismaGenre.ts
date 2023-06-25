@@ -5,11 +5,13 @@ import {
   CoverStubInclude,
   Gallery,
   Genre,
+  GenreAddCoverProps,
   GenreDeleteProps,
   GenreDetail,
   GenreFeed,
   GenreFeedInclude,
   GenreStub,
+  GenreStubInclude,
   GenreUpsertProps,
   UserStubSelect,
   prisma,
@@ -110,6 +112,39 @@ const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
   }
 }
 
+/**
+ * 
+ * @param id (String) Genre id
+ * @param image (Image) Image to add
+ * @returns Promise<GenreStub>
+ */
+const addCover = async (props:GenreAddCoverProps):Promise<GenreStub> => {
+  try {
+    const cover = await prisma.cover.create({
+      data: {
+        active: true,
+        imageId: props.image.id,
+        authorId: props.image.authorId,
+        genreId: props.id
+      }
+    })
+    if (!cover) {
+      throw ({code: 'genre/addCover', message: 'Failed creating cover'})
+    }
+    const result = await prisma.genre.update({
+      where: { id: props.id},
+      data: { covers: {connect: {id: cover!.id}}},
+      include: GenreStubInclude
+    })
+    if (result) {
+      return result as GenreStub
+    }
+    throw ({code: 'genre/addCover', message: 'Failed connecting cover'})
+  } catch (error) {
+    throw error
+  }
+}
+
 const deleteGenre = async ({
   id,
   title,
@@ -130,6 +165,7 @@ const deleteGenre = async ({
 }
 
 export const PrismaGenre = {
+  addCover,
   detail,
   details,
   stub,

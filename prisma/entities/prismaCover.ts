@@ -1,13 +1,13 @@
 import { NotImplemented } from "utils/api"
 import useDebug from "../../hooks/useDebug"
-import { Cover, CoverDeleteProps, CoverUpsertProps, Like } from "../prismaContext"
+import { Cover, CoverDeleteProps, CoverDetail, CoverStub, CoverUpsertProps, Like } from "../prismaContext"
 const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage')
 
-const detail = async (id: string): Promise<Cover | null> => await prisma.cover.findUnique({where: {id}})
-const details = async (): Promise<Cover[]> => await prisma.cover.findMany()
+const detail = async (id: string): Promise<CoverDetail | null> => await prisma.cover.findUnique({where: {id}}) as unknown as CoverDetail
+const details = async (): Promise<CoverDetail[]> => await prisma.cover.findMany() as unknown as CoverDetail[]
 
-const stub = async (id: string): Promise<Cover | null> => await prisma.cover.findUnique({where: {id}})
-const stubs = async (): Promise<Cover[]> => await prisma.cover.findMany()
+const stub = async (id: string): Promise<CoverStub | null> => await prisma.cover.findUnique({where: {id}}) as unknown as CoverStub
+const stubs = async (): Promise<CoverStub[]> => await prisma.cover.findMany() as unknown as CoverStub[]
 
 const upsert = async (props: CoverUpsertProps): Promise<Cover> => {
   debug('upsert', props)

@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  previewFeatures = ["filteredRelationCount"] 
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -18,7 +18,7 @@ model User {
   slug          String?       @unique
   accounts      Account[]
   blocks        Block[]       @relation("user_blocks") // blocks that the user has created
-  IsBlocked     Block[]       @relation("user_is_blocked") // where this user has been blocked by another
+  isBlocked     Block[]       @relation("user_is_blocked") // where this user has been blocked by another
   chatMessages  ChatMessage[] @relation("user_chat_messages")
   comments      Comment[]     @relation("user_comments")
   ownedCommunes Commune[]     @relation("commune_owner")
@@ -35,7 +35,8 @@ model User {
   membershipId  String?       @unique
   membership    Membership?   @relation("user_membership", fields: [membershipId], references: [id])
   books         Book[]        @relation("user_books")
-  
+  covers        Cover[]       @relation("user_covers")
+
   @@index(fields: [id, name, email])
 }
 
@@ -64,8 +65,8 @@ model News {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
   visible   Boolean   @default(true)
-  slug          String        @unique
-  title     String  @unique
+  slug      String    @unique
+  title     String    @unique
   banner    String?
   startDate DateTime?
   endDate   DateTime?
@@ -118,20 +119,21 @@ model Image {
 }
 
 model Cover {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now())
-  active    Boolean   @default(true)
-  title     String?
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  active    Boolean  @default(true)
+  exclusive Boolean  @default(false)
   authorId  String
-  height    Int?      @default(0)
-  width     Int?      @default(0)
-  bookId    String?   @unique
-  book      Book?     @relation("book_cover", fields: [bookId], references: [id])
-  imageId   String    @unique
-  image     Image     @relation("cover_image", fields: [imageId], references: [id])
+  author    User     @relation("user_covers", fields: [authorId], references: [id])
+  bookId    String?  @unique
+  book      Book?    @relation("book_cover", fields: [bookId], references: [id])
+  imageId   String   @unique
+  image     Image    @relation("cover_image", fields: [imageId], references: [id])
   genreId   String?
-  genre     Genre?    @relation("genre_covers", fields: [genreId], references: [id])
+  genre     Genre?   @relation("genre_covers", fields: [genreId], references: [id])
+  likes     Like[]   @relation("cover_likes")
+  shares    Share[]  @relation("cover_shares")
 }
 
 model Like {
@@ -145,6 +147,7 @@ model Like {
   commentId   String?
   characterId String?
   bookId      String?
+  coverId     String?
   author      User       @relation("user_likes", fields: [authorId], references: [id])
   comment     Comment?   @relation("comment_likes", fields: [commentId], references: [id])
   gallery     Gallery?   @relation("gallery_likes", fields: [galleryId], references: [id])
@@ -152,27 +155,30 @@ model Like {
   post        Post?      @relation("post_likes", fields: [postId], references: [id])
   character   Character? @relation("character_likes", fields: [characterId], references: [id])
   book        Book?      @relation("book_likes", fields: [bookId], references: [id])
+  cover       Cover?     @relation("cover_likes", fields: [coverId], references: [id])
 
   @@index(fields: [id, authorId, postId])
 }
 
 model Share {
-  id            String   @id @default(cuid())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now())
-  visible       Boolean  @default(true)
-  authorId      String
-  postId        String?
-  galleryId     String?
-  imageId       String?
-  characterId   String?
-  bookId        String?
-  author        User        @relation("user_shares", fields: [authorId], references: [id])
-  gallery       Gallery?    @relation("gallery_shares", fields: [galleryId], references: [id])
-  image         Image?      @relation("image_shares", fields: [imageId], references: [id])
-  post          Post?       @relation("post_shares", fields: [postId], references: [id])
-  character     Character?  @relation("character_shares", fields: [characterId], references: [id])
-  book          Book?       @relation("book_shares", fields: [bookId], references: [id])
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+  visible     Boolean    @default(true)
+  authorId    String
+  postId      String?
+  galleryId   String?
+  imageId     String?
+  characterId String?
+  bookId      String?
+  coverId     String?
+  author      User       @relation("user_shares", fields: [authorId], references: [id])
+  gallery     Gallery?   @relation("gallery_shares", fields: [galleryId], references: [id])
+  image       Image?     @relation("image_shares", fields: [imageId], references: [id])
+  post        Post?      @relation("post_shares", fields: [postId], references: [id])
+  character   Character? @relation("character_shares", fields: [characterId], references: [id])
+  book        Book?      @relation("book_shares", fields: [bookId], references: [id])
+  cover       Cover?     @relation("cover_shares", fields: [coverId], references: [id])
 
   @@index(fields: [id, authorId, postId])
 }
@@ -181,7 +187,7 @@ model Follow {
   id          String     @id @default(cuid())
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @default(now())
-  isFan       Boolean   @default(false)
+  isFan       Boolean    @default(false)
   followerId  String
   followingId String?
   follower    User       @relation("user_followed_by", fields: [followerId], references: [id])
@@ -280,11 +286,11 @@ model Membership {
 }
 
 model Genre {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now())
-  slug        String    @unique
-  title       String    @unique
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  slug        String   @unique
+  title       String   @unique
   description String
   books       Book[]   @relation("book_genre")
   covers      Cover[]  @relation("genre_covers")
@@ -303,8 +309,8 @@ model Book {
   id         String         @id @default(cuid())
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @default(now())
-  startedAt  DateTime?      
-  completeAt DateTime?      
+  startedAt  DateTime?
+  completeAt DateTime?
   active     Boolean        @default(true)
   status     BookStatus?    @default(PRIVATE)
   prospect   Boolean        @default(false)
@@ -374,7 +380,7 @@ model Block {
   id             String         @id @default(cuid())
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @default(now())
-  expiresAt      DateTime?      // a null expire is permanent
+  expiresAt      DateTime? // a null expire is permanent
   active         Boolean        @default(true)
   blockType      BlockType
   authorId       String

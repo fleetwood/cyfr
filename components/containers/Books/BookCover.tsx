@@ -1,11 +1,10 @@
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
-import Avatar from "components/ui/avatar"
 import { CheckBadge } from "components/ui/icons"
 import useDebug from "hooks/useDebug"
 import Link from "next/link"
 import { BookDetail, BookStub, Image } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
-import { isAuthor, uniqueKey } from "utils/helpers"
+import { isAuthor } from "utils/helpers"
 
 const {debug} = useDebug('BookCover')
 
@@ -48,7 +47,7 @@ const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true}:BookCov
   const isOwner = isAuthor({book,cyfrUser})
   const cover = book.cover || null
   const width = (variant === BookCoverVariant.FULL && cover !== null)
-    ? cover.width
+    ? cover.image.width
     : Number(variant) as number
   debug('BookCover', {cyfrUser: cyfrUser?.name ?? 'No cyfrUser', isOwner})
 

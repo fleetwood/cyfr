@@ -18,7 +18,7 @@ const TailwindInput = ({label, type, value, setValue, nullable, cardClassName, l
   return (
     <label className={`block ${cardClassName||''}`}>
       {label &&
-        <span className={labelClassName+' text-primary font-bold'}>{label}<IsRequired required={required} /></span>
+        <span className={labelClassName??''+' text-primary font-bold'}>{label}<IsRequired required={required} /></span>
       }
       <input
         type={type}
