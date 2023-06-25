@@ -29,9 +29,7 @@ const BookImage = ({cover, title, width, owner}:{cover: Image|null, title: strin
   const badge = owner ? <span className="absolute top-0 right-0 text-success" aria-label="Your Book!">{CheckBadge}</span> : ''
   
   return <div className="book-cover">
-    {cover && 
-      <div><img src={cloudinary.thumb({ url: cover.url, width })} />{badge}</div>
-    }
+    <div><img src={cloudinary.thumb({ url: cover?.url??cloudinary.defaultCover, width })} />{badge}</div>
   </div>
 }
 
@@ -53,14 +51,13 @@ const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true}:BookCov
 
   const Booky = () => <BookImage cover={book.cover!.image} title={book.title} width={width!} owner={isOwner} />
 
-  return book.cover ? (
+  return (
     <div className="max-w-fit relative p-4">
     {link 
       ? <Link href={`/book/${book.slug ?? book.id}`}><Booky /></Link> 
       : <Booky />
     }
-    {/* <JsonBlock data={book} /> */}
-    </div>) : <></>
+    </div>)
 }
 
 export default BookCover

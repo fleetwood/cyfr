@@ -27,7 +27,7 @@ type BooksPageProps = {
 const BooksPage = ({genres}: BooksPageProps) => {
   const [search, setSearch] = useState<string|null>(null)
   const [visibleGenres, setVisibleGenres] = useState<GenreStub[]>(genres)
-  const [visibleBooks, setVisibleBooks] = useState<BookStub[]>(genres.flatMap(g => {return [...g.books]}))
+  const [visibleBooks, setVisibleBooks] = useState<BookStub[]>([]) //(genres.flatMap(g => {return [...g.books]}))
 
   useEffect(() => {
     //todo: search by genre, title or author
@@ -35,12 +35,12 @@ const BooksPage = ({genres}: BooksPageProps) => {
     ? genres.filter(g => g.title.toLowerCase().indexOf(search.toLowerCase())>=0)
     : genres
     setVisibleGenres(() => set)
-    setVisibleBooks(() => set
-      .flatMap(g => {return [...g.books]})
-      .filter(b => b !== null)
-      .sort((a,b) => a.updatedAt > b.updatedAt ? 1 : -1)
-      .slice(0,50)
-    )
+    // setVisibleBooks(() => set
+    //   .flatMap(g => {return [...g.books]})
+    //   .filter(b => b !== null)
+    //   .sort((a,b) => a.updatedAt > b.updatedAt ? 1 : -1)
+    //   .slice(0,50)
+    // )
   }, [search])
 
   return (
@@ -52,7 +52,7 @@ const BooksPage = ({genres}: BooksPageProps) => {
           <TailwindInput type="text" inputClassName="w-[50%]" placeholder="What are you interested in?" setValue={setSearch} value={search} />
           <div className="grid grid-cols-4 justify-between gap-2 py-4">
             {genres.map((g:GenreStub) => (
-              <EZButton label={`${g.title} (${g.books?.filter(b => b !== null).length})`} variant={visibleGenres.filter(v => v.id === g.id).length> 0 ? 'primary' : 'secondary'} key={uniqueKey(g)} onClick={() => setSearch(() => g.title)}/>
+              <EZButton label={`${g.title} (${g._count.books})`} variant={visibleGenres.filter(v => v.id === g.id).length> 0 ? 'primary' : 'secondary'} key={uniqueKey(g)} onClick={() => setSearch(() => g.title)}/>
             ))}
           </div>
           <div className="grid grid-cols-3 justify-between gap-2 py-4">

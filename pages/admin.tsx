@@ -9,11 +9,13 @@ import { useSession } from "../lib/next-auth-react-query"
 import { GenreStub } from "../prisma/prismaContext"
 import { getApi } from "../utils/api"
 import { uniqueKey } from "../utils/helpers"
+import useGenreApi from "prisma/hooks/useGenreApi"
 
 const { debug, jsonBlock } = useDebug("admin page", 'DEBUG')
 
 const AdminPage = ({}) => {
   useSession({ required: true, redirectTo: "/" })
+  const {stubs} = useGenreApi()
   const [genres, setGenres] = useState<Array<GenreStub>>([])
   const [editGenre, setEditGenre] = useState<GenreStub|null>(null)
   
@@ -26,10 +28,9 @@ const AdminPage = ({}) => {
 
   useEffect(() => {
     const getGenres = async () => {
-      const genreList = await getApi('genre/stubs')
-      if (genreList.result) {
-        debug('getGenres', genreList.result)
-        setGenres(() => genreList.result)
+      const genreList = await stubs()
+      if (genreList) {
+        setGenres(() => genreList)
       }
     }
     getGenres()

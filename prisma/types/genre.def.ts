@@ -2,20 +2,22 @@ import {
   Book,
   BookCategory,
   BookStub,
+  CoverStub,
   Gallery,
   Genre,
   Image,
-  ImageStub,
-  User,
+  User
 } from '../prismaContext'
 
 export type GenreStub = Genre & {
-  covers: any[]
-  books: BookStub[]
+  covers:   CoverStub[]
+  _count:   {
+    books: number
+  }
 }
 
 export type GenreDetail = Genre & {
-  covers: any[]
+  covers:   CoverStub[]
   books: BookStub[]
 }
 
@@ -73,10 +75,15 @@ export const GenreFeedInclude = {
 }
 
 export const GenreStubInclude = {
-    books: true,
-    covers: {
-        include: {
-            image: true
-        }
-    }
+  covers: {
+    include: {
+      image: true,
+      author: true
+    },
+  },
+  _count: {
+    select: {
+      books: true,
+    },
+  },
 }

@@ -4,6 +4,10 @@ import BookCover from '../Books/BookCover'
 import { cloudinary } from 'utils/cloudinary'
 import { Dropzone } from 'components/forms'
 import useGenreApi from 'prisma/hooks/useGenreApi'
+import useDebug from 'hooks/useDebug'
+import { uniqueKey, uuid } from 'utils/helpers'
+
+const {debug} = useDebug('containers/Cover/CoverGenreEdit', 'DEBUG')
 
 type CoverGenreEditType = {
     label?:             string | ''
@@ -32,15 +36,13 @@ const CoverGenreEdit = ({genre, cardClassName, labelClassName, label, onUpdate}:
         {label &&
             <span className={labelClassName??''+' text-primary font-bold'}>{label}</span>
         }
-        <Dropzone onDropComplete={addImage} limit={1} />
-        {covers && covers.map((cover:CoverStub) => (
-            <div className="book-cover">
-            {cover && 
-              <img src={cloudinary.thumb({ url: cover.image.url, width: cover.image.width! })} />
-            }
-            </div>
+        <div className="flex space-x-4 my-2">
+        {covers && covers.map((cover:any, i) => (
+          <img src={cloudinary.thumb({ url: cover.image.url, width: 40 })} key={uniqueKey(genre,cover)} />
         ))}
+        </div>
         </label>
+        <Dropzone onDropComplete={addImage} limit={1} />
     </div>
   )
 }

@@ -64,6 +64,8 @@ const getImageProps = (base:string, {...props}) => {
     return m
 }
 
+const defaultCover = 'https://res.cloudinary.com/drckf8gfc/image/upload/v1687710860/cyfr-default-cover.png'
+
 /**
  * Create a thumbnail of the uploaded image
  * @param url string 
@@ -133,4 +135,4 @@ const upload = ({file, onProgress, onComplete}:UploadingProps) => new Promise((r
     xhr.send(formData)
 })
 
-export const cloudinary = {upload, isCloudinary, avatar, thumb, resize, scale}
+export const cloudinary = {upload, isCloudinary, avatar, thumb, resize, scale, defaultCover}

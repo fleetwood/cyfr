@@ -1,20 +1,14 @@
 import useDebug from "../../hooks/useDebug"
 import {
-  BookStubInclude,
   Cover,
-  CoverStubInclude,
-  Gallery,
   Genre,
   GenreAddCoverProps,
   GenreDeleteProps,
-  GenreDetail,
   GenreFeed,
-  GenreFeedInclude,
   GenreStub,
   GenreStubInclude,
   GenreUpsertProps,
-  UserStubSelect,
-  prisma,
+  prisma
 } from "../prismaContext"
 
 const { debug, info, fileMethod } = useDebug("entities/prismaGenre")
@@ -22,50 +16,20 @@ const { debug, info, fileMethod } = useDebug("entities/prismaGenre")
 const details = async (): Promise<Genre[]> => await prisma.genre.findMany()
 const detail = async (id:string): Promise<Genre|null> => await prisma.genre.findUnique({where: {id}})
 
-const stubs = async (): Promise<GenreStub[]> => await prisma.genre.findMany({
-  include: {
-    covers: true,
-    books: {
-      where: {
-        active: true
-      },
-      include: {
-        authors: {
-          select: UserStubSelect
-        },
-        categories: true,
-        cover: {
-          include: {
-            image: true,
-          }
-        },
-        _count: {
-          select: {
-            chapters: true,
-            follows: true,
-            likes: true,
-            shares: true
-          }
-        }
-      },
-    }
-  },
-}) as unknown as GenreStub[]
-const stub = async (id:string): Promise<Genre|null> => await prisma.genre.findUnique({where: {id}})
+const stubs = async (): Promise<GenreStub[]> => await prisma.genre.findMany({include: GenreStubInclude}) as GenreStub[]
+const stub = async (id:string): Promise<GenreStub|null> => await prisma.genre.findUnique({where: {id}, include: GenreStubInclude}) as GenreStub
 
 const covers = async (byGenre?: string): Promise<Cover[] | null> => {
   try {
-    const results: (Cover[]) | null =
-      await prisma.cover.findMany({
-        where: {
-          active: true,
-          genreId: byGenre
-        },
-        include: {
-          book: {include: BookStubInclude},
-          image: true
-        },
-      })
+    const results = await prisma.cover.findMany({
+      where: {
+        active: true,
+        genreId: byGenre
+      },
+      include: {
+        image: true
+      },
+    })
     if (results) {
       return results
     }
