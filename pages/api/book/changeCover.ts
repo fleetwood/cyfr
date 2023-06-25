@@ -1,12 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { ChangeCoverProps, PrismaBook } from "../../../prisma/prismaContext"
 
-import useDebug from "../../../hooks/useDebug"
-import {
-  GetResponseError,
-  ResponseError
-} from "../../../types/response"
-const { debug, err } = useDebug("api/book/addCover")
+import useDebug from "hooks/useDebug"
+import { ChangeCoverProps, PrismaBook } from "prisma/prismaContext"
+import { ResponseError, GetResponseError } from "types/response"
+const { debug, err } = useDebug("api/book/changeCover")
 
 export default async function handle(
   req: NextApiRequest,
@@ -20,8 +17,8 @@ export default async function handle(
       res.status(200).json({ result })
     } else {
       throw {
-        code: "api/book/addCover",
-        message: `No results from addCover`,
+        code: "api/book/changeCover",
+        message: `No results from changeCover`,
       }
     }
   } catch (e: Error | ResponseError | any) {

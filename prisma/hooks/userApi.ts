@@ -2,7 +2,7 @@ import useDebug from "../../hooks/useDebug"
 import { getApi, sendApi } from "../../utils/api"
 import { AudienceLevels, Book, CyfrUser, UserDetailProps, UserEngageProps, UserFollowProps, UserStub } from "../prismaContext"
 
-const {debug} = useDebug('prisma/api/userApi', 'DEBUG')
+const {debug} = useDebug('prisma/api/userApi')
 
 const UserApi = () => {
 

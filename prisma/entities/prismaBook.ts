@@ -310,6 +310,17 @@ const addGallery = async(props:{bookId:string, galleryId:string}):Promise<Book> 
   }
 }
 
+const changeGenre = async (props: {bookId: string, genreId: string}):Promise<boolean> => {
+  const result = await prisma.book.update({
+    where: {id: props.bookId}, 
+    data: {
+      genre: { connect: { id: props.genreId}}
+    }
+  })
+  if (result) return true
+  return false
+}
+
 const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
   try {
     const {book, cover, image} = props
@@ -397,5 +408,6 @@ export const PrismaBook = {
   , addGallery
   , sortChapters
   , changeCover
+  , changeGenre
   , deleteBook 
 }

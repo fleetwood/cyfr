@@ -57,7 +57,7 @@ const useBookQuery = ({bookId, bookSlug}:UseBookQueryProps):RktBookQuery => {
         }
         if (data) {
           const book = data.result ?? data
-          debug(`onSettled [${bookQuery}]`, {book})
+          debug(`onSettled [${bookQuery}]`, {book: book.title, url})
           return book ?? undefined
         }
       }

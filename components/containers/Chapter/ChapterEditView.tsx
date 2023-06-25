@@ -53,7 +53,8 @@ const ChapterEditView = ({chapterDetail, onSave}:ChapterEditViewProps) => {
         <div>
         <h4>Characters</h4>
         <div className="font-bold text-lg">Book</div>
-        <CharacterList characters={chapterDetail.book?.characters} />
+        {/* TODO: Find a good way to include all the characters for the book */}
+        {/* <CharacterList characters={chapterDetail.book?.characters} /> */}
         <div className="font-bold text-lg">Chapter</div>
         <CharacterList characters={chapterDetail?.characters} />
         </div>

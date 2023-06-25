@@ -1,7 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import useDebug from "hooks/useDebug"
 import ErrorPage from "pages/404"
-import { BookCategory, BookStatus, UserFollow } from "prisma/prismaContext"
+import { BookCategory, BookStatus, Genre, GenreStub, UserFollow } from "prisma/prismaContext"
 import { KeyVal } from "types/props"
 import { now, uuid } from "utils/helpers"
 import ShrinkableIconLabel from "components/ui/shrinkableIconLabel"
@@ -16,6 +16,7 @@ import Toggler from "components/ui/toggler"
 import TailwindDatepicker from "components/forms/TailwindDatepicker"
 import BookCover, { BookCoverVariant } from "./BookCover"
 import BookEditCover from "./BookEditCover"
+import useGenreApi from "prisma/hooks/useGenreApi"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -51,7 +52,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const [cyfrUser] = useCyfrUserContext()
-  const {share, follow, like, save} = useBookApi
+  const {share, follow, like, save, updateGenre} = useBookApi
   const bookId = bookDetail.id
   const engageProps = bookDetail && cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
@@ -146,9 +147,26 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
     update({completeAt: d}, true)
   }
 
-  const updateGenre = (value: string) => {
-    // bookApi.updateGenre(value)
+  const [genreList, setGenreList] = useState<KeyVal[]>([])
+  const onGenreSelect = async (value: string) => {
+    const update = await updateGenre({bookId: bookDetail.id, genreId: value})
+    if (update) {
+      notify(`Genre is now ${value}`)
+    }
+    else {
+      notify(`Did not save genre`, 'warning')
+    }
   }
+
+  const getGenres = async () => {
+    const {stubs} = useGenreApi()
+    const genres = await stubs()
+    setGenreList(() => genres.map((g:GenreStub) => { return {value: g.id, key: g.title}}))
+  }
+
+  useEffect(() => {
+    getGenres()
+  }, [])
 
   return bookDetail ? (
     <div>
@@ -179,8 +197,8 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
             <label className="font-semibold w-[50%]">Genre (TODO)</label>
             <TailwindSelectInput
               value={bookDetail?.genre.title}
-              setValue={updateGenre}
-              options={[]}
+              setValue={onGenreSelect}
+              options={genreList}
             />
           </div>
           {/* TODO Categories view is broken in db */}

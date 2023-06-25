@@ -28,7 +28,7 @@ export const config:{
 
 const unsignedUploadPreset = "cyfr_unsigned"
 
-const isCloudinary = (url?:string) => url && url.indexOf(config.cdn) >= 0
+const isCloudinary = (url?:string) => url && url.indexOf(config.fetch) >= 0
 
 const cloudUrl = (url:string, mod:string) => {
     if (!isCloudinary(url)) return `${config.fetch}/${mod}/${url}`
@@ -64,7 +64,7 @@ const getImageProps = (base:string, {...props}) => {
     return m
 }
 
-const defaultCover = 'https://res.cloudinary.com/drckf8gfc/image/upload/v1687710860/cyfr-default-cover.png'
+const defaultCover = 'https://res.cloudinary.com/drckf8gfc/image/upload/v1687710860/cyfr/cyfr-default-cover.png'
 
 /**
  * Create a thumbnail of the uploaded image

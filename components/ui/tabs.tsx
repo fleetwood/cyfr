@@ -40,22 +40,22 @@ const Tabs = ({variant = 'bar', classNames, children}:TabProps) => {
 
     const items = Array.isArray(children) ? children : [...children]
 
-    const keys = items.map(i => `${uuid()}`)
+    // const keys = items.map(i => `${uuid()}`)
  
-    useEffect(() => {
-        const tab = window.location.hash.replace('#','')
-        if (tab && tab.length > 0) {
-            debug('useEffect tab', {tab, items: items.map(i => i.props.children[0])})
-        } else {
-        //   debug('useEffect', {hash: `Ain't no hash ${window.location}`})
-        }
-      }, [])
+    // useEffect(() => {
+    //     const tab = window.location.hash.replace('#','')
+    //     if (tab && tab.length > 0) {
+    //         debug('useEffect tab', {tab, items: items.map(i => i.props.children[0])})
+    //     } else {
+    //     //   debug('useEffect', {hash: `Ain't no hash ${window.location}`})
+    //     }
+    //   }, [])
       
   return (
     <Tab.Group vertical onChange={setActiveTab}>
         <Tab.List className={classes.list}>
         {items.map((t,i) => (
-            <Tab key={'tab-'+keys[i]} className={selected(i)}>
+            <Tab key={uuid()} className={selected(i)}>
                 <>{t.props.children[0]}</>
             </Tab>
         ))}
@@ -63,7 +63,7 @@ const Tabs = ({variant = 'bar', classNames, children}:TabProps) => {
 
         <Tab.Panels>
         {items.map((p,i) => (
-            <Tab.Panel key={'panel-'+keys[i]}>{p.props.children[1]}</Tab.Panel>
+            <Tab.Panel key={uuid()}>{p.props.children[1]}</Tab.Panel>
         ))}
         </Tab.Panels>
     </Tab.Group>

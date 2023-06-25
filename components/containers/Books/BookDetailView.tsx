@@ -1,6 +1,6 @@
 import BookDetailHeader from "components/containers/Books/BookDetailHeader"
 import ChapterList from "components/containers/Chapter/ChapterList"
-import { OpenCharacterModalPlus } from "components/containers/Characters/CharacterCreateModal"
+import CreateCharacterModal, { OpenCharacterModalPlus } from "components/containers/Characters/CharacterCreateModal"
 import CharacterList from "components/containers/Characters/CharacterList"
 import GalleryCreateModal, { OpenGalleryModalPlus } from "components/containers/Gallery/GalleryCreateModal"
 import GalleryPhotoswipe from "components/containers/Gallery/GalleryPhotoswipe"
@@ -84,7 +84,6 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
     <div>
       <BookDetailHeader bookDetail={bookDetail} onUpdate={update} />
       <div>
-        <Tabs>
           <>
             <h3>Back</h3>
             <div className="my-4 font-ibarra">
@@ -134,7 +133,7 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
             <h3>Characters</h3>
             <div className="my-4">
               <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
-                {/* {isAuthor && <CreateCharacterModal bookDetailHook={bookDetailHook} />} */}
+                {isAuthor && <CreateCharacterModal bookDetail={bookDetail} />}
                 <div className="flex space-x-4">
                 <CharacterList characters={bookDetail.characters} />
               </div>
@@ -152,7 +151,6 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
               <GalleryPhotoswipe gallery={bookDetail.gallery} />
             </div>
           </>
-        </Tabs>
       </div>
       {jsonBlock(bookDetail)}
     </div>

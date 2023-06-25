@@ -111,7 +111,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
     ) : (
     <div>
       <div>
-        <BookCover book={bookDetail} link={false} variant={BookCoverVariant.FULL} />
+        <BookCover book={bookDetail} link={false} variant={BookCoverVariant.COVER} />
         <div>{bookDetail?.fiction ? "FICTION" : "NON-FICTION"}</div>
         <div className="flex">
           <span className="font-semibold text-primary-content mr-4">

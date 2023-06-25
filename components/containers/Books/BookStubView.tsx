@@ -37,15 +37,14 @@ const BookStubView = ({book, authorAvatars, size = "md", showAuthors = true, sho
       </div>
         
       <div className="p-4">
-        {book.cover &&
-          <BookCover book={book} 
-            variant={ size === 'sm' || size === 'xs' ? BookCoverVariant.THUMB : BookCoverVariant.COVER} 
-            authorAvatars={authorAvatars} />
-        }
+        <BookCover book={book} 
+          variant={ size === 'sm' || size === 'xs' ? BookCoverVariant.THUMB : BookCoverVariant.COVER} 
+          authorAvatars={authorAvatars} />
         <div className="flex">
           <span>{book.fiction ? 'FICTION' : 'NON-FICTION'}</span>
           {book.genre && <span>{book.genre?.title}</span>}
-          {book.categories?.filter(m => m !== null).map(cat => (<span className="" key={cat.id}>{cat.title}</span>))}
+          {/* TODO: categories */}
+          {/* {book.categories?.filter(m => m !== null).map(cat => (<span className="" key={cat.id}>{cat.title}</span>))} */}
         </div>
         <div>{book.words} words</div>
         {book.hook &&

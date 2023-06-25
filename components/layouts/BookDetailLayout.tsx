@@ -55,7 +55,9 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
         onScroll={handleScroll}
         ref={mainRef}
       >
-        <Navbar className="min-w-full transition-all duration-200 ease-out" pageScrolled={scrollActive} />
+        <Navbar 
+          className="min-w-full transition-all duration-200 ease-out" 
+          pageScrolled={scrollActive} />
         <Toasts />
         <Section
           className="box-border snap-y min-h-full"

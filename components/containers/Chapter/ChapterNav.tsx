@@ -7,7 +7,7 @@ import ShrinkableIconLink from "../../ui/shrinkableIconLink"
 const { debug, jsonBlock } = useDebug("ChapterFooter")
 
 type ChapterFooterProps = {
-  book: BookStub | BookDetail
+  book: BookDetail
   currentChapter?: Chapter | ChapterStub | ChapterDetail
   variant?: "horizontal" | "vertical"
 }

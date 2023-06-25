@@ -4,27 +4,29 @@ import TailwindInput from "../../components/forms/TailwindInput";
 import MainLayout from '../../components/layouts/MainLayout';
 import EZButton from "../../components/ui/ezButton";
 import useDebug from "../../hooks/useDebug";
-import { BookStub, GenreStub, PrismaGenre } from '../../prisma/prismaContext';
+import { BookStub, GenreStub, PrismaBook, PrismaGenre } from '../../prisma/prismaContext';
 import { uniqueKey } from "../../utils/helpers";
 import BookStubView from "components/containers/Books/BookStubView";
 
-const {debug, jsonBlock} = useDebug('books/index')
+const {debug, jsonBlock} = useDebug('books/index', 'DEBUG')
 
 export async function getServerSideProps(context: any) {
     const genres = await PrismaGenre.stubs()
+    const books = await PrismaBook.stubs()
     return {
       props: {
         genres,
-        books: []
+        books
       },
     }
   }
 
 type BooksPageProps = {
     genres: GenreStub[]
+    books:  BookStub[]
 }
 
-const BooksPage = ({genres}: BooksPageProps) => {
+const BooksPage = ({genres, books}: BooksPageProps) => {
   const [search, setSearch] = useState<string|null>(null)
   const [visibleGenres, setVisibleGenres] = useState<GenreStub[]>(genres)
   const [visibleBooks, setVisibleBooks] = useState<BookStub[]>([]) //(genres.flatMap(g => {return [...g.books]}))
@@ -49,14 +51,14 @@ const BooksPage = ({genres}: BooksPageProps) => {
           {search !== null && search.length > 0 &&
             <label className="btn btn-sm btn-circle absolute right-[48%] top-2" onClick={() => setSearch(() => null)}>✕</label>
           }
-          <TailwindInput type="text" inputClassName="w-[50%]" placeholder="What are you interested in?" setValue={setSearch} value={search} />
+          <TailwindInput type="text" inputClassName="w-[50%]" placeholder="TODO: What are you interested in?" setValue={setSearch} value={search} />
           <div className="grid grid-cols-4 justify-between gap-2 py-4">
             {genres.map((g:GenreStub) => (
               <EZButton label={`${g.title} (${g._count.books})`} variant={visibleGenres.filter(v => v.id === g.id).length> 0 ? 'primary' : 'secondary'} key={uniqueKey(g)} onClick={() => setSearch(() => g.title)}/>
             ))}
           </div>
           <div className="grid grid-cols-3 justify-between gap-2 py-4">
-            {visibleBooks.filter(b => b !== null).map((book) => (
+            {books.filter(b => b !== null).map((book) => (
               <BookStubView book={book} key={uniqueKey(book)} showFooter={false} />
             ))}
           </div>

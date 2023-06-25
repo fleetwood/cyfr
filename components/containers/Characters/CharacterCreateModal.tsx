@@ -6,7 +6,7 @@ import { LoggedIn } from '../../ui/toasty'
 import Spinner from '../../ui/spinner'
 import { InlineTextarea, TailwindInput } from '../../forms'
 import EZButton from '../../ui/ezButton'
-import { BookDetailHook, Character } from '../../../prisma/prismaContext'
+import { BookDetail, BookDetailHook, Character } from '../../../prisma/prismaContext'
 import { sendApi } from '../../../utils/api'
 import OpenModal from '../../ui/openModal'
 const {debug} = useDebug("components/containers/Character/CreateCharacterModal")
@@ -17,12 +17,11 @@ export const OpenCharacterModalButton = () => <OpenModal htmlFor={createCharacte
 export const OpenCharacterModalPlus = () => <OpenModal htmlFor={createCharacterModal} variant='plus' />
 
 type CreateCharacterModalType = {
-  bookDetailHook: BookDetailHook
+  bookDetail: BookDetail
 }
 
-const CreateCharacterModal = ({bookDetailHook}:CreateCharacterModalType) => {
+const CreateCharacterModal = ({bookDetail}:CreateCharacterModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
-  const {bookDetail} = bookDetailHook
   const { notify } = useToast()
   const container = useRef<HTMLDivElement>(null)
 
@@ -47,35 +46,37 @@ const CreateCharacterModal = ({bookDetailHook}:CreateCharacterModalType) => {
   const handleSubmit = async (e?: FormEvent) => {
     e?.preventDefault()
     
-    const result = await (await sendApi('character/upsert', {
-      name: displayName,
-      givenName,
-      middleName: middleName??'',
-      familyName,
-      title: title??'',
-      age: age??'',
-      description,
-      role: role??'',
-      archetype: archetype??'',
-      backstory,
-      thumbnail: thumbnail??'',
-      active,
-      bookId: bookDetail!.id
-    })).data
-    if (result) {
-      const {name, givenName, familyName} = result as Character
-      let char = givenName || name || null
-      if (char === null) {
-        char = 'Your character'
-      }
-      else if (givenName && familyName) {
-        char += ' ' + familyName
-      }
-      notify(`${char} was added to ${bookDetail?.title}!`)
-      closeModal()
-    } else {
-      notify('Hm, that dint work', 'warning')
-    }
+    // const result = await (await sendApi('character/upsert', {
+    //   name: displayName,
+    //   givenName,
+    //   middleName: middleName??'',
+    //   familyName,
+    //   title: title??'',
+    //   age: age??'',
+    //   description,
+    //   role: role??'',
+    //   archetype: archetype??'',
+    //   backstory,
+    //   thumbnail: thumbnail??'',
+    //   active,
+    //   bookId: bookDetail!.id
+    // })).data
+    // if (result) {
+    //   const {name, givenName, familyName} = result as Character
+    //   let char = givenName || name || null
+    //   if (char === null) {
+    //     char = 'Your character'
+    //   }
+    //   else if (givenName && familyName) {
+    //     char += ' ' + familyName
+    //   }
+    //   notify(`${char} was added to ${bookDetail?.title}!`)
+    //   closeModal()
+    // } else {
+    //   notify('Hm, that dint work', 'warning')
+    // }
+    notify('No Implemented', 'warning')
+    closeModal()
   }
 
   const buttonGotThis = (e: { preventDefault: () => void }) => {

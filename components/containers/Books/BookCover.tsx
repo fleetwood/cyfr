@@ -2,7 +2,7 @@ import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { CheckBadge } from "components/ui/icons"
 import useDebug from "hooks/useDebug"
 import Link from "next/link"
-import { BookDetail, BookStub, Image } from "prisma/prismaContext"
+import { BookDetail, BookStub, CoverStub, Image } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
 import { isAuthor } from "utils/helpers"
 
@@ -25,11 +25,11 @@ type BookCoverProps = {
     authorAvatars?: Boolean
 }
 
-const BookImage = ({cover, title, width, owner}:{cover: Image|null, title: string, width: number, owner?:boolean}) => { 
+const BookImage = ({cover, title, width, owner}:{cover?: CoverStub, title: string, width: number, owner?:boolean}) => { 
   const badge = owner ? <span className="absolute top-0 right-0 text-success" aria-label="Your Book!">{CheckBadge}</span> : ''
   
   return <div className="book-cover">
-    <div><img src={cloudinary.thumb({ url: cover?.url??cloudinary.defaultCover, width })} />{badge}</div>
+    <div><img src={cloudinary.thumb({ url: cover?.image?.url ?? cloudinary.defaultCover, width })} />{badge}</div>
   </div>
 }
 
@@ -49,7 +49,7 @@ const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true}:BookCov
     : Number(variant) as number
   debug('BookCover', {cyfrUser: cyfrUser?.name ?? 'No cyfrUser', isOwner})
 
-  const Booky = () => <BookImage cover={book.cover!.image} title={book.title} width={width!} owner={isOwner} />
+  const Booky = () => <BookImage cover={book.cover} title={book.title} width={width!} owner={isOwner} />
 
   return (
     <div className="max-w-fit relative p-4">

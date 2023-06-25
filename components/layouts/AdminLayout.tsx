@@ -1,5 +1,5 @@
 import UserApi from 'prisma/hooks/userApi'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import Footer from '../containers/Footer'
 import LeftColumn from '../containers/LeftColumn'
 import Section from '../ui/section'
@@ -23,6 +23,14 @@ const AdminLayout = ({children, ...props}: AdminLayoutProps) => {
   const [allowed, setAllowed] = useState(false)
   const [rejected, setRejected] = useState(false)
 
+  const [scrollActive, setScrollActive] = useState(false)
+  const mainRef = useRef<HTMLElement>(null)
+
+  const handleScroll = (e:any) => {
+    const position = mainRef?.current?.scrollTop
+    setScrollActive(() => position && position > 120 || false)
+  }
+  
   const getAccess = async () => {
     const access = await canAccess('OWNER')
     debug('getAccess', access)
@@ -44,6 +52,8 @@ const AdminLayout = ({children, ...props}: AdminLayoutProps) => {
         <main
           role="main"
           className="w-full min-h-screen flex-grow m-0 overflow-auto scrollbar-hide relative"
+          onScroll={handleScroll}
+          ref={mainRef}
         >
           <Toasts />
           {loading && <Spinner />}

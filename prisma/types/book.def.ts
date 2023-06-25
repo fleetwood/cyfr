@@ -14,7 +14,19 @@ export type BookRelations = {
   categories?:  BookCategory[]
 }
 
-export type BookStub = Book & BookRelations
+export type BookStub = Book & {
+  genre:        Genre
+  authors:      UserStub[]
+  gallery?:     GalleryStub
+  cover?:       CoverStub
+  _count: {
+    follows?:     Number
+    likes?:       Number
+    shares?:      Number
+    chapters?:    Number
+    characters?:  Number
+  }
+}
 
 export type BookDetail = Book & BookRelations
 
@@ -49,7 +61,12 @@ export type ChangeCoverProps = {
   book:   Book
   cover?: Cover
   image?: Image
-} 
+}
+
+export type ChangeGenreProps = {
+  bookId: string
+  genreId: string
+}
 
 // TODO This does not account for startedAt and completeAt bc @#$@#$ Date -> String
 export type BookApiUpdate = {
@@ -82,16 +99,14 @@ export const BookStubInclude = {
       image: true
     }
   },
-  chapters: { select: {
-    active:   true,
-    order:    true,
-    title:    true,
-    words:    true
-  }},
+  genre:        true,
+  gallery:      true,
   _count: { select: {
-    likes:    true,
-    shares:   true,
-    follows:  true
+    likes:      true,
+    shares:     true,
+    follows:    true,
+    chapters:   true,
+    characters: true
   }}
 }
 

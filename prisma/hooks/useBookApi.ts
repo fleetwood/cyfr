@@ -1,4 +1,4 @@
-import { Book, BookDetail, BookEngageProps, BookFollowProps, BookStub, BookStubInclude, BookUpsertProps, ChangeCoverProps, Chapter } from "prisma/prismaContext"
+import { Book, BookDetail, BookEngageProps, BookFollowProps, BookStub, BookStubInclude, BookUpsertProps, ChangeCoverProps, ChangeGenreProps, Chapter } from "prisma/prismaContext"
 import { NotImplemented, getApi, sendApi } from "utils/api"
 import { isAuthor } from 'utils/helpers/book'
 import useDebug from "hooks/useDebug"
@@ -88,14 +88,9 @@ const updateChapter = async (chapter: Chapter): Promise<boolean> => {
     throw NotImplemented(fileMethod('updateChapter'))
 }
 
-const updateGenre = async (
-    genreId: string
-): Promise<boolean> => {
-    debug("updateGenre", genreId)
-    throw NotImplemented(fileMethod('updateGenre'))
-}
+const updateGenre = async (props:ChangeGenreProps):Promise<boolean> => await (await sendApi('book/upsert', props)).data
 
-const changeCover = async (props:ChangeCoverProps): Promise<BookStub> => await (await sendApi("book/addCover", props)).data
+const changeCover = async (props:ChangeCoverProps): Promise<BookStub> => await (await sendApi("book/changeCover", props)).data
 
 const upsert = async (props:BookUpsertProps):Promise<Boolean> => await (await sendApi('book/upsert', {props})).data
 
