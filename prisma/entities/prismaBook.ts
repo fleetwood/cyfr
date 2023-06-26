@@ -323,9 +323,10 @@ const changeGenre = async (props: {bookId: string, genreId: string}):Promise<boo
 
 const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
   try {
-    const {book, cover, image} = props
-    debug('changeCover', {book,cover,image})
+    const {book, cover, newImage, imageId} = props
+    debug('changeCover', {book,cover,newImage})
     if (book && cover) {
+      debug('Connecting to an existing cover', {cover})
         const result = await prisma.book.update({
             where: { id: book.id},
             data: { cover: {connect: {id: cover!.id}}},
@@ -333,8 +334,9 @@ const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
         })
         return result as unknown as BookStub
 
-    } else if (book && image) {
-        const {height, width, authorId, id: imageId} = image!
+    } else if (book && newImage) {
+      debug('Creating a new cover from an existing image', {cover})
+        const {height, width, authorId, id: imageId} = newImage!
         const result = await prisma.book.update({
             where: { id: book.id},
             data: { cover: {
@@ -345,9 +347,26 @@ const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
             include: BookStubInclude
         })
         return result as unknown as BookStub
+    } else if (book && imageId) {
+      debug('Connecting to an existing cover from its image id', {imageId})
+      const cover = await prisma.cover.findFirst({
+        where: { image: { id: imageId}}
+      })
+      if (cover) {
+        const result = await prisma.book.update({
+            where: { id: book.id},
+            data: { 
+              cover: {
+                connect: {
+                    id: cover.id,
+                }
+            }},
+            include: BookStubInclude
+        })
+        return result as unknown as BookStub
+      }
     }
-
-    throw {code: 'Missing Props', message: 'Incorrect props for ChangeCover'}
+    throw {code: 'prismaBook.changeCover', message: 'That dint work'}
   } catch (e) {
       throw e
   }

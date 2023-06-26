@@ -15,7 +15,7 @@ type GalleryPhotoswipeProps = {
   items?: ItemProps[]
   images?: ImageFeed[]|Image[]
   key?: string
-  onClick?: (e: MouseEvent<Element, MouseEvent>) => void
+  onClick?: (image: ItemProps) => void
 }
 
 const GalleryPhotoswipe = ({gallery, items, images, onClick, key = uuid()}:GalleryPhotoswipeProps) => {
@@ -37,7 +37,7 @@ const GalleryPhotoswipe = ({gallery, items, images, onClick, key = uuid()}:Galle
         alt: img.title,
         // caption: img.caption || null,
         // content: img.content || null,
-        // id: img.id
+        id: img.id
       }
     })
   }
@@ -64,12 +64,14 @@ const GalleryPhotoswipe = ({gallery, items, images, onClick, key = uuid()}:Galle
           {imageList.map(item => (
               <Item {...item} key={uniqueKey(key,item)}>
               {({ ref, open }) => (
-                  <img className="cursor-pointer rounded-md transition-all duration-200 ease-out opacity-80 scale-90 hover:opacity-100 hover:scale-100"
-                      src={item.thumbnail}
-                      ref={ref as React.MutableRefObject<HTMLImageElement>}
-                      onClickCapture={() => onClick ? onClick(item) : {}}
-                      onClick={open}
-                  />
+                  <div className="cursor-pointer transition-all duration-200 ease-out opacity-80 scale-90 hover:opacity-100 hover:scale-100">
+                    <img className="rounded-md"
+                        src={item.thumbnail}
+                        ref={ref as React.MutableRefObject<HTMLImageElement>}
+                        onClick={open}
+                    />
+                    <label className="z-10 absolute btn btn-xs btn-circle bg-success border-success hover:bg-primary right-0 top-0" onClickCapture={() => onClick ? onClick(item) : {}}>✓</label>
+                  </div>
               )}
               </Item>
           ))}

@@ -57,10 +57,17 @@ export type BookEngageProps = {
   authorId: string
 }
 
+/**
+ * @param book {@link Book} The Book that the Cover is being added to
+ * @param cover {@link Cover} Connect to an existing Cover
+ * @param newImage {@link Image} Uploading a new image as the cover
+ * @param imageId {@link Image} String for the id of an existing Cover's image
+ */
 export type ChangeCoverProps = {
-  book:   Book
-  cover?: Cover
-  image?: Image
+  book:       Book
+  cover?:     Cover
+  newImage?:  Image
+  imageId?:   string
 }
 
 export type ChangeGenreProps = {

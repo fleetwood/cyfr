@@ -7,6 +7,7 @@ import { BookDetail, BookStub, CoverStub, Image } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
 import { isAuthor } from "utils/helpers"
 import FindCoverModal, { OpenFindCoverModalButton } from "../Cover/FindCoverModal"
+import { ItemProps } from "react-photoswipe-gallery"
 
 const {debug} = useDebug('BookEditCover')
 
@@ -45,10 +46,22 @@ const BookEditCover = ({book, onUpdate}:BookCoverProps) => {
   
   debug('BookCover', {cyfrUser: cyfrUser?.name ?? 'No cyfrUser', isOwner})
 
+  const onCoverSelected = async (item: ItemProps) => {
+    debug('onCoverSelected', item)
+    if (item) {
+      const result = await changeCover({book, imageId: (item.id??'').toString()})
+      if (result) {
+        onUpdate ? onUpdate() : () => {}
+      } else {
+        debug('onCoverSelected', {message: 'Failed to changeCover', item})
+      }
+    }
+  }
+
   const onCoverImageAdded = async (files:Image[]) => {
     const image = files[0]
     if (image) {
-      const result = await changeCover({book, image})
+      const result = await changeCover({book, newImage: image})
       if (result) {
         onUpdate ? onUpdate() : () => {}
       } else {
@@ -68,14 +81,12 @@ const BookEditCover = ({book, onUpdate}:BookCoverProps) => {
       }
       <div className="flex justify-evenly w-full">
         <div>
-          <Dropzone limit={1} onDropComplete={onCoverImageAdded} >
-            {book.cover &&
-            <img src={cloudinary.resize({url: book.cover.image.url, width: 200})} />}
-          </Dropzone>
+          <Dropzone limit={1} onDropComplete={onCoverImageAdded} />
         </div>
+        <span>-OR-</span>
         <div>
           <OpenFindCoverModalButton />
-          <FindCoverModal genre={book.genre} />
+          <FindCoverModal genre={book.genre} onSelect={onCoverSelected} />
         </div>
       </div>
     {/* <JsonBlock data={book} /> */}

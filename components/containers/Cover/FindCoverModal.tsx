@@ -8,7 +8,8 @@ import { Genre, Image } from 'prisma/prismaContext'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
 import GenreSelector from '../Genre/GenreSelector'
-const {debug} = useDebug("Cover/FindCoverModal", 'DEBUG')
+import { ItemProps } from 'react-photoswipe-gallery'
+const {debug, info} = useDebug("Cover/FindCoverModal")
 
 const findCoverModal = 'FindCoverModal'
 
@@ -17,9 +18,10 @@ export const OpenFindCoverModalPlus = () => <OpenModal htmlFor={findCoverModal} 
 
 type FindCoverModalType = {
   genre?: Genre
+  onSelect?: (item:ItemProps) => void
 }
 
-const FindCoverModal = ({genre}:FindCoverModalType) => {
+const FindCoverModal = ({genre, onSelect}:FindCoverModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
   const {findCover} = useCoverApi()
   const { notify } = useToast()
@@ -42,6 +44,12 @@ const FindCoverModal = ({genre}:FindCoverModalType) => {
     createModal!.checked = false
   }
 
+  const onCoverSelect = (item:any) => {
+    debug('onCoverSelect', {item})
+    if (onSelect) onSelect(item)
+    closeModal()
+  }
+
   const onGenreSelect = (value: string) => {
     notify(value ? `Genre selected ${value}` : 'All genres selected')
     setByGenre(() => value)
@@ -51,10 +59,9 @@ const FindCoverModal = ({genre}:FindCoverModalType) => {
     debug('getCovers', {byGenre})
     const found = await findCover(byGenre === 'All' ? '' : byGenre)
     if (found) {
-      debug('getCovers found', found)
       setCovers(() => found.map(c => c.image))
     } else {
-      debug('Nothing found')
+      info('No covers found')
     }
   }
 
@@ -73,7 +80,7 @@ const FindCoverModal = ({genre}:FindCoverModalType) => {
           {cyfrUser && genre && (
             <div className="w-full mx-auto m-4 p-2 sm:p-6 lg:p-4 bg-base-300 rounded-lg">
               <GenreSelector genreTitle={genre.title} allowAll={true} onGenreSelect={onGenreSelect} sendTitle={true} />
-              <GalleryPhotoswipe images={covers} />
+              <GalleryPhotoswipe images={covers} onClick={onCoverSelect} />
             </div>
           )}
         </div>

@@ -9,10 +9,10 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { book, image, cover } = req.body as ChangeCoverProps
-  debug("handle", {book, image, cover})
+  const { book, newImage: image, cover, imageId } = req.body as ChangeCoverProps
+  debug("handle", {book, image, cover, imageId})
   try {
-    const result = await PrismaBook.changeCover({book, image, cover})
+    const result = await PrismaBook.changeCover({book, newImage: image, cover, imageId})
     if (result) {
       res.status(200).json({ result })
     } else {
