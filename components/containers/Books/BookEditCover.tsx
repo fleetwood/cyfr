@@ -9,6 +9,7 @@ import { useBookApi } from "prisma/hooks/useBookApi"
 import { BookDetail, BookStub, CoverStub, Image } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
 import { isAuthor } from "utils/helpers"
+import FindCoverModal, { OpenFindCoverModalButton } from "../Cover/FindCoverModal"
 
 const {debug} = useDebug('BookEditCover', 'DEBUG')
 
@@ -75,7 +76,10 @@ const BookEditCover = ({book, onUpdate}:BookCoverProps) => {
             <img src={cloudinary.resize({url: book.cover.image.url, width: 200})} />}
           </Dropzone>
         </div>
-        <div><EZButton label="Find a cover" className="p-4 rounded-md border-2 bg-secondary text-secondary-content border-secondary-focus" /></div>
+        <div>
+          <OpenFindCoverModalButton />
+          <FindCoverModal genre={book.genre} />
+        </div>
       </div>
     {/* <JsonBlock data={book} /> */}
     </div>

@@ -17,6 +17,7 @@ import TailwindDatepicker from "components/forms/TailwindDatepicker"
 import BookCover, { BookCoverVariant } from "./BookCover"
 import BookEditCover from "./BookEditCover"
 import useGenreApi from "prisma/hooks/useGenreApi"
+import GenreSelector from "../Genre/GenreSelector"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -140,6 +141,15 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
 
   const updateStatus = (value:string) => update({status: value as BookStatus || 'DRAFT'}, false)
   
+  const onGenreSelect = async (value: string) => {
+    const changed = await updateGenre({bookId: bookDetail.id, genreId: value})
+    if (changed) {
+      updated('Genre updated!')
+    } else {
+      notify('Genre did not update...', 'warning')
+    }
+  }
+
   const [completedAt, setCompletedAt] = useState<Date|null>(bookDetail?.completeAt)
   const updateCompletedAt = (value:Date|null) => {
     const d = value ?? ''
@@ -147,27 +157,6 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
     update({completeAt: d}, true)
   }
 
-  const [genreList, setGenreList] = useState<KeyVal[]>([])
-  const onGenreSelect = async (value: string) => {
-    const newGenre = genreList.find((g:KeyVal) => g.value === value)
-    const update = await updateGenre({bookId: bookDetail.id, genreId: value})
-    if (update) {
-      updated(`Genre is now ${newGenre?.key}`)
-    }
-    else {
-      notify(`Did not save genre`, 'warning')
-    }
-  }
-
-  const getGenres = async () => {
-    const {stubs} = useGenreApi()
-    const genres = await stubs()
-    setGenreList(() => genres.map((g:GenreStub) => { return {value: g.id, key: g.title}}))
-  }
-
-  useEffect(() => {
-    getGenres()
-  }, [])
 
   return bookDetail ? (
     <div>
@@ -194,14 +183,7 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
           />
         </div>
         <div className="flex">
-          <div>
-            <label className="font-semibold w-[50%]">Genre (TODO)</label>
-            <TailwindSelectInput
-              value={bookDetail?.genre.title}
-              setValue={onGenreSelect}
-              options={genreList}
-            />
-          </div>
+          <GenreSelector genreTitle={bookDetail.genre.title} onGenreSelect={onGenreSelect} />
           {/* TODO Categories view is broken in db */}
           <div>
             <label className="font-semibold w-[50%]">Categories</label>
