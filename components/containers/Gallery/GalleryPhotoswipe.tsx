@@ -55,7 +55,7 @@ const GalleryPhotoswipe = ({gallery, items, images, onClick, key = uuid()}:Galle
     catch(e) {
       debug('useEffect FAIL', e)
     }
-  }, [])
+  }, [items, images, gallery])
   
   return (
     <PhotoGallery>

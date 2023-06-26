@@ -18,7 +18,7 @@ import {
   UserFollowProps,
   UserStub
 } from "../prismaContext"
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG')
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser")
 
 type AllPostQueryParams = {
   limit?: Number

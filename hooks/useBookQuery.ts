@@ -1,10 +1,10 @@
 
 import { useQuery, useQueryClient } from "react-query"
-import { BookDetail } from "../prisma/prismaContext"
-import { getApi } from "../utils/api"
+import { BookDetail } from "prisma/prismaContext"
+import { getApi } from "utils/api"
 import useDebug from "./useDebug"
 
-const { debug, info } = useDebug("useBookQuery", 'DEBUG')
+const { debug } = useDebug("useBookQuery")
 
 type RktBookQuery = {
   data:       any

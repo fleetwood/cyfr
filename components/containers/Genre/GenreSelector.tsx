@@ -9,19 +9,25 @@ type GenreSelectorProps = {
     showLabel?:     boolean
     genreTitle?:    string
     allowAll?:      boolean
+    sendTitle?:     boolean
     onGenreSelect?: (value:string) => void
 }
 
-const GenreSelector = ({genreTitle, onGenreSelect, label='Genre', showLabel=true, allowAll=false}:GenreSelectorProps) => {
+const GenreSelector = ({genreTitle, onGenreSelect, label='Genre', showLabel=true, allowAll=false, sendTitle=false}:GenreSelectorProps) => {
   const [genreList, setGenreList] = useState<KeyVal[]>([])
 
   const getGenres = async () => {
     const {stubs} = useGenreApi()
     const genres = await stubs()
     if (genres) {
-        const sortMap = genres.sort((a,b) => a.title > b.title ? 1 : -1).map((g:GenreStub) => { return {value: g.id, key: g.title}})
-        setGenreList(() => allowAll ? [{key: 'All', value: ''},...sortMap] : sortMap)
+      const sortMap = genres.sort((a,b) => a.title > b.title ? 1 : -1).map((g:GenreStub) => { return {value: g.id, key: g.title}})
+      setGenreList(() => allowAll ? [{key: 'All', value: ''},...sortMap] : sortMap)
     }
+  }
+
+  const onGenreChange = (value:string) => {
+    if (!onGenreSelect) return
+    onGenreSelect(!sendTitle ? value : genreList.find(g => g.value === value)!.key )
   }
 
   useEffect(() => {
@@ -35,7 +41,7 @@ const GenreSelector = ({genreTitle, onGenreSelect, label='Genre', showLabel=true
         }
         <TailwindSelectInput
             value={genreTitle}
-            setValue={onGenreSelect}
+            setValue={onGenreChange}
             options={genreList}
         />
     </div>

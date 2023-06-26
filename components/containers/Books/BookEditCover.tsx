@@ -1,17 +1,14 @@
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { Dropzone } from "components/forms"
-import EZButton from "components/ui/ezButton"
 import { CheckBadge } from "components/ui/icons"
-import useBookQuery from "hooks/useBookQuery"
 import useDebug from "hooks/useDebug"
-import Link from "next/link"
 import { useBookApi } from "prisma/hooks/useBookApi"
 import { BookDetail, BookStub, CoverStub, Image } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
 import { isAuthor } from "utils/helpers"
 import FindCoverModal, { OpenFindCoverModalButton } from "../Cover/FindCoverModal"
 
-const {debug} = useDebug('BookEditCover', 'DEBUG')
+const {debug} = useDebug('BookEditCover')
 
 /**
  * @property book {@link BookDetail} | {@link BookStub}

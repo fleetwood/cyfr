@@ -1,14 +1,14 @@
 import { useCyfrUserContext } from 'components/context/CyfrUserProvider'
 import { useToast } from 'components/context/ToastContextProvider'
-import { TailwindSelectInput } from 'components/forms'
 import OpenModal from 'components/ui/openModal'
 import Spinner from 'components/ui/spinner'
 import useDebug from 'hooks/useDebug'
-import { BookDetail, Genre } from 'prisma/prismaContext'
-import { FormEvent, useRef } from 'react'
-import GenreSelector from '../Genre/GenreSelector'
+import useCoverApi from 'prisma/hooks/useCoverApi'
+import { Genre, Image } from 'prisma/prismaContext'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
-const {debug} = useDebug("components/containers/Character/FindCoverModal")
+import GenreSelector from '../Genre/GenreSelector'
+const {debug} = useDebug("Cover/FindCoverModal", 'DEBUG')
 
 const findCoverModal = 'FindCoverModal'
 
@@ -21,8 +21,12 @@ type FindCoverModalType = {
 
 const FindCoverModal = ({genre}:FindCoverModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
+  const {findCover} = useCoverApi()
   const { notify } = useToast()
   const container = useRef<HTMLDivElement>(null)
+
+  const [byGenre, setByGenre] = useState(genre?.title)
+  const [covers, setCovers] = useState<Image[]>([])
 
   const handleSubmit = async (e?: FormEvent) => {
     e?.preventDefault()
@@ -38,6 +42,26 @@ const FindCoverModal = ({genre}:FindCoverModalType) => {
     createModal!.checked = false
   }
 
+  const onGenreSelect = (value: string) => {
+    notify(value ? `Genre selected ${value}` : 'All genres selected')
+    setByGenre(() => value)
+  }
+
+  const getCovers = async () => {
+    debug('getCovers', {byGenre})
+    const found = await findCover(byGenre === 'All' ? '' : byGenre)
+    if (found) {
+      debug('getCovers found', found)
+      setCovers(() => found.map(c => c.image))
+    } else {
+      debug('Nothing found')
+    }
+  }
+
+  useEffect(() => {
+    getCovers()
+  }, ['',byGenre])
+
   return (
     <>
     <input type="checkbox" id={findCoverModal} className="modal-toggle" />
@@ -48,8 +72,8 @@ const FindCoverModal = ({genre}:FindCoverModalType) => {
           {isLoading && <Spinner />}
           {cyfrUser && genre && (
             <div className="w-full mx-auto m-4 p-2 sm:p-6 lg:p-4 bg-base-300 rounded-lg">
-              <GenreSelector genreTitle={genre.title} allowAll={true} />
-              <GalleryPhotoswipe images={[]} />
+              <GenreSelector genreTitle={genre.title} allowAll={true} onGenreSelect={onGenreSelect} sendTitle={true} />
+              <GalleryPhotoswipe images={covers} />
             </div>
           )}
         </div>

@@ -1,6 +1,6 @@
 import { NotImplemented } from "utils/api"
 import useDebug from "../../hooks/useDebug"
-import { Cover, CoverDeleteProps, CoverDetail, CoverStub, CoverUpsertProps, Like } from "../prismaContext"
+import { Cover, CoverDeleteProps, CoverDetail, CoverStub, CoverStubInclude, CoverUpsertProps, Like } from "../prismaContext"
 const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage')
 
 const detail = async (id: string): Promise<CoverDetail | null> => await prisma.cover.findUnique({where: {id}}) as unknown as CoverDetail
@@ -46,4 +46,13 @@ const like = async (props: any): Promise<Like> => {throw NotImplemented}
 
 const share = async (props: any): Promise<Cover> => {throw NotImplemented}
 
-export const PrismaCover = { detail, details, stub, stubs, upsert, remove, like, share }
+const findCover = async (genre?:string): Promise<CoverStub[]> => {
+  const result = prisma.genre.findMany({
+    where: genre ? { title: genre } : { },
+    select: { covers: {include: {image: true}}}
+  })
+  if (result) return (await result).flatMap(g => g.covers) as unknown as CoverStub[]
+  throw ({code: 'prismaCover.findCover', message: 'No covers'})
+}
+
+export const PrismaCover = { detail, details, findCover, stub, stubs, upsert, remove, like, share }
