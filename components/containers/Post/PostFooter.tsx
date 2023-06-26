@@ -11,6 +11,7 @@ import useDebug from "../../../hooks/useDebug"
 import usePostApi from "../../../prisma/hooks/usePostApi"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
+import { abbrNum } from "utils/helpers"
 const { debug } = useDebug("PostItemFooter")
 
 type PostFooterProps = {
@@ -82,7 +83,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Like (${likes.length})`}
+          label={`Like (${abbrNum(likes.length)})`}
           onClick={() => handleLike()}
         />
         {/* @ts-ignore */}
@@ -95,7 +96,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Share (${shares.length})`}
+          label={`Share (${abbrNum(shares.length)})`}
           onClick={() => handleShare()}
         />
         {/* @ts-ignore */}

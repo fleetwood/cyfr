@@ -149,9 +149,10 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
 
   const [genreList, setGenreList] = useState<KeyVal[]>([])
   const onGenreSelect = async (value: string) => {
+    const newGenre = genreList.find((g:KeyVal) => g.value === value)
     const update = await updateGenre({bookId: bookDetail.id, genreId: value})
     if (update) {
-      notify(`Genre is now ${value}`)
+      updated(`Genre is now ${newGenre?.key}`)
     }
     else {
       notify(`Did not save genre`, 'warning')

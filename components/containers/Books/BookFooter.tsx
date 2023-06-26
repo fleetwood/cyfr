@@ -6,6 +6,7 @@ import ShrinkableIconLabel from 'components/ui/shrinkableIconLabel'
 import Spinner from 'components/ui/spinner'
 import { useBookApi } from 'prisma/hooks/useBookApi'
 import { BookDetail, BookStub, UserFollow } from 'prisma/prismaContext'
+import { abbrNum } from 'utils/helpers'
 
 type BookFooterProps = {
   bookStub?:    BookStub
@@ -24,10 +25,10 @@ const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
   const engageProps = cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
   const followProps = book && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
   
-  const numLikes = (bookDetail?.likes?.length ?? bookStub?._count.likes ?? 0).toString()
-  const numShares = (bookDetail?.shares?.length ?? bookStub?._count.shares ?? 0).toString()
-  const numFollows = (bookDetail?.follows?.length ?? bookStub?._count.follows ?? 0).toString()
-  const numFans = ((bookDetail?.follows??[]).filter((f:UserFollow) => f.isFan === true).length).toString()
+  const numLikes = abbrNum(bookDetail?.likes?.length ?? bookStub?._count.likes)
+  const numShares = abbrNum(bookDetail?.shares?.length ?? bookStub?._count.shares)
+  const numFollows = abbrNum(bookDetail?.follows?.length ?? bookStub?._count.follows)
+  const numFans = abbrNum((bookDetail?.follows??[]).filter((f:UserFollow) => f.isFan === true).length)
 
   const update = (message:string, type:ToastNotifyType = 'info') => {
     notify(message,type)

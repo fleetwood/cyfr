@@ -12,6 +12,7 @@ import { CyfrUser, Image, PrismaUser } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
 import UserDetailPage from "./user/[id]"
 import Tabs, { TabClassNames } from "components/ui/tabs"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 const {debug, info} = useDebug('pages/account')
 
 export async function getServerSideProps(context: GetSessionParams | undefined) {
@@ -27,8 +28,9 @@ type AccountProps = {
 const Account = ({user}: AccountProps) => {
   const [session] = useSession({required: true, redirectTo: '/login'})  
   const [cyfrUser, isLoading, error, invalidate] = useCyfrUserContext()
+  const {updateUser} = useCyfrUserApi()
   const [activeTab, setActiveTab] = useState('Preferences' )
-  const [cyfrName, setCyfrName] = useState<string|null>(null)
+  const [cyfrName, setCyfrName] = useState<string|null>(cyfrUser?.name)
 
   const onNameChange = () => {
     if (cyfrName===null||cyfrName.length<3) {
@@ -38,14 +40,14 @@ const Account = ({user}: AccountProps) => {
       ...cyfrUser,
       name: cyfrName
     } as unknown as CyfrUser
-    // updateUser(newCyfrUser)
-    //   .then(r => {
-    //     debug(`onNameChange complete`)
-    //     invalidate()
-    //   })
-    //   .catch(e => {
-    //     info(`onNameChange error`,e)
-    //   })
+    updateUser(newCyfrUser)
+      .then(r => {
+        debug(`onNameChange complete`)
+        invalidate()
+      })
+      .catch(e => {
+        info(`onNameChange error`,e)
+      })
   }
 
   const onFileComplete = async (files:Image[]) => {
@@ -56,35 +58,19 @@ const Account = ({user}: AccountProps) => {
         ...cyfrUser,
         image: files[0].url
       } as unknown as CyfrUser
-      // const result = await updateUser(newCyfrUser)
-      // if (result) {
-      //   invalidateUser()
-      // }
-      // else {
-      //   info(`onFileComplete error`,{file})
-      // }
+      const result = await updateUser(newCyfrUser)
+      if (result) {
+        invalidate()
+      }
+      else {
+        info(`onFileComplete error`,{file})
+      }
     }
   }
 
   const activeTabClass = (tab:string) => activeTab === tab 
     ? `btn-secondary rounded-b-none mt-0`
     : `btn-primary -mt-1`
-
-  useEffect(() => {
-    if (cyfrUser) {
-      setCyfrName(cyfrUser.name)
-    }
-  }, [cyfrUser])
-
-  useEffect(() => {
-    const tab = window.location.hash
-    if (tab && tab.length > 0) {
-      setActiveTab(tab)
-    } else {
-      debug('useEffect', {hash: `Ain't no hash ${window.location}`})
-    }
-  }, [])
-
 
   const tabClasses:TabClassNames = {
     list: 'border-b-8 border-accent flex space-x-2',
@@ -99,7 +85,6 @@ const Account = ({user}: AccountProps) => {
           Logout
         </button>
 
-        <Tabs classNames={tabClasses}>
           <>
             <span>Profile</span>
             <div className="bg-base-300 rounded-md p-4 mt-4">
@@ -123,8 +108,6 @@ const Account = ({user}: AccountProps) => {
               <UserDetailPage userId={cyfrUser.id} layout="none" />
             </div>
           </>
-          
-        </Tabs>
         
       </>}
     </MainLayout>

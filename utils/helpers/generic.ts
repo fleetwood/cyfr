@@ -1,4 +1,9 @@
 import { v4 as uid } from 'uuid'
+import NumberFormat from 'react-number-format'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
+
 import useDebug from '../../hooks/useDebug'
 
 const {debug} = useDebug('utils')
@@ -30,93 +35,7 @@ export const ymd = (date: Date = now()): string => {
   return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec
 }
 
-//TODO this can be cleaned up a bit
-const isOne = (num: number, label: string) =>
-  num !== 1 ? `${num} ${label}s ago` : `${num} ${label} ago`
-
-const dayOf = (day: any) => {
-  switch (day) {
-    case 7:
-      return "Sat"
-    case 6:
-      return "Fri"
-    case 5:
-      return "Thu"
-    case 4:
-      return "Wed"
-    case 3:
-      return "Tue"
-    case 2:
-      return "Mon"
-    default:
-      return "Sun"
-  }
-}
-
-const monthOf = (month: any) => {
-  switch (month) {
-    case 11:
-      return "Dec"
-    case 10:
-      return "Nov"
-    case 9:
-      return "Oct"
-    case 8:
-      return "Sep"
-    case 7:
-      return "Aug"
-    case 6:
-      return "Jul"
-    case 5:
-      return "Jun"
-    case 4:
-      return "May"
-    case 3:
-      return "Apr"
-    case 2:
-      return "Mar"
-    case 1:
-      return "Feb"
-    default:
-      return "Jan"
-  }
-}
-
-export const timeDifference = (from:Date|string) => {
-  if (from === null) {
-    debug('timeDifference', {message: 'from is null?', from})
-    return ''
-  }
-  const fromDate = (typeof Date === from ? from : new Date(from)) as Date
-  const datetime = fromDate.getTime()
-  const current = now().getTime()
-  if (isNaN(datetime)) {
-    debug('timeDifference', {message: 'from is NAN?', from, fromDate, datetime, current})
-    return ""
-  }
-  const milisec_diff = current - datetime
-  var days = Math.floor(milisec_diff / 1000 / 60 / (60 * 24))
-  var date_diff = new Date(milisec_diff)
-  const ago = {
-    weeks: Math.floor(days / 7),
-    days,
-    hours: date_diff.getHours(),
-    minutes: date_diff.getMinutes(),
-  }
-  if (ago.weeks > 3) {
-    return `${fromDate.getFullYear()}, ${monthOf(fromDate.getMonth())} ${fromDate.getDate() > 9 ? fromDate.getDate() : "0" + fromDate.getDate()}`
-  } else if (ago.weeks > 0) {
-    return isOne(ago.weeks, " week")
-  } else if (ago.days > 0) {
-    return isOne(ago.days, " day")
-  } else if (ago.hours > 0) {
-    return isOne(ago.hours, " hour")
-  } else if (ago.minutes >= 2) {
-    return ago.minutes + " minutes ago"
-  } else {
-    return "Just now"
-  }
-}
+export const timeDifference = (from:Date|string) => dayjs(from.toString()).fromNow()
 
 export const dedupe = (arr:any[],key:string) => {
   const a:string[] = [], b:any[] = []
@@ -155,23 +74,8 @@ export const uniqueArray = (a:string[]) => {
   return a.filter((item) => seen.hasOwnProperty(item) ? false : (seen[item] = true));
 }
 
-export const valToLabel = (val: number) => {
-  let result = val.toString()
-  const tolerances: Array<{ x: number, l: string, d: number, p: number }> = [
-    { x: 1000000, l: "M", d: 1000000, p: 2 },
-    { x: 10000, l: "K", d: 1000, p: 3 },
-    { x: 1000, l: "K", d: 1000, p: 2 },
-  ]
-  tolerances.every((t) => {
-    if (val >= t.x) {
-      result = (Math.round(val) / t.d).toPrecision(t.p).toString()
-      result += t.l
-      return false
-    }
-    return true
-  })
-  return result
-}
+export const abbrNum = (n: number |Number | null | undefined) => n ? new Intl.NumberFormat('en-US', { notation: "compact", compactDisplay: "short" }).format(Number(n)) : "0"
+
 //TODO where is this being used?
 export function hasOwnProperty<X extends {}, Y extends PropertyKey>
   (obj: X, prop: Y): obj is X & Record<Y, unknown> {

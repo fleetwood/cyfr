@@ -8,7 +8,7 @@ import useDebug from "hooks/useDebug"
 import { useBookApi } from "prisma/hooks/useBookApi"
 import { BookCategory, UserFollow } from "prisma/prismaContext"
 import { KeyVal } from "types/props"
-import { uuid } from "utils/helpers"
+import { abbrNum, uuid } from "utils/helpers"
 import BookEditHeader from "./BookEditHeader"
 import BookCover, { BookCoverVariant } from "./BookCover"
 
@@ -160,9 +160,9 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <BookInfo label="Likes" icon={HeartIcon} onClick={onLike} info={bookDetail.likes?.length || 0} />
-        <BookInfo label="Shares" icon={ShareIcon} onClick={onShare} info={bookDetail.shares?.length || 0} />
-        <BookInfo label="Follows" icon={FollowIcon} onClick={onFollow} info={bookDetail.follows?.length || 0} />
+        <BookInfo label="Likes" icon={HeartIcon} onClick={onLike} info={abbrNum(bookDetail.likes?.length)} />
+        <BookInfo label="Shares" icon={ShareIcon} onClick={onShare} info={abbrNum(bookDetail.shares?.length)} />
+        <BookInfo label="Follows" icon={FollowIcon} onClick={onFollow} info={abbrNum(bookDetail.follows?.length)} />
         <BookInfo label="Fans" icon={FireIcon} onClick={onFan} info={fans.length || 0} />
         <BookInfo label="Comments" variant={'NI'} />
         <BookInfo label="Reads" variant={'NI'} />

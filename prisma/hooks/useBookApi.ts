@@ -88,7 +88,7 @@ const updateChapter = async (chapter: Chapter): Promise<boolean> => {
     throw NotImplemented(fileMethod('updateChapter'))
 }
 
-const updateGenre = async (props:ChangeGenreProps):Promise<boolean> => await (await sendApi('book/upsert', props)).data
+const updateGenre = async (props:ChangeGenreProps):Promise<boolean> => await (await sendApi('book/changeGenre', props)).data
 
 const changeCover = async (props:ChangeCoverProps): Promise<BookStub> => await (await sendApi("book/changeCover", props)).data
 

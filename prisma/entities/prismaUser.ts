@@ -18,7 +18,7 @@ import {
   UserFollowProps,
   UserStub
 } from "../prismaContext"
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser")
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG')
 
 type AllPostQueryParams = {
   limit?: Number
@@ -300,7 +300,7 @@ const updatePreferences = async ({
       where: { id },
       data: { 
         name, 
-        slug: name.replaceAll(/[\W_]+/g,"-"),
+        slug: name.replaceAll(/[\W_]+/g,"-").toLowerCase(),
         image },
     })
     if (user) {

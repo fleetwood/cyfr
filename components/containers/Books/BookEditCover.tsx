@@ -1,5 +1,6 @@
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { Dropzone } from "components/forms"
+import EZButton from "components/ui/ezButton"
 import { CheckBadge } from "components/ui/icons"
 import useBookQuery from "hooks/useBookQuery"
 import useDebug from "hooks/useDebug"
@@ -74,7 +75,7 @@ const BookEditCover = ({book, onUpdate}:BookCoverProps) => {
             <img src={cloudinary.resize({url: book.cover.image.url, width: 200})} />}
           </Dropzone>
         </div>
-        <div>Find a Cover</div>
+        <div><EZButton label="Find a cover" className="p-4 rounded-md border-2 bg-secondary text-secondary-content border-secondary-focus" /></div>
       </div>
     {/* <JsonBlock data={book} /> */}
     </div>
