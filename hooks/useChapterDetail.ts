@@ -35,8 +35,8 @@ const useChapterDetail = ({bookDetail, chapterId, cyfrUser}:ChapterDetailProps) 
   const createdAt = chapterDetail?.createdAt ?? ''
   // updatedAt: Date;
   const [updatedAt, setUpdatedAt] = useState<string>(now.toString())
-  // active: boolean;
-  const [active, setActive] = useState<boolean>((chapterDetail?.active??false))
+  // visible: boolean;
+  const [visible, setVisible] = useState<boolean>((chapterDetail?.visible??false))
   // title: string;
   const [title, setTitle] = useState<string>(chapterDetail?.title??'')
   // content: string;

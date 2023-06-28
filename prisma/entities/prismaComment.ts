@@ -37,7 +37,6 @@ const userInbox = async (userId: string): Promise<any[]> => {
     debug(`userInbox`, userId)
     const inbox = await prisma.commentThread.findMany({
       where: {
-        entity: 'INBOX',
         commune: {
           users: {
             some: {
@@ -84,7 +83,6 @@ const upsertInbox = async ({
         }
       },
       create: {
-        entity: "INBOX",
         requiredRole: "OWNER",
         comments: {
           createMany: {
@@ -93,7 +91,6 @@ const upsertInbox = async ({
         },
         commune: {
           create: {
-            entity: "INBOX",
             ownerId: userId,
             users: {
               createMany: {

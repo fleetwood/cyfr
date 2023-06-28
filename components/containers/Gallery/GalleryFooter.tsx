@@ -25,7 +25,7 @@ const GalleryFooter = ({
   const { invalidateFeed } = useFeed('gallery')
   const {like, share} = useGalleryApi()
   const { notify, loginRequired } = useToast()
-  const { setCommentId, showComment, hideComment } = useCommentContext()
+  const { setPostId, showComment, hideComment } = useCommentContext()
 
   const isLoggedIn = () => {
     if (!cyfrUser) {
@@ -43,7 +43,8 @@ const GalleryFooter = ({
   const handleComment = async () => {
     if (!isLoggedIn()) return
     debug('handleComment')
-    setCommentId(gallery.id)
+    notify('Not implemented')
+    // setPostId(gallery.id)
     showComment()
     update()
   }

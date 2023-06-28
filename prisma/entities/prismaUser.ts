@@ -6,7 +6,6 @@ import {
   ResponseError
 } from "../../types/response"
 import {
-  Audience,
   AudienceLevels,
   audienceToLevel,
   BookStubInclude,
@@ -98,7 +97,7 @@ const userInfo = async (id:string): Promise<any> => {
         },
         books: {
           where: {
-            active: true
+            visible: true
           }
         },
         _count: {
@@ -229,11 +228,11 @@ const userInSessionContext = async (context: GetSessionParams | undefined): Prom
 
 const setMembership = async (
   userId: string,
-  audience: Audience,
+  typeId: string,
   cadence: string
 ): Promise<UserFeed | null> => {
   try {
-    debug("setMembership", { userId, audience: audience, cadence })
+    debug("setMembership", { userId, typeId, cadence })
     const user = await prisma.user.update({
       where: {
         id: userId,
@@ -241,16 +240,21 @@ const setMembership = async (
       data: {
         membership: {
           upsert: {
-            create: {
-              level: audience,
-            },
             update: {
-              level: audience,
+              typeId
             },
-          },
+            create: {
+              typeId
+            }
         },
-      },
-      include: UserFeedInclude,
+      }},
+      include: {
+        membership: {
+          include: {
+            type: true
+          }
+        }
+      }
     })
     if (user) {
       return (user as unknown as UserFeed) || null
@@ -314,7 +318,7 @@ const updatePreferences = async ({
   }
 }
 
-const canAccess = async (audience:AudienceLevels, cyfrUser?:CyfrUser):Promise<boolean> => audienceToLevel((cyfrUser?.membership?.level??Audience.PUBLIC).toString()) >= audienceToLevel(audience)
+const canAccess = async (audience:AudienceLevels, cyfrUser?:CyfrUser):Promise<boolean> => audienceToLevel((cyfrUser?.membership?.type.level??'PUBLIC').toString()) >= audienceToLevel(audience)
 
 export const PrismaUser = {
   allUsersQuery,

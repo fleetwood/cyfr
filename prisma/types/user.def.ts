@@ -1,4 +1,4 @@
-import { Book, BookStub, Follow, GalleryStub, Membership, Post, PostStub, User } from "./../prismaContext"
+import { Book, BookStub, Follow, GalleryStub, Membership, MembershipType, Post, PostStub, User } from "./../prismaContext"
 
 export type UserFeed = User & {
   _count:       { sessions: number }
@@ -32,7 +32,9 @@ export type UserDetail = User & {
 }
 
 export type CyfrUser = User & {
-  membership?:  Membership
+  membership?:  Membership & {
+    type:   MembershipType
+  }
   books:        Book & {
     authors: User[]
     chapters: {

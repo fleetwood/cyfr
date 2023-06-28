@@ -21,7 +21,7 @@ const upsert = async (chapter:Chapter) => {
       ...create,
       id: chapter.id,
       content: chapter.content,
-      active: chapter.active,
+      visible: chapter.visible,
       galleryId: chapter.galleryId
     }
     const upsert = {

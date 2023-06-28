@@ -33,7 +33,7 @@ const remove = async ({coverId, authorId}: CoverDeleteProps): Promise<Cover> => 
         id: coverId,
       },
       data: {
-        active: false
+        visible: false
       }
     })
   } catch (error) {

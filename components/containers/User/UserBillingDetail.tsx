@@ -1,4 +1,4 @@
-import { Audience } from "@prisma/client"
+import { AudienceLevels } from "prisma/prismaContext"
 import { useState } from "react"
 import useDebug from "hooks/useDebug"
 import { sendApi } from "utils/api"
@@ -9,8 +9,9 @@ import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 
 const {debug} = useDebug("UserBillingDetail")
 
+// TODO: This should pull from MembershipType instead, since these values can change. Will prolly need an API for that
 type PlanType = {
-    audience: Audience
+    audience: AudienceLevels
     label: string
     description: string
     cta: {
@@ -24,7 +25,7 @@ type PlanType = {
 }
 const plans:PlanType[] = [
     {
-        audience: Audience.USER,
+        audience: 'USER',
         label: 'Free Tier',
         description: 'Everything you need to write a story and get feedback from the larger Cyfr community!',
         cta: {
@@ -37,7 +38,7 @@ const plans:PlanType[] = [
         }
     },
     {
-        audience: Audience.MEMBER,
+        audience: 'MEMBER',
         label: 'Author Tier',
         description: `Once your story is ready, switch to Author Tier to sell your book! Or use the additional
                       features to collaborate even more deeply during the writing process, including collaboration
@@ -52,7 +53,7 @@ const plans:PlanType[] = [
         }
     },
     {
-        audience: Audience.AGENT,
+        audience: 'AGENT',
         label: 'Agent',
         description: `Interact with Authors: track your favorites, including collaboration and analytics, conduct
                       manuscript events and wishlists, and a submission form and tracker!`,
@@ -69,10 +70,10 @@ const plans:PlanType[] = [
 
 const UserBillingDetail = () => {
     const [cyfrUser, isLoading, error, invalidate] = useCyfrUserContext()
-    const initialPlan = cyfrUser.membership ? plans.find(p => p.audience === cyfrUser.membership!.level) : plans[0]
-    const [plan, setPlan] = useState<PlanType>(initialPlan || plans[0])
+    const initialPlan = plans[cyfrUser.membership?.type?.level ?? 0]
+    const [plan, setPlan] = useState<PlanType>(initialPlan)
 
-    const isPlan = (plan:PlanType) => cyfrUser && cyfrUser.membership?.level===plan.audience
+    const isPlan = (plan:PlanType) => initialPlan
 
     const choosePlan = async (plan:PlanType, cadence: string) => {
         debug('choosePlan', {plan: plan.audience.toString(), cadence})
@@ -116,7 +117,7 @@ const UserBillingDetail = () => {
             onClick={() => setPlan(p)}
             >
               <h2 className="text-2xl font-semibold leading-6 text-base-content ">{p.label}</h2>
-              {p.audience  === cyfrUser.membership?.level && <span className="text-success text-xl">{CheckBadge}</span>}
+              {p === initialPlan && <span className="text-success text-xl">{CheckBadge}</span>}
             </div>
           ))}
         </div>
@@ -133,7 +134,7 @@ const UserBillingDetail = () => {
             <p className="font-semibold">Monthly</p>
             <h2 className="text-2xl font-semibold leading-6 text-base-content">${plan.price.monthly}/mo</h2>
             <p className="my-2 text-sm flex-grow">{plan.cta.monthly}</p>
-            {plan.audience !== Audience.USER && 
+            {plan.audience !== 'USER' && 
                 <button className="btn bg-base-content bottom-0" onClick={() => choosePlan(plan, 'monthly')}>Choose {plan.label} monthly</button>
             }
           </div>
@@ -141,13 +142,13 @@ const UserBillingDetail = () => {
               <p className="font-semibold">Annually</p>
               <h2 className="text-2xl font-semibold leading-6 text-primary">${plan.price.annually}/yr</h2>
               <p className="my-2 text-sm flex-grow">{plan.cta.annually}</p>
-              {plan.audience !== Audience.USER && 
+              {plan.audience !== 'USER' && 
               <button className="btn btn-success bottom-0" onClick={() => choosePlan(plan, 'annually')}>Choose {plan.label} annually</button>
               }
           </div>
         </div>
-          {plan.audience === Audience.USER && 
-              <div><button className="btn bg-base-content" onClick={() => choosePlan(plan, 'free')}>Choose {plan.label}</button></div>
+          {plan.audience === 'USER' && 
+            <div><button className="btn bg-base-content" onClick={() => choosePlan(plan, 'free')}>Choose {plan.label}</button></div>
           }
       </div>
     </div>

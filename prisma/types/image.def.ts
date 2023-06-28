@@ -1,16 +1,17 @@
 import { Image, User, Like, Share, Gallery, Post, UserStub, UserStubSelect, MainFeed, GalleryStub, PostStub } from "../prismaContext"
 
 export type ImageUpsertProps = {
-  id?:          string
-  authorId:     string
-  url:          string
-  visible:      boolean
-  height:       number
-  width:        number
-  title?:       string | null
-  galleryId?:   string | null
-  shareId:      string | null
-  postId:       string | null
+  id?:              string
+  authorId:         string
+  url:              string
+  visible:          boolean
+  height:           number
+  width:            number
+  title?:           string | null
+  galleryId?:       string | null
+  shareId:          string | null
+  postId:           string | null
+  commentThreadId:  string | null
 }
 
 export type ImageDeleteProps = {

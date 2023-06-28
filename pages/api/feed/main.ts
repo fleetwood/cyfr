@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import useDebug from "../../../hooks/useDebug"
-import { MainFeed, prisma } from "../../../prisma/prismaContext"
+import useDebug from "hooks/useDebug"
+import { MainFeed, prisma } from "prisma/prismaContext"
 
-import { ResponseResult } from "../../../types/response"
+import { ResponseResult } from "types/response"
 const {debug, err, fileMethod}= useDebug('/api/feed/main')
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse<ResponseResult<MainFeed[]>>) {

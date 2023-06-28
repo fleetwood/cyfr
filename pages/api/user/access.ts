@@ -12,7 +12,7 @@ export default async function handle(
     const {level} = req.body
     const cyfrUser = await PrismaUser.userInSessionReq(req)
     const result = await PrismaUser.canAccess(level,cyfrUser??undefined)
-    debug('handle', {level, user: cyfrUser?.name, id:cyfrUser?.id??'NA', membership: cyfrUser?.membership?.level??'NA', result})
+    debug('handle', {level, user: cyfrUser?.name, id:cyfrUser?.id??'NA', membership: cyfrUser?.membership?.type.level??'NA', result})
     
     res.status(200).json({ result })
   } catch (e: Error | ResponseError | any) {

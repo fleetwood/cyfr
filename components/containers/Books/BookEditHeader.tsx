@@ -132,8 +132,8 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
   const [hook, setHook] = useState<string|null>(bookDetail?.hook)
   const updateHook = async () => update({hook})
 
-  const [active, setactive] = useState<boolean>(bookDetail?.active)
-  const updateActive = (bool:Boolean) => update({active: bool}, false)
+  const [visible, setvisible] = useState<boolean>(bookDetail?.visible)
+  const updateVisible = (bool:Boolean) => update({visible: bool}, false)
 
   const updateProspect = (bool:Boolean) => update({prospect: bool}, false)
   
@@ -249,8 +249,8 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
           <label className="font-semibold w-[50%]">Public</label>
           <div className="py-2">
             <Toggler
-              checked={bookDetail.active}
-              setChecked={updateActive}
+              checked={bookDetail.visible}
+              setChecked={updateVisible}
               falseLabel="Not Visible"
               trueLabel="Visible"
               labelClassName='text-xs'

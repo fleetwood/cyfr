@@ -155,7 +155,7 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
           className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
           <label className="font-semibold w-[50%]">Public</label>
           <span className="text-secondary">
-            {bookDetail.active ? "PUBLIC" : "HIDDEN"}
+            {bookDetail.visible ? "PUBLIC" : "HIDDEN"}
           </span>
         </div>
       </div>

@@ -25,7 +25,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   const comments:PostStub[] = []
   const { invalidateFeed } = useFeed('post')
   const { notify, loginRequired } = useToast()
-  const { setCommentId, showComment, hideComment } = useCommentContext()
+  const { setPostId, showComment, hideComment } = useCommentContext()
   const {share, like} = usePostApi()
 
   const isLoggedIn = () => {
@@ -44,7 +44,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   const handleComment = async () => {
     if (!isLoggedIn()) return
     debug(`handleComment`)
-    setCommentId(post.id)
+    setPostId(post.id)
     showComment()
     update()
   }

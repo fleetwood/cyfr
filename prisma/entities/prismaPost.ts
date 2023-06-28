@@ -1,5 +1,6 @@
+import CommentThread from "components/containers/Comment/CommentThread"
 import useDebug from "../../hooks/useDebug"
-import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub } from "../prismaContext"
+import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, Role } from "../prismaContext"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPost')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
@@ -42,7 +43,8 @@ const createPost = async (props: PostCreateProps): Promise<Post> => {
     content, 
     images: {
       connect: images?.filter(i => i!==null).map(i => {return {id: i.id}}) ?? []
-    }
+    },
+    commentThreadId: ''
   }
 
   try {
@@ -119,25 +121,50 @@ const sharePost = async (props: PostEngageProps): Promise<Post> => {
   }
 }
 
-const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
-  const {commentId, authorId, content} = props
+const commentOnPost = async (props: PostCommentProps): Promise<PostDetail> => {
+  const {postId, authorId, content} = props
   try {
     debug("commentonPost", {...props})
-    const success = await prisma.post.create({
-      data: {
-        authorId,
-        commentId,
-        content
-      }
+    const post = await prisma.post.findFirst({
+      where: {id: postId},
+      include: { commentThread: {
+        include: {
+          comments: true
+        }
+      }}
     })
-    if (success) {
-      return success
+    if (post) {
+      if (post.commentThreadId !== undefined) {
+        const thread = await prisma.commentThread.update({
+          where: {id: post.commentThreadId!},
+          data: {
+            comments: {
+              create: {
+                content,
+                authorId
+              }
+            }
+          }
+        })
+        if (thread) return postDetail(postId!)
+      } else {
+        const thread = await prisma.commentThread.create({
+          data: {
+            post: {
+              connect: {id: post.id}
+            },
+            comments: {
+              create: {
+                content,
+                authorId
+              }
+            }
+          }
+        })
+        if (thread) return postDetail(postId!)
+      }
     }
-    else {
-      throw ({
-        message: 'Unable to comment on post'
-      })
-    }
+    throw ({message: 'Unable to comment on post'})
   } catch (error) {
     info("commentOnPost ERROR: ", error)
     throw { code: fileMethod("commentOnPost"), message: "Post not commented!" }

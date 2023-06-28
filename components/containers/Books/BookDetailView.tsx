@@ -78,7 +78,7 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
   }
 
   // TODO this should be handled by commune
-  if (bookDetail && bookDetail.active === false && isAuthor === false) return <ErrorPage message="You do not have permissions to perform that action" />
+  if (bookDetail && bookDetail.visible === false && isAuthor === false) return <ErrorPage message="You do not have permissions to perform that action" />
 
   return (
     <div>

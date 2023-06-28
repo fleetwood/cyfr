@@ -47,7 +47,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   const [coverGallery, setCoverGallery] = useState<Gallery | null>()
 
   const [title, setTitle] = useState<string | null>(book?.title || null)
-  const [active, setActive] = useState<boolean>(book?.active || false)
+  const [visible, setVisible] = useState<boolean>(book?.visible || false)
   const [prospect, setProspect] = useState<boolean>(book?.prospect || false)
   const [fiction, setFiction] = useState<boolean>(book?.fiction || true)
   const [status, setStatus] = useState<BookStatus>(book?.status || "DRAFT")
@@ -73,7 +73,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
     const bookProps:BookUpsertProps = {
       ...book,
       title: title!,
-      active,
+      visible,
       prospect,
       status,
       fiction,
@@ -194,8 +194,8 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
           </div>
           <div className="w-1/2">
             <Toggler
-              checked={active}
-              setChecked={setActive}
+              checked={visible}
+              setChecked={setVisible}
               falseLabel="Not Visible"
               trueLabel="Visible"
             />
@@ -217,7 +217,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
             <div>GENRE: <span>TO DO</span></div>
             <div>Status: {book.status}</div>
             <div>Word count: {book.words}</div>
-            <div>Active: {book.active ? 'Yes' : 'Hidden'}</div>
+            <div>Visible: {book.visible ? 'Yes' : 'Hidden'}</div>
             <div>Agents: {book.prospect ? 'Will consider' : 'Not looking for representation'}</div>
             <div>{book.hook}</div>
             <div>{book.synopsis}</div>

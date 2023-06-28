@@ -23,7 +23,7 @@ const covers = async (byGenre?: string): Promise<Cover[] | null> => {
   try {
     const results = await prisma.cover.findMany({
       where: {
-        active: true,
+        visible: true,
         genreId: byGenre
       },
       include: {
@@ -86,7 +86,7 @@ const addCover = async (props:GenreAddCoverProps):Promise<GenreStub> => {
   try {
     const cover = await prisma.cover.create({
       data: {
-        active: true,
+        visible: true,
         imageId: props.image.id,
         authorId: props.image.authorId,
         genreId: props.id

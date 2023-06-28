@@ -36,9 +36,9 @@ const all = async (): Promise<ShareFeed[] | []> => {
         post: {
           include: {
             author: true,
-            post_comments: {
+            commentThread: {
               include: {
-                author: true
+                comments: true
               }
             },
             shares: true,

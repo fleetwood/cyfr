@@ -1,28 +1,28 @@
-import { Image, ImageFeed, Like, Post, Share, User } from "./../prismaContext";
-import { ImageFeedInclude } from "./image.def";
-import { UserFeed, UserFeedInclude, UserStub } from "./user.def";
+import { Counts, CountsInclude, Image, ImageFeed, Like, Post, Share, User } from "./../prismaContext"
+import { ImageFeedInclude } from "./image.def"
+import { UserFeed, UserFeedInclude, UserStub } from "./user.def"
 
 export type PostCreateProps = {
-  content: string;
-  authorId: string;
-  images?: Image[];
-};
+  content: string
+  authorId: string
+  images?: Image[]
+}
 
 export type PostDeleteProps = {
-  postId: string;
-  authorId: string;
-};
+  postId: string
+  authorId: string
+}
 
 export type PostEngageProps = {
-  authorId: string;
-  postId: string;
-};
+  authorId: string
+  postId:   string
+}
 
 export type PostCommentProps = {
-  commentId: string;
-  authorId: string;
-  content: string;
-};
+  postId?:    string
+  authorId:   string
+  content:    string
+}
 
 export const PostBaseInclude = {
   author: true,
@@ -30,22 +30,31 @@ export const PostBaseInclude = {
   post_comments: true,
   likes: true,
   shares: true,
-};
+}
 
 type PostComments = Post & {
-  author: User;
-};
+  author: User
+}
 
-export type PostStub = Post & {
-  createdat?:     string
-  updatedat?:     string
+export type PostStub = Post & Counts & {
   author:         UserStub
-  comment?:       Post | null;
-  post_comments:  (Post & { author: User })[];
-  likes:          UserStub[];
-  shares:         UserStub[];
-  images:         Image[];
-};
+  commentThread:  (Post & { author: User })[]
+  likes:          UserStub[]
+  shares:         UserStub[]
+  images:         Image[]
+}
+
+export const PostStubInclude = {
+  author: true,
+  commentThread: {
+    include: {
+      comments: true,
+      commune: true,
+    }
+  },
+  images: true,
+  ...CountsInclude
+}
 
 export const PostFeedInclude = {
   author: true,
@@ -59,12 +68,12 @@ export const PostFeedInclude = {
 export type PostDetail = Post & {
   createdat?: string
   updatedat?: string
-  author: UserFeed;
-  post_comments: PostStub[];
-  likes: UserStub[];
-  shares: UserStub[];
-  images: ImageFeed[];
-};
+  author: UserFeed
+  post_comments: PostStub[]
+  likes: UserStub[]
+  shares: UserStub[]
+  images: ImageFeed[]
+}
 
 export const PostDetailInclude = {
   author: { include: UserFeedInclude },
@@ -72,4 +81,4 @@ export const PostDetailInclude = {
   likes: { include: { author: true } },
   shares: { include: { author: true } },
   images: { include: ImageFeedInclude },
-};
+}

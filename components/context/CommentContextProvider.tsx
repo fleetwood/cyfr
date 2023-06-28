@@ -12,8 +12,8 @@ type CommentProviderProps = {
 }
 
 type CommentProviderType = {
-  commentId: string|null
-  setCommentId: Function
+  postId: string|null
+  setPostId: Function
   showComment: Function
   hideComment: Function
 }
@@ -32,7 +32,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
   
   const [checked, setChecked] = useState(false)
   const [content, setContent] = useState<string | null>(null)
-  const [commentId, setCommentId] = useState<string|null>(null)
+  const [postId, setPostId] = useState<string|null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
 
   // @ts-ignore
@@ -41,7 +41,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
   // @ts-ignore
   const hideComment = () => {
     setContent(null)
-    setCommentId(null)
+    setPostId(null)
     setChecked(() => false)
   }
 
@@ -54,7 +54,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
     const post = await commentOnPost({
       content: content!,
       authorId: cyfrUser.id,
-      commentId: commentId!,
+      postId: postId!,
     })
 
     hideComment()
@@ -68,11 +68,11 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
   }
 
   useEffect(() => {
-    const disabled = !cyfrUser || !commentId || !content || content.length < 1
+    const disabled = !cyfrUser || !postId || !content || content.length < 1
     setIsDisabled(() => disabled)
   }, [content])
 
-  const value={commentId, setCommentId, showComment, hideComment}
+  const value={postId, setPostId, showComment, hideComment}
 
   return (
     <CommentContext.Provider value={value}>

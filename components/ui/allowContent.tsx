@@ -13,7 +13,7 @@ type AllowContentProps = {
 
 const AllowContent = ({redirect,required,children}: AllowContentProps) => {
   const [cyfrUser] = useCyfrUser()
-  const level = cyfrUser?.membership?.level ?? null
+  const level = cyfrUser?.membership?.type?.level ?? null
   const allowed = level !== null
 
   if (allowed) {

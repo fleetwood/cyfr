@@ -35,7 +35,7 @@ export type BookUpsertProps = {
   title:        string,
   slug?:        string,
   completeAt?:  Date|null,
-  active:       boolean,
+  visible:      boolean,
   fiction:      boolean,
   prospect:     boolean,
   genreId:      string,

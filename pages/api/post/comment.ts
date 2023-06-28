@@ -1,22 +1,25 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { ResponseResult, ResponseError, GetResponseError } from "../../../types/response"
-import { todo, logError } from "../../../utils/log"
-import { Post, PrismaPost } from "../../../prisma/prismaContext"
+import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response"
+
+import useDebug from "hooks/useDebug"
+import { PostDetail, PrismaPost } from "prisma/prismaContext"
+
+const {info} = useDebug('api/post/comment')
 
 export default async function handle(
     req: NextApiRequest,
-    res: NextApiResponse<ResponseResult<Post>>
+    res: NextApiResponse<ResponseResult<PostDetail>>
   ) {
-    const { commentId, authorId, content } = req.body
+    const { postId, authorId, content } = req.body
     try {
-      const result = await PrismaPost.commentOnPost({commentId, authorId, content})
+      const result = await PrismaPost.commentOnPost({postId, authorId, content})
       if (result) {
         res.status(200).json({ result })
       } else {
         throw { code: "api/post/comment", message: "Failed to comment on post" }
       }
     } catch (e: Error | ResponseError | any) {
-      logError("\tFAIL", e)
+      info("\tFAIL", e)
       const error = GetResponseError(e)
       res.status(500).json({ error })
     }

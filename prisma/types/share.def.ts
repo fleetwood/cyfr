@@ -26,3 +26,8 @@ export type ShareFeed = Share & {
 export type ShareStub = Share & {
   author: UserStub
 }
+
+export const LikesSharesInclude = {
+  likes: true,
+  shares: true
+}
