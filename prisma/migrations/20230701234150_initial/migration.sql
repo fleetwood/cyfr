@@ -14,6 +14,23 @@ CREATE TYPE "BlockType" AS ENUM ('BOOK', 'GALLERY', 'THREAD', 'USER', 'SITE');
 CREATE TYPE "NotifType" AS ENUM ('BOOK', 'REVIEW', 'SUBMISSION', 'COMMENT', 'LIKE', 'SHARE', 'FOLLOW', 'FAN', 'CHAT', 'EVENT', 'BLOCK');
 
 -- CreateTable
+CREATE TABLE "Block" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiresAt" TIMESTAMP(3),
+    "visible" BOOLEAN NOT NULL DEFAULT true,
+    "blockType" "BlockType" NOT NULL,
+    "creatorId" TEXT NOT NULL,
+    "blockedId" TEXT NOT NULL,
+    "galleryId" TEXT,
+    "threadId" TEXT,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Block_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "name" TEXT,
@@ -25,6 +42,63 @@ CREATE TABLE "User" (
     "membershipId" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Author" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "visible" BOOLEAN NOT NULL DEFAULT true,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Author_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Artist" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "visible" BOOLEAN NOT NULL DEFAULT true,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Artist_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Editor" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "visible" BOOLEAN NOT NULL DEFAULT true,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Editor_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Reader" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "visible" BOOLEAN NOT NULL DEFAULT true,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Reader_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Agent" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "visible" BOOLEAN NOT NULL DEFAULT true,
+    "description" TEXT,
+    "publisherId" TEXT,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Agent_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -53,9 +127,9 @@ CREATE TABLE "Gallery" (
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "visible" BOOLEAN NOT NULL DEFAULT true,
+    "creatorId" TEXT NOT NULL,
     "title" TEXT,
     "description" TEXT,
-    "authorId" TEXT NOT NULL,
     "shareId" TEXT,
 
     CONSTRAINT "Gallery_pkey" PRIMARY KEY ("id")
@@ -68,7 +142,7 @@ CREATE TABLE "Image" (
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "visible" BOOLEAN NOT NULL DEFAULT true,
     "title" TEXT,
-    "authorId" TEXT NOT NULL,
+    "creatorId" TEXT NOT NULL,
     "galleryId" TEXT,
     "shareId" TEXT,
     "url" TEXT NOT NULL,
@@ -86,49 +160,15 @@ CREATE TABLE "Cover" (
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "visible" BOOLEAN NOT NULL DEFAULT true,
+    "creatorId" TEXT NOT NULL,
     "exclusive" BOOLEAN NOT NULL DEFAULT false,
-    "authorId" TEXT NOT NULL,
-    "bookId" TEXT,
-    "imageId" TEXT NOT NULL,
-    "genreId" TEXT,
     "description" TEXT,
+    "bookId" TEXT,
     "commentThreadId" TEXT,
+    "genreId" TEXT,
+    "imageId" TEXT NOT NULL,
 
     CONSTRAINT "Cover_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Like" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "authorId" TEXT NOT NULL,
-    "postId" TEXT,
-    "galleryId" TEXT,
-    "imageId" TEXT,
-    "commentId" TEXT,
-    "characterId" TEXT,
-    "bookId" TEXT,
-    "coverId" TEXT,
-
-    CONSTRAINT "Like_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Share" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "visible" BOOLEAN NOT NULL DEFAULT true,
-    "authorId" TEXT NOT NULL,
-    "postId" TEXT,
-    "galleryId" TEXT,
-    "imageId" TEXT,
-    "characterId" TEXT,
-    "bookId" TEXT,
-    "coverId" TEXT,
-
-    CONSTRAINT "Share_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -164,7 +204,7 @@ CREATE TABLE "ChatMessage" (
     "visible" BOOLEAN NOT NULL DEFAULT true,
     "seen" BOOLEAN NOT NULL DEFAULT false,
     "chatRoomId" TEXT NOT NULL,
-    "authorId" TEXT NOT NULL,
+    "creatorId" TEXT NOT NULL,
     "content" TEXT NOT NULL,
 
     CONSTRAINT "ChatMessage_pkey" PRIMARY KEY ("id")
@@ -192,16 +232,6 @@ CREATE TABLE "Address" (
 );
 
 -- CreateTable
-CREATE TABLE "Editor" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "visible" BOOLEAN NOT NULL DEFAULT true,
-
-    CONSTRAINT "Editor_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Notif" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -216,18 +246,6 @@ CREATE TABLE "Notif" (
     "eventId" TEXT,
 
     CONSTRAINT "Notif_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Agent" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "visible" BOOLEAN NOT NULL DEFAULT true,
-    "description" TEXT,
-    "publisherId" TEXT NOT NULL,
-
-    CONSTRAINT "Agent_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -266,6 +284,7 @@ CREATE TABLE "Submission" (
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "visible" BOOLEAN NOT NULL DEFAULT true,
+    "creatorId" TEXT NOT NULL,
 
     CONSTRAINT "Submission_pkey" PRIMARY KEY ("id")
 );
@@ -276,7 +295,18 @@ CREATE TABLE "Review" (
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "visible" BOOLEAN NOT NULL DEFAULT true,
+    "creatorId" TEXT NOT NULL,
     "commentThreadId" TEXT,
+    "authorId" TEXT,
+    "agentId" TEXT,
+    "artistId" TEXT,
+    "editorId" TEXT,
+    "bookId" TEXT,
+    "characterId" TEXT,
+    "chapterId" TEXT,
+    "submissionId" TEXT,
+    "coverId" TEXT,
+    "readerId" TEXT,
 
     CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
 );
@@ -287,7 +317,7 @@ CREATE TABLE "Comment" (
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "threadId" TEXT NOT NULL,
-    "authorId" TEXT NOT NULL,
+    "creatorId" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "visible" BOOLEAN NOT NULL DEFAULT true,
 
@@ -371,6 +401,7 @@ CREATE TABLE "Book" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "ownerId" TEXT NOT NULL,
     "startedAt" TIMESTAMPTZ(3),
     "completeAt" TIMESTAMPTZ(3),
     "visible" BOOLEAN NOT NULL DEFAULT true,
@@ -379,6 +410,8 @@ CREATE TABLE "Book" (
     "status" "BookStatus" DEFAULT 'PRIVATE',
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
+    "ISBN" TEXT,
+    "EISBN" TEXT,
     "hook" TEXT,
     "synopsis" TEXT,
     "back" TEXT,
@@ -391,21 +424,6 @@ CREATE TABLE "Book" (
     "publisherId" TEXT,
 
     CONSTRAINT "Book_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Post" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "visible" BOOLEAN NOT NULL DEFAULT true,
-    "content" TEXT,
-    "shareId" TEXT,
-    "commentId" TEXT,
-    "authorId" TEXT NOT NULL,
-    "commentThreadId" TEXT,
-
-    CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -450,20 +468,45 @@ CREATE TABLE "Chapter" (
 );
 
 -- CreateTable
-CREATE TABLE "Block" (
+CREATE TABLE "Post" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "expiresAt" TIMESTAMP(3),
     "visible" BOOLEAN NOT NULL DEFAULT true,
-    "blockType" "BlockType" NOT NULL,
-    "authorId" TEXT NOT NULL,
-    "blockedId" TEXT NOT NULL,
+    "creatorId" TEXT NOT NULL,
+    "content" TEXT,
+    "commentThreadId" TEXT,
+    "postId" TEXT,
     "galleryId" TEXT,
-    "threadId" TEXT,
-    "userId" TEXT NOT NULL,
+    "imageId" TEXT,
+    "characterId" TEXT,
+    "bookId" TEXT,
+    "coverId" TEXT,
 
-    CONSTRAINT "Block_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Like" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "creatorId" TEXT NOT NULL,
+    "authorId" TEXT,
+    "agentId" TEXT,
+    "publisherId" TEXT,
+    "submissionId" TEXT,
+    "eventId" TEXT,
+    "reviewId" TEXT,
+    "postId" TEXT,
+    "galleryId" TEXT,
+    "imageId" TEXT,
+    "commentId" TEXT,
+    "characterId" TEXT,
+    "bookId" TEXT,
+    "coverId" TEXT,
+
+    CONSTRAINT "Like_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -504,7 +547,25 @@ CREATE TABLE "Session" (
 );
 
 -- CreateTable
-CREATE TABLE "_user_chats" (
+CREATE TABLE "_book_authors" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_book_artists" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_gallery_artists" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_cover_artists" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
@@ -517,6 +578,12 @@ CREATE TABLE "_agent_authors" (
 
 -- CreateTable
 CREATE TABLE "_book_agents" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_user_chats" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
@@ -552,7 +619,7 @@ CREATE TABLE "_book_editors" (
 );
 
 -- CreateTable
-CREATE TABLE "_user_books" (
+CREATE TABLE "_book_readers" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
@@ -562,6 +629,9 @@ CREATE TABLE "_chapter_characters" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL
 );
+
+-- CreateIndex
+CREATE INDEX "Block_id_userId_creatorId_threadId_blockType_idx" ON "Block"("id", "userId", "creatorId", "threadId", "blockType");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
@@ -577,6 +647,24 @@ CREATE UNIQUE INDEX "User_membershipId_key" ON "User"("membershipId");
 
 -- CreateIndex
 CREATE INDEX "User_id_name_email_idx" ON "User"("id", "name", "email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Author_userId_key" ON "Author"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Artist_userId_key" ON "Artist"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Editor_userId_key" ON "Editor"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Reader_userId_key" ON "Reader"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Agent_userId_key" ON "Agent"("userId");
+
+-- CreateIndex
+CREATE INDEX "Agent_id_idx" ON "Agent"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "News_slug_key" ON "News"("slug");
@@ -603,25 +691,16 @@ CREATE UNIQUE INDEX "Image_commentThreadId_key" ON "Image"("commentThreadId");
 CREATE UNIQUE INDEX "Cover_bookId_key" ON "Cover"("bookId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Cover_imageId_key" ON "Cover"("imageId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Cover_commentThreadId_key" ON "Cover"("commentThreadId");
 
 -- CreateIndex
-CREATE INDEX "Like_id_authorId_postId_idx" ON "Like"("id", "authorId", "postId");
-
--- CreateIndex
-CREATE INDEX "Share_id_authorId_postId_idx" ON "Share"("id", "authorId", "postId");
+CREATE UNIQUE INDEX "Cover_imageId_key" ON "Cover"("imageId");
 
 -- CreateIndex
 CREATE INDEX "Follow_id_followerId_followingId_idx" ON "Follow"("id", "followerId", "followingId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ChatRoom_party_key" ON "ChatRoom"("party");
-
--- CreateIndex
-CREATE INDEX "Agent_id_idx" ON "Agent"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Publisher_addressId_key" ON "Publisher"("addressId");
@@ -669,12 +748,6 @@ CREATE UNIQUE INDEX "Book_galleryId_key" ON "Book"("galleryId");
 CREATE UNIQUE INDEX "Book_commentThreadId_key" ON "Book"("commentThreadId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Post_commentThreadId_key" ON "Post"("commentThreadId");
-
--- CreateIndex
-CREATE INDEX "Post_id_authorId_shareId_visible_createdAt_idx" ON "Post"("id", "authorId", "shareId", "visible", "createdAt");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Character_galleryId_key" ON "Character"("galleryId");
 
 -- CreateIndex
@@ -687,7 +760,16 @@ CREATE UNIQUE INDEX "Chapter_galleryId_key" ON "Chapter"("galleryId");
 CREATE UNIQUE INDEX "Chapter_commentThreadId_key" ON "Chapter"("commentThreadId");
 
 -- CreateIndex
-CREATE INDEX "Block_id_userId_authorId_threadId_blockType_idx" ON "Block"("id", "userId", "authorId", "threadId", "blockType");
+CREATE UNIQUE INDEX "Post_commentThreadId_key" ON "Post"("commentThreadId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Post_postId_key" ON "Post"("postId");
+
+-- CreateIndex
+CREATE INDEX "Post_id_creatorId_visible_createdAt_idx" ON "Post"("id", "creatorId", "visible", "createdAt");
+
+-- CreateIndex
+CREATE INDEX "Like_id_creatorId_postId_idx" ON "Like"("id", "creatorId", "postId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token");
@@ -702,10 +784,28 @@ CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provi
 CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_user_chats_AB_unique" ON "_user_chats"("A", "B");
+CREATE UNIQUE INDEX "_book_authors_AB_unique" ON "_book_authors"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_user_chats_B_index" ON "_user_chats"("B");
+CREATE INDEX "_book_authors_B_index" ON "_book_authors"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_book_artists_AB_unique" ON "_book_artists"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_book_artists_B_index" ON "_book_artists"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_gallery_artists_AB_unique" ON "_gallery_artists"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_gallery_artists_B_index" ON "_gallery_artists"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_cover_artists_AB_unique" ON "_cover_artists"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_cover_artists_B_index" ON "_cover_artists"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_agent_authors_AB_unique" ON "_agent_authors"("A", "B");
@@ -718,6 +818,12 @@ CREATE UNIQUE INDEX "_book_agents_AB_unique" ON "_book_agents"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_book_agents_B_index" ON "_book_agents"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_user_chats_AB_unique" ON "_user_chats"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_user_chats_B_index" ON "_user_chats"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_event_attendees_AB_unique" ON "_event_attendees"("A", "B");
@@ -750,10 +856,10 @@ CREATE UNIQUE INDEX "_book_editors_AB_unique" ON "_book_editors"("A", "B");
 CREATE INDEX "_book_editors_B_index" ON "_book_editors"("B");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_user_books_AB_unique" ON "_user_books"("A", "B");
+CREATE UNIQUE INDEX "_book_readers_AB_unique" ON "_book_readers"("A", "B");
 
 -- CreateIndex
-CREATE INDEX "_user_books_B_index" ON "_user_books"("B");
+CREATE INDEX "_book_readers_B_index" ON "_book_readers"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_chapter_characters_AB_unique" ON "_chapter_characters"("A", "B");
@@ -762,16 +868,46 @@ CREATE UNIQUE INDEX "_chapter_characters_AB_unique" ON "_chapter_characters"("A"
 CREATE INDEX "_chapter_characters_B_index" ON "_chapter_characters"("B");
 
 -- AddForeignKey
+ALTER TABLE "Block" ADD CONSTRAINT "Block_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Block" ADD CONSTRAINT "Block_galleryId_fkey" FOREIGN KEY ("galleryId") REFERENCES "Gallery"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Block" ADD CONSTRAINT "Block_threadId_fkey" FOREIGN KEY ("threadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Block" ADD CONSTRAINT "Block_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_membershipId_fkey" FOREIGN KEY ("membershipId") REFERENCES "Membership"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Author" ADD CONSTRAINT "Author_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Artist" ADD CONSTRAINT "Artist_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Editor" ADD CONSTRAINT "Editor_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Reader" ADD CONSTRAINT "Reader_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Agent" ADD CONSTRAINT "Agent_publisherId_fkey" FOREIGN KEY ("publisherId") REFERENCES "Publisher"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Agent" ADD CONSTRAINT "Agent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "News" ADD CONSTRAINT "News_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Gallery" ADD CONSTRAINT "Gallery_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Gallery" ADD CONSTRAINT "Gallery_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Image" ADD CONSTRAINT "Image_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Image" ADD CONSTRAINT "Image_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Image" ADD CONSTRAINT "Image_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -783,7 +919,7 @@ ALTER TABLE "Image" ADD CONSTRAINT "Image_galleryId_fkey" FOREIGN KEY ("galleryI
 ALTER TABLE "Image" ADD CONSTRAINT "Image_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Cover" ADD CONSTRAINT "Cover_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Cover" ADD CONSTRAINT "Cover_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Cover" ADD CONSTRAINT "Cover_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -798,51 +934,6 @@ ALTER TABLE "Cover" ADD CONSTRAINT "Cover_genreId_fkey" FOREIGN KEY ("genreId") 
 ALTER TABLE "Cover" ADD CONSTRAINT "Cover_imageId_fkey" FOREIGN KEY ("imageId") REFERENCES "Image"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Like" ADD CONSTRAINT "Like_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Like" ADD CONSTRAINT "Like_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Like" ADD CONSTRAINT "Like_characterId_fkey" FOREIGN KEY ("characterId") REFERENCES "Character"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Like" ADD CONSTRAINT "Like_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Like" ADD CONSTRAINT "Like_coverId_fkey" FOREIGN KEY ("coverId") REFERENCES "Cover"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Like" ADD CONSTRAINT "Like_galleryId_fkey" FOREIGN KEY ("galleryId") REFERENCES "Gallery"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Like" ADD CONSTRAINT "Like_imageId_fkey" FOREIGN KEY ("imageId") REFERENCES "Image"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Like" ADD CONSTRAINT "Like_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Share" ADD CONSTRAINT "Share_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Share" ADD CONSTRAINT "Share_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Share" ADD CONSTRAINT "Share_characterId_fkey" FOREIGN KEY ("characterId") REFERENCES "Character"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Share" ADD CONSTRAINT "Share_coverId_fkey" FOREIGN KEY ("coverId") REFERENCES "Cover"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Share" ADD CONSTRAINT "Share_galleryId_fkey" FOREIGN KEY ("galleryId") REFERENCES "Gallery"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Share" ADD CONSTRAINT "Share_imageId_fkey" FOREIGN KEY ("imageId") REFERENCES "Image"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Share" ADD CONSTRAINT "Share_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Follow" ADD CONSTRAINT "Follow_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -855,7 +946,7 @@ ALTER TABLE "Follow" ADD CONSTRAINT "Follow_followerId_fkey" FOREIGN KEY ("follo
 ALTER TABLE "Follow" ADD CONSTRAINT "Follow_followingId_fkey" FOREIGN KEY ("followingId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_chatRoomId_fkey" FOREIGN KEY ("chatRoomId") REFERENCES "ChatRoom"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -867,9 +958,6 @@ ALTER TABLE "Notif" ADD CONSTRAINT "Notif_eventId_fkey" FOREIGN KEY ("eventId") 
 ALTER TABLE "Notif" ADD CONSTRAINT "Notif_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Agent" ADD CONSTRAINT "Agent_publisherId_fkey" FOREIGN KEY ("publisherId") REFERENCES "Publisher"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Publisher" ADD CONSTRAINT "Publisher_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "Address"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -879,10 +967,46 @@ ALTER TABLE "Event" ADD CONSTRAINT "Event_addressId_fkey" FOREIGN KEY ("addressI
 ALTER TABLE "Event" ADD CONSTRAINT "Event_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Submission" ADD CONSTRAINT "Submission_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Review" ADD CONSTRAINT "Review_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Review" ADD CONSTRAINT "Review_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "Author"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_agentId_fkey" FOREIGN KEY ("agentId") REFERENCES "Agent"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_artistId_fkey" FOREIGN KEY ("artistId") REFERENCES "Artist"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_editorId_fkey" FOREIGN KEY ("editorId") REFERENCES "Editor"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_characterId_fkey" FOREIGN KEY ("characterId") REFERENCES "Character"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_chapterId_fkey" FOREIGN KEY ("chapterId") REFERENCES "Chapter"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_submissionId_fkey" FOREIGN KEY ("submissionId") REFERENCES "Submission"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_coverId_fkey" FOREIGN KEY ("coverId") REFERENCES "Cover"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_readerId_fkey" FOREIGN KEY ("readerId") REFERENCES "Reader"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_threadId_fkey" FOREIGN KEY ("threadId") REFERENCES "CommentThread"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -906,6 +1030,9 @@ ALTER TABLE "CommuneUser" ADD CONSTRAINT "CommuneUser_userId_fkey" FOREIGN KEY (
 ALTER TABLE "Membership" ADD CONSTRAINT "Membership_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "MembershipType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Book" ADD CONSTRAINT "Book_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Book" ADD CONSTRAINT "Book_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -916,12 +1043,6 @@ ALTER TABLE "Book" ADD CONSTRAINT "Book_genreId_fkey" FOREIGN KEY ("genreId") RE
 
 -- AddForeignKey
 ALTER TABLE "Book" ADD CONSTRAINT "Book_publisherId_fkey" FOREIGN KEY ("publisherId") REFERENCES "Publisher"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Post" ADD CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Post" ADD CONSTRAINT "Post_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Character" ADD CONSTRAINT "Character_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -939,16 +1060,70 @@ ALTER TABLE "Chapter" ADD CONSTRAINT "Chapter_commentThreadId_fkey" FOREIGN KEY 
 ALTER TABLE "Chapter" ADD CONSTRAINT "Chapter_galleryId_fkey" FOREIGN KEY ("galleryId") REFERENCES "Gallery"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Block" ADD CONSTRAINT "Block_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Post" ADD CONSTRAINT "Post_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Block" ADD CONSTRAINT "Block_galleryId_fkey" FOREIGN KEY ("galleryId") REFERENCES "Gallery"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Post" ADD CONSTRAINT "Post_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Block" ADD CONSTRAINT "Block_threadId_fkey" FOREIGN KEY ("threadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Post" ADD CONSTRAINT "Post_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Block" ADD CONSTRAINT "Block_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Post" ADD CONSTRAINT "Post_galleryId_fkey" FOREIGN KEY ("galleryId") REFERENCES "Gallery"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Post" ADD CONSTRAINT "Post_imageId_fkey" FOREIGN KEY ("imageId") REFERENCES "Image"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Post" ADD CONSTRAINT "Post_characterId_fkey" FOREIGN KEY ("characterId") REFERENCES "Character"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Post" ADD CONSTRAINT "Post_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Post" ADD CONSTRAINT "Post_coverId_fkey" FOREIGN KEY ("coverId") REFERENCES "Cover"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_agentId_fkey" FOREIGN KEY ("agentId") REFERENCES "Agent"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_publisherId_fkey" FOREIGN KEY ("publisherId") REFERENCES "Publisher"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_submissionId_fkey" FOREIGN KEY ("submissionId") REFERENCES "Submission"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_reviewId_fkey" FOREIGN KEY ("reviewId") REFERENCES "Review"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_characterId_fkey" FOREIGN KEY ("characterId") REFERENCES "Character"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_commentId_fkey" FOREIGN KEY ("commentId") REFERENCES "Comment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_coverId_fkey" FOREIGN KEY ("coverId") REFERENCES "Cover"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_galleryId_fkey" FOREIGN KEY ("galleryId") REFERENCES "Gallery"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_imageId_fkey" FOREIGN KEY ("imageId") REFERENCES "Image"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -957,10 +1132,28 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_user_chats" ADD CONSTRAINT "_user_chats_A_fkey" FOREIGN KEY ("A") REFERENCES "ChatRoom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_book_authors" ADD CONSTRAINT "_book_authors_A_fkey" FOREIGN KEY ("A") REFERENCES "Author"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_user_chats" ADD CONSTRAINT "_user_chats_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_book_authors" ADD CONSTRAINT "_book_authors_B_fkey" FOREIGN KEY ("B") REFERENCES "Book"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_book_artists" ADD CONSTRAINT "_book_artists_A_fkey" FOREIGN KEY ("A") REFERENCES "Artist"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_book_artists" ADD CONSTRAINT "_book_artists_B_fkey" FOREIGN KEY ("B") REFERENCES "Book"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_gallery_artists" ADD CONSTRAINT "_gallery_artists_A_fkey" FOREIGN KEY ("A") REFERENCES "Artist"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_gallery_artists" ADD CONSTRAINT "_gallery_artists_B_fkey" FOREIGN KEY ("B") REFERENCES "Gallery"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_cover_artists" ADD CONSTRAINT "_cover_artists_A_fkey" FOREIGN KEY ("A") REFERENCES "Artist"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_cover_artists" ADD CONSTRAINT "_cover_artists_B_fkey" FOREIGN KEY ("B") REFERENCES "Cover"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_agent_authors" ADD CONSTRAINT "_agent_authors_A_fkey" FOREIGN KEY ("A") REFERENCES "Agent"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -973,6 +1166,12 @@ ALTER TABLE "_book_agents" ADD CONSTRAINT "_book_agents_A_fkey" FOREIGN KEY ("A"
 
 -- AddForeignKey
 ALTER TABLE "_book_agents" ADD CONSTRAINT "_book_agents_B_fkey" FOREIGN KEY ("B") REFERENCES "Book"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_user_chats" ADD CONSTRAINT "_user_chats_A_fkey" FOREIGN KEY ("A") REFERENCES "ChatRoom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_user_chats" ADD CONSTRAINT "_user_chats_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_event_attendees" ADD CONSTRAINT "_event_attendees_A_fkey" FOREIGN KEY ("A") REFERENCES "Event"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -1005,10 +1204,10 @@ ALTER TABLE "_book_editors" ADD CONSTRAINT "_book_editors_A_fkey" FOREIGN KEY ("
 ALTER TABLE "_book_editors" ADD CONSTRAINT "_book_editors_B_fkey" FOREIGN KEY ("B") REFERENCES "Editor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_user_books" ADD CONSTRAINT "_user_books_A_fkey" FOREIGN KEY ("A") REFERENCES "Book"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_book_readers" ADD CONSTRAINT "_book_readers_A_fkey" FOREIGN KEY ("A") REFERENCES "Book"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_user_books" ADD CONSTRAINT "_user_books_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_book_readers" ADD CONSTRAINT "_book_readers_B_fkey" FOREIGN KEY ("B") REFERENCES "Reader"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_chapter_characters" ADD CONSTRAINT "_chapter_characters_A_fkey" FOREIGN KEY ("A") REFERENCES "Chapter"("id") ON DELETE CASCADE ON UPDATE CASCADE;

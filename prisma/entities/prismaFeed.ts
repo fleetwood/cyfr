@@ -6,17 +6,51 @@ const main = async (): Promise<any> => {
   try {
     debug('main')
     // Property '_count' is missing in type 'Post & { [x: string]: never; [x: number]: never; [x: symbol]: never; }' but required in type 'Counts'.ts
-    return await prisma.post.findMany({
-      where: {visible: true},
+    return await prisma.post.findMany({    
+      where: {
+        visible: true
+      },
       include: {
-        images: true,
+        author: true,
+        images: {
+          include: {
+            _count: {
+              select: {
+                likes: true,
+                shares: true
+              }
+            }
+          }
+        },
+        commentThread: {
+          include: {
+            comments: true
+          }
+        },
+        likes: {
+          include: {
+            author: true
+          },
+          take: 10
+        },
+        shares: {
+          include: {
+            author: true
+          },
+          take: 10
+        },
         _count: {
           select: {
             likes: true,
             shares: true
-          }
+          } 
         }
-      }
+      },
+      orderBy: {
+        updatedAt: 'desc'
+      },
+      take: 50,
+      skip: 0
     })
   } catch (error) {
     err('postDetail error', {error})

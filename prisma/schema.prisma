@@ -9,16 +9,41 @@ datasource db {
   shadowDatabaseUrl = env("DIGITAL_OCEAN_CYFR_DB_SHADOW")
 }
 
+model Block {
+  id             String         @id @default(cuid())
+  createdAt      DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime       @default(now()) @db.Timestamptz(3)
+  expiresAt      DateTime?
+  visible        Boolean        @default(true)
+  blockType      BlockType
+  creatorId      String
+  blockedId      String
+  galleryId      String?
+  threadId       String?
+  userId         String
+  creator        User           @relation("user_blocks", fields: [creatorId], references: [id])
+  blockedGallery Gallery?       @relation("blocked_from_gallery", fields: [galleryId], references: [id])
+  blockedThread  CommentThread? @relation("blocked_from_thread", fields: [threadId], references: [id])
+  user           User           @relation("user_is_blocked", fields: [userId], references: [id])
+
+  @@index([id, userId, creatorId, threadId, blockType])
+}
+
 model User {
-  id            String        @id @default(cuid())
-  name          String?       @unique
-  email         String?       @unique
+  id            String    @id @default(cuid())
+  name          String?   @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
-  slug          String?       @unique
+  slug          String?   @unique
   description   String?
-  membershipId  String?       @unique
-  accounts      Account[]
+
+  membershipId String?     @unique
+  membership   Membership? @relation("user_membership", fields: [membershipId], references: [id])
+  accounts     Account[]
+
+  likes         Like[]        @relation("user_likes") // for keeping track of how many likes a user has given
+  authorLikes   Like[]        @relation("author_likes") // for how many times his user has been liked
   blocks        Block[]       @relation("user_blocks")
   isBlocked     Block[]       @relation("user_is_blocked")
   chatMessages  ChatMessage[] @relation("user_chat_messages")
@@ -30,19 +55,97 @@ model User {
   following     Follow[]      @relation("user_following")
   galleries     Gallery[]     @relation("user_galleries")
   images        Image[]       @relation("user_images")
-  likes         Like[]        @relation("user_likes")
   notifs        Notif[]       @relation("user_notifs")
   posts         Post[]        @relation("user_posts")
   sessions      Session[]
-  shares        Share[]       @relation("user_shares")
-  membership    Membership?   @relation("user_membership", fields: [membershipId], references: [id])
-  agents        Agent[]       @relation("agent_authors")
-  attending     Event[]       @relation("event_attendees")
-  hosting       Event[]       @relation("event_hosts")
-  books         Book[]        @relation("user_books")
-  chats         ChatRoom[]    @relation("user_chats")
+
+  userAgent  Agent?  @relation("user_agent") // user is an agent
+  userArtist Artist? @relation("user_artist") // user is an artist
+  userAuthor Author? @relation("user_author")
+  userEditor Editor? @relation("user_editor") // user is an editor
+  userReader Reader? @relation("user_reader") // user is a reader
+
+  agents      Agent[]      @relation("agent_authors")
+  attending   Event[]      @relation("event_attendees")
+  hosting     Event[]      @relation("event_hosts")
+  books       Book[]       @relation("book_owner") // books this user has created
+  chats       ChatRoom[]   @relation("user_chats")
+  submissions Submission[] @relation("user_submission")
+  reviews     Review[]     @relation("user_reviews") // reviews this user has written
 
   @@index([id, name, email])
+}
+
+model Author {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+  visible   Boolean  @default(true)
+  userId    String   @unique
+  user      User     @relation("user_author", fields: [userId], references: [id])
+
+  books   Book[]   @relation("book_authors")
+  reviews Review[] @relation("author_reviews")
+}
+
+model Artist {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+  visible   Boolean  @default(true)
+  userId    String   @unique
+  user      User     @relation("user_artist", fields: [userId], references: [id]) // user is an agent
+
+  books     Book[]    @relation("book_artists")
+  galleries Gallery[] @relation("gallery_artists")
+  reviews   Review[]  @relation("artist_reviews")
+  covers    Cover[]   @relation("cover_artists")
+}
+
+model Editor {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+  visible   Boolean  @default(true)
+  userId    String   @unique
+  user      User     @relation("user_editor", fields: [userId], references: [id]) // user is an editor
+
+  books   Book[]   @relation("book_editors")
+  reviews Review[] @relation("editor_reviews")
+}
+
+model Reader {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+  visible   Boolean  @default(true)
+  userId    String   @unique
+  user      User     @relation("user_reader", fields: [userId], references: [id]) // user is an editor
+
+  books   Book[]   @relation("book_readers")
+  reviews Review[] @relation("reader_reviews")
+}
+
+model Agent {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+  visible   Boolean  @default(true)
+
+  description String?
+
+  publisherId String?
+  publisher   Publisher? @relation("publisher_agent", fields: [publisherId], references: [id])
+
+  userId String @unique
+  user   User   @relation("user_agent", fields: [userId], references: [id]) // user is an agent
+
+  authors User[]   @relation("agent_authors")
+  books   Book[]   @relation("book_agents")
+  likes   Like[]   @relation("agent_likes")
+  reviews Review[] @relation("agent_reviews")
+
+  @@index([id])
 }
 
 model News {
@@ -68,19 +171,20 @@ model Gallery {
   createdAt         DateTime   @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime   @default(now()) @db.Timestamptz(3)
   visible           Boolean    @default(true)
+  creatorId         String
+  creator           User       @relation("user_galleries", fields: [creatorId], references: [id])
   title             String?
   description       String?
-  authorId          String
   shareId           String?
   blocking          Block[]    @relation("blocked_from_gallery")
   book_gallery      Book?      @relation("book_gallery")
   chapter_gallery   Chapter?   @relation("chapter_gallery")
   character_gallery Character? @relation("character_gallery")
   commune           Commune?   @relation("gallery_commune")
-  author            User       @relation("user_galleries", fields: [authorId], references: [id])
   images            Image[]    @relation("gallery_images")
   likes             Like[]     @relation("gallery_likes")
-  shares            Share[]    @relation("gallery_shares")
+  shares            Post[]     @relation("gallery_shares")
+  artist            Artist[]   @relation("gallery_artists")
 }
 
 model Image {
@@ -89,7 +193,7 @@ model Image {
   updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
   visible         Boolean        @default(true)
   title           String?
-  authorId        String
+  creatorId       String
   galleryId       String?
   shareId         String?
   url             String         @unique
@@ -98,80 +202,42 @@ model Image {
   width           Int?           @default(0)
   commentThreadId String?        @unique
   cover           Cover?         @relation("cover_image")
-  author          User           @relation("user_images", fields: [authorId], references: [id])
+  creator         User           @relation("user_images", fields: [creatorId], references: [id])
   commentThread   CommentThread? @relation("image_comments", fields: [commentThreadId], references: [id])
   gallery         Gallery?       @relation("gallery_images", fields: [galleryId], references: [id])
   post            Post?          @relation("post_images", fields: [postId], references: [id])
   likes           Like[]         @relation("image_likes")
-  shares          Share[]        @relation("image_shares")
+  shares          Post[]         @relation("image_shares")
 }
 
 model Cover {
-  id              String         @id @default(cuid())
-  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
-  visible         Boolean        @default(true)
-  exclusive       Boolean        @default(false)
-  authorId        String
-  bookId          String?        @unique
-  imageId         String         @unique
-  genreId         String?
-  description     String?
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+  visible   Boolean  @default(true)
+  creatorId String
+  creator   User     @relation("user_covers", fields: [creatorId], references: [id])
+
+  exclusive   Boolean @default(false)
+  description String?
+
+  bookId String? @unique
+  book   Book?   @relation("book_cover", fields: [bookId], references: [id])
+
+  artists Artist[] @relation("cover_artists")
+
   commentThreadId String?        @unique
-  author          User           @relation("user_covers", fields: [authorId], references: [id])
-  book            Book?          @relation("book_cover", fields: [bookId], references: [id])
   commentThread   CommentThread? @relation("cover_comments", fields: [commentThreadId], references: [id])
-  genre           Genre?         @relation("genre_covers", fields: [genreId], references: [id])
-  image           Image          @relation("cover_image", fields: [imageId], references: [id])
-  likes           Like[]         @relation("cover_likes")
-  shares          Share[]        @relation("cover_shares")
-}
 
-model Like {
-  id          String     @id @default(cuid())
-  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime   @default(now()) @db.Timestamptz(3)
-  authorId    String
-  postId      String?
-  galleryId   String?
-  imageId     String?
-  commentId   String?
-  characterId String?
-  bookId      String?
-  coverId     String?
-  author      User       @relation("user_likes", fields: [authorId], references: [id])
-  book        Book?      @relation("book_likes", fields: [bookId], references: [id])
-  character   Character? @relation("character_likes", fields: [characterId], references: [id])
-  comment     Comment?   @relation("comment_likes", fields: [commentId], references: [id])
-  cover       Cover?     @relation("cover_likes", fields: [coverId], references: [id])
-  gallery     Gallery?   @relation("gallery_likes", fields: [galleryId], references: [id])
-  image       Image?     @relation("image_likes", fields: [imageId], references: [id])
-  post        Post?      @relation("post_likes", fields: [postId], references: [id])
+  genreId String?
+  genre   Genre?  @relation("genre_covers", fields: [genreId], references: [id])
 
-  @@index([id, authorId, postId])
-}
+  imageId String @unique
+  image   Image  @relation("cover_image", fields: [imageId], references: [id])
 
-model Share {
-  id          String     @id @default(cuid())
-  createdAt   DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime   @default(now()) @db.Timestamptz(3)
-  visible     Boolean    @default(true)
-  authorId    String
-  postId      String?
-  galleryId   String?
-  imageId     String?
-  characterId String?
-  bookId      String?
-  coverId     String?
-  author      User       @relation("user_shares", fields: [authorId], references: [id])
-  book        Book?      @relation("book_shares", fields: [bookId], references: [id])
-  character   Character? @relation("character_shares", fields: [characterId], references: [id])
-  cover       Cover?     @relation("cover_shares", fields: [coverId], references: [id])
-  gallery     Gallery?   @relation("gallery_shares", fields: [galleryId], references: [id])
-  image       Image?     @relation("image_shares", fields: [imageId], references: [id])
-  post        Post?      @relation("post_shares", fields: [postId], references: [id])
-
-  @@index([id, authorId, postId])
+  likes   Like[]   @relation("cover_likes")
+  shares  Post[]   @relation("cover_shares")
+  reviews Review[] @relation("cover_reviews")
 }
 
 model Follow {
@@ -210,9 +276,9 @@ model ChatMessage {
   visible    Boolean  @default(true)
   seen       Boolean  @default(false)
   chatRoomId String
-  authorId   String
+  creatorId  String
   content    String
-  author     User     @relation("user_chat_messages", fields: [authorId], references: [id])
+  creator    User     @relation("user_chat_messages", fields: [creatorId], references: [id])
   chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
 }
 
@@ -247,14 +313,6 @@ model Address {
   publisherAddress Publisher? @relation("publisher_address")
 }
 
-model Editor {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @db.Timestamptz(3)
-  visible   Boolean  @default(true)
-  books     Book[]   @relation("book_editors")
-}
-
 model Notif {
   id        String    @id @default(cuid())
   createdAt DateTime  @default(now()) @db.Timestamptz(3)
@@ -271,20 +329,6 @@ model Notif {
   user      User?     @relation("user_notifs", fields: [userId], references: [id])
 }
 
-model Agent {
-  id          String    @id @default(cuid())
-  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime  @default(now()) @db.Timestamptz(3)
-  visible     Boolean   @default(true)
-  description String?
-  publisherId String
-  publisher   Publisher @relation("publisher_agent", fields: [publisherId], references: [id])
-  authors     User[]    @relation("agent_authors")
-  books       Book[]    @relation("book_agents")
-
-  @@index([id])
-}
-
 model Publisher {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now()) @db.Timestamptz(3)
@@ -296,6 +340,7 @@ model Publisher {
   agents      Agent[]  @relation("publisher_agent")
   books       Book[]   @relation("book_publisher")
   address     Address? @relation("publisher_address", fields: [addressId], references: [id])
+  likes       Like[]   @relation("publisher_likes")
 
   @@index([id])
 }
@@ -317,6 +362,7 @@ model Event {
   notifs          Notif[]        @relation("event_notifs")
   attendees       User[]         @relation("event_attendees")
   hosts           User[]         @relation("event_hosts")
+  likes           Like[]         @relation("event_likes")
 }
 
 model Submission {
@@ -324,28 +370,67 @@ model Submission {
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @db.Timestamptz(3)
   visible   Boolean  @default(true)
+  creatorId String
+  creator   User     @relation("user_submission", fields: [creatorId], references: [id])
+  likes     Like[]   @relation("submission_likes")
+  reviews   Review[] @relation("submission_reviews")
 }
 
 model Review {
-  id              String         @id @default(cuid())
-  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
-  visible         Boolean        @default(true)
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+  visible   Boolean  @default(true)
+  creatorId String
+  creator   User     @relation("user_reviews", fields: [creatorId], references: [id])
+
   commentThreadId String?        @unique
   commentThread   CommentThread? @relation("review_comments", fields: [commentThreadId], references: [id])
+
+  authorId String?
+  author   Author? @relation("author_reviews", fields: [authorId], references: [id])
+
+  agentId String?
+  agent   Agent?  @relation("agent_reviews", fields: [agentId], references: [id])
+
+  artistId String?
+  artist   Artist? @relation("artist_reviews", fields: [artistId], references: [id])
+
+  editorId String?
+  editor   Editor? @relation("editor_reviews", fields: [editorId], references: [id])
+
+  bookId String?
+  book   Book?   @relation("book_reviews", fields: [bookId], references: [id])
+
+  characterId String?
+  character   Character? @relation("character_reviews", fields: [characterId], references: [id])
+
+  chapterId String?
+  chapter   Chapter? @relation("chapter_reviews", fields: [chapterId], references: [id])
+
+  submissionId String?
+  submission   Submission? @relation("submission_reviews", fields: [submissionId], references: [id])
+
+  coverId String?
+  cover   Cover?  @relation("cover_reviews", fields: [coverId], references: [id])
+
+  readerId String?
+  readers  Reader? @relation("reader_reviews", fields: [readerId], references: [id])
+
+  likes Like[] @relation("review_likes")
 }
 
 model Comment {
-  id        String         @id @default(cuid())
-  createdAt DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime       @default(now()) @db.Timestamptz(3)
+  id        String        @id @default(cuid())
+  createdAt DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime      @default(now()) @db.Timestamptz(3)
   threadId  String
-  authorId  String
+  creatorId String
   content   String
-  visible   Boolean        @default(true)
-  author    User           @relation("user_comments", fields: [authorId], references: [id])
-  thread    CommentThread? @relation("thread_comments", fields: [threadId], references: [id])
-  likes     Like[]         @relation("comment_likes")
+  visible   Boolean       @default(true)
+  creator   User          @relation("user_comments", fields: [creatorId], references: [id])
+  thread    CommentThread @relation("thread_comments", fields: [threadId], references: [id])
+  likes     Like[]        @relation("comment_likes")
 }
 
 model Commune {
@@ -422,6 +507,8 @@ model Book {
   id              String         @id @default(cuid())
   createdAt       DateTime       @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
+  ownerId         String
+  owner           User           @relation("book_owner", fields: [ownerId], references: [id])
   startedAt       DateTime?      @db.Timestamptz(3)
   completeAt      DateTime?      @db.Timestamptz(3)
   visible         Boolean        @default(true)
@@ -430,6 +517,8 @@ model Book {
   status          BookStatus?    @default(PRIVATE)
   title           String         @unique
   slug            String         @unique
+  ISBN            String?
+  EISBN           String?
   hook            String?
   synopsis        String?
   back            String?
@@ -448,31 +537,15 @@ model Book {
   cover           Cover?         @relation("book_cover")
   follows         Follow[]       @relation("book_follows")
   likes           Like[]         @relation("book_likes")
-  shares          Share[]        @relation("book_shares")
+  shares          Post[]         @relation("book_shares")
   agent           Agent[]        @relation("book_agents")
   categories      BookCategory[] @relation("book_categories")
   characters      Character[]    @relation("book_characters")
   editor          Editor[]       @relation("book_editors")
-  authors         User[]         @relation("user_books")
-}
-
-model Post {
-  id              String         @id @default(cuid())
-  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
-  visible         Boolean        @default(true)
-  content         String?
-  shareId         String?
-  commentId       String?
-  authorId        String
-  commentThreadId String?        @unique
-  images          Image[]        @relation("post_images")
-  likes           Like[]         @relation("post_likes")
-  author          User           @relation("user_posts", fields: [authorId], references: [id])
-  commentThread   CommentThread? @relation("post_comments", fields: [commentThreadId], references: [id])
-  shares          Share[]        @relation("post_shares")
-
-  @@index([id, authorId, shareId, visible, createdAt])
+  authors         Author[]       @relation("book_authors")
+  artists         Artist[]       @relation("book_artists")
+  readers         Reader[]       @relation("book_readers")
+  reviews         Review[]       @relation("book_reviews")
 }
 
 model Character {
@@ -497,9 +570,10 @@ model Character {
   gallery         Gallery?       @relation("character_gallery", fields: [galleryId], references: [id])
   follows         Follow[]       @relation("character_follows")
   likes           Like[]         @relation("character_likes")
-  shares          Share[]        @relation("character_shares")
+  shares          Post[]         @relation("character_shares")
   books           Book[]         @relation("book_characters")
   chapters        Chapter[]      @relation("chapter_characters")
+  reviews         Review[]       @relation("character_reviews")
 }
 
 model Chapter {
@@ -519,26 +593,81 @@ model Chapter {
   commentThread   CommentThread? @relation("chapter_comments", fields: [commentThreadId], references: [id])
   gallery         Gallery?       @relation("chapter_gallery", fields: [galleryId], references: [id])
   characters      Character[]    @relation("chapter_characters")
+  reviews         Review[]       @relation("chapter_reviews")
 }
 
-model Block {
-  id             String         @id @default(cuid())
-  createdAt      DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime       @default(now()) @db.Timestamptz(3)
-  expiresAt      DateTime?
-  visible        Boolean        @default(true)
-  blockType      BlockType
-  authorId       String
-  blockedId      String
-  galleryId      String?
-  threadId       String?
-  userId         String
-  author         User           @relation("user_blocks", fields: [authorId], references: [id])
-  blockedGallery Gallery?       @relation("blocked_from_gallery", fields: [galleryId], references: [id])
-  blockedThread  CommentThread? @relation("blocked_from_thread", fields: [threadId], references: [id])
-  user           User           @relation("user_is_blocked", fields: [userId], references: [id])
+model Post {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+  visible   Boolean  @default(true)
+  creatorId String
+  creator   User     @relation("user_posts", fields: [creatorId], references: [id])
 
-  @@index([id, userId, authorId, threadId, blockType])
+  content String?
+
+  commentThreadId String?        @unique
+  commentThread   CommentThread? @relation("post_comments", fields: [commentThreadId], references: [id])
+
+  images Image[] @relation("post_images")
+  likes  Like[]  @relation("post_likes")
+
+  postId     String? @unique
+  post       Post?   @relation("shared_post", fields: [postId], references: [id])
+  sharedPost Post?   @relation("shared_post")
+
+  galleryId String?
+  gallery   Gallery? @relation("gallery_shares", fields: [galleryId], references: [id])
+
+  imageId String?
+  image   Image?  @relation("image_shares", fields: [imageId], references: [id])
+
+  characterId String?
+  character   Character? @relation("character_shares", fields: [characterId], references: [id])
+
+  bookId String?
+  book   Book?   @relation("book_shares", fields: [bookId], references: [id])
+
+  coverId String?
+  cover   Cover?  @relation("cover_shares", fields: [coverId], references: [id])
+
+  @@index([id, creatorId, visible, createdAt])
+}
+
+model Like {
+  id           String      @id @default(cuid())
+  createdAt    DateTime    @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime    @default(now()) @db.Timestamptz(3)
+  creatorId    String
+  authorId     String?
+  agentId      String?
+  publisherId  String?
+  submissionId String?
+  eventId      String?
+  reviewId     String?
+  postId       String?
+  galleryId    String?
+  imageId      String?
+  commentId    String?
+  characterId  String?
+  bookId       String?
+  coverId      String?
+  creator      User        @relation("user_likes", fields: [creatorId], references: [id])
+  author       User?       @relation("author_likes", fields: [authorId], references: [id])
+  agent        Agent?      @relation("agent_likes", fields: [agentId], references: [id])
+  publisher    Publisher?  @relation("publisher_likes", fields: [publisherId], references: [id])
+  submissions  Submission? @relation("submission_likes", fields: [submissionId], references: [id])
+  event        Event?      @relation("event_likes", fields: [eventId], references: [id])
+  review       Review?     @relation("review_likes", fields: [reviewId], references: [id])
+  book         Book?       @relation("book_likes", fields: [bookId], references: [id])
+  character    Character?  @relation("character_likes", fields: [characterId], references: [id])
+  comment      Comment?    @relation("comment_likes", fields: [commentId], references: [id])
+  cover        Cover?      @relation("cover_likes", fields: [coverId], references: [id])
+  gallery      Gallery?    @relation("gallery_likes", fields: [galleryId], references: [id])
+  image        Image?      @relation("image_likes", fields: [imageId], references: [id])
+  post         Post?       @relation("post_likes", fields: [postId], references: [id])
+
+  @@index([id, creatorId, postId])
 }
 
 model VerificationToken {
