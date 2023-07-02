@@ -10,7 +10,7 @@ import {
   ResponseError,
   ResponseResult,
 } from 'types/response'
-const { debug, fileMethod, err } = useDebug('api/image/upsert')
+const { debug, fileMethod, err } = useDebug('api/image/upsert', 'DEBUG')
 
 /**
  *

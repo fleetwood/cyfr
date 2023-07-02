@@ -189,7 +189,7 @@ export type v_gallery_detail = {
   visible: boolean
   title: string
   description: string
-  authorId: string
+  creatorId: string
   shareId: string
   author: {}
   images: {}
@@ -253,7 +253,7 @@ export type v_like_detail = {
   image: {}
   gallery: {}
   id: string
-  authorId: string
+  creatorId: string
   postId: string
   createdAt: string
   updatedAt: string
@@ -266,7 +266,7 @@ export type v_like_detail = {
 export type v_like_stub = {
   author: {}
   id: string
-  authorId: string
+  creatorId: string
   postId: string
   createdAt: string
   updatedAt: string
@@ -287,7 +287,7 @@ export type v_share_detail = {
   createdAt: string
   updatedAt: string
   visible: boolean
-  authorId: string
+  creatorId: string
   postId: string
   galleryId: string
   imageId: string
@@ -296,7 +296,7 @@ export type v_share_detail = {
 }
 export type v_share_stub = {
   author: {}
-  authorId: string
+  creatorId: string
   postId: string
   galleryId: string
   imageId: string

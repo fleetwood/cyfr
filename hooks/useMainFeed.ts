@@ -51,7 +51,7 @@ export const useMainFeed = () => {
 
   /**
    * 
-   * @param props commentId, authorId, content
+   * @param props commentId, cretorId, content
    * @returns 
    */
   const commentOnPost = async (props:PostCommentProps) => await send("post/comment", props)

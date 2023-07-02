@@ -53,7 +53,7 @@ export const usePosts = () => {
 
   /**
    * 
-   * @param props commentId, authorId, content
+   * @param props commentId, creatordId, content
    * @returns 
    */
   const comment = async (props:PostCommentProps) => await send("post/comment", props)

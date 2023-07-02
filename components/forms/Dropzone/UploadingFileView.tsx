@@ -34,7 +34,7 @@ const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileView
     debug('uploadComplete', file)
     // convert completeFile to ImageUpsertProps
     const props = {
-      authorId: cyfrUser.id,
+      creatorId: cyfrUser.id,
       url: file.secure_url,
       visible: true,
       height: file.height,

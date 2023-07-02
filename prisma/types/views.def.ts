@@ -179,7 +179,7 @@ export type v_gallery_detail = {
   id: string
   title: string
   description: string
-  authorId: string
+  creatorId: string
   shareId: string
 }
 
@@ -195,7 +195,7 @@ export type v_gallery_stub = {
   visible: boolean
   description: string
   shares: {}
-  authorId: string
+  creatorId: string
 }
 
 export type v_genre_all = {
@@ -237,7 +237,7 @@ export type v_genre_stub = {
 }
 
 export type v_like_detail = {
-  authorId: string
+  creatorId: string
   updatedAt: string // timestamp
   createdAt: string // timestamp
   gallery: {}
@@ -262,7 +262,7 @@ export type v_like_stub = {
   postId: string
   commentId: string
   author: {}
-  authorId: string
+  creatorId: string
   galleryId: string
   imageId: string
   bookId: string
@@ -286,7 +286,7 @@ export type v_share_detail = {
   updatedAt: string // timestamp
   galleryId: string
   visible: boolean
-  authorId: string
+  creatorId: string
 }
 
 export type v_share_stub = {
@@ -297,6 +297,6 @@ export type v_share_stub = {
   createdAt: string // timestamp
   author: {}
   updatedAt: string // timestamp
-  authorId: string
+  creatorId: string
   bookId: string
 }

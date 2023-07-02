@@ -52,7 +52,7 @@ export type CyfrUser = User & {
         visible: boolean
         title?: string
         description?: string
-        authorId: string,
+        creatorId: string,
         shareId?: string,
         _count: {
           images: number,
@@ -82,7 +82,7 @@ export type CyfrUser = User & {
         "visible": true,
         "title": "Tattoos",
         "description": "Here’s some ink",
-        "authorId": "clfw1ptdt0000buxb0tg7rntt",
+        "creatorId": "clfw1ptdt0000buxb0tg7rntt",
         "shareId": null,
         "_count": {
           "images": 7,
@@ -97,7 +97,7 @@ export type CyfrUser = User & {
         "visible": true,
         "title": "Ink",
         "description": "Here’s some inks",
-        "authorId": "clfw1ptdt0000buxb0tg7rntt",
+        "creatorId": "clfw1ptdt0000buxb0tg7rntt",
         "shareId": null,
         "_count": {
           "images": 7,
@@ -112,7 +112,7 @@ export type CyfrUser = User & {
         "visible": true,
         "title": "Testing From UI",
         "description": null,
-        "authorId": "clfw1ptdt0000buxb0tg7rntt",
+        "creatorId": "clfw1ptdt0000buxb0tg7rntt",
         "shareId": null,
         "_count": {
           "images": 2,
@@ -127,7 +127,7 @@ export type CyfrUser = User & {
         "visible": true,
         "title": "Testing",
         "description": null,
-        "authorId": "clfw1ptdt0000buxb0tg7rntt",
+        "creatorId": "clfw1ptdt0000buxb0tg7rntt",
         "shareId": null,
         "_count": {
           "images": 2,
@@ -142,7 +142,7 @@ export type CyfrUser = User & {
         "visible": true,
         "title": "Final Test from UI",
         "description": "...I hope",
-        "authorId": "clfw1ptdt0000buxb0tg7rntt",
+        "creatorId": "clfw1ptdt0000buxb0tg7rntt",
         "shareId": null,
         "_count": {
           "images": 9,

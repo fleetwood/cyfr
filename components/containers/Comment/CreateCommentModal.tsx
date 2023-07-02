@@ -49,7 +49,7 @@ const CreateCommentModal = (): JSX.Element => {
 
     const postData = {
       content: content!,
-      authorId: cyfrUser.id,
+      creatorId: cyfrUser.id,
       postId: postMessage
     }
 
