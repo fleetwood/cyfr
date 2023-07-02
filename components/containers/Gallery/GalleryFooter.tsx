@@ -55,7 +55,7 @@ const GalleryFooter = ({
     debug('handleLike')
     const liked = await like({
       galleryId: gallery.id,
-      authorId: cyfrUser!.id,
+      creatorId: cyfrUser!.id,
     })
     if (liked) {
       notify("You liked this gallery!")
@@ -71,7 +71,7 @@ const GalleryFooter = ({
     debug(`handleShare`)
     const shared = await share({
       galleryId: gallery.id,
-      authorId: cyfrUser!.id,
+      creatorId: cyfrUser!.id,
     })
     if (shared) {
       notify("You shared this gallery!!!")
@@ -101,10 +101,10 @@ const GalleryFooter = ({
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Shares (${(gallery.shares||[]).length})`}
+          label={`Shares (NI)`}
           onClick={() => handleShare()}
         />
-        <AvatarList users={(gallery.shares||[])} sz="xs" />
+        {/* <AvatarList users={(gallery.shares||[])} sz="xs" /> */}
       </div>
 
       <div className="font-semibold uppercase">
@@ -118,7 +118,7 @@ const GalleryFooter = ({
           // onClick={() => handleComment()}
         />
         {/* <AvatarList
-          users={(gallery.comments || []).map((a) => a.author)}
+          users={(gallery.comments || []).map((a) => a.creator)}
           sz="xs"
         /> */}
       </div>

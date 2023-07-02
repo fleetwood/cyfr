@@ -1,34 +1,26 @@
 import useDebug from "hooks/useDebug"
 import {
   Book,
-  BookCategory,
-  BookDetail,
   BookStatus,
   BookUpsertProps,
-  Chapter,
-  Character,
-  Cover,
   Gallery,
-  GalleryStub,
-  Image,
-  UserStub
+  Image
 } from "prisma/prismaContext"
 import { useEffect, useState } from "react"
 import { ItemProps } from "react-photoswipe-gallery"
 import { KeyVal } from "types/props"
-import { getApi, sendApi } from "utils/api"
+import { getApi } from "utils/api"
 import { uuid } from "utils/helpers"
 
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { useToast } from "components/context/ToastContextProvider"
 import { AutoInput, TailwindInput, TailwindTextarea } from "components/forms"
-import Dropzone, { CompleteFile } from "components/forms/Dropzone"
+import Dropzone from "components/forms/Dropzone"
 import EZButton from "components/ui/ezButton"
 import Toggler from "components/ui/toggler"
 import Link from "next/link"
-import { cloudinary } from "utils/cloudinary"
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import { useBookApi } from "prisma/hooks/useBookApi"
+import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 
 const { debug } = useDebug("components/containers/Books/UpsertBook")
 
@@ -72,6 +64,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   const saveBook = async () => {
     const bookProps:BookUpsertProps = {
       ...book,
+      ownerId: cyfrUser.id,
       title: title!,
       visible,
       prospect,
@@ -85,9 +78,9 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
       words,
       // cover,
       // authors: authors!,
-    //   chapters,
-    //   characters,
-    //   gallery,
+      //   chapters,
+      //   characters,
+      //   gallery,
     }
     const result = await upsert(bookProps)
     if (result) {

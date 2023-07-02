@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { Like, PrismaGallery, GalleryEngageProps, Share } from "../../../prisma/prismaContext"
-import { ResponseResult, ResponseError, GetResponseError } from "../../../types/response"
-import { logError } from "../../../utils/log"
+import { GalleryEngageProps, Post, PrismaGallery } from "prisma/prismaContext"
+import { GetResponseError, ResponseError, ResponseResult } from "types/response"
+import { logError } from "utils/log"
 
 /**
  * @param req (@type PostEngageProps)
@@ -9,11 +9,11 @@ import { logError } from "../../../utils/log"
  */
 export default async function handle(
     req: NextApiRequest,
-    res: NextApiResponse<ResponseResult<Share>>
+    res: NextApiResponse<ResponseResult<Post>>
   ) {
-    const { galleryId, authorId } = req.body as GalleryEngageProps
+    const { galleryId, creatorId } = req.body as GalleryEngageProps
     try {
-      const result = await PrismaGallery.share({galleryId, authorId})
+      const result = await PrismaGallery.share({galleryId, creatorId})
       if (result) {
         res.status(200).json({ result })
       } else {

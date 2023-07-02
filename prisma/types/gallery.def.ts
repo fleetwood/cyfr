@@ -10,7 +10,7 @@ import { ImageFeed, ImageFeedInclude, ImageStub, ImageUpsertProps } from './imag
 
 export type GalleryUpsertProps = {
   galleryId?: string|null
-  authorId: string
+  creatorId: string
   title?: string|null
   description?: string|null
   images?: ImageFeed[]|Image[]|null
@@ -19,22 +19,21 @@ export type GalleryUpsertProps = {
 
 export type GalleryCreateProps = {
   galleryId?: string|null
-  authorId: string
+  creatorId: string
   title?: string|null
   description?: string|null
   images?: ImageUpsertProps[]|Image[]|null
 }
 
 export type GalleryEngageProps = {
-  authorId: string
+  creatorId: string
   galleryId: string
 }
 
 export type GalleryStub = Gallery & {
-  author: UserStub
+  creator: UserStub
   images: ImageStub[]
   likes:  UserStub[]
-  shares: UserStub[]
 }
 
 export const GalleryStubInclude = {
@@ -43,24 +42,20 @@ export const GalleryStubInclude = {
       _count: {
         select: {
         likes: true,
-        shares: true
       }}
     }
   },
   likes: true,
-  shares: true,
 }
 
 export type GalleryDetail = Gallery & {
-  author: User
-  shares: EngageList[]
+  creator: User
   likes:  EngageList[]
   images: any[]
 }
 
 export const GalleryDetailInclude = {
-  author: true,
-  shares: EngageInclude,
+  creator: true,
   likes: EngageInclude,
   images: {
     include: ImageFeedInclude,

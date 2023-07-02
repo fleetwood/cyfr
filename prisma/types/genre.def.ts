@@ -78,7 +78,7 @@ export const GenreStubInclude = {
   covers: {
     include: {
       image: true,
-      author: true
+      creator: true
     },
   },
   _count: {

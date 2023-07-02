@@ -34,7 +34,7 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
             userId: user.id, 
             partyId: party!.id, 
             messages: [
-                { authorId: user.id, content: message! }
+                { creatorId: user.id, content: message! }
             ]
         }
         debug('onSend', data)
@@ -68,9 +68,9 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
             <div>{thread.id}</div>
             {thread.comments.map(comment => (
                 <div className={`p-2 mt-2 w-full text-base-content`} key={uniqueKey(thread,comment)}>
-                    <div><span>{comment.author.name}</span><span>{timeDifference(comment.updatedAt)}</span></div>
+                    <div><span>{comment.creator.name}</span><span>{timeDifference(comment.updatedAt)}</span></div>
                     <div className={`p-2 border rounded-md 
-                    ${comment.authorId===user.id ? 'bg-base-200' : 'bg-base-300'}`}>{ReactHtmlParser(comment.content!)}</div>
+                    ${comment.creatorId===user.id ? 'bg-base-200' : 'bg-base-300'}`}>{ReactHtmlParser(comment.content!)}</div>
                 </div>
             ))}
         </div>

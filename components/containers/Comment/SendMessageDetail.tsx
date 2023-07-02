@@ -36,7 +36,7 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
         userId: cyfrUser.id,
         partyId: party!.id,
         messages: [{
-            authorId: cyfrUser.id,
+            creatorId: cyfrUser.id,
             content: message!
         }]
     }
@@ -71,13 +71,13 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
             key={uniqueKey(thread, comment)}
           >
             <div>
-              <span>{comment.author.name}</span>
+              <span>{comment.creator.name}</span>
               <span>{timeDifference(comment.updatedAt)}</span>
             </div>
             <div
               className={`p-2 border rounded-md 
                 ${
-                  comment.authorId === cyfrUser.id ? "bg-base-200" : "bg-base-300"
+                  comment.creatorId === cyfrUser.id ? "bg-base-200" : "bg-base-300"
                 }`}
             >
               {ReactHtmlParser(comment.content!)}

@@ -1,22 +1,22 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { PrismaBook, Share } from "../../../prisma/prismaContext"
+import { Post, PrismaBook } from "prisma/prismaContext"
 
-import useDebug from "../../../hooks/useDebug"
+import useDebug from "hooks/useDebug"
 import {
   GetResponseError,
   ResponseError,
   ResponseResult,
-} from "../../../types/response"
+} from "types/response"
 const { todo, err } = useDebug("api/book/share")
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Share>>
+  res: NextApiResponse<ResponseResult<Post>>
 ) {
   // TODO Unshare
-  const { bookId, authorId } = req.body
+  const { bookId, creatorId } = req.body
   try {
-    const result = await PrismaBook.share({bookId, authorId})
+    const result = await PrismaBook.share({bookId, creatorId})
     if (result) {
       res.status(200).json({ result })
     } else {

@@ -1,6 +1,6 @@
 import CommentThread from "components/containers/Comment/CommentThread"
 import useDebug from "../../hooks/useDebug"
-import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, Role } from "../prismaContext"
+import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, Role, PostFeedInclude } from "../prismaContext"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPost')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
@@ -21,25 +21,28 @@ const postDetail = async (id: string): Promise<PostDetail> => {
   }
 }
 
-/**
- * @satisfies visible:true
- * @satisfies commentId:null //don't include Shares
- * @returns PostFeed[]
- */
-const all = async (): Promise<any> => {
+const all = async (): Promise<PostStub[]> => {
   debug('all')
   try {
-    const posts =  await prisma.$queryRaw`select * from f_post_feed()`;
+    const posts =  await prisma.post.findMany({
+      //TODO: blocked users
+      where: {visible: true},
+      include: PostFeedInclude,
+      orderBy: {createdAt: "desc"},
+      //TODO: pagination
+      take: 10
+    })
     return posts as unknown as PostStub[]
   } catch (error) {
+    info('prismaPost.all',error)
     throw { code: fileMethod('all'), message: "No posts were returned!" }
   }
 }
 
 const createPost = async (props: PostCreateProps): Promise<Post> => {
-  const {content, authorId, images} = { ...props }
+  const {content, creatorId, images} = { ...props }
   const data = {
-    authorId, 
+    creatorId, 
     content, 
     images: {
       connect: images?.filter(i => i!==null).map(i => {return {id: i.id}}) ?? []
@@ -56,9 +59,9 @@ const createPost = async (props: PostCreateProps): Promise<Post> => {
   }
 }
 
-const deletePost = async ({postId, authorId}: PostDeleteProps): Promise<Post> => {
+const deletePost = async ({postId, creatorId}: PostDeleteProps): Promise<Post> => {
   try {
-    debug("deletePost", {postId, authorId})
+    debug("deletePost", {postId, creatorId})
     return await prisma.post.update({ 
       where: {
         id: postId,
@@ -92,37 +95,9 @@ const likePost = async (props: PostEngageProps): Promise<Like> => {
   }
 }
 
-const sharePost = async (props: PostEngageProps): Promise<Post> => {
-  const { authorId, postId } = props
-  try {
-    debug("sharePost", props)
-    const post = await prisma.post.findUnique({ where: { id: postId } })
-
-    const newShare = await prisma.share.create({
-      data: {
-        authorId,
-        postId
-      },
-    })
-    const updatePost = await prisma.post.update({
-      where: { id: postId },
-      data: {
-        shares: {
-          connect: {
-            id: newShare.id,
-          },
-        },
-      },
-    })
-    return updatePost
-  } catch (error) {
-    info("sharePost ERROR: ", error)
-    throw { code: fileMethod("sharePost"), message: "Post not shared!" }
-  }
-}
 
 const commentOnPost = async (props: PostCommentProps): Promise<PostDetail> => {
-  const {postId, authorId, content} = props
+  const {postId, creatorId, content} = props
   try {
     debug("commentonPost", {...props})
     const post = await prisma.post.findFirst({
@@ -141,7 +116,7 @@ const commentOnPost = async (props: PostCommentProps): Promise<PostDetail> => {
             comments: {
               create: {
                 content,
-                authorId
+                creatorId
               }
             }
           }
@@ -156,7 +131,7 @@ const commentOnPost = async (props: PostCommentProps): Promise<PostDetail> => {
             comments: {
               create: {
                 content,
-                authorId
+                creatorId
               }
             }
           }
@@ -171,4 +146,4 @@ const commentOnPost = async (props: PostCommentProps): Promise<PostDetail> => {
   }
 }
 
-export const PrismaPost = { all, postDetail, createPost, deletePost, likePost, sharePost, commentOnPost }
+export const PrismaPost = { all, postDetail, createPost, deletePost, likePost, commentOnPost }

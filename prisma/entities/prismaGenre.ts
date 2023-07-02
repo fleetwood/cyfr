@@ -88,7 +88,7 @@ const addCover = async (props:GenreAddCoverProps):Promise<GenreStub> => {
       data: {
         visible: true,
         imageId: props.image.id,
-        authorId: props.image.authorId,
+        creatorId: props.image.creatorId,
         genreId: props.id
       }
     })

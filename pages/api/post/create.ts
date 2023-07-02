@@ -1,12 +1,8 @@
+import useDebug from "hooks/useDebug"
 import { NextApiRequest, NextApiResponse } from "next"
-import {
-  GetResponseError,
-  ResponseError,
-  ResponseResult
-} from "../../../types/response"
-import { logError, todo } from "../../../utils/log"
-import { Post, PrismaPost } from "../../../prisma/prismaContext"
-import useDebug from "../../../hooks/useDebug"
+import { Post, PrismaPost } from "prisma/prismaContext"
+import { ResponseResult, ResponseError, GetResponseError } from "types/response"
+import { logError } from "utils/log"
 
 const {debug} = useDebug('api/post/create')
 
@@ -15,9 +11,9 @@ export default async function handle(
   res: NextApiResponse<ResponseResult<Post>>
 ) {
   debug('handle', {...req.body})
-  const { content, authorId, images } = req.body
+  const { content, creatorId, images } = req.body
   try {
-    const result = await PrismaPost.createPost({content, authorId, images})
+    const result = await PrismaPost.createPost({content, creatorId, images})
     if (result) {
       res.status(200).json({ result })
     } else {

@@ -43,7 +43,7 @@ const SendMessageModal = ({checked, setChecked, children }: InboxProviderProps) 
     const thread = await sendMessage({
       partyId: partyId!,
       userId: cyfrUser.id,
-      messages: [{authorId: cyfrUser.id, content: content!}]
+      messages: [{creatorId: cyfrUser.id, content: content!}]
     })
 
     hide()

@@ -31,21 +31,22 @@ export type BookStub = Book & {
 export type BookDetail = Book & BookRelations
 
 export type BookUpsertProps = {
+  ownerId:      string
   id?:          string|null
-  title:        string,
-  slug?:        string,
-  completeAt?:  Date|null,
-  visible:      boolean,
-  fiction:      boolean,
-  prospect:     boolean,
-  genreId:      string,
-  status?:      BookStatus|null,
-  back?:        string,
-  hook?:        string,
+  title:        string
+  slug?:        string
+  completeAt?:  Date|null
+  visible:      boolean
+  fiction:      boolean
+  prospect:     boolean
+  genreId:      string
+  status?:      BookStatus|null
+  back?:        string
+  hook?:        string
   synopsis?:    string
   words?:       number
-  categories?:  BookCategory[] | null,
-  authors?:      User[]|CyfrUser[],
+  categories?:  BookCategory[] | null
+  authors?:      User[]|CyfrUser[]
 }
 
 export type BookCreateProps = {
@@ -54,7 +55,7 @@ export type BookCreateProps = {
 
 export type BookEngageProps = {
   bookId: string,
-  authorId: string
+  creatorId: string
 }
 
 /**

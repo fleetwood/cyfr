@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import useDebug from "hooks/useDebug"
 import ErrorPage from "pages/404"
-import { BookCategory, BookStatus, Genre, GenreStub, UserFollow } from "prisma/prismaContext"
+import { BookCategory, BookEngageProps, BookStatus, Genre, GenreStub, UserFollow } from "prisma/prismaContext"
 import { KeyVal } from "types/props"
 import { now, uuid } from "utils/helpers"
 import ShrinkableIconLabel from "components/ui/shrinkableIconLabel"
@@ -55,7 +55,7 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const {share, follow, like, save, updateGenre} = useBookApi
   const bookId = bookDetail.id
-  const engageProps = bookDetail && cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
+  const engageProps:BookEngageProps|undefined = bookDetail && cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
 
   const isAuthor = cyfrUser ? (bookDetail?.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false

@@ -2,7 +2,7 @@ import { Book, Cover, Genre, Image, UserStub, UserStubSelect } from "prisma/pris
 
 export type CoverUpsertProps = {
   id?:        string
-  authorId:   string
+  creatorId:   string
   imageId:    string
   bookId?:    string
   genreId?:   string
@@ -14,12 +14,12 @@ export type CoverUpsertProps = {
 
 export type CoverDeleteProps = {
   coverId: string
-  authorId: string
+  creatorId: string
 }
 
 export type CoverEngageProps = {
   coverId: string
-  authorId: string
+  creatorId: string
 }
 
 export type CoverStubViewProps = {
@@ -30,7 +30,7 @@ export type CoverStubViewProps = {
 
 export type CoverStub = Cover & {
   image:  Image
-  author: UserStub
+  creator: UserStub
   book?:  Book
   genre?: Genre
 }
@@ -40,14 +40,14 @@ export type CoverDetail = CoverStub & {
 
 export const CoverStubInclude = {
   image: true,
-  author: true,
+  creator: true,
   book: true,
   genre: true
 }
 
 export const CoverDetailInclude = {
   image: true,
-  author: true,
+  creator: true,
   book: true,
   genre: true
 }

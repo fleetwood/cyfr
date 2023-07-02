@@ -26,12 +26,12 @@ const PostDetailPage = ({ postId }:PostDetailPageProps) => {
 
   return (post && 
     <MainLayout
-      pageTitle={`${post.author.name}`}
+      pageTitle={`${post.creator.name}`}
       sectionTitle=''
     >
       <div className="flex flex-row justify-between relative">
         <div className="flex justify-end w-full -mb-4 mr-4 z-10">
-          <Avatar user={post.author} sz="lg" />
+          <Avatar user={post.creator} sz="lg" />
         </div>
       </div>
       <div className="bg-base-100 rounded-lg p-4 relative">

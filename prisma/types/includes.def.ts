@@ -1,5 +1,5 @@
 export type EngageList = {
-  author: {
+  creator: {
     id: string
     name: string | null
     image: string | null
@@ -8,7 +8,7 @@ export type EngageList = {
 
 export const EngageInclude = { 
     select: { 
-        author: { 
+        creator: { 
             select: { 
                 id: true, 
                 name: true, 

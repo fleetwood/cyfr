@@ -11,7 +11,7 @@ export type UpsertInboxProps = {
   userId: string;
   partyId: string;
   messages?: ({
-    authorId: string,
+    creatorId: string,
     content: string
   })[]
 }
@@ -29,7 +29,7 @@ export type CommentThreadDetails = CommentThread & {
     })[];
   };
   comments: (Comment & {
-    author: User;
+    creator: User;
     _count: {
       likes: number;
     };
@@ -54,7 +54,7 @@ export const CommentThreadDetailsInclude = {
       updatedAt: 'desc'
     },
     include: {
-      author: true,
+      creator: true,
       _count: {
         select: {
           likes: true

@@ -1,7 +1,6 @@
-import { AxiosResponse } from "axios"
-import { BookDetail, BookStub, Chapter, Character, CharacterStub, CyfrUser, Gallery, GalleryStub, GenreStub, Image, Share, UserFollow, UserStub } from "../prismaContext"
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction } from "react"
 import { RocketQuery } from "../../types/props"
+import { BookDetail, BookStub, Chapter, Character, CharacterStub, CyfrUser, Gallery, GalleryStub, GenreStub, UserStub } from "../prismaContext"
 
 /**
  * @property characters {@link Character} TODO: should be a CharacterStub
@@ -25,7 +24,6 @@ export type ChapterDetailApi = {
   save:       (chapterDetail: ChapterDetail) => Promise<ChapterDetail | null>
   stub:       (id:string) => Promise<ChapterStub|null>
   detail:     (id: string) => Promise<ChapterDetail | null>
-  share:      (id: string) => Promise<Share | null>
   addGallery: (id:string, gallery:Gallery) => Promise<Gallery | null>
   sort:       (changedChapter: Chapter) => Promise<Boolean>
 }
@@ -80,7 +78,6 @@ export type ChapterRelations = {
   gallery?:     GalleryStub[],
   authors:      UserStub[],
   likes?:       UserStub[],
-  shares?:      UserStub[],
   characters?:  CharacterStub[],
 }
 

@@ -23,10 +23,10 @@ const upsert = async (props: ImageUpsertProps): Promise<Image> => {
   }
 }
 
-const deleteImage = async ({imageId, authorId}: ImageDeleteProps): Promise<Image> => {
+const deleteImage = async ({imageId, creatorId}: ImageDeleteProps): Promise<Image> => {
   try {
     todo('deleteImage','Need to make sure the user in session matches the user making the request')
-    debug("deleteImage", {imageId, authorId})
+    debug("deleteImage", {imageId, creatorId})
     return await prisma.image.update({ 
       where: {
         id: imageId,
@@ -59,14 +59,14 @@ const likeImage = async (props: ImageEngageProps): Promise<Like> => {
 }
 
 const shareImage = async (props: ImageEngageProps): Promise<Image> => {
-  const { authorId, imageId } = props
+  const { creatorId, imageId } = props
   try {
     debug("shareImage", props)
     const image = await prisma.image.findUnique({ where: { id: imageId } })
 
     const updateImage = await prisma.image.update({
       where: { id: imageId },
-      data: { shares: { create: { authorId },},
+      data: { shares: { create: { creatorId },},
     }})
 
     return updateImage
@@ -77,14 +77,14 @@ const shareImage = async (props: ImageEngageProps): Promise<Image> => {
 }
 
 const commentOnImage = async (props: any): Promise<Image> => {
-  const {commentId, authorId, content} = props
+  const {commentId, creatorId, content} = props
   try {
     debug("comment", {...props})
     throw {code: fileMethod('commentOnImage'), message: 'commentOnImage not implemented'}
 
     // const success = await prisma.image.create({
     //   data: {
-    //     authorId,
+    //     creatorId,
     //     commentId,
     //     content
     //   }

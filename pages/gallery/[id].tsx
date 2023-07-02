@@ -29,12 +29,12 @@ const GalleryDetailPage = () => {
   const {data, isLoading, error} = useGalleryQuery(id! as string)
 
   const gallery = data
-  const authorName = gallery?.author?.name ? `by ${gallery?.author?.name}` :``
+  const creatorName = gallery?.creator?.name ? `by ${gallery?.creator?.name}` :``
 
   return (
     <MainLayout
       sectionTitle={gallery?.title || "Gallery"}
-      subTitle={authorName}
+      subTitle={creatorName}
     >
       {error && <ErrorPage />}
       {isLoading && <Spinner onResize={undefined} onResizeCapture={undefined} />}

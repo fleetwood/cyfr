@@ -1,4 +1,5 @@
-import { MainFeed } from "../../../prisma/types";
+import { isShare } from "utils/helpers";
+import { MainFeed, PostStub } from "../../../prisma/types";
 import BookStubView from "../Books/BookStubView";
 import CharacterStubView from "../Characters/CharacterStubView";
 import GalleryStubView from "../Gallery/GalleryStubView";
@@ -8,12 +9,11 @@ import FeedFooter from "./FeedFooter";
 import FeedHeader from "./FeedHeader";
 
 type FeedItemProps = {
-  item: MainFeed;
+  item: PostStub;
 };
 
 const FeedItem = ({ item }: FeedItemProps) => {
-  const { isShare, author } = item;
-
+  const isShared = isShare(item)
   return (
     <div
       className={`
@@ -21,15 +21,35 @@ const FeedItem = ({ item }: FeedItemProps) => {
       rounded-2xl
       snap-always snap-start
       border-2
-      ${isShare ? `border-primary` : `border-neutral`}`}
+      ${isShared ? `border-primary` : `border-neutral`}`}
     >
         <FeedHeader item={item} />
         <div className="p-4 mt-4 font-feed">
-          {item.post && <PostStubView post={item.post} />}
-          {item.image && <ImageStubView image={item.image} />}
-          {item.gallery && <GalleryStubView gallery={item.gallery} />}
-          {item.book && <BookStubView book={item.book} size="sm" showFooter={false} />}
-          {item.character && <CharacterStubView character={item.character} />}
+          {item.sharedPost && <PostStubView post={item.sharedPost as PostStub} />}
+          {item.image && 
+            <div>
+                Not Implemented
+                {/* <ImageStubView image={item.image} /> */}
+            </div>
+          }
+          {item.gallery && 
+            <div>
+              Not Implemented
+              {/* <GalleryStubView gallery={item.gallery} /> */}
+            </div>
+          }
+          {item.book && 
+          <div>
+            Not Implemented
+            {/* <BookStubView book={item.book} size="sm" showFooter={false} /> */}
+          </div>
+          }
+          {item.character && 
+          <div>
+            Not Implemented
+            {/* <CharacterStubView character={item.character} /> */}
+          </div>
+          }
         </div>
         <FeedFooter item={item} />
     </div>

@@ -10,8 +10,7 @@ export type Counts = {
 export const CountsInclude = {
   _count: {
       select: {
-          likes: true,
-          shares: true
+          likes: true
       }
   }
 }

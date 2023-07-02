@@ -1,22 +1,22 @@
 import ReactHtmlParser from 'react-html-parser'
 import Avatar from "../../ui/avatar"
-import { ShareFeed } from '../../../prisma/types/share.def'
+import { PostStub } from 'prisma/types'
 
 type ShareItemProps = {
-    share: ShareFeed
+    post: PostStub
 }
-const ShareItem = ({share}:ShareItemProps) => {
+const ShareItem = ({post}:ShareItemProps) => {
   return (
     <>
-    {share.post && 
+    {post && 
         <div className="relative">
-            <div>{ReactHtmlParser(share.post.content!)}</div>
+            <div>{ReactHtmlParser(post.content!)}</div>
             <div className="absolute -mt-6 right-0">
-                <Avatar shadow={true} user={share.author} sz="sm" />
+                <Avatar shadow={true} user={post.creator} sz="sm" />
             </div>
         </div>
     }
     </>
   )
 }
-export default ShareFeed
+export default ShareItem

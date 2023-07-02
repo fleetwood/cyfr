@@ -53,7 +53,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
 
     const post = await commentOnPost({
       content: content!,
-      authorId: cyfrUser.id,
+      creatorId: cyfrUser.id,
       postId: postId!,
     })
 

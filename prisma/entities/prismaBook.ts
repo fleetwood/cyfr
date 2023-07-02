@@ -15,9 +15,8 @@ import {
   Follow,
   Like,
   LikeProps,
+  Post,
   PrismaChapter,
-  Share,
-  ShareProps,
   prisma
 } from "../prismaContext"
 
@@ -61,7 +60,7 @@ const byUser = async (id: string): Promise<BookDetail[]> => {
 
 const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
     try {
-        const {id, title, slug, hook, synopsis, back, status, visible, fiction, prospect, words, completeAt} = props
+        const {ownerId, id, title, slug, hook, synopsis, back, status, visible, fiction, prospect, words, completeAt} = props
         const data =  {
           title,
           slug: encodeURIComponent((slug || title).replaceAll(' ','-')).toLowerCase(),
@@ -81,6 +80,11 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
           genre: {
             connect: {
               id: props.genreId
+            }
+          },
+          owner: {
+            connect: {
+              id: props.ownerId
             }
           }
         }
@@ -158,20 +162,21 @@ const follow = async (props:BookFollowProps): Promise<Follow> => {
 
 const like = async (props:LikeProps): Promise<Like> => {
   // TODO cannot like your own stuff
-  const {authorId, bookId} = props;
+  const {creatorId, bookId} = props;
+  if (!bookId || !creatorId) throw({code: 'prismaBook/like', message: 'Missing params'})
   try {
     // we have to do this crazy little dance because composites in Follow model
     const exists = await prisma.like.findFirst({
       where: {
-        authorId: authorId.toString(),
-        bookId: authorId.toString()
+        creatorId: creatorId.toString(),
+        bookId: bookId.toString()
       }
     })
     const data = {
-      authorId: authorId.toString(),
-      bookId: authorId.toString()
+      creatorId: creatorId.toString(),
+      bookId: bookId.toString()
     }
-    debug('like', {authorId, bookId, data})
+    debug('like', {creatorId, bookId, data})
 
     const like = exists 
       ? await prisma.like.update({
@@ -180,9 +185,9 @@ const like = async (props:LikeProps): Promise<Like> => {
       })
       : await prisma.like.create({
         data: {
-          author: {
+          creator: {
             connect: {
-              id: authorId.toString()
+              id: creatorId.toString()
             }
           },
           book: {
@@ -205,36 +210,37 @@ const like = async (props:LikeProps): Promise<Like> => {
   }
 }
 
-const share = async (props:ShareProps): Promise<Share> => {
+const share = async (props:{creatorId:String, bookId:String}): Promise<Post> => {
   // TODO cannot share more than once
-  const {authorId, bookId} = props;
+  const {creatorId, bookId} = props;
+  if (!bookId || !creatorId) throw({code: 'prismaBook/share', message: 'Missing params'})
+
   try {
     // we have to do this crazy little dance because composites in Follow model
-    const exists = await prisma.share.findFirst({
+    const exists = await prisma.post.findFirst({
       where: {
-        authorId: authorId.toString(),
-        bookId: authorId.toString()
+        creatorId: creatorId.toString(),
+        bookId: bookId.toString()
       }
     })
     const data = {
-      authorId: authorId.toString(),
-      bookId: authorId.toString(),
-      // Yo, this might handle unshare!!!
+      creatorId: creatorId.toString(),
+      bookId: bookId.toString(),
       visible: exists ? !exists.visible : true
     }
 
-    debug('Share', {authorId, bookId, data})
+    debug('Share', {creatorId, bookId, data})
 
     const share = exists 
-      ? await prisma.share.update({
+      ? await prisma.post.update({
         where: {id: exists.id},
         data
       })
-      : await prisma.share.create({
+      : await prisma.post.create({
         data: {
-          author: {
+          creator: {
             connect: {
-              id: authorId.toString()
+              id: creatorId.toString()
             }
           },
           book: {
@@ -336,12 +342,12 @@ const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
 
     } else if (book && newImage) {
       debug('Creating a new cover from an existing image', {cover})
-        const {height, width, authorId, id: imageId} = newImage!
+        const {height, width, creatorId, id: imageId} = newImage!
         const result = await prisma.book.update({
             where: { id: book.id},
             data: { cover: {
                 create: {
-                    authorId, imageId
+                    creatorId, imageId
                 }
             }},
             include: BookStubInclude
@@ -378,9 +384,9 @@ const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
  */
 const sortChapters = async (currentChapers:Chapter[], changedChapter:Chapter) => PrismaChapter.sort(currentChapers,changedChapter)
 
-const deleteBook = async ({bookId,authorId}:BookEngageProps): Promise<Book | undefined> => {
+const deleteBook = async ({bookId,creatorId}:BookEngageProps): Promise<Book | undefined> => {
   try {
-    debug("deleteBook", { bookId, authorId })
+    debug("deleteBook", { bookId, creatorId })
     todo("deleteBook", "Make sure author deleting the book is an owner.")
     throw { code: fileMethod("deleteBook"), message: "Not implemented" }
   } catch (error) {

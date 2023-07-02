@@ -46,7 +46,7 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
         ...gallery,
         title,
         description,
-        authorId: cyfrUser.id,
+        creatorId: cyfrUser.id,
         images: images.map((img:ImageStub) => {return {
           id:     img.id,
           height: img.height,

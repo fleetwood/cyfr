@@ -1,5 +1,5 @@
 import useDebug from 'hooks/useDebug'
-import { LikesSharesInclude, MainFeed, PostDetail, PostStub, PostStubInclude, prisma } from '../prismaContext'
+import { MainFeed, PostDetail, PostStub, PostStubInclude, prisma } from '../prismaContext'
 const {debug, err, info, fileMethod} = useDebug('entities/prismaFeed')
 
 const main = async (): Promise<any> => {
@@ -11,13 +11,12 @@ const main = async (): Promise<any> => {
         visible: true
       },
       include: {
-        author: true,
+        creator: true,
         images: {
           include: {
             _count: {
               select: {
-                likes: true,
-                shares: true
+                likes: true
               }
             }
           }
@@ -29,20 +28,13 @@ const main = async (): Promise<any> => {
         },
         likes: {
           include: {
-            author: true
-          },
-          take: 10
-        },
-        shares: {
-          include: {
-            author: true
+            creator: true
           },
           take: 10
         },
         _count: {
           select: {
-            likes: true,
-            shares: true
+            likes: true
           } 
         }
       },

@@ -27,7 +27,7 @@ const ChatRoom = ({firstPerson, secondPerson, onCloseRoom, lastUpdated=now()}:Ch
     
     const onSendClick = async () => {
         const data = {
-            authorId: firstPerson.id,
+            creatorId: firstPerson.id,
             content: message!,
             chatRoomId: room!.id
         }
@@ -95,7 +95,7 @@ const ChatRoom = ({firstPerson, secondPerson, onCloseRoom, lastUpdated=now()}:Ch
         {room && (
             <div className="h-[240px] overflow-y-scroll scrollbar-thin space-y-2 my-2">
             <div className="text-xs opacity-50">{room.id}</div>
-            {room.messages?.map((message:ChatMessage) => isFirstPerson(message.authorId) 
+            {room.messages?.map((message:ChatMessage) => isFirstPerson(message.creatorId) 
                 ?
                 <div className="chat chat-end" key={`chatmessage-${uniqueKey(firstPerson, secondPerson)}-${message.updatedAt}`}>
                     <div className="chat-header">

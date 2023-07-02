@@ -7,7 +7,6 @@ import {
   ChapterDetail,
   ChapterStub,
   Gallery,
-  Share
 } from "../prismaContext"
 
 const { debug, fileMethod } = useDebug("hooks/useChapterApi")
@@ -20,8 +19,6 @@ const useChapterApi = () => {
 
   const stub = async (id: string): Promise<ChapterStub | null> => await (await sendApi("chapter/stub", id)).data
 
-  const share = async (id: string): Promise<Share | null> => {throw NotImplemented(fileMethod('share'))}
-
   const addGallery = async (id: string,gallery: Gallery): Promise<Gallery | null> => {throw NotImplemented(fileMethod('addGallery'))}
 
   const sort = async (changedChapter: Chapter): Promise<Boolean> => {throw NotImplemented(fileMethod('sort'))}
@@ -31,7 +28,6 @@ const useChapterApi = () => {
     detail,
     save,
     sort,
-    share,
     addGallery,
     isAuthor
   }

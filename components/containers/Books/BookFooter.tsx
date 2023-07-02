@@ -5,7 +5,7 @@ import { BookIcon, DollarIcon, FireIcon, FollowIcon, HeartIcon, ReplyIcon, Share
 import ShrinkableIconLabel from 'components/ui/shrinkableIconLabel'
 import Spinner from 'components/ui/spinner'
 import { useBookApi } from 'prisma/hooks/useBookApi'
-import { BookDetail, BookStub, UserFollow } from 'prisma/prismaContext'
+import { BookDetail, BookEngageProps, BookStub, UserFollow } from 'prisma/prismaContext'
 import { abbrNum } from 'utils/helpers'
 
 type BookFooterProps = {
@@ -22,7 +22,7 @@ const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
   const [cyfrUser] = useCyfrUserContext()
   const {share, follow, like} = useBookApi
   const bookId = book.id
-  const engageProps = cyfrUser ? {bookId, authorId: cyfrUser.id} : undefined
+  const engageProps:BookEngageProps|undefined = cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined
   const followProps = book && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
   
   const numLikes = abbrNum(bookDetail?.likes?.length ?? bookStub?._count.likes)

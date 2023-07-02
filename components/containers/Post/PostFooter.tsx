@@ -1,17 +1,16 @@
-import { useCommentContext } from "../../context/CommentContextProvider"
-import { useToast } from "../../context/ToastContextProvider"
-import AvatarList from "../../ui/avatarList"
-import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
-import ShrinkableIconButton from "../../ui/shrinkableIconButton"
 
-import useFeed from "../../../hooks/useFeed"
-import { PostDetail, PostStub, UserStub } from "../../../prisma/prismaContext"
+import useFeed from "hooks/useFeed"
+import { Like, PostDetail, PostStub, User, UserStub } from "prisma/prismaContext"
 
-import useDebug from "../../../hooks/useDebug"
-import usePostApi from "../../../prisma/hooks/usePostApi"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
+import useDebug from "hooks/useDebug"
+import usePostApi from "prisma/hooks/usePostApi"
 import { abbrNum } from "utils/helpers"
+import { useCommentContext } from "components/context/CommentContextProvider"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import { useToast } from "components/context/ToastContextProvider"
+import { HeartIcon, ShareIcon } from "components/ui/icons"
+import ShrinkableIconButton from "components/ui/shrinkableIconButton"
+import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
 const { debug } = useDebug("PostItemFooter")
 
 type PostFooterProps = {
@@ -20,8 +19,8 @@ type PostFooterProps = {
 }
 const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const likes:UserStub[] = post?.likes?.filter(f=>f!==null)||[]
-  const shares:UserStub[] = post?.shares?.filter(f=>f!==null)||[]
+  const likes:(UserStub[] | Like & {creator: User}[]) = post?.likes??[]
+  // const shares:UserStub[] = post?.shares?.filter(f=>f!==null)||[]
   const comments:PostStub[] = []
   const { invalidateFeed } = useFeed('post')
   const { notify, loginRequired } = useToast()
@@ -53,7 +52,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
     if (!isLoggedIn()) return
 
     debug(`handleLike`)
-    const liked = await like({ postId: post.id, authorId: cyfrUser!.id })
+    const liked = await like({ postId: post.id, creatorId: cyfrUser!.id })
     if (liked) {
       notify("You liked this post!!!!!!!!!!!", "success")
       update()
@@ -66,7 +65,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
     if (!isLoggedIn()) return
 
     debug(`handleShare`)
-    const shared = await share({ postId: post.id, authorId: cyfrUser!.id })
+    const shared = await share({ postId: post.id, creatorId: cyfrUser!.id })
     if (shared) {
       notify("You shared this post", "success")
       update()
@@ -96,7 +95,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Share (${abbrNum(shares.length)})`}
+          label={`Share (NI)`}
           onClick={() => handleShare()}
         />
         {/* @ts-ignore */}
@@ -104,9 +103,9 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
       </div>
 
       <div className="font-semibold uppercase">
-        <CreateCommentFooterButton postId={post.id} comments={(post.post_comments??[]).length} />
+        <CreateCommentFooterButton postId={post.id} comments={(post.commentThread?.comments??[]).length} />
         {/* <AvatarList
-          users={(post.post_comments || []).map((a) => a.author)}
+          users={(post.post_comments || []).map((a) => a.creator)}
           sz="xs"
         /> */}
       </div>

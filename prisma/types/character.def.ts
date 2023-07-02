@@ -1,4 +1,4 @@
-import { Book, BookDetail, BookStub, Chapter, ChapterStub, Character, CyfrUser, Follow, Gallery, GalleryStub, Like, Share, UserFollow, UserStub } from "../prismaContext"
+import { BookStub, ChapterStub, Character, CyfrUser, Gallery, GalleryStub, UserFollow, UserStub } from "../prismaContext"
 
 /**
  * @property characters {@link Character} TODO: should be a CharacterStub
@@ -9,7 +9,6 @@ export type CharacterStub = Character & {
   gallery:    GalleryStub
   characters: Character[]
   likes:      UserStub[]
-  shares:     UserStub[]
 }
 
 /** 
@@ -18,7 +17,6 @@ export type CharacterStub = Character & {
 export type CharacterDetail = Character & {
   follows?:     UserFollow[]
   likes:        UserStub[]
-  shares:       UserStub[]
   books?:       BookStub[]
   chapters?:    ChapterStub[]
   galleryId?:   string

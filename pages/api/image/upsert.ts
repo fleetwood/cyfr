@@ -24,27 +24,25 @@ export default async function handle(
   const props = req.body as ImageUpsertProps
   const {
     id,
-    authorId,
+    creatorId,
     url,
     visible,
     height,
     width,
     title,
     galleryId,
-    shareId,
     postId,
     commentThreadId,
   } = props
   const imageUpsert = {
     id,
-    authorId,
+    creatorId,
     url,
     visible,
     height,
     width,
     title,
     galleryId,
-    shareId,
     postId,
     commentThreadId,
   }

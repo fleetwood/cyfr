@@ -24,10 +24,10 @@ const upsert = async (props: CoverUpsertProps): Promise<Cover> => {
   }
 }
 
-const remove = async ({coverId, authorId}: CoverDeleteProps): Promise<Cover> => {
+const remove = async ({coverId, creatorId}: CoverDeleteProps): Promise<Cover> => {
   try {
     todo('deleteImage','Need to make sure the user in session matches the user making the request')
-    debug("deleteImage", {coverId, authorId})
+    debug("deleteImage", {coverId, creatorId})
     return await prisma.cover.update({ 
       where: {
         id: coverId,
@@ -44,8 +44,6 @@ const remove = async ({coverId, authorId}: CoverDeleteProps): Promise<Cover> => 
 
 const like = async (props: any): Promise<Like> => {throw NotImplemented}
 
-const share = async (props: any): Promise<Cover> => {throw NotImplemented}
-
 const findCover = async (genre?:string): Promise<CoverStub[]> => {
   const result = prisma.genre.findMany({
     where: genre ? { title: genre } : { },
@@ -55,4 +53,4 @@ const findCover = async (genre?:string): Promise<CoverStub[]> => {
   throw ({code: 'prismaCover.findCover', message: 'No covers'})
 }
 
-export const PrismaCover = { detail, details, findCover, stub, stubs, upsert, remove, like, share }
+export const PrismaCover = { detail, details, findCover, stub, stubs, upsert, remove, like }

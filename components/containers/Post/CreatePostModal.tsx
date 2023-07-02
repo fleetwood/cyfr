@@ -48,7 +48,7 @@ const CreatePostModal = (): JSX.Element => {
     debug('handleSubmit', images)
     const postData = {
       content: content!,
-      authorId: cyfrUser.id,
+      creatorId: cyfrUser.id,
       images: images,
     }
     const post = await createPost(postData)

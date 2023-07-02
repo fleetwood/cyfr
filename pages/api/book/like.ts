@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { Follow, Like, PrismaBook } from "../../../prisma/prismaContext"
+import { Follow, Like, PrismaBook } from "prisma/prismaContext"
 
-import useDebug from "../../../hooks/useDebug"
+import useDebug from "hooks/useDebug"
 import {
     GetResponseError,
     ResponseError,
     ResponseResult,
-} from "../../../types/response"
+} from "types/response"
 const { debug, todo, err } = useDebug("api/book/like",'DEBUG')
 
 export default async function handle(
@@ -15,10 +15,10 @@ export default async function handle(
 ) {
   // TODO Unlike/Unfan
   const { body } = req
-  const { bookId, authorId } = body
-  debug('handle', {bookId, authorId, body})
+  const { bookId, creatorId } = body
+  debug('handle', {bookId, creatorId, body})
   try {
-    const result = await PrismaBook.like({bookId, authorId})
+    const result = await PrismaBook.like({bookId, creatorId})
     if (result) {
       res.status(200).json({ result })
     } else {

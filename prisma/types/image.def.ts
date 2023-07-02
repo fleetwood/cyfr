@@ -1,27 +1,26 @@
-import { Image, User, Like, Share, Gallery, Post, UserStub, UserStubSelect, MainFeed, GalleryStub, PostStub } from "../prismaContext"
+import { Image, User, Like, Gallery, Post, UserStub, UserStubSelect, MainFeed, GalleryStub, PostStub } from "../prismaContext"
 
 export type ImageUpsertProps = {
   id?:              string
-  authorId:         string
+  creatorId:         string
   url:              string
   visible:          boolean
   height:           number
   width:            number
   title?:           string | null
   galleryId?:       string | null
-  shareId:          string | null
   postId:           string | null
   commentThreadId:  string | null
 }
 
 export type ImageDeleteProps = {
   imageId: string
-  authorId: string
+  creatorId: string
 }
 
 export type ImageEngageProps = {
   imageId: string
-  authorId: string
+  creatorId: string
 }
 
 export type ImageStubViewProps = {
@@ -31,19 +30,17 @@ export type ImageStubViewProps = {
 }
 
 export type ImageFeed = Image & {
-  author: UserStub
-  likes: UserStub[]
-  shares: UserStub[]
+  creator: UserStub
+  // likes: UserStub[]
   galleryId?: string
   postId?: string
 }
 
 export const ImageFeedInclude = {
-  author: {
+  creator: {
     select: UserStubSelect
   },
   likes: true,
-  shares: true,
   gallery: true,
   post: true
 }
@@ -56,8 +53,7 @@ export type ImageStub = {
   height: number | null
   width: number | null
   likes: UserStub[]
-  shares: UserStub[]
-  author: UserStub[]
+  creator: UserStub[]
 }
 
 export type ImageDetail = ImageStub & {
@@ -66,31 +62,21 @@ export type ImageDetail = ImageStub & {
 }
 
 export const ImageDetailInclude = {
-  author: true,
+  creator: true,
   likes: {
     include: {
-      author: true,
-    },
-  },
-  shares: {
-    include: {
-      author: true,
+      creator: true,
     },
   },
   post: true,
   gallery: {
     include: {
-      author: true,
+      creator: true,
       likes: {
         include: {
-          author: true,
+          creator: true,
         },
-      },
-      shares: {
-        include: {
-          author: true,
-        },
-      },
+      }
     },
   },
 }

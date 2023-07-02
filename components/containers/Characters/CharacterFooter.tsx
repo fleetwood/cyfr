@@ -14,7 +14,7 @@ const CharacterFooter = ({character, onUpdate}:CharacterFooterProps) => {
   return (
     <>
       <div>Likes: {character.likes.length}</div>
-      <div>Shares: {character.shares.length}</div>
+      <div>Shares: (NI)</div>
     </>
   )
 }

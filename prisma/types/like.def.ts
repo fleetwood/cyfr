@@ -1,7 +1,7 @@
 import { Like, UserStub } from "./../prismaContext"
 
 export type LikeProps = {
-  authorId:     String
+  creatorId:     String
   postId?:      String
   galleryId?:   String
   imageId?:     String
@@ -11,5 +11,5 @@ export type LikeProps = {
 }
 
 export type LikeStub = Like & {
-  author: UserStub
+  creator: UserStub
 }

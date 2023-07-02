@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { Post, PrismaPost, PostEngageProps, Like } from "../../../prisma/prismaContext"
-import { ResponseResult, ResponseError, GetResponseError } from "../../../types/response"
-import { todo, logError, log } from "../../../utils/log"
+import { Like, PostEngageProps, PrismaPost } from "prisma/prismaContext"
+import { ResponseResult, ResponseError, GetResponseError } from "types/response"
+import { logError } from "utils/log"
 
 /**
  * 
@@ -12,9 +12,9 @@ export default async function handle(
     req: NextApiRequest,
     res: NextApiResponse<ResponseResult<Like>>
   ) {
-    const { postId, authorId } = req.body as PostEngageProps
+    const { postId, creatorId } = req.body as PostEngageProps
     try {
-      const result = await PrismaPost.likePost({postId, authorId})
+      const result = await PrismaPost.likePost({postId, creatorId})
       if (result) {
         res.status(200).json({ result })
       } else {

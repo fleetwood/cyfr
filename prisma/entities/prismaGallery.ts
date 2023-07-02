@@ -3,7 +3,7 @@ import {
   Book, Chapter, Gallery, GalleryCreateProps,
   GalleryDetail,
   GalleryDetailInclude, GalleryEngageProps,
-  GalleryUpsertProps, ImageUpsertProps, Like, Share
+  GalleryUpsertProps, ImageUpsertProps, Like, Post
 } from "prisma/prismaContext"
 import { now } from "utils/helpers"
 
@@ -16,10 +16,10 @@ export type GalleryAddImageProps = {
 
 /**
  * Using `f_user_galleries` FNX
- * @param authorId :string
+ * @param creatorId :string
  * @returns `json`
  */
-const userGalleries = async (authorId: string): Promise<Gallery[]> => await prisma.gallery.findMany({where: {authorId}})
+const userGalleries = async (creatorId: string): Promise<Gallery[]> => await prisma.gallery.findMany({where: {creatorId}})
 
 const details = async () : Promise<GalleryDetail[]> => await prisma.gallery.findMany({include: GalleryDetailInclude})
 const detail = async (id: string): Promise<GalleryDetail|null> => await prisma.gallery.findUnique({where: {id}, include: GalleryDetailInclude})
@@ -30,18 +30,18 @@ const stub = async (id: string): Promise<Gallery|null> => await prisma.gallery.f
 /**
  * Params {@link GalleryEngageProps}
  * @param galleryId: String
- * @param authorId: String
+ * @param creatorId: String
  * @returns: {@link Like}
  */
 const like = async ({
   galleryId,
-  authorId,
+  creatorId,
 }: GalleryEngageProps): Promise<Like> => {
   try {
     const like = await prisma.like.create({
       data: {
         galleryId,
-        authorId
+        creatorId
       }
     })
     if (like) return like
@@ -55,17 +55,17 @@ const like = async ({
  * Using `prisma.share.create`
  * Params {@link GalleryEngageProps}
  * @param galleryId: String
- * @param authorId: String
+ * @param creatorId: String
  * @returns: {@link Share}
  */
 const share = async ({
   galleryId,
-  authorId,
-}: GalleryEngageProps): Promise<Share> => {
-  debug(`share`, { galleryId, authorId })
-  const share = await prisma.share.create({
+  creatorId,
+}: GalleryEngageProps): Promise<Post> => {
+  debug(`share`, { galleryId, creatorId })
+  const share = await prisma.post.create({
     data: {
-      authorId,
+      creatorId,
       galleryId
     }
   })
@@ -119,12 +119,12 @@ const upsertGallery = async(props:GalleryUpsertProps) => {
           updatedAt: now(),
           title: props.title,
           description: props.description,
-          authorId: props.authorId,
+          creatorId: props.creatorId,
           images: {
             connectOrCreate: [
               props.images?.map(img => { return {
                 id: img.id,
-                authorId: img.authorId,
+                creatorId: img.creatorId,
                 url: img.url,
                 visible: img.visible,
                 height: img.height,
@@ -147,18 +147,18 @@ const upsertGallery = async(props:GalleryUpsertProps) => {
 
 /**
  * 
- * @param authorId :String
+ * @param creatorId :String
  * @param title :String | null
  * @param description: String | null
  * @param images: {@link ImageUpsertProps}[] | null | undefined
  * @returns: {@link Gallery}
  */
-const createGallery = async ({authorId,title,description,images,}: GalleryCreateProps) => {
+const createGallery = async ({creatorId,title,description,images,}: GalleryCreateProps) => {
   try {
-    debug(`createGallery`, {authorId, title, description, images})
+    debug(`createGallery`, {creatorId, title, description, images})
     const result = await prisma.gallery.create({
       data: {
-        authorId,
+        creatorId,
         title,
         description,
         images: {
