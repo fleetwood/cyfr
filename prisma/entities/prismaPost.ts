@@ -1,7 +1,7 @@
-import CommentThread from "components/containers/Comment/CommentThread"
-import useDebug from "../../hooks/useDebug"
-import { prisma, Like, Post, PostCommentProps, PostCreateProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, Role, PostFeedInclude } from "../prismaContext"
-const {debug, err, info, fileMethod} = useDebug('entities/prismaPost')
+
+import useDebug from "hooks/useDebug"
+import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeedInclude, PostStub, prisma } from "prisma/prismaContext"
+const {debug, err, info, fileMethod} = useDebug('entities/prismaPost', 'DEBUG')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
   try {
@@ -40,14 +40,20 @@ const all = async (): Promise<PostStub[]> => {
 }
 
 const createPost = async (props: PostCreateProps): Promise<Post> => {
-  const {content, creatorId, images} = { ...props }
+  const {content, creatorId, images} = props
   const data = {
-    creatorId, 
+    creator: {
+      connect: {
+        id: creatorId
+      }
+    },
     content, 
     images: {
       connect: images?.filter(i => i!==null).map(i => {return {id: i.id}}) ?? []
     },
-    commentThreadId: ''
+    commentThread: {
+      create: {}
+    }
   }
 
   try {

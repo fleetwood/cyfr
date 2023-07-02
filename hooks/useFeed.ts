@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { BookStub, CharacterStub, CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryStub, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostStub, StartInboxThreadProps, UpsertInboxProps } from "../prisma/prismaContext"
-import { getApi, sendApi } from "../utils/api"
+import { BookStub, CharacterStub, CommentThread, GalleryCreateProps, GalleryEngageProps, GalleryStub, MainFeed, PostCommentProps, PostCreateProps, PostEngageProps, PostStub, StartInboxThreadProps, UpsertInboxProps } from "prisma/prismaContext"
+import { getApi, sendApi } from "utils/api"
 import useDebug from "./useDebug"
 
 export const mainFeedQuery = ['feed', { type: 'main'}]
@@ -10,7 +10,7 @@ export const galleryFeedQuery = ['feed', { type: 'gallery'}]
 export const imageFeedQuery = ['feed', { type: 'image'}]
 export const inboxFeedQuery = ['feed', { type: 'inbox'}]
 
-const {debug} = useDebug('useFeed')
+const {debug, info} = useDebug('useFeed')
 
 export type FeedTypes = 'main'|'post'|'gallery'|'inbox'
 
@@ -20,30 +20,33 @@ export const useFeed = (type:FeedTypes) => {
 
   const [commentId, setCommentId] = useState<string|null>(null)
 
-  const getMainFeed = async ():Promise<MainFeed[]|null> => {
-    const result = await getApi<MainFeed[]|null>(`feed/main`)
+  const getMainFeed = async ():Promise<PostStub[]> => {
+    const result = await getApi<PostStub[]>(`feed/main`)
     debug('getMainFeed')
-    try {
-      return result.map((r:any) => {
-        // aggregating mainFeed requires a UNION ALL between post and shares
-        // in V_feed_main, which in turn requires casting the json_agg records
-        // to `::text`   
-        //
-        // so here we have to parse those records back to json
-        // oy.
-        return {
-          ...r,
-          post: JSON.parse(r.post) as PostStub,
-          gallery: JSON.parse(r.gallery) as GalleryStub,
-          character: JSON.parse(r.character) as CharacterStub,
-          book: JSON.parse(r.book) as BookStub,
-        }
-      })
-      .sort((a:MainFeed,b:MainFeed) => a.updatedAt > b.updatedAt ? -1 : 1)  
-    } catch (error) {
-      debug('getMaindFeed', error)
-      return null
-    }
+    if (result) return result
+    info('getMainFeed', 'Did not obtain results')
+    return []
+    // try {
+    //   return result.map((r:any) => {
+    //     // aggregating mainFeed requires a UNION ALL between post and shares
+    //     // in V_feed_main, which in turn requires casting the json_agg records
+    //     // to `::text`   
+    //     //
+    //     // so here we have to parse those records back to json
+    //     // oy.
+    //     return {
+    //       ...r,
+    //       post: JSON.parse(r.post) as PostStub,
+    //       gallery: JSON.parse(r.gallery) as GalleryStub,
+    //       character: JSON.parse(r.character) as CharacterStub,
+    //       book: JSON.parse(r.book) as BookStub,
+    //     }
+    //   })
+    //   .sort((a:MainFeed,b:MainFeed) => a.updatedAt > b.updatedAt ? -1 : 1)  
+    // } catch (error) {
+    //   debug('getMaindFeed', error)
+    //   return null
+    // }
   }
   
   const getPosts = async ():Promise<PostStub[]|null> => {

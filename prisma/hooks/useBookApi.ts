@@ -1,7 +1,6 @@
-import { Book, BookDetail, BookEngageProps, BookFollowProps, BookStub, BookStubInclude, BookUpsertProps, ChangeCoverProps, ChangeGenreProps, Chapter } from "prisma/prismaContext"
-import { NotImplemented, getApi, sendApi } from "utils/api"
-import { isAuthor } from 'utils/helpers/book'
 import useDebug from "hooks/useDebug"
+import { BookDetail, BookEngageProps, BookFollowProps, BookStub, BookUpsertProps, ChangeCoverProps, ChangeGenreProps, Chapter } from "prisma/prismaContext"
+import { NotImplemented, getApi, sendApi } from "utils/api"
 
 const { debug, fileMethod } = useDebug("hooks/useBookApi", 'DEBUG')
 
