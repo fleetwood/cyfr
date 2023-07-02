@@ -1,4 +1,4 @@
-import { Image, User, Like, Gallery, Post, UserStub, UserStubSelect, MainFeed, GalleryStub, PostStub } from "../prismaContext"
+import { Gallery, GalleryStub, GalleryStubInclude, Image, LikesCount, LikesInclude, PostStub, PostStubInclude, UserStub, UserStubSelect } from "prisma/prismaContext"
 
 export type ImageUpsertProps = {
   id?:              string
@@ -37,24 +37,36 @@ export type ImageFeed = Image & {
 }
 
 export const ImageFeedInclude = {
-  creator: {
-    select: UserStubSelect
-  },
-  likes: true,
-  gallery: true,
-  post: true
+  include: {
+    creator: {
+      select: {
+        name: true,
+        email: true,
+        slug: true,
+        image: true
+      }
+    },
+    gallery: true
+  }
 }
 
-export type ImageStub = {
-  id: string
-  visible: boolean
-  title: string | null
-  url: string
-  height: number | null
-  width: number | null
+export type ImageStub = Image & {
   likes: UserStub[]
+  gallery: Gallery
+  // post: PostStub
   creator: UserStub[]
 }
+
+export const ImageStubInclude = { include : {
+  creator: UserStubSelect,
+  gallery: true,
+  // post: {include: {
+  //     creator: true,
+  //     ...LikesCount
+  // }},
+  // ...LikesInclude,
+  // ...LikesCount
+}}
 
 export type ImageDetail = ImageStub & {
   gallery?: GalleryStub

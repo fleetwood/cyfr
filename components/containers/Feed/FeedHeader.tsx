@@ -11,7 +11,7 @@ type FeedHeaderProps = {
 
 const FeedHeader = ({ item }: FeedHeaderProps) => {
 
-  const link = item.sharedPost ? `/post/${item.sharedPost.id}`
+  const link = item.post ? `/post/${item.post.id}`
     : item.gallery ? `/gallery/${item.gallery.id}`
     : item.book ? `/book/${item.book.slug}`
     : item.character ? `/character/${item.character.id}`
@@ -43,7 +43,7 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
       }
       <div className="flex space-x-2 pb-2 mb-2">
         {/* POSTS and GALLERIES have only one author */}
-        {(item.sharedPost || item.gallery) && 
+        {(item.post || item.gallery) && 
           <Avatar shadow={true} user={originalAuthor} sz="sm" />
         }
         {/* BOOKS can have multiple authors */}

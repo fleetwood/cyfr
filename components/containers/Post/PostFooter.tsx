@@ -1,6 +1,6 @@
 
 import useFeed from "hooks/useFeed"
-import { Like, PostDetail, PostStub, User, UserStub } from "prisma/prismaContext"
+import { Like, LikeStub, PostDetail, PostStub, User, UserStub } from "prisma/prismaContext"
 
 import useDebug from "hooks/useDebug"
 import usePostApi from "prisma/hooks/usePostApi"
@@ -11,6 +11,7 @@ import { useToast } from "components/context/ToastContextProvider"
 import { HeartIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
+import AvatarList from "components/ui/avatarList"
 const { debug } = useDebug("PostItemFooter")
 
 type PostFooterProps = {
@@ -19,7 +20,7 @@ type PostFooterProps = {
 }
 const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   const [cyfrUser] = useCyfrUserContext()
-  const likes:(UserStub[] | Like & {creator: User}[]) = post?.likes??[]
+  const likes = post?.likes??[]
   // const shares:UserStub[] = post?.shares?.filter(f=>f!==null)||[]
   const comments:PostStub[] = []
   const { invalidateFeed } = useFeed('post')
@@ -85,8 +86,9 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
           label={`Like (${abbrNum(likes.length)})`}
           onClick={() => handleLike()}
         />
-        {/* @ts-ignore */}
+        {likes &&
         <AvatarList users={likes} sz="xs" />
+        }
       </div>
 
       <div className="font-semibold uppercase">
@@ -99,7 +101,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
           onClick={() => handleShare()}
         />
         {/* @ts-ignore */}
-        <AvatarList users={shares} sz="xs" />
+        {/* <AvatarList users={shares} sz="xs" /> */}
       </div>
 
       <div className="font-semibold uppercase">

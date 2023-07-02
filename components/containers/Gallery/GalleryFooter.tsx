@@ -84,7 +84,7 @@ const GalleryFooter = ({
   return (
     <div className="min-w-full p-4 flex justify-around space-x-4">
       <div className="font-semibold uppercase">
-        <ShrinkableIconButton
+        {/* <ShrinkableIconButton
           icon={HeartIcon}
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
@@ -92,7 +92,7 @@ const GalleryFooter = ({
           label={`Likes (${(gallery.likes||[]).length})`}
           onClick={() => handleLike()}
         />
-        <AvatarList users={(gallery.likes||[])} sz="xs" />
+        <AvatarList users={(gallery.likes||[])} sz="xs" /> */}
       </div>
 
       <div className="font-semibold uppercase">

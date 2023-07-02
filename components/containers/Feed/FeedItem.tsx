@@ -25,31 +25,7 @@ const FeedItem = ({ item }: FeedItemProps) => {
     >
         <FeedHeader item={item} />
         <div className="p-4 mt-4 font-feed">
-          {item.sharedPost && <PostStubView post={item.sharedPost as PostStub} />}
-          {item.image && 
-            <div>
-                Not Implemented
-                {/* <ImageStubView image={item.image} /> */}
-            </div>
-          }
-          {item.gallery && 
-            <div>
-              Not Implemented
-              {/* <GalleryStubView gallery={item.gallery} /> */}
-            </div>
-          }
-          {item.book && 
-          <div>
-            Not Implemented
-            {/* <BookStubView book={item.book} size="sm" showFooter={false} /> */}
-          </div>
-          }
-          {item.character && 
-          <div>
-            Not Implemented
-            {/* <CharacterStubView character={item.character} /> */}
-          </div>
-          }
+          <PostStubView post={item} />
         </div>
         <FeedFooter item={item} />
     </div>

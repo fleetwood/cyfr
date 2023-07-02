@@ -1,4 +1,4 @@
-import { Like, UserStub } from "./../prismaContext"
+import { Like, UserStub, UserStubSelect } from "prisma/prismaContext"
 
 export type LikeProps = {
   creatorId:     String
@@ -12,4 +12,28 @@ export type LikeProps = {
 
 export type LikeStub = Like & {
   creator: UserStub
+}
+
+export type LikesCount = {
+  likes:  LikeStub[]
+  _count: {
+    likes:  Number
+  }
+}
+
+export const LikesInclude = { include: {
+  likes: {
+    include: {
+      creator: UserStubSelect
+    },
+    take: 10
+  }
+}}
+
+export const LikesCount = {
+  _count: {
+    select: {
+      likes: true
+    } 
+  }
 }

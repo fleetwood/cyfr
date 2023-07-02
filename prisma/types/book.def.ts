@@ -14,22 +14,6 @@ export type BookRelations = {
   categories?:  BookCategory[]
 }
 
-export type BookStub = Book & {
-  genre:        Genre
-  authors:      UserStub[]
-  gallery?:     GalleryStub
-  cover?:       CoverStub
-  _count: {
-    follows?:     Number
-    likes?:       Number
-    shares?:      Number
-    chapters?:    Number
-    characters?:  Number
-  }
-}
-
-export type BookDetail = Book & BookRelations
-
 export type BookUpsertProps = {
   ownerId:      string
   id?:          string|null
@@ -100,6 +84,54 @@ export type BookDetailHook = BookDetail & {
   api:          any
 }
 
+export const BookFeedInclude = {
+  include: {
+    gallery: true,
+    cover: true,
+    agent: {
+      include: {
+        user: true
+      }
+    },
+    authors: {
+      include: {
+        user: true
+      }
+    },
+    artists: {
+      include: {
+        user: true
+      }
+    },
+    reviews: {
+      include: {
+        creator: true
+      }
+    },
+    _count: {
+      select: {
+        chapters: true,
+        characters: true,
+        readers: true,
+        reviews: true
+      }
+    }
+  }
+}
+
+export type BookStub = Book & {
+  genre:        Genre
+  authors:      UserStub[]
+  gallery?:     GalleryStub
+  cover?:       CoverStub
+  _count: {
+    follows?:     Number
+    likes?:       Number
+    shares?:      Number
+    chapters?:    Number
+    characters?:  Number
+  }
+}
 export const BookStubInclude = {
   authors:  true,
   cover:    {
@@ -117,6 +149,8 @@ export const BookStubInclude = {
     characters: true
   }}
 }
+
+export type BookDetail = Book & BookRelations
 
 export const BookDetailInclude = {
   genre:      true,

@@ -299,7 +299,6 @@ export type UserStub = {
  * @returns {
  *  id: String
  *  name: String
- *  email: String
  *  image: String (url)
  *  slug: String
  * }
@@ -307,7 +306,6 @@ export type UserStub = {
 export const UserStubSelect = {
   id: true,
   name: true,
-  email: true,
   image: true,
   slug: true
 }
@@ -316,7 +314,6 @@ export const UserStubSelect = {
  * NOTE! Use a `select` instead of `include`
  * @property id: String
  * @property name: String
- * @property email: String
  * @property image: String (url)
  * @property isFan: Boolean | null
  */

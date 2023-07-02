@@ -10,10 +10,10 @@ const mono = require("react-json-pretty/dist/monikai")
 type jsonBlockProps = {
   data: any
   theme?: "adventure" | "leet" | "acai" | "mono"
-  debug?: false
+  debug?: boolean
 }
 
-const JsonBlock = ({ data, theme, debug }: jsonBlockProps) => {
+const JsonBlock = ({ data, theme, debug = false }: jsonBlockProps) => {
   if (!debug && __logLevel__ !== "DEBUG") return <></>
   const useTheme =
     theme === "adventure" ? adventureTme

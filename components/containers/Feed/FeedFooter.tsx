@@ -12,7 +12,7 @@ type FeedFooterProps = {
   item: PostStub
 }
 const FeedFooter = ({ item }: FeedFooterProps) => {
-  const {sharedPost, gallery, image, book, character} = item
+  const {post, gallery, image, book, character} = item
 
   const { invalidateFeed } = useFeed('main')
   const onInvalidate = () => {
@@ -22,12 +22,12 @@ const FeedFooter = ({ item }: FeedFooterProps) => {
   
   return (
     <>
-      {sharedPost && <PostFooter post={sharedPost as PostStub} onUpdate={onInvalidate} />}
-      {/*       
-        {gallery && <GalleryFooter gallery={gallery} onUpdate={onInvalidate} />}
-        {book && <BookFooter bookDetail={book} onUpdate={onInvalidate} />}
-        {character && <CharacterFooter character={character} onUpdate={onInvalidate} />} 
-      */}
+      {
+        gallery ? <GalleryFooter gallery={gallery} onUpdate={onInvalidate} /> :
+        book ? <BookFooter bookStub={book} onUpdate={onInvalidate} /> :
+        character ? <CharacterFooter character={character} onUpdate={onInvalidate} /> :
+        <PostFooter post={(item.post ?? item) as PostStub} onUpdate={onInvalidate} />
+      }
     </>
 )}
 

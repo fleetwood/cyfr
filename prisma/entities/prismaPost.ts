@@ -1,6 +1,6 @@
 
 import useDebug from "hooks/useDebug"
-import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostFeedInclude, PostStub, prisma } from "prisma/prismaContext"
+import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, prisma, PostStubInclude } from "prisma/prismaContext"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPost', 'DEBUG')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
@@ -22,12 +22,14 @@ const postDetail = async (id: string): Promise<PostDetail> => {
 }
 
 const all = async (): Promise<PostStub[]> => {
-  debug('all')
+  debug('all', PostStubInclude)
   try {
     const posts =  await prisma.post.findMany({
       //TODO: blocked users
       where: {visible: true},
-      include: PostFeedInclude,
+      // TODO: review all stubs and details
+      // note that stubs cannot include others stubs in their includes
+      include: PostStubInclude,
       orderBy: {createdAt: "desc"},
       //TODO: pagination
       take: 10

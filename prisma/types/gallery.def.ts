@@ -3,6 +3,8 @@ import {
   EngageList,
   Gallery,
   Image,
+  LikesCount,
+  LikesInclude,
   User,
   UserStub
 } from "../prismaContext";
@@ -30,6 +32,24 @@ export type GalleryEngageProps = {
   galleryId: string
 }
 
+export const GalleryFeedInclude = { include: {
+  images: {
+    include: {
+      creator: {
+        select: {
+          name: true,
+          email: true,
+          slug: true,
+          image: true
+        }
+      },
+      gallery: true
+    }
+  },
+  ...LikesCount,
+  ...LikesInclude
+}}
+
 export type GalleryStub = Gallery & {
   creator: UserStub
   images: ImageStub[]
@@ -50,14 +70,14 @@ export const GalleryStubInclude = {
 
 export type GalleryDetail = Gallery & {
   creator: User
-  likes:  EngageList[]
-  images: any[]
+  // likes:  EngageList[]
+  // images: any[]
 }
 
 export const GalleryDetailInclude = {
   creator: true,
-  likes: EngageInclude,
-  images: {
-    include: ImageFeedInclude,
-  },
+  // likes: EngageInclude,
+  // images: {
+  //   include: ImageFeedInclude,
+  // },
 }
