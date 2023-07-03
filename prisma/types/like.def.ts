@@ -24,7 +24,9 @@ export type LikesCount = {
 export const LikesInclude = { include: {
   likes: {
     include: {
-      creator: UserStubSelect
+      creator: {
+        select: UserStubSelect
+      }
     },
     take: 10
   }

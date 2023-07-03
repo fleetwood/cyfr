@@ -95,7 +95,7 @@ const Avatar = ({
       onMouseOutCapture={() => setShowProfile(() => false)}
     >
       <div className={`mask mask-squircle`}>
-        {link && user ? <a href={`/user/${user.name}`}>{content}</a> : content}
+        {link && user ? <a href={`/user/${user.slug}`}>{content}</a> : content}
       </div>
       {allowProfile && userInfo && 
       <Transition

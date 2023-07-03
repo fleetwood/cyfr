@@ -1,8 +1,8 @@
+import useDebug from "hooks/useDebug";
 import { NextApiRequest, NextApiResponse } from "next";
-import useDebug from "../../../hooks/useDebug";
-import { User, PrismaUser } from "../../../prisma/prismaContext";
+import { User, PrismaUser } from "prisma/prismaContext";
 
-import { GetResponseError, ResponseError, ResponseResult } from "../../../types/response";
+import { GetResponseError, ResponseError, ResponseResult } from "types/response";
 const {debug, info, todo} = useDebug('api/user/preferences')
 
 export default async function handle(

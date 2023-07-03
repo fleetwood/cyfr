@@ -13,26 +13,18 @@ import { cloudinary } from "utils/cloudinary"
 import UserDetailPage from "./user/[id]"
 import Tabs, { TabClassNames } from "components/ui/tabs"
 import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
+import { useToast } from "components/context/ToastContextProvider"
 const {debug, info} = useDebug('pages/account')
 
-export async function getServerSideProps(context: GetSessionParams | undefined) {
-  const user = await PrismaUser.userInSessionContext(context)
-  
-  return { props: { user } }
-}
-
-type AccountProps = {
-  user?: CyfrUser | undefined
-}
-
-const Account = ({user}: AccountProps) => {
-  const [session] = useSession({required: true, redirectTo: '/login'})  
+const Account = () => {
+  useSession({required: true, redirectTo: '/login'})
   const [cyfrUser, isLoading, error, invalidate] = useCyfrUserContext()
+  const {notify} = useToast()
   const {updateUser} = useCyfrUserApi()
   const [activeTab, setActiveTab] = useState('Preferences' )
   const [cyfrName, setCyfrName] = useState<string|null>(cyfrUser?.name)
 
-  const onNameChange = () => {
+  const onNameChange = async () => {
     if (cyfrName===null||cyfrName.length<3) {
       return
     }
@@ -40,14 +32,13 @@ const Account = ({user}: AccountProps) => {
       ...cyfrUser,
       name: cyfrName
     } as unknown as CyfrUser
-    updateUser(newCyfrUser)
-      .then(r => {
-        debug(`onNameChange complete`)
-        invalidate()
-      })
-      .catch(e => {
-        info(`onNameChange error`,e)
-      })
+    const result = await updateUser(newCyfrUser)
+    if (result) {
+      notify('Updated!')
+      invalidate()
+    } else {
+      notify('Ya that dint work sry', 'warning')
+    }
   }
 
   const onFileComplete = async (files:Image[]) => {
@@ -60,13 +51,19 @@ const Account = ({user}: AccountProps) => {
       } as unknown as CyfrUser
       const result = await updateUser(newCyfrUser)
       if (result) {
+        notify('Updated!')
         invalidate()
-      }
-      else {
-        info(`onFileComplete error`,{file})
+      } else {
+        notify('Ya that dint work sry', 'warning')
       }
     }
   }
+
+  useEffect(() => {
+    if (cyfrUser) {
+      setCyfrName(() => cyfrUser.name)
+    }
+  }, [isLoading])
 
   const activeTabClass = (tab:string) => activeTab === tab 
     ? `btn-secondary rounded-b-none mt-0`

@@ -31,7 +31,7 @@ const Navbar = ({
   const [isPageScrolled, setIsPageScrolled] = useState(false)
   const [showDropDown, setShowDropDown ] = useState(false)
 
-  const userUrl = cyfrUser ? cyfrUser.name : ''
+  const userUrl = cyfrUser ? cyfrUser.slug : ''
 
   const linkClass = 'rounded-lg hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'
 
