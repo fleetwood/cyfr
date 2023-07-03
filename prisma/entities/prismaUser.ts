@@ -131,6 +131,7 @@ const detail = async (props:UserDetailProps): Promise<any> => {
     : { id : id}
   return await prisma.user.findUnique({where: where})
 }
+
 const books = async (props:UserDetailProps): Promise<any> => {
   const {id, name, email, slug} = props
   const some = 
@@ -142,8 +143,17 @@ const books = async (props:UserDetailProps): Promise<any> => {
   const books = await prisma.book.findMany({
     where: { 
       authors: {
-        some
-    }},
+        some: {
+          user: {
+            slug: 'fleetwood'
+          }
+        }
+      },
+      OR: {
+       owner: {
+         slug: 'fleetwood'
+       } 
+      }},
     include: BookStubInclude
   })
   debug('result', books)
