@@ -1,10 +1,10 @@
 import { NextApiRequest } from "next"
 import { getSession, GetSessionParams } from "next-auth/react"
-import useDebug from "../../hooks/useDebug"
+import useDebug from "hooks/useDebug"
 import {
   GenericResponseError,
   ResponseError
-} from "../../types/response"
+} from "types/response"
 import {
   AudienceLevels,
   audienceToLevel,
@@ -13,11 +13,10 @@ import {
   CyfrUserInclude,
   Follow,
   prisma, User, UserFeed,
-  UserFeedInclude,
   UserFollowProps,
   UserStub
-} from "../prismaContext"
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser")
+} from "prisma/prismaContext"
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG')
 
 type AllPostQueryParams = {
   limit?: Number
@@ -123,37 +122,37 @@ export type UserDetailProps = {
   email?: string
   slug?:  string
 }
+
 const detail = async (props:UserDetailProps): Promise<any> => {
   const {id, name, email, slug} = props
   const where = name ? { name: name}
     : email ? { email: email}
     : slug ? { slug : slug.toLowerCase() }
     : { id : id}
-  return await prisma.user.findUnique({where: where})
+  debug('detail', {where})
+  return await prisma.user.findUnique({
+    where: where,
+    include: CyfrUserInclude
+  })
 }
 
 const books = async (props:UserDetailProps): Promise<any> => {
   const {id, name, email, slug} = props
-  const some = 
+  const user = 
       name ? { name: name}
       : email ? { email: email}
       : slug ? { slug : slug.toLowerCase() }
       : { id : id}
-  debug('books', {props, some})
+  debug('books', {props, user})
   const books = await prisma.book.findMany({
     where: { 
       authors: {
         some: {
-          user: {
-            slug: 'fleetwood'
-          }
+          user,
+          visible: true
         }
-      },
-      OR: {
-       owner: {
-         slug: 'fleetwood'
-       } 
-      }},
+      }
+    },
     include: BookStubInclude
   })
   debug('result', books)

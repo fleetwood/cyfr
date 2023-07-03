@@ -1,13 +1,14 @@
+import useRocketQuery from "hooks/useRocketQuery";
 import UserDetailView from "../../../components/containers/User/UserDetailView";
 import MainLayout from "../../../components/layouts/MainLayout";
 import useUserDetail from "../../../hooks/useUserDetailQuery";
 import { InferGetServerSidePropsType } from "next";
 
 export async function getServerSideProps(context: any) {
-  const userId = context.params.id
+  const slug = context.params.id
   return {
     props: {
-      userId,
+      slug,
     },
   }
 }
@@ -18,8 +19,12 @@ type UserDetailProps = {
 }
 
 // @ts-ignore
-const UserDetailPage = ({ userId, layout='main' }:UserDetailProps) => {
-  const { currentUser } = useUserDetail({id: userId})
+const UserDetailPage = ({ slug, layout='main' }:UserDetailProps) => {
+  const {data: currentUser, isLoading, error} = useRocketQuery({
+    name: `user-${slug}`,
+    url: `user/${slug}`,
+    body: {slug}
+  })
   
   return (
     <>

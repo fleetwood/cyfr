@@ -14,7 +14,7 @@ export type RocketQueryProps = {
 export const useRocketQuery = <T>({name, url, body, timeout=30000}:RocketQueryProps) => {
   const qc = useQueryClient()
   const queryKey = Array.isArray(name) ? [...name] : [name]
-  const method = async () => body !== null && body !== undefined ? (await sendApi(url, body)).data : await getApi(url)
+  const method = async () => body !== undefined ? (await sendApi(url, body)).data : await getApi(url)
 
   const query = useQuery(queryKey, method,
     {
