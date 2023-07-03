@@ -13,8 +13,8 @@ type InboxProviderProps = {
 }
 
 const SendMessageModal = ({checked, setChecked, children }: InboxProviderProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const {sendMessage, invalidateFeed} = useFeed('inbox')
+  const {cyfrUser} = useCyfrUserContext()
+  const [invalidate] = useFeed('inbox')
   const {notify} = useToast()
   
   const inboxUserModal = 'inboxUserModal'
@@ -40,20 +40,23 @@ const SendMessageModal = ({checked, setChecked, children }: InboxProviderProps) 
       return
     }
 
-    const thread = await sendMessage({
-      partyId: partyId!,
-      userId: cyfrUser.id,
-      messages: [{creatorId: cyfrUser.id, content: content!}]
-    })
+    notify('not implemented')
+    return 
 
-    hide()
+    // const thread = await sendMessage({
+    //   partyId: partyId!,
+    //   userId: cyfrUser.id,
+    //   messages: [{creatorId: cyfrUser.id, content: content!}]
+    // })
 
-    if (thread) {
-      debug(`handleSubmit success`)
-      invalidateFeed()
-    } else {
-      notify(`Hm. That didn't work....`,'warning')
-    }
+    // hide()
+
+    // if (thread) {
+    //   debug(`handleSubmit success`)
+    //   invalidate()
+    // } else {
+    //   notify(`Hm. That didn't work....`,'warning')
+    // }
   }
 
   useEffect(() => {

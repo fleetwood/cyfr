@@ -21,7 +21,7 @@ type SendMessageDetailProps = {
 
 const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetailProps) => {
     const {notify} = useToast()
-    const {sendMessage, invalidateFeed} = useFeed('inbox')
+    const [invalidate] = useFeed('inbox')
    const [party, setParty] = useState<User|null>(null)
    const [search, setSearch] = useState<string>('')
    const [message, setMessage] = useState<string|null>(null)
@@ -40,13 +40,15 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
             content: message!
         }]
     }
-    const inbox = await (await sendMessage(inboxProps))?.data.result
-    if (inbox) {
-        notify('Message sent!')
-        onCreate(inbox)
-    } else {
-        notify(`Well that didn't work, sorry!`,'warning')
-    }
+    notify('not implemented')
+    return 
+    // const inbox = await (await sendMessage(inboxProps))?.data.result
+    // if (inbox) {
+    //     notify('Message sent!')
+    //     onCreate(inbox)
+    // } else {
+    //     notify(`Well that didn't work, sorry!`,'warning')
+    // }
    }
 
    const onSelectParty = (user:User) => {

@@ -13,7 +13,7 @@ export default async function handle(
   try {
     const result = await PrismaBook.changeGenre({bookId, genreId})
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw {
         code: "api/book/changeGenre",

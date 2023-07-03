@@ -10,14 +10,14 @@ const {debug, err} = useDebug('api/genre')
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<GenreFeed>>
+  res: NextApiResponse
 ) {
   const { title, description, fiction } = req.body
   try {
     debug('handle', {title, description, fiction})
     const result = await PrismaGenre.upsertGenre({title, description, fiction})
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: "api/genre/upsert", message: "Failed to create genre" }
     }

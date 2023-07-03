@@ -9,13 +9,13 @@ import { logError, todo } from "../../../utils/log"
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Genre>>
+  res: NextApiResponse
 ) {
   const { title } = req.body
   try {
     const result = await PrismaGenre.deleteGenre({title})
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: "api/genre/delete", message: "Failed to delete genre" }
     }

@@ -15,7 +15,7 @@ import useChapterApi from "../../../prisma/hooks/useChapterApi"
 const {debug, jsonBlock} = useDebug('ChapterDetailLayout')
 
 const ChapterDetailLayout = ({chapterDetail, genres, view, setView}:ChapterLayoutProps) => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const {isAuthor} = useChapterApi()
   const showEdit = isAuthor({chapter: chapterDetail, cyfrUser})
   

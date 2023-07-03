@@ -16,7 +16,7 @@ export default async function handle(
     throw NotImplemented('api/post/share')
     // try {
     //   if (result) {
-    //     res.status(200).json({ result })
+    //     res.status(200).json(result)
     //   } else {
     //     throw { code: "api/post/share", message: "Failed to share post" }
     //   }

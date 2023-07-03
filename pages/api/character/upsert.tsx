@@ -10,7 +10,7 @@ import {
 const {debug, err, fileMethod} = useDebug('api/character/upsert')
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<unknown>>
+  res: NextApiResponse
 ) {
   try {
     const character = req.body
@@ -18,7 +18,7 @@ export default async function handle(
     const result = await PrismaCharacter.upsert(character)
     if (result) {
       debug('result', {result})
-      res.status(200).json({ result })
+      res.status(200).json(result)
     }
     throw { code: fileMethod('upsert'), message: "Fail upsert characterrrrr!!!!" }
     

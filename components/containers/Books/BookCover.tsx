@@ -41,7 +41,7 @@ const BookImage = ({cover, title, width, owner}:{cover?: CoverStub, title: strin
  * @returns 
  */
 const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true}:BookCoverProps) => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const isOwner = isAuthor({book,cyfrUser})
   const cover = book.cover || null
   const width = (variant === BookCoverVariant.FULL && cover !== null)

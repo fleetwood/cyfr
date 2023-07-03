@@ -38,7 +38,7 @@ const BookImage = ({cover, title, width, owner}:{cover: CoverStub, title: string
  * @returns 
  */
 const BookEditCover = ({book, onUpdate}:BookCoverProps) => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const {changeCover} = useBookApi
 
   const isOwner = isAuthor({book,cyfrUser})

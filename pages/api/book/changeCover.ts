@@ -14,7 +14,7 @@ export default async function handle(
   try {
     const result = await PrismaBook.changeCover({book, newImage: image, cover, imageId})
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw {
         code: "api/book/changeCover",

@@ -3,7 +3,7 @@ import {
   EngageList,
   Gallery,
   Image,
-  LikesCount,
+  LikesCountInclude,
   LikesInclude,
   User,
   UserStub
@@ -46,7 +46,7 @@ export const GalleryFeedInclude = { include: {
       gallery: true
     }
   },
-  ...LikesCount,
+  ...LikesCountInclude,
   ...LikesInclude
 }}
 

@@ -12,7 +12,7 @@ import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
 import Toasts from "../../ui/toasts"
 
 const ChapterReviewLayout = ({chapterDetail, view, setView}:ChapterLayoutProps) => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const {book} = chapterDetail
   
   const [scrollActive, setScrollActive] = useState(false)

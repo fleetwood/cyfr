@@ -19,7 +19,7 @@ const { debug, fileMethod, err } = useDebug('api/image/upsert', 'DEBUG')
  */
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Image>>
+  res: NextApiResponse
 ) {
   const props = req.body as ImageUpsertProps
   const {
@@ -50,7 +50,7 @@ export default async function handle(
   try {
     const result = await PrismaImage.upsert(imageUpsert)
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: fileMethod('handle'), message: 'Failed to upsert image' }
     }

@@ -29,7 +29,7 @@ const Login: FC = (props: InferGetServerSidePropsType<typeof getServerSideProps>
 
   const Router = useRouter()
   const [user, setUser] = useState<DefaultSession["user"]>()
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const [session, loading] = useSession({
     required: false,
     queryConfig: {

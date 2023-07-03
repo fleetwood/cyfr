@@ -16,7 +16,7 @@ type CommentThreadDetailProps = {
 }
 
 const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
-    const {sendMessage, invalidateFeed} = useFeed('inbox')
+    const [invalidate] = useFeed('inbox')
     const {notify} = useToast()
     const [message, setMessage] = useState<string|null>(null)
     const [valid, setValid] = useState<boolean>(true)
@@ -38,14 +38,15 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
             ]
         }
         debug('onSend', data)
+        notify('not implemented')
+        return
+        // const send = await sendMessage(data)
         
-        const send = await sendMessage(data)
-        
-        if (send) {
-            notify("Message sent!")
-            setMessage(() => null)
-            invalidateFeed('inbox')
-        }
+        // if (send) {
+        //     notify("Message sent!")
+        //     setMessage(() => null)
+        //     invalidate()
+        // }
     }
 
     useEffect(() => {

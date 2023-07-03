@@ -19,7 +19,7 @@ const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
   if (!book) return <Spinner size='sm' />
 
   const { notify, loginRequired } = useToast()
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const {share, follow, like} = useBookApi
   const bookId = book.id
   const engageProps:BookEngageProps|undefined = cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined

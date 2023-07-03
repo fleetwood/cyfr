@@ -1,5 +1,4 @@
 import { useState } from "react"
-import useUserDetail from "hooks/useUserDetail"
 import { UserFollow } from "prisma/prismaContext"
 import { uniqueKey } from 'utils/helpers'
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
@@ -11,14 +10,15 @@ import JsonBlock from "components/ui/jsonBlock"
 import BookCover from "../Books/BookCover"
 import PostStubView from "../Post/PostStubView"
 import Avatar from "components/ui/avatar"
+import useUserDetailQuery from "hooks/useUserDetailQuery"
 
 type UserDetailViewProps = {
   userId: string
 }
 
 const UserDetailView = ({ userId }: UserDetailViewProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const { currentUser, followers, follows, fans, stans, followUser, stanUser, invalidateUser } = useUserDetail({id: userId})
+  const {cyfrUser} = useCyfrUserContext()
+  const { currentUser, followers, follows, fans, stans, followUser, stanUser, invalidateUser } = useUserDetailQuery({id: userId})
   const { notify } = useToast()
   const [activeTab, setActiveTab] = useState("Posts")
 

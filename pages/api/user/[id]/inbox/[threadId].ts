@@ -6,7 +6,7 @@ import { todo } from "../../../../../utils/log";
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<CommentThread>>
+  res: NextApiResponse
 ) {
   try {
     const session = await getSession({ req });
@@ -25,11 +25,11 @@ export default async function handle(
       // log(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\nYES USER in session.... ${JSON.stringify(session, null, 2)}`)
       todo('This should only get inbox that the user is included in')
       const result = PrismaComment.threadById(id, threadId) as unknown as CommentThread
-      if (!result) {
-        res.status(200).json({});
-        res.end();
+      if (result) {
+        res.status(200).json(result);
       }
-      res.status(200).json({ result });
+      res.status(200).json({});
+      res.end();
     }
   } catch (error) {}
 }

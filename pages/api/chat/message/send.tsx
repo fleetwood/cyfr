@@ -12,7 +12,7 @@ export default async function sendMessage(req: NextApiRequest,res: NextApiRespon
     const result = await PrismaChat.sendMessage(message)
 
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     }
     
   } catch (e: Error | any) {

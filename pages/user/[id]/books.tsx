@@ -31,7 +31,7 @@ type UserBooksPageProps = {
 }
 
 const UserBooksPage = ({ user, books }:UserBooksPageProps) => {  
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const title = `Books by ${user ? user.name : 'Somebody'}`
   const isOwner = user && cyfrUser ? user.id === cyfrUser.id : false
 

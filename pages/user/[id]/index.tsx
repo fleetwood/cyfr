@@ -1,6 +1,6 @@
 import UserDetailView from "../../../components/containers/User/UserDetailView";
 import MainLayout from "../../../components/layouts/MainLayout";
-import useUserDetail from "../../../hooks/useUserDetail";
+import useUserDetail from "../../../hooks/useUserDetailQuery";
 import { InferGetServerSidePropsType } from "next";
 
 export async function getServerSideProps(context: any) {

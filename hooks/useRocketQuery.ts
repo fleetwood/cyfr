@@ -5,28 +5,31 @@ import useDebug from "./useDebug"
 const {debug} = useDebug("useRocketQuery")
 
 export type RocketQueryProps = {
-  name:   string | string[]
-  url:    string
-  body?:  any
+  name:     string | string[] | (string | { type: string; })[]
+  url:      string
+  body?:    any
+  timeout?: number
 }
 
-export const useRocketQuery = async <T>({name, url, body}:RocketQueryProps) => {
+export const useRocketQuery = <T>({name, url, body, timeout=30000}:RocketQueryProps) => {
   const qc = useQueryClient()
   const queryKey = Array.isArray(name) ? [...name] : [name]
-  const method = async () => body !== null && body !== undefined ? sendApi(url, body) : getApi(url)
+  const method = async () => body !== null && body !== undefined ? (await sendApi(url, body)).data : await getApi(url)
 
   const query = useQuery(queryKey, method,
     {
+      refetchInterval: timeout,
       onSettled(data,error) {
-        if (error || data === null) {
+        if (error || data === undefined) {
           debug(`onSettled(${queryKey}) ERROR`,{ error, data })
         }
         if (data) {
-          debug(`onSettled(${queryKey})`,{ data })
+          debug(`onSettled(${queryKey})`,data)
           return data as T
         }
+        return null
       }
-    },
+    }
   )
 
   const invalidate = () => {

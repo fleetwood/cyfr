@@ -32,7 +32,7 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
   const {save} = useBookApi
 
   const { notify } = useToast()
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
 
   const [back, setBack] = useState<string|null|undefined>(bookDetail.back)
   const [synopsis, setSynopsis] = useState<string|null|undefined>(bookDetail.synopsis)

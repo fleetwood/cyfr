@@ -35,7 +35,7 @@ export const CreateCommentFooterButton = ({postId, comments}:{postId: string, co
 )
 
 const CreateCommentModal = (): JSX.Element => { 
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [valid, setIsValid] = useState<boolean>(false)

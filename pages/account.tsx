@@ -1,24 +1,23 @@
-import { GetSessionParams, signOut } from "next-auth/react"
+import { signOut } from "next-auth/react"
 import { useEffect, useState } from "react"
 
 import UserBillingDetail from "components/containers/User/UserBillingDetail"
-import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import { useToast } from "components/context/ToastContextProvider"
 import { Dropzone, TailwindInput } from "components/forms"
 import MainLayout from "components/layouts/StaticLayout"
 import { SaveIcon } from "components/ui/icons"
+import { TabClassNames } from "components/ui/tabs"
 import useDebug from "hooks/useDebug"
 import { useSession } from "lib/next-auth-react-query"
-import { CyfrUser, Image, PrismaUser } from "prisma/prismaContext"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
+import { CyfrUser, Image } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
 import UserDetailPage from "./user/[id]"
-import Tabs, { TabClassNames } from "components/ui/tabs"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
-import { useToast } from "components/context/ToastContextProvider"
 const {debug, info} = useDebug('pages/account')
 
 const Account = () => {
   useSession({required: true, redirectTo: '/login'})
-  const [cyfrUser, isLoading, error, invalidate] = useCyfrUserContext()
+  const {cyfrUser, isLoading, error, invalidate} = useCyfrUserApi()
   const {notify} = useToast()
   const {updateUser} = useCyfrUserApi()
   const [activeTab, setActiveTab] = useState('Preferences' )

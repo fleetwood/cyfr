@@ -3,7 +3,7 @@ import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider
 import MainLayout from "../../../components/layouts/MainLayout";
 
 const UserMembershipPage = () => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
 
   return (
   <MainLayout sectionTitle="Memberships" subTitle={cyfrUser?.name || ""}>

@@ -18,7 +18,7 @@ export default async function handle(
   try {
     const result = await PrismaBook.addGallery({galleryId, bookId})
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw {
         code: "api/book/addGallery",

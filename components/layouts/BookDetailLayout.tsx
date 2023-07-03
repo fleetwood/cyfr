@@ -27,7 +27,7 @@ export type BookDetailProps = {
 }
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   // const bookDetailHook = useBookDetail(props.bookId, cyfrUser)
   const {data: bookDetail , isLoading, error, invalidate} = useBookQuery({bookSlug: props.bookSlug})
   

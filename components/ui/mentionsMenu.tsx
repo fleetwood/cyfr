@@ -17,7 +17,7 @@ type MentionsMenuProps = {
 }
 
 const MentionsMenu = ({onSelect, show = true, type='MENTION'}:MentionsMenuProps) => {
-    const [cyfrUser] = useCyfrUserContext()
+    const {cyfrUser} = useCyfrUserContext()
     const [showMenu, setShowMenu] = useState(show)
     const {mentions} = UserApi()
     const [list, setList] = useState<Array<UserStub>>([])

@@ -7,7 +7,7 @@ const {debug, info, todo} = useDebug('api/user/preferences')
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<User>>
+  res: NextApiResponse
 ) {
   debug("handle", req.body)
   try {
@@ -15,7 +15,7 @@ export default async function handle(
     const result = await PrismaUser.updatePreferences({id, name, image});
     if (result) {
       debug("got result!!")
-      res.status(200).json({ result });
+      res.status(200).json(result);
     } else {
       debug("no result!!")
       throw { code: "api/user/preferences", message: `No results from Users.updatePreferences` };

@@ -20,7 +20,7 @@ export default async function handle(
   try {
     const result = await PrismaGallery.detail(id)
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: "api/gallery/create", message: "Failed to create gallery" }
     }

@@ -10,7 +10,7 @@ const {debug, err} = useDebug('api/book/upsert', 'DEBUG')
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<BookDetail>>
+  res: NextApiResponse
 ) {
   const props:BookUpsertProps = req.body
   try {
@@ -18,7 +18,7 @@ export default async function handle(
     const result = await PrismaBook.upsert(props)
     if (result) {
       debug('result', result)
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: "api/book/upsert", message: "Fail upsert boooook!!!!" }
     }

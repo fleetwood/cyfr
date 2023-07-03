@@ -35,9 +35,9 @@ const PostDetailPage = ({ postId }:PostDetailPageProps) => {
         </div>
       </div>
       <div className="bg-base-100 rounded-lg p-4 relative">
-        <div className="flex justify-end pr-4">Posted {timeDifference((post.createdat || '').toString())}</div>
+        <div className="flex justify-end pr-4">Posted {timeDifference((post.createdAt || '').toString())}</div>
         <HtmlContent className="clear-both" content={post.content!} /> 
-        {post.images?.length > 0 && post.images[0] !== null && <GalleryPhotoswipe images={post.images} />}
+        {post.images && post.images[0] !== null && <GalleryPhotoswipe images={post.images} />}
         <PostFooter post={post} onUpdate={invalidate} />
       </div>
     </MainLayout>

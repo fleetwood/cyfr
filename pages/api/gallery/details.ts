@@ -17,7 +17,7 @@ export default async function handle(
   try {
     const result = await PrismaGallery.details()
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: filename, message: "Failed to find gallery details" }
     }

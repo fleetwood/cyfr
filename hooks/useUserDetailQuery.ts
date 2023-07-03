@@ -1,15 +1,13 @@
 import { useState } from "react"
 import { useQuery, useQueryClient } from "react-query"
-import { getApi, sendApi } from "../utils/api"
-import { UserFollowProps } from "../prisma/types/follow.def"
-import { UserDetail, UserDetailProps } from "../prisma/prismaContext"
+import { getApi, sendApi } from "utils/api"
+import { UserDetail, UserDetailProps, UserFollowProps } from "prisma/prismaContext"
 import useDebug from "./useDebug"
 import UserApi from "prisma/hooks/userApi"
 const {debug, info} = useDebug('useUserDetails')
 
-
 const {detail} = UserApi()
-export const userDetailQuery = "userDetailQuery"
+export const userDetailQuery = "useUserDetailQuery"
 
 const  getUser = async (userid:string) => await( await detail({id: userid})).data
 

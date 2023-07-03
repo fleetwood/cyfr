@@ -11,7 +11,7 @@ const {debug, err, fileMethod} = useDebug('api/chapter/detail')
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<unknown>>
+  res: NextApiResponse
 ) {
   try {
     const {chapterId} = req.body
@@ -19,7 +19,7 @@ export default async function handle(
     const result = await PrismaChapter.detail(chapterId)
     if (result) {
       debug('detail', result)
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: fileMethod('detail'), message: "Fail detail chapterrrrr!!!!" }
     }

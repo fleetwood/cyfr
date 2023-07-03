@@ -9,7 +9,7 @@ import ChatRoom, { ChatRoomProps } from "./ChatRoom"
 const {debug} = useDebug("components/containers/ChatList.tpx")
 
 const ChatList = () => {
-    const [cyfrUser] = useCyfrUserContext()
+    const {cyfrUser} = useCyfrUserContext()
     const [show, setShow] = useState<boolean>(false)
     const [chatRooms, setChatRooms] = useState<ChatRoomProps[]>([])
 

@@ -8,14 +8,14 @@ const {debug} = useDebug('api/post/create')
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Post>>
+  res: NextApiResponse
 ) {
   debug('handle', {...req.body})
   const { content, creatorId, images } = req.body
   try {
     const result = await PrismaPost.createPost({content, creatorId, images})
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: "api/post/create", message: "Failed to create posts" }
     }

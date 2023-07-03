@@ -1,5 +1,5 @@
 import { useState } from "react"
-import useUserDetail, { UserDetailHookProps } from "../../../hooks/useUserDetail"
+import useUserDetail, { UserDetailHookProps } from "../../../hooks/useUserDetailQuery"
 import { PostStub, UserFollow } from "../../../prisma/prismaContext"
 import Avatar from "../../ui/avatar"
 import PostStubView from "../Post/PostStubView"

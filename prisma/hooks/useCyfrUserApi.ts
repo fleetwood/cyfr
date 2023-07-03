@@ -1,13 +1,22 @@
-import useCyfrUser from "hooks/useCyfrUser"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import useDebug from "hooks/useDebug"
 import { CyfrUser } from "prisma/prismaContext"
 import { sendApi } from "utils/api"
 
 const {debug, info, fileMethod} = useDebug('/prisma/hooks/useCyfrUserApi')
 
-export const useCyfrUserApi = () => {
-    const [cyfrUser, isLoading, error, invalidate] = useCyfrUser()
+type CyfrUserApi = {
+    invalidate: () => void
+    updateUser: (data: CyfrUser) => Promise<CyfrUser>
+    cyfrUser:   CyfrUser
+    isLoading:  boolean
+    error:      boolean
+}
+
+export const useCyfrUserApi = ():CyfrUserApi => {
+    const {data:cyfrUser, isLoading, error, invalidate} = useCyfrUserContext()
     
+    // TODO: this needs a better name, because it's not updating preferences
     const updateUser = async (data:CyfrUser) => {
       debug('updateUser', data)
       try {
@@ -30,6 +39,6 @@ export const useCyfrUserApi = () => {
       }
     }
   
-    return { invalidate, updateUser }
+    return { invalidate, updateUser, cyfrUser, isLoading, error }
   }
   

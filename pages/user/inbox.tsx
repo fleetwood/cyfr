@@ -14,12 +14,13 @@ const {debug, info, todo} = useDebug('pages/user/inbox')
 
 const Inbox = ({}) => {
     useSession({required: true, redirectTo: '/login'})
-    const [cyfrUser] = useCyfrUserContext()
-    const {feed, sendMessage, invalidateFeed} = useFeed('inbox')
+    const {cyfrUser} = useCyfrUserContext()
+    const [data, invalidate] = useFeed('inbox')
     const [party, setParty] = useState<string|null>(null)
     const [activeThread, setActiveThread] = useState<CommentThreadDetails|null>(null)
     const [showModal, setShowModal] = useState(false)
 
+    const feed = data
     
     const showModalView = () => {
         setShowModal(() => true)
@@ -33,7 +34,7 @@ const Inbox = ({}) => {
 
     useEffect(() => {
         debug('useEffect', feed)
-        invalidateFeed('inbox')
+        invalidate()
     }, [cyfrUser])
 
   return (

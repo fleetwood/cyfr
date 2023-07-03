@@ -10,13 +10,13 @@ import { logError } from "utils/log"
  */
 export default async function handle(
     req: NextApiRequest,
-    res: NextApiResponse<ResponseResult<Like>>
+    res: NextApiResponse
   ) {
     const { galleryId, creatorId } = req.body as GalleryEngageProps
     try {
       const result = await PrismaGallery.like({galleryId, creatorId})
       if (result) {
-        res.status(200).json({ result })
+        res.status(200).json(result)
       } else {
         throw { code: "api/gallery/like", message: "Failed to like gallery" }
       }

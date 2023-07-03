@@ -18,7 +18,7 @@ type ChapterEditViewProps = {
 }
 
 const ChapterEditView = ({chapterDetail, onSave}:ChapterEditViewProps) => {
-    const [cyfrUser] = useCyfrUserContext()
+    const {cyfrUser} = useCyfrUserContext()
     const {isAuthor, save} = useChapterApi()
     const {notify} = useToast()
 

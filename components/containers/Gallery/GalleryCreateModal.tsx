@@ -28,10 +28,10 @@ type GalleryCreateModalProps = {
 const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
   const modal = useRef<HTMLInputElement>(null)
 
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const { notify } = useToast()
   
-  const { invalidateFeed } = useFeed('gallery')
+  const [invalidate] = useFeed('gallery')
 
   return (
     <>
@@ -43,7 +43,7 @@ const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
             {cyfrUser && (
               <div className="w-full mx-auto p-2 sm:p-6 lg:p-4 drop-shadow-xl">
                 <form className="flex flex-col space-y-2 bg-secondary p-2 rounded-lg drop-shadow-lg border border-base-100 border-opacity-50" onSubmit={(e) => {e.preventDefault()}}>
-                  <GalleryUpsertForm limit={limit} onUpsert={(galleryId) => {invalidateFeed(); onUpsert ? onUpsert(galleryId) : {}}} />
+                  <GalleryUpsertForm limit={limit} onUpsert={(galleryId) => {invalidate(); onUpsert ? onUpsert(galleryId) : {}}} />
                 </form>
               </div>
             )}

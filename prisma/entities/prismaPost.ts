@@ -1,14 +1,14 @@
 
 import useDebug from "hooks/useDebug"
-import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, prisma, PostStubInclude } from "prisma/prismaContext"
+import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, prisma, PostStubInclude, PostDetailInclude } from "prisma/prismaContext"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPost', 'DEBUG')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
   try {
     debug('postDetail', id)
-    const result:any[] = await prisma.$queryRaw`select * from f_post_detail(${id})`
+    const result = await prisma.post.findUnique({where: {id}, include: PostDetailInclude})
     if (result) {
-      return result[0] as PostDetail
+      return result as PostDetail
     }
     else {
       debug('postDetail NAWP', {result})
@@ -21,10 +21,15 @@ const postDetail = async (id: string): Promise<PostDetail> => {
   }
 }
 
-const all = async (): Promise<PostStub[]> => {
-  debug('all', PostStubInclude)
+type PaginationProps = {
+  take?: number
+  skip?: number
+}
+
+const feed = async ({take=10, skip=0}:PaginationProps): Promise<PostStub[]> => {
+  debug('feed')
   try {
-    const posts =  await prisma.post.findMany({
+    const posts = await prisma.post.findMany({
       //TODO: blocked users
       where: {visible: true},
       // TODO: review all stubs and details
@@ -32,12 +37,15 @@ const all = async (): Promise<PostStub[]> => {
       include: PostStubInclude,
       orderBy: {createdAt: "desc"},
       //TODO: pagination
-      take: 10
+      take, skip
     })
-    return posts as unknown as PostStub[]
-  } catch (error) {
-    info('prismaPost.all',error)
+    if (posts) {
+      return posts as unknown as PostStub[]
+    }
     throw { code: fileMethod('all'), message: "No posts were returned!" }
+  } catch (error) {
+    info('prismaPost.feed ERROR',error)
+    throw error
   }
 }
 
@@ -103,7 +111,6 @@ const likePost = async (props: PostEngageProps): Promise<Like> => {
   }
 }
 
-
 const commentOnPost = async (props: PostCommentProps): Promise<PostDetail> => {
   const {postId, creatorId, content} = props
   try {
@@ -154,4 +161,4 @@ const commentOnPost = async (props: PostCommentProps): Promise<PostDetail> => {
   }
 }
 
-export const PrismaPost = { all, postDetail, createPost, deletePost, likePost, commentOnPost }
+export const PrismaPost = { feed, postDetail, createPost, deletePost, likePost, commentOnPost }

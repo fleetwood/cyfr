@@ -25,7 +25,7 @@ export async function getServerSideProps(context: any) {
 }
 
 const UserGalleryPage = ({ user, galleries }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
 
   return (
   <MainLayout sectionTitle="Galleries" subTitle={user?.name || ""}>

@@ -8,13 +8,13 @@ const {info} = useDebug('api/post/comment')
 
 export default async function handle(
     req: NextApiRequest,
-    res: NextApiResponse<ResponseResult<PostDetail>>
+    res: NextApiResponse
   ) {
     const { postId, creatorId, content } = req.body
     try {
       const result = await PrismaPost.commentOnPost({postId, creatorId, content})
       if (result) {
-        res.status(200).json({ result })
+        res.status(200).json(result)
       } else {
         throw { code: "api/post/comment", message: "Failed to comment on post" }
       }

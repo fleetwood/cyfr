@@ -8,7 +8,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const result = await PrismaPost.postDetail(id?.toString() || "");
     if (result) {
-      res.status(200).json({ result });
+      res.status(200).json(result);
     } else {
       throw { code: "api/post", message: `No results from Post.byId()` };
     }

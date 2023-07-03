@@ -14,7 +14,7 @@ export default async function handle(
     const result = await PrismaUser.canAccess(level,cyfrUser??undefined)
     debug('handle', {level, user: cyfrUser?.name, id:cyfrUser?.id??'NA', membership: cyfrUser?.membership?.type.level??'NA', result})
     
-    res.status(200).json({ result })
+    res.status(200).json(result)
   } catch (e: Error | ResponseError | any) {
     err(`FAIL`, e)
     res.status(200).json({ })

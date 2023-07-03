@@ -52,7 +52,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 
 const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const {share, follow, like, save, updateGenre} = useBookApi
   const bookId = bookDetail.id
   const engageProps:BookEngageProps|undefined = bookDetail && cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined

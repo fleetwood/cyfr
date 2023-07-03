@@ -9,13 +9,13 @@ import { logError } from "utils/log"
  */
 export default async function handle(
     req: NextApiRequest,
-    res: NextApiResponse<ResponseResult<Post>>
+    res: NextApiResponse
   ) {
     const { galleryId, creatorId } = req.body as GalleryEngageProps
     try {
       const result = await PrismaGallery.share({galleryId, creatorId})
       if (result) {
-        res.status(200).json({ result })
+        res.status(200).json(result)
       } else {
         throw { code: "api/gallery/share", message: "Failed to share gallery" }
       }

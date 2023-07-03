@@ -19,11 +19,11 @@ type PostFooterProps = {
   onUpdate?:  () => void
 }
 const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const likes = post?.likes??[]
   // const shares:UserStub[] = post?.shares?.filter(f=>f!==null)||[]
   const comments:PostStub[] = []
-  const { invalidateFeed } = useFeed('post')
+  const [invalidate] = useFeed('post')
   const { notify, loginRequired } = useToast()
   const { setPostId, showComment, hideComment } = useCommentContext()
   const {share, like} = usePostApi()
@@ -37,7 +37,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   }
 
   const update = () => {
-    invalidateFeed()
+    invalidate()
     onUpdate ? onUpdate() : {}
   }
 

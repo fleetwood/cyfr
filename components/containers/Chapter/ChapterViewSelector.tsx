@@ -26,7 +26,7 @@ export const currentView = (view?:ChapterViews) => {
 
 const ChapterViewSelector = ({chapter, view, setView}:ChapterViewSelectorProps) => {
   debug('ChapterViewSelector', chapter)
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const {isAuthor} = useChapterApi()
   const showEdit = isAuthor({chapter, cyfrUser})
   const {detailView, editView, readView, reviewView} = currentView(view)

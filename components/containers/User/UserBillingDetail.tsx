@@ -1,11 +1,10 @@
+import { CheckBadge } from "components/ui/icons"
+import useDebug from "hooks/useDebug"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import { AudienceLevels } from "prisma/prismaContext"
 import { useState } from "react"
-import useDebug from "hooks/useDebug"
 import { sendApi } from "utils/api"
 import { uniqueKey } from "utils/helpers"
-import { useCyfrUserContext } from "components/context/CyfrUserProvider"
-import { CheckBadge } from "components/ui/icons"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 
 const {debug} = useDebug("UserBillingDetail")
 
@@ -69,7 +68,7 @@ const plans:PlanType[] = [
 ]
 
 const UserBillingDetail = () => {
-    const [cyfrUser, isLoading, error, invalidate] = useCyfrUserContext()
+  const {cyfrUser, isLoading, error, invalidate} = useCyfrUserApi()
     const initialPlan = plans[cyfrUser.membership?.type?.level ?? 0]
     const [plan, setPlan] = useState<PlanType>(initialPlan)
 

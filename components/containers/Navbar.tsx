@@ -1,14 +1,15 @@
-import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import Avatar from "components/ui/avatar"
-import { CyfrLogo, HouseIcon, BookIcon, UserIcon } from "components/ui/icons"
+import { BookIcon, CyfrLogo, HouseIcon, UserIcon } from "components/ui/icons"
 import ShrinkableIconLink from "components/ui/shrinkableIconLink"
 import ShrinkableLink from "components/ui/shrinkableLink"
+import useDebug from "hooks/useDebug"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import UserApi from "prisma/hooks/userApi"
-import { Book } from "prisma/prismaContext"
-import { useState, useEffect, ReactNode } from "react"
-import { uniqueKey, onlyFans } from "utils/helpers"
+import { ReactNode, useEffect, useState } from "react"
+
+const {debug} = useDebug('Navbar', 'DEBUG')
 
 type NavbarProps = {
   className?: string
@@ -25,7 +26,7 @@ const Navbar = ({
   rightChildren,
   pageScrolled: active,
 }: NavbarProps) => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser, isLoading} = useCyfrUserApi()
   const [userInfo, setUserInfo] = useState()
   const {info} = UserApi()
   const [isPageScrolled, setIsPageScrolled] = useState(false)
@@ -36,9 +37,11 @@ const Navbar = ({
   const linkClass = 'rounded-lg hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'
 
   const getInfo = async () => {
-    if (!cyfrUser) return
+    debug('getInfo', ...cyfrUser.id)
+    if (!cyfrUser.id) return
     const result = await info(cyfrUser.id)
     if (result) {
+      debug('gotInfo')
       setUserInfo(() => result)
     }
   }
@@ -48,8 +51,8 @@ const Navbar = ({
   }, [active])
 
   useEffect(() => {
-    getInfo()
-  }, [cyfrUser])
+    if (isLoading == false && cyfrUser) getInfo()
+  }, [isLoading])
 
   return (
     <>
@@ -122,9 +125,9 @@ const Navbar = ({
 
                   {userInfo &&
                   <ul className="p-2 text-secondary-content mt-2 space-y-2">
-                    <li><span><b>Posts</b> cyfrUser.posts?.length</span></li>
-                    <li><span><b>Followers</b> cyfrUser.followers?.length</span></li>
-                    <li><span><b>Fans</b> onlyFans(cyfrUser.followers??[]).length </span></li>
+                    <li><span><b>Posts</b> {cyfrUser._count.posts}</span></li>
+                    <li><span><b>Followers</b>{cyfrUser._count.follower}</span></li>
+                    <li><span><b>Fans</b> [NI] </span></li>
                     <li><span><b>Reads</b> [NI]</span></li>
                     <li><span><b>Reviews</b> [NI]</span></li>
                   </ul>

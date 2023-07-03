@@ -1,4 +1,4 @@
-import { Gallery, GalleryStub, GalleryStubInclude, Image, LikesCount, LikesInclude, PostStub, PostStubInclude, UserStub, UserStubSelect } from "prisma/prismaContext"
+import { Gallery, GalleryStub, GalleryStubInclude, Image, LikesCountInclude, LikesInclude, PostStub, PostStubInclude, UserStub, UserStubSelect } from "prisma/prismaContext"
 
 export type ImageUpsertProps = {
   id?:              string

@@ -11,14 +11,14 @@ const { todo, err } = useDebug("api/book/share")
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Post>>
+  res: NextApiResponse
 ) {
   // TODO Unshare
   const { bookId, creatorId } = req.body
   try {
     const result = await PrismaBook.share({bookId, creatorId})
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: "api/book/share", message: `No results from Share` }
     }

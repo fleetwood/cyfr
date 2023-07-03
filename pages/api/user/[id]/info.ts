@@ -17,7 +17,7 @@ export default async function handle(
       throw { code: fileMethod('handle'), message: `No results for (${id})` }
     }
     debug('handle SUCCESS', result)
-    res.status(200).json({ result })
+    res.status(200).json(result)
     
   } catch (e) {
     debug("handle CATCH", e)

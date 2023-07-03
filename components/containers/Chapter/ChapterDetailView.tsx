@@ -19,7 +19,7 @@ type ChapterDetailViewProps = {
 
 const ChapterDetailView = ({chapterDetail, view}:ChapterDetailViewProps) => {
   const {notify} = useToast()
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const {isAuthor} = useChapterApi()
   const showEdit = isAuthor({chapter: chapterDetail, cyfrUser})
   const {detailView, reviewView, editView, readView} = currentView(view)

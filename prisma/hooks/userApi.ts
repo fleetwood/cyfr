@@ -6,7 +6,7 @@ const {debug} = useDebug('prisma/api/userApi')
 
 const UserApi = () => {
 
-  const canAccess = async (level:AudienceLevels) => await (await sendApi("user/access", {level})).data.result === true
+  const canAccess = async (level:AudienceLevels) => await (await sendApi("user/access", {level})).data === true
 
   const followUser = async (props: UserFollowProps):Promise<boolean>  => {
     const like = await (await sendApi("user/follow", props)).data
@@ -18,7 +18,7 @@ const UserApi = () => {
     }
   }
 
-  const detail = async (props: UserDetailProps) => await (await sendApi('user/detail', props))
+  const detail = async (props: UserDetailProps) => await (await sendApi('user/detail', props)).data
 
   const mentions = async (search:string|undefined):Promise<UserStub[]> => {
     debug('mentions', search)

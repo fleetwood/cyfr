@@ -11,14 +11,14 @@ const { todo, err } = useDebug("api/user/follow")
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Follow>>
+  res: NextApiResponse
 ) {
   // TODO Unfollow/Unfan
   const { followingId, followerId, isFan = false, active = true } = req.body
   try {
     const result = await PrismaUser.follow({followingId, followerId, isFan, active})
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: "api/user/follow", message: `No results from Follow` }
     }

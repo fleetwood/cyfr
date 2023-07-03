@@ -20,7 +20,7 @@ export type GalleryNestedProps = {
 }
 
 const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
-    const [cyfrUser] = useCyfrUserContext()
+    const {cyfrUser} = useCyfrUserContext()
     const [images, setImages] = useState<ImageStub[]>(gallery?.images ?? [])
     const [title, setTitle] = useState<string|null>(gallery?.title ?? null)
     const [description, setDescription] = useState<string|null>(null)

@@ -2,17 +2,16 @@ import FeedItem from "components/containers/Feed/FeedItem"
 import { CreatePostModalButton } from "components/containers/Post/CreatePostModal"
 import MainLayout from "components/layouts/MainLayout"
 import { CyfrLogo } from "components/ui/icons"
+import Spinner from "components/ui/spinner"
 import useDebug from "hooks/useDebug"
 import useFeed from "hooks/useFeed"
-import { PostStub } from "prisma/types"
 import { uniqueKey } from "utils/helpers"
-const {debug, jsonBlock} = useDebug('pages/index')
+import ErrorPage from "./404"
 
+const {debug, jsonBlock} = useDebug('pages/index', 'DEBUG')
 
-type HomePageProps = {}
-
-const HomePage = (props:HomePageProps) => {
-  const {feed} = useFeed('main')
+const HomePage = () => {
+  const [data, isLoading, error] = useFeed('post')
 
   const CyfrHome = 
     <div className="flex">
@@ -22,7 +21,9 @@ const HomePage = (props:HomePageProps) => {
   return (
     <MainLayout sectionTitle={CyfrHome} subTitle="The Creative Site">
       <CreatePostModalButton />
-      {feed && feed.map((item:PostStub) => <FeedItem item={item} key={uniqueKey(item)} />)}
+      {isLoading && <Spinner size="md" center={true} />}
+      {error && <ErrorPage message="Error loading feed" />}
+      {!isLoading && !error && data && data.map((item:any, idx:number) => <FeedItem item={item} key={`feed-${idx}-${uniqueKey(item)}`} />)}
     </MainLayout>
   )
 }

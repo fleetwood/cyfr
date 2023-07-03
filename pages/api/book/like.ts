@@ -11,7 +11,7 @@ const { debug, todo, err } = useDebug("api/book/like",'DEBUG')
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Like>>
+  res: NextApiResponse
 ) {
   // TODO Unlike/Unfan
   const { body } = req
@@ -20,7 +20,7 @@ export default async function handle(
   try {
     const result = await PrismaBook.like({bookId, creatorId})
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: "api/book/like", message: `No results from Like` }
     }

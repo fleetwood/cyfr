@@ -31,7 +31,7 @@ type UpsertBookProps = {
 }
 
 const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const { notify } = useToast()
   const {upsert} = useBookApi
 

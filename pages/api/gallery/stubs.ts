@@ -16,7 +16,7 @@ export default async function handle(
   try {
     const result = await PrismaGallery.stubs()
     if (result) {
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: "api/gallery/stubs", message: "Failed to find gallery stubs" }
     }

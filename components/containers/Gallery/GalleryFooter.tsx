@@ -21,8 +21,8 @@ const GalleryFooter = ({
   gallery,
   onUpdate
 }: GalleryFooterProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const { invalidateFeed } = useFeed('gallery')
+  const {cyfrUser} = useCyfrUserContext()
+  const [invalidate] = useFeed('gallery')
   const {like, share} = useGalleryApi()
   const { notify, loginRequired } = useToast()
   const { setPostId, showComment, hideComment } = useCommentContext()
@@ -36,7 +36,7 @@ const GalleryFooter = ({
   }
 
   const update = () => {
-    invalidateFeed('gallery')
+    invalidate()
     onUpdate ?  onUpdate() : {}
   }
 

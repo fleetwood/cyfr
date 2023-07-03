@@ -2,8 +2,8 @@ import { createContext, FormEvent, ReactNode, useContext, useEffect, useRef, use
 import useFeed from "../../hooks/useFeed"
 import { useToast } from "./ToastContextProvider"
 
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import useDebug from "../../hooks/useDebug"
-import { useCyfrUserContext } from "./CyfrUserProvider"
 import usePostApi from "../../prisma/hooks/usePostApi"
 const {debug} = useDebug("CommentContextProvider")
 
@@ -22,8 +22,8 @@ export const CommentContext = createContext({} as CommentProviderType)
 export const useCommentContext = () => useContext(CommentContext)
 
 const CommentProvider = ({ children }: CommentProviderProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const {invalidateFeed} = useFeed('post')
+  const {cyfrUser} = useCyfrUserApi()
+  const [invalidate] = useFeed('post')
   const {commentOnPost} = usePostApi()
   const {notify} = useToast()
   
@@ -61,7 +61,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
 
     if (post) {
       debug(`handleSubmit success`)
-      invalidateFeed()
+      invalidate()
     } else {
       notify(`Hm. That didn't work....`,'warning')
     }

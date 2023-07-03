@@ -21,11 +21,11 @@ export const CreatePostModalButton = () => (
 )
 
 const CreatePostModal = (): JSX.Element => { 
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [valid, setIsValid] = useState<boolean>(false)
-  const { invalidateFeed } = useFeed('post')
+  const [invalidate] = useFeed('post')
   const {createPost } = usePostApi()
   const [images, setImages] = useState<Image[]>([])
 
@@ -58,7 +58,7 @@ const CreatePostModal = (): JSX.Element => {
     } else {
       setContent(null)
       setImages(() => [])
-      invalidateFeed()
+      invalidate()
     }
 
     toggleModal()

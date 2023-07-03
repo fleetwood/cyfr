@@ -1,4 +1,4 @@
-import { BookFeedInclude, BookStub, BookStubInclude, CharacterStub, CharacterStubInclude, CommentThread, CoverStub, CoverStubInclude, GalleryFeedInclude, GalleryStub, GalleryStubInclude, Image, ImageFeed, ImageFeedInclude, ImageStub, ImageStubInclude, Like, LikesCount, LikesInclude, Post, User, UserStub, UserStubSelect } from "prisma/prismaContext"
+import { Book, BookFeedInclude, BookStub, Character, CharacterStub, Comment, CommentThread, CoverStub, CreatorStub, CreatorStubInclude, GalleryFeedInclude, GalleryStub, Image, ImageFeed, ImageFeedInclude, ImageStub, Like, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, Post, User, UserStub } from "prisma/prismaContext"
 
 export type PostCreateProps = {
   content: string
@@ -34,7 +34,7 @@ type PostComments = Post & {
   creator: User
 }
 
-export type PostStub = Post & LikesCount & {
+export type PostStub = Post & LikesAndCount & {
   creator:        UserStub
   images:         ImageFeed[]
   commentThread:  CommentThread & {
@@ -64,7 +64,7 @@ export const SharedPostFeedInclude = { include: {
     }},
     commentThread: { include: { comments: true } },
     ...LikesInclude,
-    ...LikesCount
+    ...LikesCountInclude
 }}
 
 export const SharedPostInclude = {
@@ -82,7 +82,7 @@ export const SharedPostInclude = {
   }},
   commentThread: { include: { comments: true } },
   ...LikesInclude,
-  ...LikesCount
+  ...LikesCountInclude
 }
 
 export const PostStubInclude = {
@@ -94,24 +94,33 @@ export const PostStubInclude = {
   gallery: GalleryFeedInclude,
   book: BookFeedInclude,
   ...LikesInclude,
-  ...LikesCount,
+  ...LikesCountInclude,
 }
 
-export type PostDetail = Post & {
-  createdat?: string
-  updatedat?: string
-  creator: UserStub
+type CreatorAndLikesAndCount = CreatorStub & LikesAndCount
+
+export type PostDetail = Post & CreatorAndLikesAndCount & {
+  post?: Post & CreatorAndLikesAndCount
+  images?:  (Image & CreatorAndLikesAndCount)[]
+  book?: Book & CreatorAndLikesAndCount,
+  character?: Character & CreatorAndLikesAndCount
+  image?: Image & CreatorAndLikesAndCount
   commentThread: CommentThread & {
-    comments: Comment[]
+    comments: (Comment & CreatorAndLikesAndCount)[]
   }
-  likes: UserStub[]
-  images: ImageFeed[]
 }
+
+const CreatorLikesCountInclude = {include: {...CreatorStubInclude,...LikesAndCountsInclude}}
 
 export const PostDetailInclude = {
-  creator: { select: UserStubSelect },
-  commentThread: { include: { comments: true } },
-  images: { include: ImageFeedInclude },
-  ...LikesInclude,
-  ...LikesCount,
+  ...CreatorStubInclude,
+  post: CreatorLikesCountInclude,
+  images: CreatorLikesCountInclude,
+  book: CreatorLikesCountInclude,
+  character: CreatorLikesCountInclude,
+  image: CreatorLikesCountInclude,
+  commentThread: { include: { comments: CreatorLikesCountInclude } },
+  ...LikesAndCountsInclude
+  // ...LikesInclude,
+  // ...LikesCount,
 }

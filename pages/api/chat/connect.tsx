@@ -12,7 +12,7 @@ export default async function ConnectToChat(req: NextApiRequest,res: NextApiResp
 
     if (result) {
       debug(`ConnectToChat result`,result)
-      res.status(200).json({ result })
+      res.status(200).json(result)
     }
   } catch (e: Error | any) {
     info(`FAIL`, e)

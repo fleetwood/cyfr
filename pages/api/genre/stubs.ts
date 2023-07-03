@@ -8,7 +8,7 @@ const handle = async (req: NextApiRequest, res: NextApiResponse) => {
     const result = await PrismaGenre.stubs()
     if (result) {
       debug('result', result)
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       debug('result', result)
       res.status(200).json({ result: null })

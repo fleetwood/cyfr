@@ -11,7 +11,7 @@ const { debug, err } = useDebug("api/book/follow")
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Follow>>
+  res: NextApiResponse
 ) {
   // TODO Unfollow/Unfan
   const {body} = req
@@ -21,7 +21,7 @@ export default async function handle(
     const result = await PrismaBook.follow({bookId, followerId, isFan})
     if (result) {
       debug('handle', result)
-      res.status(200).json({ result })
+      res.status(200).json(result)
     } else {
       throw { code: "api/book/follow", message: `No results from Follow` }
     }

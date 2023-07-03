@@ -11,7 +11,7 @@ const {debug, err, fileMethod} = useDebug('api/chapter/stub')
 
 export default async function handle(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<unknown>>
+  res: NextApiResponse
 ) {
   try {
     const {id} = req.body
@@ -19,7 +19,7 @@ export default async function handle(
     const result = await PrismaChapter.stub(id)
     if (result) {
       debug('stub', result)
-      res.status(200).json({ result })
+      res.status(200).json(result)
     }
     
     throw { code: fileMethod('upsert'), message: "Fail stub chapterrrrr!!!!" }

@@ -11,7 +11,7 @@ import Toasts from "../../ui/toasts"
 import ChapterEditView from "../../containers/Chapter/ChapterEditView"
 
 const ChapterReadLayout = ({chapterDetail, view, setView}:ChapterLayoutProps) => {
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const {readView, editView} = currentView(view)
 
   const [scrollActive, setScrollActive] = useState(false)
