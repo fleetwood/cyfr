@@ -12,7 +12,7 @@ import {
   CyfrUser,
   CyfrUserInclude,
   Follow,
-  prisma, User, UserFeed,
+  prisma, User, UserDetail, UserDetailInclude, UserFeed,
   UserFollowProps,
   UserStub
 } from "prisma/prismaContext"
@@ -123,7 +123,7 @@ export type UserDetailProps = {
   slug?:  string
 }
 
-const detail = async (props:UserDetailProps): Promise<any> => {
+const detail = async (props:UserDetailProps): Promise<UserDetail> => {
   const {id, name, email, slug} = props
   const where = name ? { name: name}
     : email ? { email: email}
@@ -132,8 +132,93 @@ const detail = async (props:UserDetailProps): Promise<any> => {
   debug('detail', {where})
   return await prisma.user.findUnique({
     where: where,
-    include: CyfrUserInclude
-  })
+    include: {
+      galleries: {
+        where: {
+          visible: true
+        },
+        include: {
+          creator: true,
+          images: {
+            include: {
+            _count: {
+              select: {
+                likes: true,
+                shares: true
+              }
+            }}
+          },
+          _count: {
+            select: {
+              likes: true,
+              shares: true
+            }
+          }
+        }
+      },
+      books: {
+        where: {
+          visible: true
+        },
+        include: {
+          cover: true,
+          authors: true,
+          _count: {
+            select: {
+              chapters: true,
+              characters: true,
+              likes: true,
+              shares: true
+            }
+          }
+        }
+      },
+      follower: {
+        include: {
+          following: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              slug: true,
+            }
+          },
+        },
+        orderBy: {createdAt: 'desc'},
+        take: 10
+      },
+      following: {
+        include: {
+          follower: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              slug: true,
+            }
+          },
+        },
+        orderBy: {createdAt: 'desc'},
+        take: 10
+      },
+      membership: {
+        include: {
+          type: true
+        }
+      },
+      _count: {
+        select: {
+          likes: true,
+          posts: true,
+          follower: true,
+          following: true,
+          books: true,
+          galleries: true,
+          submissions: true
+        }
+      }
+    }
+  }) as unknown as UserDetail
 }
 
 const books = async (props:UserDetailProps): Promise<any> => {
@@ -212,9 +297,7 @@ const canMention = async ({search, all = false}:MentionSearchProps):Promise<any>
   }
 }
 
-const userInSessionReq = async (
-  req: NextApiRequest
-): Promise<CyfrUser | null> => {
+const userInSessionReq = async (req: NextApiRequest): Promise<CyfrUser | null> => {
   try {
     const session = await getSession({ req })
     debug('userInSessionReq', session)

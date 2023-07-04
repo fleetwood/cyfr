@@ -1,4 +1,4 @@
-import { Book, BookStub, Follow, GalleryStub, LikesAndCount, LikesAndCountsInclude, Membership, MembershipType, Post, PostStub, User } from "./../prismaContext"
+import { Book, BookStub, Follow, GalleryStub, GalleryStubInclude, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, MembershipType, Post, PostStub, User } from "prisma/prismaContext"
 
 export type UserFeed = User & {
   _count:       { sessions: number }
@@ -19,16 +19,6 @@ export const UserFeedInclude = {
       sessions: true
     }
   }
-}
-
-export type UserDetail = User & {
-  membership?:  Membership,
-  posts:        PostStub[]
-  canMessage:   UserStub[]
-  follows:      UserFollow[]
-  followers:    UserFollow[]
-  galleries:    GalleryStub[]
-  books:        BookStub[]
 }
 
 export type CyfrUser = User & {
@@ -124,6 +114,87 @@ export const UserStubSelect = {
   image: true,
   slug: true
 }
+
+export type UserDetail = User & {
+  membership?:  Membership & {
+    type:   MembershipType
+  },
+  // posts:        PostStub[]
+  // follower:     (Follow & {
+  //   following:  UserStub
+  // })[]
+  // following:    (Follow & {
+  //   follower:   UserStub
+  // })[]
+  galleries:    GalleryStub[]
+  // books:        BookStub[]
+  // _count: {
+  //   select: {
+  //     likes:        number,
+  //     posts:        number,
+  //     follower:     number,
+  //     following:    number,
+  //     books:        number,
+  //     galleries:    number,
+  //     submissions:  number
+  //   }
+  // }
+}
+
+export const UserDetailInclude = { include: {
+  membership: {
+    include: {
+      type: true
+    }
+  },
+  galleries: GalleryStubInclude,
+  // books: {
+  //   where: {
+  //     visible: true
+  //   },
+  //   include: {
+  //     cover: true,
+  //     authors: true,
+  //     _count: {
+  //       select: {
+  //         chapters: true,
+  //         characters: true,
+  //         likes: true,
+  //         shares: true
+  //       }
+  //     }
+  //   }
+  // },
+  // follower: {
+  //   include: {
+  //     following: {
+  //       select: UserStubSelect
+  //     },
+  //   },
+  //   orderBy: {createdAt: 'desc'},
+  //   take: 10
+  // },
+  // following: {
+  //   include: {
+  //     follower: {
+  //       select: UserStubSelect
+  //     },
+  //   },
+  //   orderBy: {createdAt: 'desc'},
+  //   take: 10
+  // },
+  // _count: {
+  //   select: {
+  //     likes: true,
+  //     posts: true,
+  //     follower: true,
+  //     following: true,
+  //     books: true,
+  //     galleries: true,
+  //     submissions: true
+  //   }
+  // }
+}}
 
 /**
  * NOTE! Use a `select` instead of `include`

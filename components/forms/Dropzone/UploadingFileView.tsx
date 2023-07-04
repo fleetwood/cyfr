@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react"
-import { cloudinary } from "../../../utils/cloudinary"
+import { cloudinary } from "utils/cloudinary"
 import { FileError } from "react-dropzone"
-import Spinner from "../../ui/spinner"
 import { CompleteFile, UploadFileViewProps } from "./types.defs"
-import useDebug from "../../../hooks/useDebug"
-import { sendApi } from "../../../utils/api"
-import { ImageUpsertProps, Image } from "../../../prisma/prismaContext"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import useDebug from "hooks/useDebug"
+import { sendApi } from "utils/api"
+import { ImageUpsertProps, Image } from "prisma/prismaContext"
 import Link from "next/link"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
+import Spinner from "components/ui/spinner"
 const {debug} = useDebug("components/forms/Dropzone/UploadingFileView")
 
 const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileViewProps) => {
-  const [cyfrUser, loading] = useCyfrUserContext()
+  const {cyfrUser, isLoading} = useCyfrUserApi()
   const [fileProgress, setFileProgress] = useState<number>(0)
   const [fileErrors, setFileErrors] = useState<FileError[]>([])
   const [image, setImage] = useState<Image | null>(null)
 
-  if (loading) return <Spinner />
+  if (isLoading) return <Spinner size="sm" center={true} />
   else if (!cyfrUser) return <>Please <Link href='/login'>login</Link> first...</>
 
   const progressStyle = (e: boolean, p: number) =>

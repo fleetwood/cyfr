@@ -53,20 +53,37 @@ export const GalleryFeedInclude = { include: {
 export type GalleryStub = Gallery & {
   creator: UserStub
   images: ImageStub[]
-  likes:  UserStub[]
+  _count: {
+    likes:  number,
+    shares: number
+  }
 }
 
-export const GalleryStubInclude = {
-  images: {
+export const GalleryStubInclude = {include: {
+  galleries: {
+    where: {
+      visible: true
+    },
     include: {
+      creator: true,
+      images: {
+        include: {
+        _count: {
+          select: {
+            likes: true,
+            shares: true
+          }
+        }}
+      },
       _count: {
         select: {
-        likes: true,
-      }}
+          likes: true,
+          shares: true
+        }
+      }
     }
-  },
-  likes: true,
-}
+  }
+}}
 
 export type GalleryDetail = Gallery & {
   creator: User

@@ -3,6 +3,8 @@ import {
   Book, Chapter, Gallery, GalleryCreateProps,
   GalleryDetail,
   GalleryDetailInclude, GalleryEngageProps,
+  GalleryStub,
+  GalleryStubInclude,
   GalleryUpsertProps, ImageUpsertProps, Like, Post
 } from "prisma/prismaContext"
 import { now } from "utils/helpers"
@@ -19,7 +21,30 @@ export type GalleryAddImageProps = {
  * @param creatorId :string
  * @returns `json`
  */
-const userGalleries = async (creatorId: string): Promise<Gallery[]> => await prisma.gallery.findMany({where: {creatorId}})
+const userGalleries = async (creatorId: string): Promise<GalleryStub[]> => await prisma.gallery.findMany({
+  where: {
+    creatorId,
+    visible: true
+  },
+  include: {
+    creator: true,
+    images: {
+      include: {
+      _count: {
+        select: {
+          likes: true,
+          shares: true
+        }
+      }}
+    },
+    _count: {
+      select: {
+        likes: true,
+        shares: true
+      }
+    }
+  }
+}) as unknown as GalleryStub[]
 
 const details = async () : Promise<GalleryDetail[]> => await prisma.gallery.findMany({include: GalleryDetailInclude})
 const detail = async (id: string): Promise<GalleryDetail|null> => await prisma.gallery.findUnique({where: {id}, include: GalleryDetailInclude})

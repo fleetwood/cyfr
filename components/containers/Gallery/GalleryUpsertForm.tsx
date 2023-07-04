@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import useDebug from '../../../hooks/useDebug'
-import { Gallery, GalleryCreateProps, GalleryStub, GalleryUpsertProps, Image, ImageStub } from '../../../prisma/prismaContext'
-import { sendApi } from '../../../utils/api'
-import { useCyfrUserContext } from '../../context/CyfrUserProvider'
-import Dropzone, { CompleteFile } from '../../forms/Dropzone'
-import TailwindInput from '../../forms/TailwindInput'
+import useDebug from 'hooks/useDebug'
+import { GalleryStub, GalleryUpsertProps, Image, ImageStub } from 'prisma/prismaContext'
+import { useEffect, useState } from 'react'
+import { sendApi } from 'utils/api'
+
+import { useCyfrUserContext } from 'components/context/CyfrUserProvider'
+import { Dropzone, TailwindInput } from 'components/forms'
 import GalleryPhotoswipe from './GalleryPhotoswipe'
 
-const {debug} = useDebug('components/containers/Gallery/GalleryUpsertForm')
+const {debug} = useDebug('Gallery/GalleryUpsertForm', 'DEBUG')
 
 export type GalleryNestedProps = {
     gallery?:         GalleryStub
@@ -70,8 +70,7 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
         // @ts-ignore
         const images = gallery.images || []
       }
-    }, [
-    ])
+    }, [])
   return (
     <div className={className}>
       <label className={`block`}>

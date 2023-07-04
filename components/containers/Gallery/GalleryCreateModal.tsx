@@ -8,12 +8,13 @@ import { CompleteFile } from "../../forms/Dropzone"
 import { CyfrLogo } from "../../ui/icons"
 import GalleryUpsertForm from "./GalleryUpsertForm"
 import OpenModal from "../../ui/openModal"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 
 const {debug} = useDebug('components/containers/GalleryGalleryCreateView')
 
 const createGalleryModal = "createGalleryModal"
 
-export const OpenGalleryModalButton = () => <OpenModal htmlFor={createGalleryModal} label='Create Character' />
+export const OpenGalleryModalButton = () => <OpenModal htmlFor={createGalleryModal} label='Create Gallery' />
 export const OpenGalleryModalPlus = () => <OpenModal htmlFor={createGalleryModal} variant='plus' />
 
 type GalleryCreateModalProps = {
@@ -28,7 +29,7 @@ type GalleryCreateModalProps = {
 const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
   const modal = useRef<HTMLInputElement>(null)
 
-  const {cyfrUser} = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserApi()
   const { notify } = useToast()
   
   const [invalidate] = useFeed('gallery')
@@ -36,21 +37,20 @@ const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
   return (
     <>
     <input type="checkbox" ref={modal} id={createGalleryModal} className="modal-toggle" onChange={()=>{}} />
-      <div className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box bg-opacity-0 shadow-none">
-        <label htmlFor={createGalleryModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-          <div className="mb-3 rounded-xl w-full bg-primary text-primary-content md:bg-blend-hard-light md:bg-opacity-80">
-            {cyfrUser && (
-              <div className="w-full mx-auto p-2 sm:p-6 lg:p-4 drop-shadow-xl">
-                <form className="flex flex-col space-y-2 bg-secondary p-2 rounded-lg drop-shadow-lg border border-base-100 border-opacity-50" onSubmit={(e) => {e.preventDefault()}}>
-                  <GalleryUpsertForm limit={limit} onUpsert={(galleryId) => {invalidate(); onUpsert ? onUpsert(galleryId) : {}}} />
-                </form>
-              </div>
-            )}
-          </div>
+    <div className="modal modal-bottom sm:modal-middle">
+      <div className="modal-box bg-opacity-0 shadow-none">
+      <label htmlFor={createGalleryModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+        <div className="mb-3 rounded-xl w-full bg-primary text-primary-content md:bg-blend-hard-light md:bg-opacity-80">
+          {/* {cyfrUser && ( */}
+            <div className="w-full mx-auto p-2 sm:p-6 lg:p-4 drop-shadow-xl">
+              <form className="flex flex-col space-y-2 bg-secondary p-2 rounded-lg drop-shadow-lg border border-base-100 border-opacity-50" onSubmit={(e) => {e.preventDefault()}}>
+                <GalleryUpsertForm limit={limit} onUpsert={(galleryId) => {invalidate(); onUpsert ? onUpsert(galleryId) : {}}} />
+              </form>
+            </div>
+          {/* )} */}
         </div>
       </div>
-      
+    </div>
     </>
   )
 }

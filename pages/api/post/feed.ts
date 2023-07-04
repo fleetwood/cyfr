@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import useDebug from "hooks/useDebug"
 import { PrismaPost } from "prisma/prismaContext"
-const {debug, err} = useDebug('api/post/feed', 'DEBUG')
+const {debug, err} = useDebug('api/post/feed')
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const {pg, limit} = req.query

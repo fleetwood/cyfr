@@ -1,20 +1,29 @@
-import GalleryCreateModal from "../../../components/containers/Gallery/GalleryCreateModal"
-import MainLayout from "../../../components/layouts/MainLayout"
+import GalleryCreateModal, { OpenGalleryModalButton } from "components/containers/Gallery/GalleryCreateModal"
+import MainLayout from "components/layouts/MainLayout"
 import {
   Gallery,
-  PrismaGallery, PrismaUser
-} from "../../../prisma/prismaContext"
+  GalleryStub,
+  PrismaGallery, PrismaUser, UserDetail
+} from "prisma/prismaContext"
 
-import { InferGetServerSidePropsType } from "next"
-import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider"
-import useDebug from "../../../hooks/useDebug"
-import JsonBlock from "../../../components/ui/jsonBlock"
+import JsonBlock from "components/ui/jsonBlock"
+import useDebug from "hooks/useDebug"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
+import Spinner from "components/ui/spinner"
+import ErrorPage from "pages/404"
+import GalleryDetailView from "components/containers/Gallery/GalleryDetailView"
+import GalleryStubView from "components/containers/Gallery/GalleryStubView"
 
-const {jsonBlock} = useDebug('pages/user/id/gallery')
+const {debug, jsonBlock} = useDebug('pages/user/id/gallery','DEBUG')
 
 export async function getServerSideProps(context: any) {
-  const user = await PrismaUser.userInSessionContext(context)
+  const {id: slug} = context.params
+  const user = await PrismaUser.detail({slug})
   const galleries = user ? await PrismaGallery.userGalleries(user.id) : []
+
+  if (user) {
+    debug('getServerSideProps', {...context.params, slug, name: user.name, galleries: galleries.length})
+  }
 
   return {
     props: {
@@ -24,21 +33,31 @@ export async function getServerSideProps(context: any) {
   }
 }
 
-const UserGalleryPage = ({ user, galleries }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const {cyfrUser} = useCyfrUserContext()
+type UserGalleryPageProps = {
+  user: UserDetail
+  galleries: GalleryStub[]
+}
+
+const UserGalleryPage = ({ user, galleries }:UserGalleryPageProps) => {
+  const {cyfrUser, isLoading, error} = useCyfrUserApi()
 
   return (
   <MainLayout sectionTitle="Galleries" subTitle={user?.name || ""}>
     <div className="flex flex-col space-y-4">
-      {cyfrUser && cyfrUser.id === user?.id && 
-        <GalleryCreateModal  />
+      {isLoading && <Spinner  size="md" />}
+      {error && <ErrorPage message="Could not load galleries..." />}
+      {cyfrUser?.id === user.id && 
+        <>
+          <OpenGalleryModalButton />
+          <GalleryCreateModal  />
+        </>
       }
-        {/* <div className="relative" key={`user:${user?.id}-gallery:${gallery.id}`}>
-          <GalleryDetailView gallery={gallery} />
-        </div> */}
-      {galleries.map((gallery:Gallery) => (
-          <JsonBlock data={gallery} />
+      {galleries && galleries.map((gallery:GalleryStub) => (
+        <div className="relative" key={`user:${user?.id}-gallery:${gallery.id}`}>
+          <GalleryStubView gallery={gallery} />
+        </div>
       ))}
+      
     </div>
   </MainLayout>
 )}
