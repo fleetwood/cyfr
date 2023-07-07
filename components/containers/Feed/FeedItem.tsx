@@ -1,9 +1,5 @@
 import { isShare } from "utils/helpers";
-import { MainFeed, PostStub } from "../../../prisma/types";
-import BookStubView from "../Books/BookStubView";
-import CharacterStubView from "../Characters/CharacterStubView";
-import GalleryStubView from "../Gallery/GalleryStubView";
-import ImageStubView from "../Image/ImageStubView";
+import { PostStub } from "../../../prisma/types";
 import PostStubView from "../Post/PostStubView";
 import FeedFooter from "./FeedFooter";
 import FeedHeader from "./FeedHeader";

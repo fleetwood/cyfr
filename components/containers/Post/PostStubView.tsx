@@ -1,4 +1,4 @@
-import { BookStub, ImageStub, PostStub } from 'prisma/prismaContext'
+import { BookStub, GalleryStub, ImageStub, PostStub } from 'prisma/prismaContext'
 
 import JsonBlock from 'components/ui/jsonBlock'
 import HtmlContent from 'components/ui/htmlContent'
@@ -6,6 +6,7 @@ import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
 import useDebug from 'hooks/useDebug'
 import ImageStubView from '../Image/ImageStubView'
 import BookStubView from '../Books/BookStubView'
+import GalleryStubView from '../Gallery/GalleryStubView'
 
 const { debug, jsonBlock } = useDebug('PostStubView','DEBUG')
 
@@ -28,15 +29,10 @@ const PostStubView = ({ post }: PostFeedItemProps) => {
 
       {post.post && <PostStubView post={post.post as PostStub} />}
       {post.image && (
-        <div>
-          <ImageStubView image={post.image as unknown as ImageStub} />
-        </div>
+        <ImageStubView image={post.image as unknown as ImageStub} />
       )}
       {post.gallery && (
-        <div>
-          Not Implemented
-          {/* <GalleryStubView gallery={post.gallery} /> */}
-        </div>
+        <GalleryStubView gallery={post.gallery as GalleryStub} />
       )}
       {post.book && (
         <div>
