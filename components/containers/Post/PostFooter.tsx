@@ -23,7 +23,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   const likes = post?.likes??[]
   // const shares:UserStub[] = post?.shares?.filter(f=>f!==null)||[]
   const comments:PostStub[] = []
-  const [invalidate] = useFeed('post')
+  const {invalidate} = useFeed('post')
   const { notify, loginRequired } = useToast()
   const { setPostId, showComment, hideComment } = useCommentContext()
   const {share, like} = usePostApi()

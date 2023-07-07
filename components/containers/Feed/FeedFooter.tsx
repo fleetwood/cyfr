@@ -14,7 +14,7 @@ type FeedFooterProps = {
 const FeedFooter = ({ item }: FeedFooterProps) => {
   const {post, gallery, image, book, character} = item
 
-  const [invalidate] = useFeed('post')
+  const {invalidate} = useFeed('post')
   const onInvalidate = () => {
     debug('invalidate')
     invalidate()

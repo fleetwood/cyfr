@@ -11,7 +11,7 @@ import ErrorPage from "./404"
 const {debug, jsonBlock} = useDebug('pages/index', 'DEBUG')
 
 const HomePage = () => {
-  const [data, isLoading, error] = useFeed('post')
+  const {data, isLoading, error} = useFeed('post')
 
   const CyfrHome = 
     <div className="flex">

@@ -1,8 +1,10 @@
 import {
+  Commune,
   EngageInclude,
   EngageList,
   Gallery,
   Image,
+  Like,
   LikesCountInclude,
   LikesInclude,
   User,
@@ -86,15 +88,66 @@ export const GalleryStubInclude = {include: {
 }}
 
 export type GalleryDetail = Gallery & {
-  creator: User
-  // likes:  EngageList[]
-  // images: any[]
+  commune?: Commune
+  creator:  UserStub
+  likes:    (Like & {
+    creator: UserStub
+  })[]
+  images: (Image & {
+    likes:  (Like & {
+      creator: UserStub
+    })[]
+    _count: {
+      shares: number
+      likes:  number
+    }
+  })[]
+  _count: {
+    shares: number
+    likes:  number
+  }
 }
 
-export const GalleryDetailInclude = {
-  creator: true,
-  // likes: EngageInclude,
-  // images: {
-  //   include: ImageFeedInclude,
-  // },
-}
+export const GalleryDetailInclude = {include: {
+  commune: true,
+  creator: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      image: true,
+      membership: true
+    }
+  },
+  likes: {
+    include: {
+      creator: true
+    },
+    take: 10,
+    // orderBy: {
+    //   createdAt: 'desc'
+    // }
+  },
+  images: {
+    include: {
+      likes: {
+        include: {
+          creator: true
+        },
+        take: 10,
+      },
+      _count: {
+        select: {
+          shares: true,
+          likes: true
+        }
+      }
+    }
+  },
+  _count: {
+    select: {
+      shares: true,
+      likes: true
+    }
+  }
+}}

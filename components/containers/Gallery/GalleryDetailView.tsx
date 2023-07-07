@@ -1,22 +1,21 @@
-import Link from "next/link";
-import { GalleryDetail, MainFeed } from "./../../../prisma/prismaContext";
+import JsonBlock from "components/ui/jsonBlock";
+import { GalleryDetail } from "prisma/prismaContext";
 import GalleryFooter from "./GalleryFooter";
 import GalleryPhotoswipe from "./GalleryPhotoswipe";
-import { cloudinary } from "../../../utils/cloudinary";
-import useGalleryQuery from "hooks/useGalleryQuery";
 
 type GalleryDetailViewProps = {
   gallery: GalleryDetail
+  onUpdate?: () => void
+  showTitle?: boolean
+  showFooter?: boolean
 };
 
-const GalleryDetailView = ({gallery}: GalleryDetailViewProps) => {
+const GalleryDetailView = ({gallery, onUpdate, showTitle = true, showFooter = true}: GalleryDetailViewProps) => {
   
-  const {invalidate} = useGalleryQuery(gallery.id)
-
   return (
     <div className="rounded-lg bg-base-300 text-base-content my-4">
-      <div className="font-semibold">Gallery</div>
-      {gallery.title && (
+      {/* <JsonBlock data={gallery} debug={true} /> */}
+      {showTitle && gallery.title && (
         <h2 className="h-subtitle p-4">{gallery.title}</h2>
       )}
       {gallery.description && (
@@ -27,9 +26,11 @@ const GalleryDetailView = ({gallery}: GalleryDetailViewProps) => {
       <div className="min-w-full p-4 space-x-2">
         <GalleryPhotoswipe gallery={gallery} />
       </div>
-      <div className="min-w-full">
-        <GalleryFooter gallery={gallery} onUpdate={invalidate} />
-      </div>
+      {showFooter &&
+        <div className="min-w-full">
+          <GalleryFooter gallery={gallery} onUpdate={onUpdate} />
+        </div>
+      }
     </div>
 )}
 

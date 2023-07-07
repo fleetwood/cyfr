@@ -171,11 +171,16 @@ model Gallery {
   createdAt         DateTime   @default(now()) @db.Timestamptz(3)
   updatedAt         DateTime   @default(now()) @db.Timestamptz(3)
   visible           Boolean    @default(true)
-  creatorId         String
-  creator           User       @relation("user_galleries", fields: [creatorId], references: [id])
   title             String?
   description       String?
-  shareId           String?
+
+  creatorId         String
+  creator           User       @relation("user_galleries", fields: [creatorId], references: [id])
+
+  commentThreadId   String?        @unique
+  commentThread     CommentThread? @relation("gallery_comments", fields: [commentThreadId], references: [id])
+
+  // shareId           String?
   blocking          Block[]    @relation("blocked_from_gallery")
   book_gallery      Book?      @relation("book_gallery")
   chapter_gallery   Chapter?   @relation("chapter_gallery")
@@ -299,6 +304,7 @@ model CommentThread {
   news         News?      @relation("news_comments")
   post         Post?      @relation("post_comments")
   review       Review?    @relation("review_comments")
+  gallery      Gallery?   @relation("gallery_comments")
 }
 
 model Address {

@@ -25,7 +25,7 @@ const CreatePostModal = (): JSX.Element => {
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [valid, setIsValid] = useState<boolean>(false)
-  const [invalidate] = useFeed('post')
+  const {invalidate} = useFeed('post')
   const {createPost } = usePostApi()
   const [images, setImages] = useState<Image[]>([])
 

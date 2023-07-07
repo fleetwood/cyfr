@@ -5,7 +5,7 @@ import { getApi } from "../utils/api"
 import useDebug from "./useDebug"
 import { RocketQuery } from "types/props"
 
-const { debug, info } = useDebug("useGalleryQuery")
+const { debug, info } = useDebug("useGalleryQuery", 'DEBUG')
 
 type GalleryRocketQuery = RocketQuery<GalleryDetail>
 
@@ -26,11 +26,7 @@ const useGalleryQuery = (galleryId:string):GalleryRocketQuery => {
   const qc = useQueryClient()
   const galleryQuery = ["galleryDetail", `galleryDetail-${galleryId}`]
 
-  const getGalleryDetail = async () => {
-    debug(`getGalleryDetail  ${galleryQuery}`, {url: `/gallery/${galleryId}`})
-    const galleryDetail = await getApi(`/gallery/${galleryId}`)
-    return (galleryDetail.result as GalleryDetail) || galleryDetail.error || null
-  }
+  const getGalleryDetail = async () => await getApi(`/gallery/${galleryId}`)
 
   const invalidate = () => {
     debug('invalidate',galleryQuery)

@@ -1,3 +1,4 @@
+import useFeed from "hooks/useFeed"
 import useDebug from "../../hooks/useDebug"
 import { sendApi } from "../../utils/api"
 import { GalleryCreateProps, GalleryEngageProps } from "../prismaContext"
@@ -5,6 +6,8 @@ import { GalleryCreateProps, GalleryEngageProps } from "../prismaContext"
 const {debug} = useDebug('hooks/useGalleryApi')
 
 const useGalleryApi = () => {
+
+  const {invalidate} = useFeed('gallery')
 
   const createGallery = async (props: GalleryCreateProps) => await sendApi("gallery/create", props)
 
@@ -16,6 +19,7 @@ const useGalleryApi = () => {
     createGallery,
     share,
     like,
+    invalidate
   }
 }
 

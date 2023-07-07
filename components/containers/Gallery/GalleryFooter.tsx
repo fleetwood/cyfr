@@ -1,14 +1,14 @@
-import { useCommentContext } from "../../context/CommentContextProvider"
-import { useToast } from "../../context/ToastContextProvider"
-import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
-import ShrinkableIconButton from "../../ui/shrinkableIconButton"
-
-import useDebug from "../../../hooks/useDebug"
-import useFeed from "../../../hooks/useFeed"
-import useGalleryApi from "../../../prisma/hooks/useGalleryApi"
-import { GalleryDetail, GalleryStub } from "../../../prisma/prismaContext"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import AvatarList from "../../ui/avatarList"
+import { useCommentContext } from "components/context/CommentContextProvider"
+import { useToast } from "components/context/ToastContextProvider"
+import AvatarList from "components/ui/avatarList"
+import { ShareIcon, ReplyIcon, HeartIcon } from "components/ui/icons"
+import ShrinkableIconButton from "components/ui/shrinkableIconButton"
+import useDebug from "hooks/useDebug"
+import useFeed from "hooks/useFeed"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
+import useGalleryApi from "prisma/hooks/useGalleryApi"
+import { GalleryDetail, GalleryStub } from "prisma/prismaContext"
+import { abbrNum } from "utils/helpers"
 
 type GalleryFooterProps = {
   gallery:    GalleryDetail | GalleryStub
@@ -21,9 +21,8 @@ const GalleryFooter = ({
   gallery,
   onUpdate
 }: GalleryFooterProps) => {
-  const {cyfrUser} = useCyfrUserContext()
-  const [invalidate] = useFeed('gallery')
-  const {like, share} = useGalleryApi()
+  const {cyfrUser} = useCyfrUserApi()
+  const {invalidate, like, share} = useGalleryApi()
   const { notify, loginRequired } = useToast()
   const { setPostId, showComment, hideComment } = useCommentContext()
 
@@ -36,7 +35,7 @@ const GalleryFooter = ({
   }
 
   const update = () => {
-    invalidate()
+    invalidate ? invalidate() : {}
     onUpdate ?  onUpdate() : {}
   }
 
@@ -84,15 +83,15 @@ const GalleryFooter = ({
   return (
     <div className="min-w-full p-4 flex justify-around space-x-4">
       <div className="font-semibold uppercase">
-        {/* <ShrinkableIconButton
+        <ShrinkableIconButton
           icon={HeartIcon}
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Likes (${(gallery.likes||[]).length})`}
+          label={`Likes (${abbrNum(gallery._count.likes)})`}
           onClick={() => handleLike()}
         />
-        <AvatarList users={(gallery.likes||[])} sz="xs" /> */}
+        <AvatarList users={[]} sz="xs" />
       </div>
 
       <div className="font-semibold uppercase">
@@ -101,10 +100,10 @@ const GalleryFooter = ({
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Shares (NI)`}
+          label={`Shares (${abbrNum(gallery._count.shares)})`}
           onClick={() => handleShare()}
         />
-        {/* <AvatarList users={(gallery.shares||[])} sz="xs" /> */}
+        <AvatarList users={[]} sz="xs" />
       </div>
 
       <div className="font-semibold uppercase">
