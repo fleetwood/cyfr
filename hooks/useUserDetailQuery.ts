@@ -9,7 +9,7 @@ const {debug, info} = useDebug('useUserDetails')
 const {detail} = UserApi()
 export const userDetailQuery = "useUserDetailQuery"
 
-const  getUser = async (userid:string) => await( await detail({id: userid})).data
+const  getUser = async (userid:string) => await detail({id: userid})
 
 export type UserDetailHookProps = UserDetailProps & {
   user?:  UserDetail
@@ -22,12 +22,11 @@ const useUserDetail = ({user, id, name, email, slug}:UserDetailHookProps) => {
   const userId = user?.id||id
   const queryTag = `userQuery.${userId}`
 
-  const followers = currentUser?.followers || []
+  const followers = currentUser?.follower || []
   const fans = followers.filter(f => f.isFan)
-  const follows = currentUser?.follows || []
+  const follows = currentUser?.following || []
   const stans = follows.filter(f => f.isFan)
   
-
   const query = useQuery(
     [queryTag],
     () => getUser(userId!),

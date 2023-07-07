@@ -16,7 +16,7 @@ import {
   UserFollowProps,
   UserStub
 } from "prisma/prismaContext"
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG')
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser")
 
 type AllPostQueryParams = {
   limit?: Number
@@ -88,7 +88,11 @@ const userInfo = async (id:string): Promise<any> => {
     const result = await prisma.user.findUnique({
       where: { id },
       include: {
-        membership: true,
+        membership: {
+          include: {
+            type: true
+          }
+        },
         galleries: {
           where: {
             visible: true

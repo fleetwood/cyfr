@@ -1,14 +1,9 @@
-import { ReactNode, useEffect, useRef, useState } from "react"
-import useDebug from "../../../hooks/useDebug"
-import useFeed from "../../../hooks/useFeed"
-import { Gallery, ImageUpsertProps } from "../../../prisma/types"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { useToast } from "../../context/ToastContextProvider"
-import { CompleteFile } from "../../forms/Dropzone"
-import { CyfrLogo } from "../../ui/icons"
-import GalleryUpsertForm from "./GalleryUpsertForm"
-import OpenModal from "../../ui/openModal"
 import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
+import { useRef } from "react"
+import useDebug from "hooks/useDebug"
+
+import GalleryUpsertForm from "./GalleryUpsertForm"
+import OpenModal from "components/ui/openModal"
 
 const {debug} = useDebug('components/containers/GalleryGalleryCreateView')
 
@@ -29,10 +24,20 @@ type GalleryCreateModalProps = {
 const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
   const modal = useRef<HTMLInputElement>(null)
 
-  const {cyfrUser} = useCyfrUserApi()
-  const { notify } = useToast()
-  
-  const [invalidate] = useFeed('gallery')
+  const closeModal = (e?:any) => {
+    debug('closeModal')
+    const galleryModal = document.getElementById(createGalleryModal)
+    // @ts-ignore
+    galleryModal!.checked = false
+  }
+
+  const onGalleryUpsert = (galleryId?:string) => {
+    debug('onGalleryUpsert', galleryId||'')
+    closeModal()
+    if (onUpsert) onUpsert()
+  }
+
+  const {cyfrUser} = useCyfrUserApi()  
 
   return (
     <>
@@ -41,13 +46,13 @@ const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
       <div className="modal-box bg-opacity-0 shadow-none">
       <label htmlFor={createGalleryModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
         <div className="mb-3 rounded-xl w-full bg-primary text-primary-content md:bg-blend-hard-light md:bg-opacity-80">
-          {/* {cyfrUser && ( */}
+          {cyfrUser && (
             <div className="w-full mx-auto p-2 sm:p-6 lg:p-4 drop-shadow-xl">
               <form className="flex flex-col space-y-2 bg-secondary p-2 rounded-lg drop-shadow-lg border border-base-100 border-opacity-50" onSubmit={(e) => {e.preventDefault()}}>
-                <GalleryUpsertForm limit={limit} onUpsert={(galleryId) => {invalidate(); onUpsert ? onUpsert(galleryId) : {}}} />
+                <GalleryUpsertForm limit={limit} onUpsert={onGalleryUpsert} />
               </form>
             </div>
-          {/* )} */}
+          )}
         </div>
       </div>
     </div>

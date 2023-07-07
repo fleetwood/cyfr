@@ -212,17 +212,17 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
         <div className="col-span-1">
           <h2 className="h-subtitle">Followers</h2>
           <div className="flex space-x-2 space-y-2">
-            {followers.map((follow:UserFollow) => (
+            {/* {followers.map((follow:UserFollow) => (
               <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
-            ))}
+            ))} */}
           </div>
         </div>
         <div className="col-span-1">
           <h2 className="h-subtitle">Follows</h2>
           <div className="flex space-x-2 space-y-2">
-            {follows.map((follow:UserFollow) => (
+            {/* {follows.map((follow:UserFollow) => (
               <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
-            ))}
+            ))} */}
           </div>
         </div>
       </div>
@@ -233,17 +233,17 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
         <div className="col-span-1">
           <h2 className="h-subtitle">Fans</h2>
           <div className="flex space-x-2 space-y-2">
-            {fans.map((follow:UserFollow) => (
+            {/* {fans.map((follow:UserFollow) => (
               <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)}/>
-            ))}
+            ))} */}
           </div>
         </div>
         <div className="col-span-1">
           <h2 className="h-subtitle">Stans</h2>
           <div className="flex space-x-2 space-y-2">
-            {stans.map((follow:UserFollow) => (
+            {/* {stans.map((follow:UserFollow) => (
               <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)}/>
-            ))}
+            ))} */}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Book, BookStub, Follow, GalleryStub, GalleryStubInclude, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, MembershipType, Post, PostStub, User } from "prisma/prismaContext"
+import { Book, BookStub, Follow, GalleryStub, GalleryStubInclude, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, MembershipType, Post, PostStub, PostStubInclude, User } from "prisma/prismaContext"
 
 export type UserFeed = User & {
   _count:       { sessions: number }
@@ -119,26 +119,25 @@ export type UserDetail = User & {
   membership?:  Membership & {
     type:   MembershipType
   },
-  // posts:        PostStub[]
-  // follower:     (Follow & {
-  //   following:  UserStub
-  // })[]
-  // following:    (Follow & {
-  //   follower:   UserStub
-  // })[]
+  posts:        PostStub[]
+  books:        BookStub[]
+  follower:     (Follow & {
+    following:  UserStub
+  })[]
+  following:    (Follow & {
+    follower:   UserStub
+  })[]
   galleries:    GalleryStub[]
   // books:        BookStub[]
-  // _count: {
-  //   select: {
-  //     likes:        number,
-  //     posts:        number,
-  //     follower:     number,
-  //     following:    number,
-  //     books:        number,
-  //     galleries:    number,
-  //     submissions:  number
-  //   }
-  // }
+  _count: {
+    likes:        number,
+    posts:        number,
+    follower:     number,
+    following:    number,
+    books:        number,
+    galleries:    number,
+    submissions:  number
+  }
 }
 
 export const UserDetailInclude = { include: {
@@ -148,6 +147,7 @@ export const UserDetailInclude = { include: {
     }
   },
   galleries: GalleryStubInclude,
+  posts: {...PostStubInclude, take: 10, orderBy: {updatedAt: 'desc'}},
   // books: {
   //   where: {
   //     visible: true
@@ -165,35 +165,35 @@ export const UserDetailInclude = { include: {
   //     }
   //   }
   // },
-  // follower: {
-  //   include: {
-  //     following: {
-  //       select: UserStubSelect
-  //     },
-  //   },
-  //   orderBy: {createdAt: 'desc'},
-  //   take: 10
-  // },
-  // following: {
-  //   include: {
-  //     follower: {
-  //       select: UserStubSelect
-  //     },
-  //   },
-  //   orderBy: {createdAt: 'desc'},
-  //   take: 10
-  // },
-  // _count: {
-  //   select: {
-  //     likes: true,
-  //     posts: true,
-  //     follower: true,
-  //     following: true,
-  //     books: true,
-  //     galleries: true,
-  //     submissions: true
-  //   }
-  // }
+  follower: {
+    include: {
+      following: {
+        select: UserStubSelect
+      },
+    },
+    orderBy: {createdAt: 'desc'},
+    take: 10
+  },
+  following: {
+    include: {
+      follower: {
+        select: UserStubSelect
+      },
+    },
+    orderBy: {createdAt: 'desc'},
+    take: 10
+  },
+  _count: {
+    select: {
+      likes: true,
+      posts: true,
+      follower: true,
+      following: true,
+      books: true,
+      galleries: true,
+      submissions: true
+    }
+  }
 }}
 
 /**
@@ -235,6 +235,25 @@ export const CreatorStubInclude = {
     }
   }
 }
+
+export type UserInfo = {
+  _count: {
+    likes: number
+    shares: number
+    followers: number
+    follows: number
+    books: number
+    posts: number
+    galleries: number
+  },
+  membership: Membership & {
+    type: MembershipType
+  }
+}
+
+export const UserInfoInclude = { include: {
+
+}}
 
 export type AudienceLevels = 'PUBLIC' | 'USER' | 'READER' | 'MEMBER' | 'MEMBER_EXP' | 'AGENT' | 'AGENT_EXP' | 'ADMIN' | 'OWNER'
 export const audienceToLevel = (level:string) => ['PUBLIC' , 'USER' , 'READER' , 'MEMBER' , 'MEMBER_EXP' , 'AGENT' , 'AGENT_EXP' , 'ADMIN' , 'OWNER'].indexOf(level)

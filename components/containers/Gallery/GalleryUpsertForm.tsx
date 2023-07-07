@@ -1,13 +1,13 @@
 import useDebug from 'hooks/useDebug'
 import { GalleryStub, GalleryUpsertProps, Image, ImageStub } from 'prisma/prismaContext'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { sendApi } from 'utils/api'
 
-import { useCyfrUserContext } from 'components/context/CyfrUserProvider'
 import { Dropzone, TailwindInput } from 'components/forms'
+import { useCyfrUserApi } from 'prisma/hooks/useCyfrUserApi'
 import GalleryPhotoswipe from './GalleryPhotoswipe'
 
-const {debug} = useDebug('Gallery/GalleryUpsertForm', 'DEBUG')
+const {debug} = useDebug('Gallery/GalleryUpsertForm')
 
 export type GalleryNestedProps = {
     gallery?:         GalleryStub
@@ -20,19 +20,19 @@ export type GalleryNestedProps = {
 }
 
 const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
-    const {cyfrUser} = useCyfrUserContext()
+    const {cyfrUser} = useCyfrUserApi()
     const [images, setImages] = useState<ImageStub[]>(gallery?.images ?? [])
     const [title, setTitle] = useState<string|null>(gallery?.title ?? null)
     const [description, setDescription] = useState<string|null>(null)
   
-    const onFilesComplete = async (images: Image[]) => {
-      debug(`onFilesComplete`,images)
+    const onDropComplete = async (images: Image[]) => {
+      debug(`onDropComplete`,images)
       setImages((current) => [...current, ...images as unknown as ImageStub[]])
     }
   
-    const onFileChange = async (file:Image) => { 
+    const onDropChange = async (file:Image) => { 
       // const path = file.file.path
-      debug(`onFileRemove`,{file, images})
+      debug(`onDropChange`,{file, images})
       const fileChange = images.map(f => {
         return {
           ...f,
@@ -65,12 +65,6 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
 
     const isValid = () => images.filter(i => i.visible).length > 0
 
-    useEffect(() => {
-      if (gallery && Object.hasOwn(gallery,'images')) {
-        // @ts-ignore
-        const images = gallery.images || []
-      }
-    }, [])
   return (
     <div className={className}>
       <label className={`block`}>
@@ -84,7 +78,7 @@ const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, classNam
         <TailwindInput type='text' label='Description' value={description} setValue={setDescription} />
         }
         <GalleryPhotoswipe gallery={gallery} />
-        <Dropzone limit={limit!} onDropComplete={onFilesComplete} onDropChange={onFileChange} />
+        <Dropzone limit={limit!} onDropComplete={onDropComplete} onDropChange={onDropChange} />
         <button className='btn btn-primary' disabled={!isValid()} onClick={upsertGallery}>Save</button>
       </label>
     </div>

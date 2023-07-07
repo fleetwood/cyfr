@@ -1,4 +1,4 @@
-import { MainFeed, PostStub } from "../../../prisma/prismaContext"
+import { GalleryStub, MainFeed, PostStub } from "../../../prisma/prismaContext"
 
 import useDebug from "../../../hooks/useDebug"
 import PostFooter from "../Post/PostFooter"
@@ -23,9 +23,9 @@ const FeedFooter = ({ item }: FeedFooterProps) => {
   return (
     <>
       {
-        gallery ? <GalleryFooter gallery={gallery} onUpdate={onInvalidate} /> :
-        book ? <BookFooter bookStub={book} onUpdate={onInvalidate} /> :
-        character ? <CharacterFooter character={character} onUpdate={onInvalidate} /> :
+        gallery ? <GalleryFooter gallery={gallery as GalleryStub} onUpdate={onInvalidate} /> :
+        // book ? <BookFooter bookStub={book} onUpdate={onInvalidate} /> :
+        // character ? <CharacterFooter character={character} onUpdate={onInvalidate} /> :
         <PostFooter post={(item.post ?? item) as PostStub} onUpdate={onInvalidate} />
       }
     </>

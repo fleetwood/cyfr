@@ -5,6 +5,7 @@ import {
   User,
   UserDetail,
   UserFeed,
+  UserFollow,
   UserStub,
 } from "../../prisma/prismaContext";
 import { getApi } from "../../utils/api";
@@ -16,7 +17,7 @@ import { SizeProps } from "types/props";
 const {debug, jsonBlock} = useDebug('avatar')
 
 type AvatarProps = {
-  user?: CyfrUser | UserDetail | UserFeed | User | UserStub;
+  user?: CyfrUser | UserDetail | UserFeed | User | UserStub | UserFollow;
   link?: boolean;
   shadow?: boolean;
   className?: string;

@@ -8,7 +8,7 @@ import { ImageUpsertProps, Image } from "prisma/prismaContext"
 import Link from "next/link"
 import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import Spinner from "components/ui/spinner"
-const {debug} = useDebug("components/forms/Dropzone/UploadingFileView")
+const {debug} = useDebug("forms/Dropzone/UploadingFileView")
 
 const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileViewProps) => {
   const {cyfrUser, isLoading} = useCyfrUserApi()
@@ -41,7 +41,7 @@ const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileView
       width: file.width,
       title: file.original_filename
     }
-    const image = await(await sendApi('image/upsert', props)).data.result
+    const image = await(await sendApi('image/upsert', props)).data
     if (image) {
       debug('uploadComplete.image', image)
       setImage(image)

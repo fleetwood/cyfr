@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { FileRejection, useDropzone } from 'react-dropzone'
-import { dedupe, uuid } from "../../../utils/helpers"
+import { dedupe, uuid } from "utils/helpers"
 import UploadFileView from "./UploadingFileView"
 import { UploadableFile, CompleteFile, DropzoneProps } from "./types.defs"
-import {Image as PrismaImage} from './../../../prisma/prismaContext'
-import useDebug from "../../../hooks/useDebug"
-const {debug, jsonBlock} = useDebug("components/forms/Dropzone/index")
+import {Image as PrismaImage} from 'prisma/prismaContext'
+import useDebug from "hooks/useDebug"
+const {debug, jsonBlock} = useDebug("forms/Dropzone/index", 'DEBUG')
 
 function Dropzone({limit=-1, onDropComplete, onDropChange, children}:DropzoneProps) {
   const [files, setFiles] = useState<UploadableFile[]>([])
@@ -30,6 +30,7 @@ function Dropzone({limit=-1, onDropComplete, onDropChange, children}:DropzonePro
   }, [])
 
   const onFileComplete = useCallback((e:any) => {
+    debug('onFileComplete', e)
     setCompletedFiles((current) => [...current, e])
   }, [])
 

@@ -1,4 +1,4 @@
-import { PostStub } from 'prisma/prismaContext'
+import { BookStub, ImageStub, PostStub } from 'prisma/prismaContext'
 
 import JsonBlock from 'components/ui/jsonBlock'
 import HtmlContent from 'components/ui/htmlContent'
@@ -29,7 +29,7 @@ const PostStubView = ({ post }: PostFeedItemProps) => {
       {post.post && <PostStubView post={post.post as PostStub} />}
       {post.image && (
         <div>
-          <ImageStubView image={post.image} />
+          <ImageStubView image={post.image as unknown as ImageStub} />
         </div>
       )}
       {post.gallery && (
@@ -40,7 +40,7 @@ const PostStubView = ({ post }: PostFeedItemProps) => {
       )}
       {post.book && (
         <div>
-          <BookStubView book={post.book} size="sm" showFooter={false} />
+          <BookStubView book={post.book as unknown as BookStub} size="sm" showFooter={false} />
         </div>
       )}
       {post.character && (
