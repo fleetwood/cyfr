@@ -16,7 +16,7 @@ type CommentThreadDetailProps = {
 }
 
 const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
-    const [invalidate] = useFeed('inbox')
+    const {invalidate} = useFeed('inbox')
     const {notify} = useToast()
     const [message, setMessage] = useState<string|null>(null)
     const [valid, setValid] = useState<boolean>(true)

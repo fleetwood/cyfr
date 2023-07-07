@@ -6,20 +6,24 @@ import Avatar from "components/ui/avatar"
 import AvatarList from "components/ui/avatarList"
 
 type FeedHeaderProps = {
-  item: PostStub
+  item:       PostStub
+  isShared?:  boolean
 }
 
-const FeedHeader = ({ item }: FeedHeaderProps) => {
+const FeedHeader = ({ item, isShared }: FeedHeaderProps) => {
 
-  const link = item.post ? `/post/${item.post.id}`
-    : item.gallery ? `/gallery/${item.gallery.id}`
-    : item.book ? `/book/${item.book.slug}`
-    : item.character ? `/character/${item.character.id}`
-    : `/`
+  const link = item.post ? `/post/${item.post.id}` :
+               item.gallery ? `/gallery/${item.gallery.id}` :
+               item.book ? `/book/${item.book.slug}` :
+               item.character ? `/character/${item.character.id}` :
+               `/`
 
-  const isShared = isShare(item)
-  const updatedAt = item.updatedAt ?? item.gallery?.updatedAt ?? null
-  const label = updatedAt ?` Posted ${timeDifference(updatedAt.toString())}` : `Read more`
+  const sharedTime = item.book?.createdAt ?? 
+                     item.character?.createdAt ?? 
+                     item.cover?.createdAt ??
+                     item.image?.createdAt ??
+                     item.gallery?.createdAt ??
+                     item.createdAt
 
   const originalAuthor:UserStub = item.creator
   // TODO: get creator for shared items
@@ -38,12 +42,11 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
       {isShared &&
         <div className="border-b border-dashed border-base-content flex space-x-2 pb-2 mb-2">
             <Avatar shadow={true} user={item.creator} sz="sm" />
-            <div>Shared {timeDifference((item.updatedAt || "").toString())}</div>
+            <div>Shared {timeDifference(item.createdAt)}</div>
         </div>
       }
       <div className="flex space-x-2 pb-2 mb-2">
-        {/* POSTS and GALLERIES have only one author */}
-        {(item.post || item.gallery) && 
+        {(!item.book) && 
           <Avatar shadow={true} user={originalAuthor} sz="sm" />
         }
         {/* BOOKS can have multiple authors */}
@@ -52,7 +55,7 @@ const FeedHeader = ({ item }: FeedHeaderProps) => {
         }
 
         <Link href={link} className="text-primary underline">
-          <span>{label}</span>
+          <span>Posted {timeDifference(isShared ? sharedTime : item.updatedAt)}</span>
         </Link>
       </div>
     </div>

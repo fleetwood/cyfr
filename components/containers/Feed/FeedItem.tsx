@@ -19,7 +19,7 @@ const FeedItem = ({ item }: FeedItemProps) => {
       border-2
       ${isShared ? `border-primary` : `border-neutral`}`}
     >
-        <FeedHeader item={item} />
+        <FeedHeader item={item} isShared={isShared} />
         <div className="p-4 mt-4 font-feed">
           <PostStubView post={item} />
         </div>
