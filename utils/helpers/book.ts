@@ -1,4 +1,5 @@
 import {
+  AuthorStub,
   BookDetail,
   BookStub,
   ChapterDetail,
@@ -19,4 +20,4 @@ export type IsAuthorProps = {
   cyfrUser?:  CyfrUser
 }
 
-export const isAuthor = ({book, chapter, cyfrUser}:IsAuthorProps) => cyfrUser && ((book||chapter?.book)!.authors??[]).filter((a:UserStub) => a.id === cyfrUser?.id).length > 0
+export const isAuthor = ({book, chapter, cyfrUser}:IsAuthorProps) => cyfrUser && ((book||chapter?.book)!.authors??[]).filter((a:AuthorStub) => a.user.id === cyfrUser?.id).length > 0

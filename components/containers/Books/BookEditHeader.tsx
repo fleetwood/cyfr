@@ -3,7 +3,7 @@ import useDebug from "hooks/useDebug"
 import ErrorPage from "pages/404"
 import { BookCategory, BookEngageProps, BookStatus, Genre, GenreStub, UserFollow } from "prisma/prismaContext"
 import { KeyVal } from "types/props"
-import { now, uuid } from "utils/helpers"
+import { abbrNum, now, uuid } from "utils/helpers"
 import ShrinkableIconLabel from "components/ui/shrinkableIconLabel"
 import { FireIcon, FollowIcon, HeartIcon, QuestionMarkIcon, ShareIcon } from "components/ui/icons"
 import { ToastNotifyType, useToast } from "components/context/ToastContextProvider"
@@ -192,11 +192,11 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
                 TODO: Create categories upsert. Don't forget to include
                 existing categories, and the ability to create new ones.
               </p>
-              {bookDetail.categories?.filter(c => c!==null).map((cat:BookCategory) => (
+              {/* {bookDetail.categories?.filter(c => c!==null).map((cat:BookCategory) => (
                 <span className="italic mr-2" key={uuid()}>
                   {cat.title}
                 </span>
-              ))}
+              ))} */}
             </div>
           </div>
         </div>
@@ -259,14 +259,14 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <BookInfo label="Likes" icon={HeartIcon} onClick={onLike} info={bookDetail.likes?.length || 0} />
-        <BookInfo label="Shares" icon={ShareIcon} onClick={onShare} info={bookDetail.shares?.length || 0} />
-        <BookInfo label="Follows" icon={FollowIcon} onClick={onFollow} info={bookDetail.follows?.length || 0} />
+        <BookInfo label="Likes" icon={HeartIcon} onClick={onLike} info={abbrNum(bookDetail._count.likes)} />
+        <BookInfo label="Shares" icon={ShareIcon} onClick={onShare} info={abbrNum(bookDetail._count.shares)} />
+        <BookInfo label="Follows" icon={FollowIcon} onClick={onFollow} info={abbrNum(bookDetail._count.follows)} />
         <BookInfo label="Fans" icon={FireIcon} onClick={onFan} info={fans.length || 0} />
         <BookInfo label="Comments" variant={'NI'} />
-        <BookInfo label="Reads" variant={'NI'} />
-        <BookInfo label="Reviews" variant={'NI'} />
-        <BookInfo label="Purchases" variant={'NI'} />
+        <BookInfo label="Reads" variant={'NI'} info={abbrNum(bookDetail.reads)} />
+        <BookInfo label="Reviews" variant={'NI'} info={abbrNum(bookDetail._count.reviews)} />
+        <BookInfo label="Purchases" variant={'NI'} info={abbrNum(bookDetail.purchases)}/>
       </div>
     </div>
   )

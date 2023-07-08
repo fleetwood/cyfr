@@ -2,6 +2,14 @@ import { Dispatch, SetStateAction } from "react"
 import { RocketQuery } from "../../types/props"
 import { BookDetail, BookStub, Chapter, Character, CharacterStub, CyfrUser, Gallery, GalleryStub, GenreStub, UserStub } from "../prismaContext"
 
+export type ChapterListItem = {
+  id:     string
+  order:  number
+  title:  string
+  words:  number
+  visible: true
+}
+
 /**
  * @property characters {@link Character} TODO: should be a CharacterStub
  */

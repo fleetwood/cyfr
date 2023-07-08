@@ -30,7 +30,7 @@ const BookStubView = ({book, authorAvatars, size = "md", showAuthors = true, sho
           <div className="flex my-4">
             <span>by </span>
             {book.authors.map((author) => 
-              <Avatar user={author} sz={size} key={uniqueKey(book, author)} />
+              <Avatar user={author.user} sz={size} key={uniqueKey(book, author)} />
             )}
           </div>
         }

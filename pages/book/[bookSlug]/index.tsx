@@ -1,6 +1,6 @@
-import BookDetailLayout, { BookDetailLayoutProps } from "../../../components/layouts/BookDetailLayout";
-import useDebug from "../../../hooks/useDebug";
-import { PrismaGenre } from "../../../prisma/prismaContext";
+import BookDetailLayout, { BookDetailLayoutProps } from "components/layouts/BookDetailLayout";
+import useDebug from "hooks/useDebug";
+import { PrismaGenre } from "prisma/prismaContext";
 
 const {debug, info} = useDebug('pages/book/[bookId]')
 

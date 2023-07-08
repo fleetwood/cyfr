@@ -45,9 +45,10 @@ const ChapterDetailView = ({chapterDetail, view}:ChapterDetailViewProps) => {
           <CharacterList characters={chapterDetail.characters} />
         </div>
         <HtmlContent content={chapterDetail.content} />
-        <div>
-          <ChapterNav book={chapterDetail.book} currentChapter={chapterDetail}/>
-        </div>
+        {/* TODO: Include the chapters that the characters show up in */}
+        {/* <div>
+          <ChapterNav bookSlug={chapterDetail.book.slug} chapters={chapterDetail.book.chapters} currentChapter={chapterDetail}/>
+        </div> */}
       </div>
       <div>
         <div>

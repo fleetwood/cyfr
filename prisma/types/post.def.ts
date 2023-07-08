@@ -1,5 +1,5 @@
 import { Agent } from "http"
-import { Artist, Author, Book, BookFeedInclude, BookStub, Character, CharacterStub, Comment, CommentThread, CommentThreadStub, CommentThreadStubInclude, Cover, CoverStub, CreatorStub, CreatorStubInclude, Gallery, GalleryFeedInclude, GalleryStub, Image, ImageFeed, ImageFeedInclude, ImageStub, ImageStubInclude, Like, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, Post, User, UserStub } from "prisma/prismaContext"
+import { Artist, Author, Book, BookFeedInclude, BookStub, BookStubInclude, Character, CharacterStub, Comment, CommentThread, CommentThreadStub, CommentThreadStubInclude, Cover, CoverStub, CreatorStub, CreatorStubInclude, Gallery, GalleryFeedInclude, GalleryStub, Image, ImageFeed, ImageFeedInclude, ImageStub, ImageStubInclude, Like, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, Post, User, UserStub } from "prisma/prismaContext"
 
 export type PostCreateProps = {
   content: string
@@ -227,10 +227,15 @@ export const SharedPostInclude = {
 
 type CreatorAndLikesAndCount = CreatorStub & LikesAndCount
 
+const CreatorLikesCountInclude = {include: {...CreatorStubInclude,...LikesAndCountsInclude}}
+
 export type PostDetail = Post & CreatorAndLikesAndCount & {
+  // This is a shared post, not the main post
   post?: Post & CreatorAndLikesAndCount
-  images?:  (Image & CreatorAndLikesAndCount)[]
-  book?: Book & CreatorAndLikesAndCount,
+  images:  (Image & {
+    likes: (Like & CreatorAndLikesAndCount)[]
+  })[]
+  book?: BookStub,
   character?: Character & CreatorAndLikesAndCount
   image?: Image & CreatorAndLikesAndCount
   commentThread: CommentThread & {
@@ -238,17 +243,103 @@ export type PostDetail = Post & CreatorAndLikesAndCount & {
   }
 }
 
-const CreatorLikesCountInclude = {include: {...CreatorStubInclude,...LikesAndCountsInclude}}
-
 export const PostDetailInclude = {
-  ...CreatorStubInclude,
-  post: CreatorLikesCountInclude,
-  images: CreatorLikesCountInclude,
-  book: CreatorLikesCountInclude,
-  character: CreatorLikesCountInclude,
-  image: CreatorLikesCountInclude,
-  commentThread: { include: { comments: CreatorLikesCountInclude } },
-  ...LikesAndCountsInclude
-  // ...LikesInclude,
-  // ...LikesCount,
+  _count: {
+    select: {
+      likes: true,
+    },
+  },
+  creator: {
+    include: {
+      membership: true,
+      blocks: true,
+      isBlocked: true
+    }
+  },
+  likes: {
+    include: {
+      creator: {
+        select: {
+          name: true,
+          id: true,
+          image: true,
+          slug: true
+        }
+      }
+    },
+    take: 10
+  },
+  images: {
+    include: {
+      likes: {
+        include: {
+          creator: {
+            select: {
+              name: true,
+              id: true,
+              image: true,
+              slug: true
+            }
+          }
+        },
+        take: 10
+      },
+      _count: {
+        select: {
+          likes: true,
+          shares: true
+        }
+      }
+    }
+  },
+  commentThread: {
+    include: {
+      comments: {
+        take: 10
+      },
+      commune: true,
+      blocked: true,
+      _count: {
+        select: {
+          comments: true
+        }
+      },
+    },
+  },
+  gallery: {
+    include: {
+      images: true,
+      _count: {
+        select: {
+          likes: true,
+          shares: true
+        }
+      }
+    }
+  },
+  character: {
+    include: {
+      books: true,
+      gallery: true,
+      _count: {
+        select: {
+          likes: true,
+          shares: true
+        }
+      }
+    }
+  },
+  image: {
+    include: {
+      creator: true,
+      cover: true,
+      _count: {
+        select: {
+          likes: true,
+          shares: true
+        }
+      }
+    }
+  },
+  book: {...BookStubInclude}
 }

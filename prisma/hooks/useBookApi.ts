@@ -4,8 +4,6 @@ import { NotImplemented, getApi, sendApi } from "utils/api"
 
 const { debug, fileMethod } = useDebug("hooks/useBookApi", 'DEBUG')
 
-debug("BookApi")
-
 const addChapter = async (
     bookId: string,
     title: string,
@@ -34,9 +32,9 @@ const addGallery = async (bookId: string, galleryId?: string) => {
     }
 }
 
-const slugDetail = async (bookSlug:string):Promise<BookDetail|null> => await (await getApi(`book/slug/${bookSlug}`)).data
+const slugDetail = async (bookSlug:string):Promise<BookDetail> => await (await getApi(`book/slug/${bookSlug}`)).data
 
-const detail = async (bookId:string):Promise<BookDetail|null> => await (await getApi(`book/${bookId}`)).data
+const detail = async (bookId:string):Promise<BookDetail> => await (await getApi(`book/${bookId}`)).data
 
 const follow = async (props:BookFollowProps):Promise<boolean> => await (await sendApi("book/follow", props)).data
 

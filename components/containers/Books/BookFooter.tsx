@@ -24,10 +24,12 @@ const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
   const bookId = book.id
   const engageProps:BookEngageProps|undefined = cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined
   const followProps = book && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
+  const {likes, shares, follows} = bookDetail?._count ?? {likes: 0, shares: 0, follows: 0}
   
-  const numLikes = abbrNum(bookDetail?.likes?.length ?? bookStub?._count?.likes)
-  const numShares = abbrNum(bookDetail?.shares?.length ?? bookStub?._count?.shares)
-  const numFollows = abbrNum(bookDetail?.follows?.length ?? bookStub?._count?.follows)
+  const numLikes = abbrNum(likes)
+  const numShares = abbrNum(shares)
+  const numFollows = abbrNum(follows)
+  // TODO: follows is only taking 10, so this won't be accurate
   const numFans = abbrNum((bookDetail?.follows??[]).filter((f:UserFollow) => f.isFan === true).length)
 
   const update = (message:string, type:ToastNotifyType = 'info') => {

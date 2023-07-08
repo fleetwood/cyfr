@@ -1,24 +1,25 @@
-import useDebug from "../../../hooks/useDebug"
-import { BookDetail, BookStub, Chapter, ChapterDetail, ChapterStub } from "../../../prisma/prismaContext"
-import { uniqueKey } from "../../../utils/helpers"
-import { NextIcon, PrevIcon } from "../../ui/icons"
-import ShrinkableIconLink from "../../ui/shrinkableIconLink"
+import { PrevIcon, NextIcon } from "components/ui/icons"
+import ShrinkableIconLink from "components/ui/shrinkableIconLink"
+import useDebug from "hooks/useDebug"
+import { Chapter, ChapterDetail, ChapterListItem, ChapterStub } from "prisma/prismaContext"
+import { uniqueKey } from "utils/helpers"
 
 const { debug, jsonBlock } = useDebug("ChapterFooter")
 
 type ChapterFooterProps = {
-  book: BookDetail
+  bookSlug: string
+  chapters: ChapterListItem[]
   currentChapter?: Chapter | ChapterStub | ChapterDetail
   variant?: "horizontal" | "vertical"
 }
 
 
 const ChapterNav = ({
-  book,
+  bookSlug,
+  chapters,
   currentChapter,
   variant = "horizontal",
 }: ChapterFooterProps) => {
-  const {chapters} = book
   const idx = chapters?.findIndex((c) => c.id === currentChapter?.id)
   const classes = {
     horizontal: 'flex flex-row justify-between',
@@ -33,17 +34,17 @@ const ChapterNav = ({
             icon={PrevIcon}
             label={chapter.title}
             className="btn-primary"
-            href={`/book/${book.slug}/chapter/${chapter.id}`}
-            key={uniqueKey(book, chapter)}
+            href={`/book/${bookSlug}/chapter/${chapter.id}`}
+            key={uniqueKey(chapter)}
           />
         ) : i + 1 === i ? (
           <ShrinkableIconLink
             icon={NextIcon}
             label={chapter.title}
             className="btn-primary text-primary-content"
-            href={`/book/${book.slug}/chapter/${chapter.id}`}
+            href={`/book/${bookSlug}/chapter/${chapter.id}`}
             dir="left"
-            key={uniqueKey(book, chapter)}
+            key={uniqueKey(chapter)}
           />
         ) : null
       )}

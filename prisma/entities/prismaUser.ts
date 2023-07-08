@@ -242,7 +242,7 @@ const books = async (props:UserDetailProps): Promise<any> => {
         }
       }
     },
-    include: BookStubInclude
+    ...BookStubInclude
   })
   debug('result', books)
   return books

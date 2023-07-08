@@ -1,21 +1,22 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import useDebug from "../../../hooks/useDebug";
-import { PrismaPost } from "../../../prisma/entities/prismaPost";
+import { NextApiRequest, NextApiResponse } from "next"
+import useDebug from "hooks/useDebug"
+import { PrismaPost } from "prisma/entities/prismaPost"
+
 const {err, stringify} = useDebug('api/post/[id]')
 
 const handle = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { id } = req.query;
+  const id = req.query.id!.toString()
   try {
-    const result = await PrismaPost.postDetail(id?.toString() || "");
+    const result = await PrismaPost.postDetail(id)
     if (result) {
-      res.status(200).json(result);
+      res.status(200).json(result)
     } else {
-      throw { code: "api/post", message: `No results from Post.byId()` };
+      throw { code: "api/post", message: `No results from Post.byId()` }
     }
   } catch (e) {
-    err("\tFAIL", e);
-    res.status(500).json({ error: { code: "api/error", message: stringify(e) } });
+    err("\tFAIL", e)
+    res.status(500).json({ error: { code: "api/error", message: stringify(e) } })
   }
-};
+}
 
 export default handle

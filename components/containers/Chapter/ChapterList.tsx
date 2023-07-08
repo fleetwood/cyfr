@@ -1,12 +1,12 @@
-import React, { useState, useRef } from "react";
-import { BookDetailHook, Chapter, ChapterStub } from "../../../prisma/prismaContext";
-import useDebug from "../../../hooks/useDebug";
-import Spinner from "../../ui/spinner";
+import React, { useState, useRef } from "react"
+import { BookDetailHook, Chapter, ChapterListItem, ChapterStub } from "../../../prisma/prismaContext"
+import useDebug from "hooks/useDebug"
+import Spinner from "components/ui/spinner"
 
 type ChapterListProps = {
-    chapters:   ChapterStub[]
-    onSort? :   (chapter:Chapter) => void
-    onSelect?:  (chapter:Chapter) => void
+    chapters:   ChapterListItem[]
+    onSort? :   (chapter:ChapterListItem) => void
+    onSelect?:  (chapter:ChapterListItem) => void
 }
 
 const {debug} = useDebug('containers/Chapter/ChapterList')
@@ -18,7 +18,7 @@ type DragProps = {
 
 
 const ChapterList = ({chapters, onSort, onSelect}:ChapterListProps) => {
-  const [bookChapters, setBookChapters] = useState<Chapter[]>(chapters??[])
+  const [bookChapters, setBookChapters] = useState<ChapterListItem[]>(chapters??[])
   const [dragging, setDragging] = useState<boolean>(false)
   const dragItem = useRef<any>(null)
   const dragOverItem = useRef<any>(null)
@@ -34,7 +34,7 @@ const ChapterList = ({chapters, onSort, onSelect}:ChapterListProps) => {
     createModal!.checked = show
   }
 
-  const handleSort = async (e:React.DragEvent<HTMLDivElement>,chapter:Chapter) => {
+  const handleSort = async (e:React.DragEvent<HTMLDivElement>,chapter:ChapterListItem) => {
     showSpinnerModal(true)
     const sortChapter = {...chapter, order: dragOverItem.current}
     // await bookDetailHook.api.sortChapters(sortChapter)
@@ -52,12 +52,12 @@ const ChapterList = ({chapters, onSort, onSelect}:ChapterListProps) => {
       return (dragItem.current === index) ? style : dragOverItem.current === index ? over : ''
   }
 
-  const chapterItem = (chapter:Chapter, index:number) => onSort !== undefined ? 
+  const chapterItem = (chapter:ChapterListItem, index:number) => onSort !== undefined ? 
       <div draggable key={chapter.id}
       className={`text-lg font-semibold border border-neutral rounded-lg my-2 py-1 px-4 ${dragging ? getStyles(index) : ``}`}
-      onDragStart={(e) => { dragItem.current = index, setDragging(true); } }
-      onDragEnter={(e) => dragOverItem.current = index}
-      onDragEnd={(e) => handleSort(e, chapter)}
+      // onDragStart={(e) => { dragItem.current = index, setDragging(true) } }
+      // onDragEnter={(e) => dragOverItem.current = index}
+      // onDragEnd={(e) => handleSort(e, chapter)}
     >
       <div className="flex space-x-2">
         <span className="text-xs text-primary btn btn-circle btn-sm cursor-move ">{index+1}</span>
@@ -72,7 +72,7 @@ const ChapterList = ({chapters, onSort, onSelect}:ChapterListProps) => {
   return (
     <div className="relative flex">
       <ul>
-        {bookChapters.map((chapter:Chapter, index:number) => chapterItem(chapter, index))}
+        {bookChapters.map((chapter:ChapterListItem, index:number) => chapterItem(chapter, index))}
       </ul>
         <input type="checkbox" id={spinnerModal} className="modal-toggle" />
         <div className="modal modal-bottom sm:modal-middle">
@@ -84,7 +84,7 @@ const ChapterList = ({chapters, onSort, onSelect}:ChapterListProps) => {
         </div>
     </div>
   )
-};
+}
 
 export default ChapterList
 

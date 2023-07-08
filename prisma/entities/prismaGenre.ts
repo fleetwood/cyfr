@@ -16,8 +16,8 @@ const { debug, info, fileMethod } = useDebug("entities/prismaGenre")
 const details = async (): Promise<Genre[]> => await prisma.genre.findMany()
 const detail = async (id:string): Promise<Genre|null> => await prisma.genre.findUnique({where: {id}})
 
-const stubs = async (): Promise<GenreStub[]> => await prisma.genre.findMany({include: GenreStubInclude}) as GenreStub[]
-const stub = async (id:string): Promise<GenreStub|null> => await prisma.genre.findUnique({where: {id}, include: GenreStubInclude}) as GenreStub
+const stubs = async (): Promise<GenreStub[]> => await prisma.genre.findMany({...GenreStubInclude}) as GenreStub[]
+const stub = async (id:string): Promise<GenreStub|null> => await prisma.genre.findUnique({where: {id}, ...GenreStubInclude}) as GenreStub
 
 const covers = async (byGenre?: string): Promise<Cover[] | null> => {
   try {
@@ -98,10 +98,10 @@ const addCover = async (props:GenreAddCoverProps):Promise<GenreStub> => {
     const result = await prisma.genre.update({
       where: { id: props.id},
       data: { covers: {connect: {id: cover!.id}}},
-      include: GenreStubInclude
+      ...GenreStubInclude
     })
     if (result) {
-      return result as GenreStub
+      return result as unknown as GenreStub
     }
     throw ({code: 'genre/addCover', message: 'Failed connecting cover'})
   } catch (error) {

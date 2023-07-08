@@ -14,7 +14,7 @@ type InboxProviderProps = {
 
 const SendMessageModal = ({checked, setChecked, children }: InboxProviderProps) => {
   const {cyfrUser} = useCyfrUserContext()
-  const [invalidate] = useFeed('inbox')
+  const {invalidate} = useFeed('inbox')
   const {notify} = useToast()
   
   const inboxUserModal = 'inboxUserModal'

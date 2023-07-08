@@ -28,13 +28,13 @@ type BookQueryProps = {
   email?: string
   slug?:  string
 }
-const detail = async (props:BookQueryProps):Promise<Book|null> => await prisma.book.findUnique({ where: { ...props }, include: BookDetailInclude})
+const detail = async (props:BookQueryProps):Promise<BookDetail> => await prisma.book.findUnique({ where: { ...props }, ...BookDetailInclude}) as unknown as BookDetail
 
-const details = async ():Promise<Book[]> => await prisma.book.findMany()
+const details = async ():Promise<BookDetail[]> => await prisma.book.findMany({...BookDetailInclude}) as unknown as BookDetail[]
 
-const stub = async (props:BookQueryProps):Promise<Book|null> => await prisma.book.findUnique({ where: { ...props }})
+const stub = async (props:BookQueryProps):Promise<BookStub> => await prisma.book.findUnique({ where: { ...props }, ...BookStubInclude}) as unknown as BookStub
 
-const stubs = async ():Promise<Book[]> => await prisma.book.findMany()
+const stubs = async ():Promise<BookStub[]> => await prisma.book.findMany({...BookStubInclude}) as unknown as BookStub[]
 
 const byUser = async (id: string): Promise<BookDetail[]> => {
   try {
@@ -336,7 +336,7 @@ const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
         const result = await prisma.book.update({
             where: { id: book.id},
             data: { cover: {connect: {id: cover!.id}}},
-            include: BookStubInclude
+            ...BookStubInclude
         })
         return result as unknown as BookStub
 
@@ -350,7 +350,7 @@ const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
                     creatorId, imageId
                 }
             }},
-            include: BookStubInclude
+            ...BookStubInclude
         })
         return result as unknown as BookStub
     } else if (book && imageId) {
@@ -367,7 +367,7 @@ const changeCover = async (props:ChangeCoverProps):Promise<BookStub> => {
                     id: cover.id,
                 }
             }},
-            include: BookStubInclude
+            ...BookStubInclude
         })
         return result as unknown as BookStub
       }

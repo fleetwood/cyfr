@@ -6,7 +6,7 @@ import Spinner from 'components/ui/spinner'
 import { LoggedIn } from 'components/ui/toasty'
 import useDebug from 'hooks/useDebug'
 import { useBookApi } from 'prisma/hooks/useBookApi'
-import { BookDetail, Chapter } from 'prisma/prismaContext'
+import { BookDetail, Chapter, ChapterListItem } from 'prisma/prismaContext'
 import { FormEvent, useRef, useState } from 'react'
 
 const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", 'DEBUG')
@@ -91,7 +91,7 @@ const CreateChapterModal = ({bookDetail, onSave}:CreateChapterModalType) => {
                   <span className='text-primary font-bold'>Order</span>
                 </label>
                 <div className='flex'>
-                  {(bookDetail?.chapters??[]).map((c:Chapter,i:number) => (
+                  {(bookDetail?.chapters??[]).map((c:ChapterListItem,i:number) => (
                   <div className={`btn btn-sm btn-circle ${i+1===chapterOrder ? 'btn-primary' :''}`} onClick={() => setChapterOrder(i+1)} key={c.id}>{i+1}</div>
                   ))}
                   <div className={`btn btn-sm btn-circle ${chapterOrder === nextOrder ? 'btn-primary' :''}}`} onClick={() => setChapterOrder(nextOrder)}>{nextOrder}</div>

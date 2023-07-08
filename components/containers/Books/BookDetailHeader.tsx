@@ -119,11 +119,11 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
           </span>
             
           {/* TODO Categories view is broken in db */}
-          {bookDetail.categories?.filter(c => c!==null).map((cat:BookCategory) => (
+          {/* {bookDetail.categories?.filter(c => c!==null).map((cat:BookCategory) => (
             <span className="italic mr-2" key={uuid()}>
               {cat.title}
             </span>
-          ))}
+          ))} */}
         </div>
         <div>{bookDetail.words} words</div>
         <div className="font-ibarra">
@@ -160,12 +160,12 @@ const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <BookInfo label="Likes" icon={HeartIcon} onClick={onLike} info={abbrNum(bookDetail.likes?.length)} />
-        <BookInfo label="Shares" icon={ShareIcon} onClick={onShare} info={abbrNum(bookDetail.shares?.length)} />
-        <BookInfo label="Follows" icon={FollowIcon} onClick={onFollow} info={abbrNum(bookDetail.follows?.length)} />
+        <BookInfo label="Likes" icon={HeartIcon} onClick={onLike} info={abbrNum(bookDetail._count.likes)} />
+        <BookInfo label="Shares" icon={ShareIcon} onClick={onShare} info={abbrNum(bookDetail._count.shares)} />
+        <BookInfo label="Follows" icon={FollowIcon} onClick={onFollow} info={abbrNum(bookDetail._count.follows)} />
         <BookInfo label="Fans" icon={FireIcon} onClick={onFan} info={fans.length || 0} />
-        <BookInfo label="Comments" variant={'NI'} />
-        <BookInfo label="Reads" variant={'NI'} />
+        <BookInfo label="Comments" info={abbrNum(bookDetail.commentThread?.comments.length)}  variant={'NI'} />
+        <BookInfo label="Reads" info={abbrNum(bookDetail.reads)} variant={'NI'} />
         <BookInfo label="Reviews" variant={'NI'} />
         <BookInfo label="Purchases" variant={'NI'} />
       </div>

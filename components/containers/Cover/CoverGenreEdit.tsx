@@ -1,11 +1,10 @@
-import { Cover, CoverStub, GenreStub, Image } from 'prisma/prismaContext'
-import React from 'react'
-import BookCover from '../Books/BookCover'
-import { cloudinary } from 'utils/cloudinary'
 import { Dropzone } from 'components/forms'
-import useGenreApi from 'prisma/hooks/useGenreApi'
 import useDebug from 'hooks/useDebug'
-import { uniqueKey, uuid } from 'utils/helpers'
+import useGenreApi from 'prisma/hooks/useGenreApi'
+import { CoverStub, GenreStub, Image } from 'prisma/prismaContext'
+import { useState } from 'react'
+import { cloudinary } from 'utils/cloudinary'
+import { uniqueKey } from 'utils/helpers'
 
 const {debug} = useDebug('containers/Cover/CoverGenreEdit', 'DEBUG')
 
@@ -21,23 +20,21 @@ type CoverGenreEditType = {
 
 const CoverGenreEdit = ({genre, cardClassName, labelClassName, label, onUpdate}:CoverGenreEditType) => {
   const {addCover} = useGenreApi()
-  const {covers} = genre
+  const [covers, setCovers] = useState<CoverStub[]>()
 
   const addImage = async (files:Image[]) => {
     const cover = await addCover({id: genre!.id, image:files[0]})
-    if (cover) {
-      if (onUpdate) onUpdate()
-    }
+    if (cover && onUpdate) onUpdate()
   }
 
   return (
     <div>
         <label className={`block ${cardClassName||''}`}>
         {label &&
-            <span className={labelClassName??''+' text-primary font-bold'}>{label}</span>
+          <span className={labelClassName??''+' text-primary font-bold'}>{label}</span>
         }
         <div className="flex space-x-4 my-2">
-        {covers && covers.map((cover:any, i) => (
+        {covers && covers.map((cover:any, i:number) => (
           <img src={cloudinary.thumb({ url: cover.image.url, width: 40 })} key={uniqueKey(genre,cover)} />
         ))}
         </div>

@@ -4,7 +4,7 @@ import { BookDetail } from "prisma/prismaContext"
 import { getApi } from "utils/api"
 import useDebug from "./useDebug"
 
-const { debug } = useDebug("useBookQuery")
+const { debug } = useDebug("useBookQuery", 'DEBUG')
 
 type RktBookQuery = {
   data:       any
@@ -36,11 +36,7 @@ const useBookQuery = ({bookId, bookSlug}:UseBookQueryProps):RktBookQuery => {
   const bookQuery = ["bookDetail", `bookDetail-${bookId||bookSlug}`]
   const url = bookSlug ? `/book/slug/${bookSlug}` : `/book/${bookId}`
 
-  const getBookDetail = async () => {
-    debug('getBookDetail', {bookSlug, bookId, bookQuery, url})
-    const bookDetail = await getApi(url)
-    return (bookDetail.result as BookDetail) || bookDetail.error || null
-  }
+  const getBookDetail = async () => await getApi(url)
 
   const invalidate = () => {
     debug('invalidate',bookQuery)

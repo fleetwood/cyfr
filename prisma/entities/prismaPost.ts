@@ -8,16 +8,12 @@ const postDetail = async (id: string): Promise<PostDetail> => {
     debug('postDetail', id)
     const result = await prisma.post.findUnique({where: {id}, include: PostDetailInclude})
     if (result) {
-      return result as PostDetail
+      return result as unknown as PostDetail
     }
-    else {
-      debug('postDetail NAWP', {result})
-    }
-    // throw {code: fileMethod('postDetail'), message: 'No post was returned'}
-    return {} as PostDetail
+    throw {code: 'prismaPost/postDetail', message: `No post was returned for ${id}`}
   } catch (error) {
     err('postDetail error', {error})
-    throw { code: fileMethod('postDetail'), message: "Failed fetching post" }
+    throw {code: 'prismaPost/postDetail', message: `No post was returned for ${id}`}
   }
 }
 

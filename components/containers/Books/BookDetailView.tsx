@@ -14,7 +14,7 @@ import useDebug from "hooks/useDebug"
 import router from "next/router"
 import ErrorPage from "pages/404"
 import { useBookApi } from "prisma/hooks/useBookApi"
-import { BookDetail, Chapter } from "prisma/prismaContext"
+import { BookDetail, Chapter, ChapterListItem } from "prisma/prismaContext"
 import { useState } from "react"
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
 
@@ -56,7 +56,7 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
     // }
   }
 
-  const editChapter =(chapter:Chapter) => {
+  const editChapter =(chapter:ChapterListItem) => {
     const v = isAuthor ? '?v=edit' : ''
     //TODO: Don't leave this page with unsaved changes
     //TODO: add slug to chapter as a compound key
@@ -135,7 +135,7 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
               <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
                 {isAuthor && <CreateCharacterModal bookDetail={bookDetail} />}
                 <div className="flex space-x-4">
-                <CharacterList characters={bookDetail.characters} />
+                {/* <CharacterList characters={bookDetail.characters} /> */}
               </div>
             </div>
           </>

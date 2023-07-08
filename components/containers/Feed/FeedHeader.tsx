@@ -12,11 +12,10 @@ type FeedHeaderProps = {
 
 const FeedHeader = ({ item, isShared }: FeedHeaderProps) => {
 
-  const link = item.post ? `/post/${item.post.id}` :
-               item.gallery ? `/gallery/${item.gallery.id}` :
+  const link = item.gallery ? `/gallery/${item.gallery.id}` :
                item.book ? `/book/${item.book.slug}` :
                item.character ? `/character/${item.character.id}` :
-               `/`
+               `/post/${(item.post ?? item).id}`
 
   const sharedTime = item.book?.createdAt ?? 
                      item.character?.createdAt ?? 
@@ -42,7 +41,7 @@ const FeedHeader = ({ item, isShared }: FeedHeaderProps) => {
       {isShared &&
         <div className="border-b border-dashed border-base-content flex space-x-2 pb-2 mb-2">
             <Avatar shadow={true} user={item.creator} sz="sm" />
-            <div>Shared {timeDifference(item.createdAt)}</div>
+            <div>Shared {timeDifference(item.createdAt)} ({item.id})</div>
         </div>
       }
       <div className="flex space-x-2 pb-2 mb-2">
