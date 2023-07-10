@@ -23,12 +23,12 @@ const GalleryFooter = ({
 }: GalleryFooterProps) => {
   const {cyfrUser} = useCyfrUserApi()
   const {invalidate, like, share} = useGalleryApi()
-  const { notify, loginRequired } = useToast()
+  const { notify, notifyLoginRequired } = useToast()
   const { setPostId, showComment, hideComment } = useCommentContext()
 
   const isLoggedIn = () => {
     if (!cyfrUser) {
-      loginRequired()
+      notifyLoginRequired()
       return false
     }
     return true

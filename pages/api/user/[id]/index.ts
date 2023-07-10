@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 
 import useDebug from "hooks/useDebug"
 import { CyfrUser, PrismaUser } from "prisma/prismaContext"
-const {debug, stringify, fileMethod} = useDebug(`api/user/[id]`, 'DEBUG')
+const {debug, stringify, fileMethod} = useDebug(`api/user/[slug]`, 'DEBUG')
 
 export default async function handle(
   req: NextApiRequest,

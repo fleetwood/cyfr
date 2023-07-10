@@ -1,10 +1,10 @@
-import usePostQuery from "hooks/usePostQuery";
-import GalleryPhotoswipe from "../../components/containers/Gallery/GalleryPhotoswipe";
-import PostFooter from "../../components/containers/Post/PostFooter";
-import MainLayout from "../../components/layouts/MainLayout";
-import Avatar from "../../components/ui/avatar";
-import HtmlContent from "../../components/ui/htmlContent";
-import { timeDifference } from '../../utils/helpers';
+import GalleryPhotoswipe from "components/containers/Gallery/GalleryPhotoswipe";
+import PostFooter from "components/containers/Post/PostFooter";
+import MainLayout from "components/layouts/MainLayout";
+import Avatar from "components/ui/avatar";
+import HtmlContent from "components/ui/htmlContent";
+import usePostApi from "prisma/hooks/usePostApi";
+import { timeDifference } from 'utils/helpers';
 
 type PostDetailPageProps = {
   postId: string
@@ -21,7 +21,8 @@ export async function getServerSideProps(context: any) {
 }
 
 const PostDetailPage = ({ postId }:PostDetailPageProps) => {
-  const {data, isLoading, error, invalidate} = usePostQuery(postId)
+  const {query} = usePostApi()
+  const {data, isLoading, error, invalidate} = query(postId)
   const post = data
 
   return (post && 

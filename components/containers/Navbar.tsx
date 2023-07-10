@@ -7,6 +7,7 @@ import { signOut } from "next-auth/react"
 import Link from "next/link"
 import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import UserApi from "prisma/hooks/userApi"
+import { UserInfo } from "prisma/types"
 import { ReactNode, useEffect, useState } from "react"
 
 const {debug} = useDebug('Navbar', 'DEBUG')
@@ -27,7 +28,7 @@ const Navbar = ({
   pageScrolled: active,
 }: NavbarProps) => {
   const {cyfrUser, isLoading} = useCyfrUserApi()
-  const [userInfo, setUserInfo] = useState()
+  const [userInfo, setUserInfo] = useState<UserInfo>()
   const {info} = UserApi()
   const [isPageScrolled, setIsPageScrolled] = useState(false)
   const [showDropDown, setShowDropDown ] = useState(false)
@@ -37,11 +38,11 @@ const Navbar = ({
   const linkClass = 'rounded-lg hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'
 
   const getInfo = async () => {
-    debug('getInfo', ...cyfrUser.id)
+    debug('getInfo', cyfrUser.id)
     if (!cyfrUser.id) return
     const result = await info(cyfrUser.id)
     if (result) {
-      debug('gotInfo')
+      debug('gotInfo', result)
       setUserInfo(() => result)
     }
   }

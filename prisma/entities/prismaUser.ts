@@ -14,6 +14,8 @@ import {
   Follow,
   prisma, User, UserDetail, UserDetailInclude, UserFeed,
   UserFollowProps,
+  UserInfo,
+  UserInfoInclude,
   UserStub
 } from "prisma/prismaContext"
 const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser")
@@ -82,40 +84,19 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
   }
 }
 
-const userInfo = async (id:string): Promise<any> => {
-  debug('userInfo', {id})
+const userInfo = async (id:string): Promise<UserInfo> => {
+  debug('userInfo', id)
   try {
     const result = await prisma.user.findUnique({
       where: { id },
-      include: {
-        membership: {
-          include: {
-            type: true
-          }
-        },
-        galleries: {
-          where: {
-            visible: true
-          }
-        },
-        books: {
-          where: {
-            visible: true
-          }
-        },
-        _count: {
-          select: {
-          posts: true,
-          follower: true,
-          following: true
-        }}
-      }
+      ...UserInfoInclude
     })
 
-    if (result) return result
+    if (result) return result as UserInfo
     
     throw {code: fileMethod, message: 'Could not find info for that user id'}
   } catch (error) {
+    err('userInfo', error)
     throw error
   }
 }

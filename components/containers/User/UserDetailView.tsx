@@ -1,25 +1,23 @@
-import { useState } from "react"
-import { UserFollow } from "prisma/prismaContext"
-import { uniqueKey } from 'utils/helpers'
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { useToast } from "components/context/ToastContextProvider"
-import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import { FireIcon, HeartIcon } from "components/ui/icons"
-import GalleryStubView from "../Gallery/GalleryStubView"
 import JsonBlock from "components/ui/jsonBlock"
-import BookCover from "../Books/BookCover"
-import PostStubView from "../Post/PostStubView"
-import Avatar from "components/ui/avatar"
-import useUserDetailQuery from "hooks/useUserDetailQuery"
+import ShrinkableIconButton from "components/ui/shrinkableIconButton"
+import userApi from "prisma/hooks/userApi"
+import { BookStub, GalleryStub, PostStub } from "prisma/prismaContext"
+import { useState } from "react"
+import { uniqueKey } from 'utils/helpers'
 
 type UserDetailViewProps = {
-  userId: string
+  slug: string
 }
 
-const UserDetailView = ({ userId }: UserDetailViewProps) => {
+const UserDetailView = ({slug}:UserDetailViewProps) => {
   const {cyfrUser} = useCyfrUserContext()
-  const { currentUser, followers, follows, fans, stans, followUser, stanUser, invalidateUser } = useUserDetailQuery({id: userId})
-  const { notify } = useToast()
+  const {query, followUser, stanUser } = userApi()
+  const {data: currentUser, isLoading, error, invalidate} = query({slug})
+  const {followers, follows } = currentUser
+  const { notify, notifyNotImplemented } = useToast()
   const [activeTab, setActiveTab] = useState("Posts")
 
   const activeTabClass = (tab: string) =>
@@ -39,7 +37,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
     if (result) {
       notify(`You are now following ${currentUser.name}!`,"success",)
     }
-    invalidateUser()
+    invalidate()
   }
 
   const clickStan = async () => {
@@ -54,7 +52,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
     if (result) {
       notify(`You are stanning ${currentUser.name}!!! Nice!`,"success")
     }
-    invalidateUser()
+    invalidate()
   }
 
   return (
@@ -87,16 +85,16 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
               <strong>Posts:</strong> {(currentUser?.posts||[]).length}
             </div>
             <div>
-              <strong>Followers:</strong> {followers.length}
+              <strong>Followers:</strong> (NI)
             </div>
             <div>
-              <strong>Follows:</strong> {follows.length}
+              <strong>Follows:</strong> (NI)
             </div>
             <div>
-              <strong>Fans:</strong> {fans.length}
+              <strong>Fans:</strong> (NI)
             </div>
             <div>
-              <strong>Stans:</strong> {stans.length}
+              <strong>Stans:</strong> (NI)
             </div>
           </div>
           <div
@@ -173,7 +171,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
 
           <div className="bg-base-100 my-4 p-4 rounded-md">
             {currentUser?.galleries && 
-              currentUser.galleries.map(gallery => 
+              currentUser.galleries.map((gallery: GalleryStub) => 
               <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
                 <JsonBlock data={gallery} />
                 {/* <GalleryStubView gallery={gallery}/> */}
@@ -187,7 +185,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
         <div>
           <h2 className="subtitle">Books</h2>
           <div className="bg-base-100 my-4 p-4 rounded-md">
-            {currentUser?.books?.map(book => (
+            {currentUser?.books?.map((book:BookStub) => (
               // <BookCover book={book} key={book.id} />
               <JsonBlock data={book} key={book.id} />
             ))}
@@ -199,7 +197,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
         <>
           <h2 className="subtitle">Posts</h2>
           <div className="my-4">
-          {currentUser?.posts?.map((post) => (
+          {currentUser?.posts?.map((post:PostStub) => (
               // <PostStubView post={post} key={post.id} />
               <JsonBlock data={post} key={post.id} />
           ))}
@@ -215,6 +213,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
             {/* {followers.map((follow:UserFollow) => (
               <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
             ))} */}
+            <JsonBlock data={followers} />
           </div>
         </div>
         <div className="col-span-1">
@@ -223,6 +222,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
             {/* {follows.map((follow:UserFollow) => (
               <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
             ))} */}
+            <JsonBlock data={follows} />
           </div>
         </div>
       </div>

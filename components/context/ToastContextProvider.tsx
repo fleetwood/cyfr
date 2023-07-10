@@ -12,7 +12,9 @@ type ToastProviderType = {
   notify:         (message:ReactNode|string, type?: ToastNotifyType) => void
   slice:          (key: string) => void
   toasts:         ToastyElement[]
-  loginRequired:  () => void
+  notifyLoginRequired:  () => void
+  notifyNotImplemented: () => void
+  notifyError:          () => void
 }
 
 type ToastyElement = {
@@ -48,12 +50,20 @@ const ToastProvider = ({ children }: ToastProviderProps) => {
     setToasts([...toasts, toast])
   }
 
-  const loginRequired = () => {
-    notify(<div>Please <a href="/login" className="text-primary underline">log in</a> first</div>)
+  const notifyLoginRequired = () => {
+    notify(<div>Please <a href="/login" className="text-primary underline">log in</a> first</div>, 'warning')
+  }
+
+  const notifyNotImplemented = () => {
+    notify(<div><strong>Not Implemented</strong> Ya this ain't working rn.</div>, 'warning')
+  }
+
+  const notifyError = () => {
+    notify(<div>Ya that dint work.</div>, 'warning')
   }
 
   return (
-    <ToastContext.Provider value={{ toasts, notify, slice, loginRequired }}>
+    <ToastContext.Provider value={{ toasts, notify, slice, notifyLoginRequired, notifyNotImplemented, notifyError }}>
       {children}
     </ToastContext.Provider>
   )

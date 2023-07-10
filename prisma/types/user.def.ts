@@ -1,4 +1,4 @@
-import { Book, BookStub, Follow, GalleryStub, GalleryStubInclude, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, MembershipType, Post, PostStub, PostStubInclude, User } from "prisma/prismaContext"
+import { Book, BookStub, Follow, Gallery, GalleryStub, GalleryStubInclude, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, MembershipType, Post, PostStub, PostStubInclude, User } from "prisma/prismaContext"
 
 export type UserFeed = User & {
   _count:       { sessions: number }
@@ -236,15 +236,14 @@ export const CreatorStubInclude = {
   }
 }
 
-export type UserInfo = {
+export type UserInfo = User & {
   _count: {
-    likes: number
-    shares: number
-    followers: number
-    follows: number
-    books: number
-    posts: number
-    galleries: number
+    likes:      number
+    following:  number
+    follower:   number
+    books:      number
+    posts:      number
+    galleries:  number
   },
   membership: Membership & {
     type: MembershipType
@@ -252,7 +251,20 @@ export type UserInfo = {
 }
 
 export const UserInfoInclude = { include: {
-
+  membership: {
+    include: {
+      type: true
+    }
+  },
+  _count: {
+    select: {
+      likes:      true,
+      following:  true,
+      follower:   true,
+      books:      true,
+      posts:      true,
+      galleries:  true,
+  }}
 }}
 
 export type AudienceLevels = 'PUBLIC' | 'USER' | 'READER' | 'MEMBER' | 'MEMBER_EXP' | 'AGENT' | 'AGENT_EXP' | 'ADMIN' | 'OWNER'

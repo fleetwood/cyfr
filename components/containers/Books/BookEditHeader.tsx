@@ -51,7 +51,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 )}
 
 const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
-  const { notify, loginRequired } = useToast()
+  const { notify, notifyLoginRequired } = useToast()
   const {cyfrUser} = useCyfrUserContext()
   const {share, follow, like, save, updateGenre} = useBookApi()
   const bookId = bookDetail.id
@@ -80,7 +80,7 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
 
   const onFollow = async (fan=false) => {
     if (!followProps) { 
-      loginRequired()
+      notifyLoginRequired()
       return null
     }
     const result = await follow({bookId, followerId: cyfrUser.id, isFan: fan===true})
@@ -91,7 +91,7 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
 
   const onShare = async () => {
     if (!engageProps) {
-      loginRequired()
+      notifyLoginRequired()
       return null
     }
     // the share author, not the book author
@@ -103,7 +103,7 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
 
   const onLike = async () => {
     if (!engageProps) {
-      loginRequired()
+      notifyLoginRequired()
       return null
     }
     const result = await like(engageProps)

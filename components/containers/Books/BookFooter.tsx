@@ -18,7 +18,7 @@ const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
   const book = bookDetail ?? bookStub
   if (!book) return <Spinner size='sm' />
 
-  const { notify, loginRequired } = useToast()
+  const { notify, notifyLoginRequired } = useToast()
   const {cyfrUser} = useCyfrUserContext()
   const {share, follow, like} = useBookApi()
   const bookId = book.id
@@ -41,7 +41,7 @@ const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
 
   const onFollow = async (fan=false) => {
     if (!followProps) { 
-      loginRequired()
+      notifyLoginRequired()
       return null
     }
     const result = await follow({bookId, followerId: cyfrUser.id, isFan: fan===true})
@@ -52,7 +52,7 @@ const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
 
   const onShare = async () => {
     if (!engageProps) {
-      loginRequired()
+      notifyLoginRequired()
       return null
     }
     // the share author, not the book author
@@ -64,7 +64,7 @@ const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
 
   const onLike = async () => {
     if (!engageProps) {
-      loginRequired()
+      notifyLoginRequired()
       return null
     }
     const result = await like(engageProps)

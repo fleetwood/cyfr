@@ -1,12 +1,14 @@
 import { useState } from "react"
-import useUserDetail, { UserDetailHookProps } from "../../../hooks/useUserDetailQuery"
-import { PostStub, UserFollow } from "../../../prisma/prismaContext"
-import Avatar from "../../ui/avatar"
+import { PostStub, UserDetail, UserFollow } from "prisma/prismaContext"
+import userApi from "prisma/hooks/userApi"
+import Avatar from "components/ui/avatar"
 import PostStubView from "../Post/PostStubView"
 
-const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
+const UserAccountDetail = (user:UserDetail) => {
 
-  const { currentUser, followers, follows, fans, stans } = useUserDetail({user, id})
+  const {query, followUser, stanUser } = userApi()
+  const {data, isLoading, error, invalidate} = query({slug: user!.slug??user!.name!})
+  const currentUser:UserDetail = data
   const [activeTab, setActiveTab] = useState('Posts')
   const activeTabClass = (tab:string) => activeTab === tab 
     ? `btn-secondary rounded-b-none mt-0`
@@ -44,16 +46,16 @@ const UserAccountDetail = ({ user, id }: UserDetailHookProps) => {
                   <strong>Posts:</strong> {currentUser._count.posts}
                 </div>
                 <div>
-                  <strong>Followers:</strong> {followers.length}
+                  <strong>Followers:</strong> {currentUser.follower.length}
                 </div>
                 <div>
-                  <strong>Follows:</strong> {follows.length}
+                  <strong>Follows:</strong> {currentUser.following.length}
                 </div>
                 <div>
-                  <strong>Fans:</strong> {fans.length}
+                  <strong>Fans:</strong> (NI)
                 </div>
                 <div>
-                  <strong>Stans:</strong> {stans.length}
+                  <strong>Stans:</strong> (NI)
                 </div>
               </div>
             </div>

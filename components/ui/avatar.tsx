@@ -1,30 +1,32 @@
-import { Transition } from "@headlessui/react";
-import { useState } from "react";
+import { Transition } from "@headlessui/react"
+import { useState } from "react"
 import {
   CyfrUser,
   User,
   UserDetail,
   UserFeed,
   UserFollow,
+  UserInfo,
   UserStub,
-} from "../../prisma/prismaContext";
-import { getApi } from "../../utils/api";
-import { cloudinary } from "../../utils/cloudinary";
-import Spinner from "./spinner";
-import useDebug from "../../hooks/useDebug";
-import { SizeProps } from "types/props";
+} from "prisma/prismaContext"
+import { cloudinary } from "utils/cloudinary"
+import Spinner from "./spinner"
+import useDebug from "hooks/useDebug"
+import { SizeProps } from "types/props"
+import UserApi from "prisma/hooks/userApi"
+import { abbrNum } from "utils/helpers"
 
-const {debug, jsonBlock} = useDebug('avatar')
+const {debug, jsonBlock} = useDebug('avatar', 'DEBUG')
 
 type AvatarProps = {
-  user?: CyfrUser | UserDetail | UserFeed | User | UserStub | UserFollow;
-  link?: boolean;
-  shadow?: boolean;
-  className?: string;
-  placeholder?: string;
-  variant?: AvatarVariants[];
-  sz: SizeProps;
-};
+  user?: CyfrUser | UserDetail | UserFeed | User | UserStub | UserFollow
+  link?: boolean
+  shadow?: boolean
+  className?: string
+  placeholder?: string
+  variant?: AvatarVariants[]
+  sz: SizeProps
+}
 
 export type AvatarVariants = 'default'|'no-profile'
 
@@ -38,53 +40,58 @@ const Avatar = ({
   variant = ['default'],
 }: AvatarProps) => {
   const [showProfile, setShowProfile] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [userInfo, setUserInfo] = useState<CyfrUser>()
+  
+  const {info} = UserApi()
 
-  const numPosts = (userInfo?._count.posts??0).toString()
-  const numGalleries = ((userInfo?.galleries??[]).length).toString()
-  const numBooks = ((userInfo?.books??[]).length).toString()
-  const numFollowers = (userInfo?._count.follower??0).toString()
-  const numFollowing = (userInfo?._count.following??0).toString()
+  const [isLoading, setIsLoading] = useState(false)
+  const [userInfo, setUserInfo] = useState<UserInfo>()
+
+  const numPosts = userInfo?._count.posts
+  const numGalleries = userInfo?._count.galleries
+  const numBooks = userInfo?._count.books
+  const numFollowers = userInfo?._count.follower
+  const numFollowing = userInfo?._count.following
   const numStans = 'NI' //userInfo?._count.follower??0
   const numFans = 'NI' //userInfo?._count.following??0
 
 
   const allowProfile = variant.indexOf('no-profile')<0
   const content =
-    user && user.image ? (
-      <img
-        src={cloudinary.avatar(user.image, sz as unknown as SizeProps)}
-      />
-    ) : placeholder ? (
-      placeholder
-    ) : user ? (
-      user.name
-    ) : (
-      "?"
-    );
+    user && user.image 
+      ? ( <img src={cloudinary.avatar(user.image, sz as unknown as SizeProps)} /> ) : 
+      placeholder ? ( placeholder) : 
+      user ? ( user.name ) :
+      ("?")
 
     const online =
     // @ts-ignore
     user && user._count && user._count.sessions && user._count.sessions > 0
       ? "online"
-      : "";
+      : ""
   // @ts-ignore
-  const member = user?.membership?.level.toLowerCase() || "";
+  const member = user?.membership?.level.toLowerCase() || ""
   
   const init = async () => {
+    debug('init')
     setShowProfile(() => true)
     if (userInfo) {
+      debug('alreadyGotUserInfo', userInfo)
+      return
+    }
+
+    if (!user) {
+      debug('aint got no user')
       return
     }
 
     setIsLoading(() => true)
+    debug('getting user info....', user.id)
     // get user infro from api
-    const info = await getApi(`/user/${user?.id}/info`)
+    const result = await info(user.id)
     
-    if (info?.result) {
-      debug('init', info)
-      setUserInfo(() => info.result)
+    if (result) {
+      debug('userInfo', result)
+      setUserInfo(() => result)
       setIsLoading(() => false)
     }
   }
@@ -125,7 +132,7 @@ const Avatar = ({
                 <div className="flex flex-col p-2">
                   <div className="flex odd:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Posts</div>
-                    <div>{numPosts}</div>
+                    <div>{abbrNum(numPosts)}</div>
                   </div>
                   <div className="flex odd:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Books</div>
@@ -140,7 +147,7 @@ const Avatar = ({
                 <div className="flex flex-col p-2">
                   <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Followers</div>
-                    <div>{numFollowers}</div>
+                    <div>{abbrNum(numFollowers)}</div>
                   </div>
                   <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Fans</div>
@@ -148,7 +155,7 @@ const Avatar = ({
                   </div>
                   <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Follows</div>
-                    <div>{numFollowing}</div>
+                    <div>{abbrNum(numFollowing)}</div>
                   </div>
                   <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Stans</div>
@@ -162,7 +169,7 @@ const Avatar = ({
       </Transition>
       }
     </div>
-  );
-};
+  )
+}
 
-export default Avatar;
+export default Avatar

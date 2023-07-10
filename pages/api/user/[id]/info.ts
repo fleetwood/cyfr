@@ -1,14 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import useDebug from "../../../../hooks/useDebug"
-import { PrismaUser } from "../../../../prisma/prismaContext"
+import useDebug from "hooks/useDebug"
+import { PrismaUser } from "prisma/prismaContext"
 
-const {debug, stringify, fileMethod} = useDebug('api/user/stub/[id]')
+const {debug, stringify, fileMethod} = useDebug('api/user/[id]/info')
 
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const id = req.query.id?.toString() || ""
+  const id = req.query.id!.toString()
   debug('handle', id)
   try {
     const result = await PrismaUser.userInfo(id)
@@ -21,6 +21,6 @@ export default async function handle(
     
   } catch (e) {
     debug("handle CATCH", e)
-    res.status(500).json({ error: { code: "api/error", message: stringify(e) } })
+    res.status(500).json({ error: { code: "api/error", message: e } })
   }
 }

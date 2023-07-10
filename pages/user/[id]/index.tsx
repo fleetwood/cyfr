@@ -1,8 +1,7 @@
-import useRocketQuery from "hooks/useRocketQuery";
-import UserDetailView from "../../../components/containers/User/UserDetailView";
-import MainLayout from "../../../components/layouts/MainLayout";
-import useUserDetail from "../../../hooks/useUserDetailQuery";
-import { InferGetServerSidePropsType } from "next";
+import UserDetailView from "components/containers/User/UserDetailView";
+import MainLayout from "components/layouts/MainLayout";
+import userApi from "prisma/hooks/userApi";
+import { UserDetail } from "prisma/prismaContext";
 
 export async function getServerSideProps(context: any) {
   const slug = context.params.id
@@ -13,19 +12,13 @@ export async function getServerSideProps(context: any) {
   }
 }
 
-type UserDetailProps = {
-  userId: string
-  layout?: 'main'|'none'
-}
-
 // @ts-ignore
-const UserDetailPage = ({ slug, layout='main' }:UserDetailProps) => {
-  const {data: currentUser, isLoading, error} = useRocketQuery({
-    name: `user-${slug}`,
-    url: `user/${slug}`,
-    body: {slug}
-  })
-  
+const UserDetailPage = ({layout='main', ...props}:UserDetailProps) => {
+  const {query} = userApi()
+  const {data, isLoading, error, invalidate} = query({slug: props.slug})
+ 
+  const currentUser:UserDetail = data
+
   return (
     <>
     {
@@ -36,11 +29,11 @@ const UserDetailPage = ({ slug, layout='main' }:UserDetailProps) => {
         subTitle={currentUser?.name || ""}
       >
         {currentUser && 
-          <UserDetailView userId={currentUser!.id} />
+          <UserDetailView slug={currentUser!.slug??currentUser.name!} />
         }
       </MainLayout>
     }
-    { layout==='none' && currentUser && <UserDetailView userId={currentUser!.id} /> }
+    { layout==='none' && currentUser && <UserDetailView slug={currentUser!.slug??currentUser.name!} /> }
     </>
 )}
 
