@@ -10,7 +10,7 @@ import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import Spinner from "components/ui/spinner"
 const {debug} = useDebug("forms/Dropzone/UploadingFileView")
 
-const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileViewProps) => {
+const UploadFileView = ({file, showUploadProgress = true, onUploadComplete, onUploadChange}: UploadFileViewProps) => {
   const {cyfrUser, isLoading} = useCyfrUserApi()
   const [fileProgress, setFileProgress] = useState<number>(0)
   const [fileErrors, setFileErrors] = useState<FileError[]>([])
@@ -80,7 +80,7 @@ const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileView
 
   return (
     <div className="relative mb-2 h-32" key={file.id}>
-      {image && 
+      {showUploadProgress && image && 
         <div>
             <img src={image.url} className={`mask mask-squircle max-h-32 h-32 ${image.visible ? '' : 'opacity-30'}`} />
             <div className="bg-success text-success-content overflow-hidden text-xs opacity-80 absolute bottom-6 mx-2 px-2 rounded-md">{image.title}</div>

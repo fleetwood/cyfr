@@ -1,13 +1,13 @@
-import NextAuth from "next-auth";
-import EmailProvider from "next-auth/providers/email";
-import TwitterProvider from "next-auth/providers/twitter";
-import GoogleProvider from "next-auth/providers/google";
-import FacebookProvider from "next-auth/providers/facebook";
-import WordpressProvider from "next-auth/providers/wordpress";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import NextAuth from "next-auth"
+import EmailProvider from "next-auth/providers/email"
+import TwitterProvider from "next-auth/providers/twitter"
+import GoogleProvider from "next-auth/providers/google"
+import FacebookProvider from "next-auth/providers/facebook"
+import WordpressProvider from "next-auth/providers/wordpress"
+import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "./../../../prisma/prismaContext"
-import useDebug from "../../../hooks/useDebug";
-const {debug, err} = useDebug("api/auth/nextauth")
+import useDebug from "../../../hooks/useDebug"
+const {debug, err} = useDebug("api/auth/nextauth", 'DEBUG')
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -65,12 +65,12 @@ export default NextAuth({
     //       method: 'POST',
     //       body: JSON.stringify(credentials),
     //       headers: { 'Content-Type': 'application/json' },
-    //     });
-    //     const user = await res.json();
+    //     })
+    //     const user = await res.json()
 
     //     // If no error and we have user data, return it
     //     if (res.ok && user) {
-    //       return user;
+    //       return user
     //     }
     //     // Return null if user data could not be retrieved
     //   },
@@ -133,11 +133,11 @@ export default NextAuth({
         let prismaUser = await prisma.user.findUnique({
           where: { email: user.email || undefined },
           include: { membership: true },
-        });
+        })
         if (isNewUser || prismaUser?.membership === null) {
           debug(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
           This user needs to select a membership!
-          >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`, user);
+          >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`, user)
         }
       } catch (e) {
         err('signIn Error',{error: e,user})
@@ -147,4 +147,4 @@ export default NextAuth({
 
   // Enable debug messages in the console if you are having problems
   // debug: true,
-});
+})

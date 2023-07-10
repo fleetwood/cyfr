@@ -1,7 +1,7 @@
 import { useQuery } from "react-query"
 import { useRouter } from "next/router"
-import useDebug from "../hooks/useDebug"
-const {debug} = useDebug('next-auth-react-query', 'DEBUG')
+import useDebug from "./useDebug"
+const {debug} = useDebug('useSession', 'DEBUG')
 
 export async function fetchSession() {
   const res = await fetch("/api/auth/session")
@@ -28,7 +28,6 @@ export function useSession({
     ...queryConfig,
     onSettled(data, error) {
       if (data || !required) return
-      
       router.push(redirectTo || './login')
     },
   })

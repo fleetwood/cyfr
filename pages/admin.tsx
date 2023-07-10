@@ -4,7 +4,7 @@ import GenreAdmin from "../components/containers/Genre/GenreAdmin"
 import AdminLayout from "../components/layouts/AdminLayout"
 import { CyfrLogo } from "../components/ui/icons"
 import useDebug from "../hooks/useDebug"
-import { useSession } from "../lib/next-auth-react-query"
+import { useSession } from "../hooks/useSession"
 
 import { GenreStub } from "../prisma/prismaContext"
 import { getApi } from "../utils/api"

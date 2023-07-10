@@ -7,8 +7,8 @@ import MainLayout from "components/layouts/MainLayout"
 import { CyfrLogo } from "components/ui/icons"
 import useDebug from "hooks/useDebug"
 import useFeed from "hooks/useFeed"
-import { useSession } from "lib/next-auth-react-query"
 import { CommentThreadDetails } from "prisma/prismaContext"
+import { useSession } from "hooks/useSession"
 
 const {debug, info, todo} = useDebug('pages/user/inbox')
 

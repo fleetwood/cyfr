@@ -15,7 +15,7 @@ import {
   WordpressSVG
 } from "../components/ui/svgs"
 import useDebug from "../hooks/useDebug"
-import { useSession } from "../lib/next-auth-react-query"
+import { useSession } from "../hooks/useSession"
 import { apiUrl } from "../utils/api"
 
 const {debug} = useDebug('pages/login')

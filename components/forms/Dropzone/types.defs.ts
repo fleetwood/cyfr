@@ -42,10 +42,12 @@ export type DropzoneProps = {
   onDropComplete?: (files:Image[]) => void
   onDropChange?: (file:any) => void
   children?: ReactNode
+  showUploadProgress?: boolean
 }
 
 export interface UploadFileViewProps {
   file: UploadableFile
   onUploadComplete?: (files:Image[]) => void
   onUploadChange?: (file: any) => void
+  showUploadProgress?: boolean
 }
