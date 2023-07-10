@@ -16,7 +16,7 @@ import { SizeProps } from "types/props"
 import UserApi from "prisma/hooks/userApi"
 import { abbrNum } from "utils/helpers"
 
-const {debug, jsonBlock} = useDebug('avatar', 'DEBUG')
+const {debug, jsonBlock} = useDebug('avatar')
 
 type AvatarProps = {
   user?: CyfrUser | UserDetail | UserFeed | User | UserStub | UserFollow
@@ -39,6 +39,8 @@ const Avatar = ({
   link = true,
   variant = ['default'],
 }: AvatarProps) => {
+  if (!user) return <></>
+  
   const [showProfile, setShowProfile] = useState(false)
   
   const {info} = UserApi()
@@ -54,11 +56,10 @@ const Avatar = ({
   const numStans = 'NI' //userInfo?._count.follower??0
   const numFans = 'NI' //userInfo?._count.following??0
 
-
   const allowProfile = variant.indexOf('no-profile')<0
   const content =
-    user && user.image 
-      ? ( <img src={cloudinary.avatar(user.image, sz as unknown as SizeProps)} /> ) : 
+    user && 
+      user.image ? ( <img src={cloudinary.avatar(user.image, sz as unknown as SizeProps)} /> ) : 
       placeholder ? ( placeholder) : 
       user ? ( user.name ) :
       ("?")

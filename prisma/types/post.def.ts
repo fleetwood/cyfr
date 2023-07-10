@@ -59,7 +59,9 @@ export type PostStub = Post & LikesAndCount & {
   book?:          Book & {
     agent?:         Agent
     artists:        Artist[]
-    authors:        Author[]
+    authors:        (Author & {
+      user:         User
+    })[]
     cover:          Cover & {
       image:          Image,
       artists:        Artist[]
@@ -168,7 +170,11 @@ export const PostStubInclude = {
     include: {
       agent: true,
       artists: true,
-      authors: true,
+      authors: {
+        include: {
+          user: true
+        }
+      },
       cover: {
         include: {
           image: true,

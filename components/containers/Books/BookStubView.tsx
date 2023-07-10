@@ -28,7 +28,7 @@ const BookStubView = ({book, authorAvatars, size = "md", showAuthors = true, sho
         <h3><Link href={`/book/${book.slug}`}>{book.title}</Link></h3>
         {showAuthors && book.authors && book.authors.length > 0 && 
           <div className="flex my-4">
-            <span>by </span>
+            <span className="pr-2">by</span>
             {book.authors.map((author) => 
               <Avatar user={author.user} sz={size} key={uniqueKey(book, author)} />
             )}
