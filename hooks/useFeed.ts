@@ -12,7 +12,7 @@ const {debug, info} = useDebug('useFeed')
 export type FeedTypes = 'post'|'gallery'|'inbox'|'image'
 
 export const useFeed = (type:FeedTypes) => {
-  const name = ['feed', { type: type.toString()}]  
+  const name = ['feed', type.toString()]
   return  type === 'gallery' ? useRocketQuery<GalleryStub[]>({name, url: 'gallery/feed', body: {take:0, skip: 0}}) :
           type === 'inbox' ? useRocketQuery<CommentThread>({name, url: 'user/inbox'}) :
           type === 'image' ? useRocketQuery<ImageStub[]>({name, url: 'image/feed', body: {take:0, skip: 0}}) :

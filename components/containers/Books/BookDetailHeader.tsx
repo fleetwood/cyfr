@@ -5,12 +5,12 @@ import HtmlContent from "components/ui/htmlContent"
 import { FireIcon, FollowIcon, HeartIcon, QuestionMarkIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconLabel from "components/ui/shrinkableIconLabel"
 import useDebug from "hooks/useDebug"
-import { useBookApi } from "prisma/hooks/useBookApi"
 import { BookCategory, BookEngageProps, UserFollow } from "prisma/prismaContext"
 import { KeyVal } from "types/props"
 import { abbrNum, uuid } from "utils/helpers"
 import BookEditHeader from "./BookEditHeader"
 import BookCover, { BookCoverVariant } from "./BookCover"
+import useBookApi from "prisma/hooks/useBookApi"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -46,7 +46,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const {cyfrUser} = useCyfrUserContext()
-  const {share, follow, like, save} = useBookApi
+  const {share, follow, like, save} = useBookApi()
   const bookId = bookDetail.id
   const engageProps:BookEngageProps|undefined = bookDetail && cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined

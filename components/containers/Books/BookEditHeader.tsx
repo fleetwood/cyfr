@@ -8,7 +8,6 @@ import ShrinkableIconLabel from "components/ui/shrinkableIconLabel"
 import { FireIcon, FollowIcon, HeartIcon, QuestionMarkIcon, ShareIcon } from "components/ui/icons"
 import { ToastNotifyType, useToast } from "components/context/ToastContextProvider"
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
-import { useBookApi } from "prisma/hooks/useBookApi"
 import { BookDetailProps } from "components/layouts/BookDetailLayout"
 import { InlineTextarea, TailwindInput, TailwindSelectInput } from "components/forms"
 import EZButton from "components/ui/ezButton"
@@ -18,6 +17,7 @@ import BookCover, { BookCoverVariant } from "./BookCover"
 import BookEditCover from "./BookEditCover"
 import useGenreApi from "prisma/hooks/useGenreApi"
 import GenreSelector from "../Genre/GenreSelector"
+import useBookApi from "prisma/hooks/useBookApi"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -53,7 +53,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, loginRequired } = useToast()
   const {cyfrUser} = useCyfrUserContext()
-  const {share, follow, like, save, updateGenre} = useBookApi
+  const {share, follow, like, save, updateGenre} = useBookApi()
   const bookId = bookDetail.id
   const engageProps:BookEngageProps|undefined = bookDetail && cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined

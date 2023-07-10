@@ -19,8 +19,8 @@ import Dropzone from "components/forms/Dropzone"
 import EZButton from "components/ui/ezButton"
 import Toggler from "components/ui/toggler"
 import Link from "next/link"
-import { useBookApi } from "prisma/hooks/useBookApi"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
+import useBookApi from "prisma/hooks/useBookApi"
 
 const { debug } = useDebug("components/containers/Books/UpsertBook")
 
@@ -33,7 +33,7 @@ type UpsertBookProps = {
 const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   const {cyfrUser} = useCyfrUserContext()
   const { notify } = useToast()
-  const {upsert} = useBookApi
+  const {upsert} = useBookApi()
 
   const [genreList, setGenreList] = useState<any[]>([])
   const [coverGallery, setCoverGallery] = useState<Gallery | null>()

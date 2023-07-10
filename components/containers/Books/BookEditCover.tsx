@@ -2,12 +2,12 @@ import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { Dropzone } from "components/forms"
 import { CheckBadge } from "components/ui/icons"
 import useDebug from "hooks/useDebug"
-import { useBookApi } from "prisma/hooks/useBookApi"
 import { BookDetail, BookStub, CoverStub, Image } from "prisma/prismaContext"
 import { cloudinary } from "utils/cloudinary"
 import { isAuthor } from "utils/helpers"
 import FindCoverModal, { OpenFindCoverModalButton } from "../Cover/FindCoverModal"
 import { ItemProps } from "react-photoswipe-gallery"
+import useBookApi from "prisma/hooks/useBookApi"
 
 const {debug} = useDebug('BookEditCover')
 
@@ -39,7 +39,7 @@ const BookImage = ({cover, title, width, owner}:{cover: CoverStub, title: string
  */
 const BookEditCover = ({book, onUpdate}:BookCoverProps) => {
   const {cyfrUser} = useCyfrUserContext()
-  const {changeCover} = useBookApi
+  const {changeCover} = useBookApi()
 
   const isOwner = isAuthor({book,cyfrUser})
   const cover = book.cover || null

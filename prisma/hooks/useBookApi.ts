@@ -1,8 +1,20 @@
 import useDebug from "hooks/useDebug"
+import useRocketQuery from "hooks/useRocketQuery"
 import { BookDetail, BookEngageProps, BookFollowProps, BookStub, BookUpsertProps, ChangeCoverProps, ChangeGenreProps, Chapter } from "prisma/prismaContext"
 import { NotImplemented, getApi, sendApi } from "utils/api"
 
 const { debug, fileMethod } = useDebug("hooks/useBookApi", 'DEBUG')
+const noBookDetail = (method: string) => {debug(method, "bookDetail is null");return false}
+
+
+type UseBookQueryProps = {
+    bookId?:    string
+    bookSlug?:  string
+}
+const query = ({bookId, bookSlug}:UseBookQueryProps) => useRocketQuery<BookDetail>({
+    name: [`bookDetail-${bookId||bookSlug}`, { type: 'book'}],
+    url: bookSlug ? `/book/slug/${bookSlug}` : `/book/${bookId}`
+})
 
 const addChapter = async (
     bookId: string,
@@ -32,18 +44,23 @@ const addGallery = async (bookId: string, galleryId?: string) => {
     }
 }
 
-const slugDetail = async (bookSlug:string):Promise<BookDetail> => await (await getApi(`book/slug/${bookSlug}`)).data
-
+/**
+ * Get {@link BookDetail} using the book id
+ * @param {string} bookId 
+ * @returns BookDetail
+ */
 const detail = async (bookId:string):Promise<BookDetail> => await (await getApi(`book/${bookId}`)).data
+
+/**
+ * Get {@link BookDetail} using the book slug
+ * @param {string} bookSlug 
+ * @returns BookDetail
+ */
+const slugDetail = async (bookSlug:string):Promise<BookDetail> => await (await getApi(`book/slug/${bookSlug}`)).data
 
 const follow = async (props:BookFollowProps):Promise<boolean> => await (await sendApi("book/follow", props)).data
 
 const like = async (props: BookEngageProps):Promise<boolean>  => await (await sendApi("book/like", props)).data
-
-const noBookDetail = (method: string) => {
-    debug(method, "bookDetail is null")
-    return false
-}
 
 const save = async (detail?:BookDetail) => {
     if (!detail) return noBookDetail("save")
@@ -81,9 +98,7 @@ const sortChapters = async (changedChapter: Chapter): Promise<Boolean> => {
     // return false
 }
 
-const updateChapter = async (chapter: Chapter): Promise<boolean> => {
-    throw NotImplemented(fileMethod('updateChapter'))
-}
+const updateChapter = async (chapter: Chapter): Promise<boolean> => {throw NotImplemented(fileMethod('updateChapter'))}
 
 const updateGenre = async (props:ChangeGenreProps):Promise<boolean> => await (await sendApi('book/changeGenre', props)).data
 
@@ -91,18 +106,44 @@ const changeCover = async (props:ChangeCoverProps): Promise<BookStub> => await (
 
 const upsert = async (props:BookUpsertProps):Promise<Boolean> => await (await sendApi('book/upsert', {props})).data
 
-export const useBookApi = {
-  addChapter
-  , addGallery
-  , detail
-  , slugDetail
-  , follow
-  , like
-  , save
-  , share
-  , sortChapters
-  , updateChapter
-  , updateGenre
-  , upsert
-  , changeCover
-}
+type BookApi = {
+    query: ({ bookId, bookSlug }: UseBookQueryProps) => {
+        data: any;
+        isLoading: boolean;
+        error: unknown;
+        invalidate: () => void;
+    }
+    addChapter: (bookId: string, title: string, order: number) => Promise<any>
+    addGallery: (bookId: string, galleryId?: string) => Promise<any>
+    detail: (bookId: string) => Promise<BookDetail>
+    slugDetail: (bookSlug: string) => Promise<BookDetail>
+    follow: (props: BookFollowProps) => Promise<boolean>
+    like: (props: BookEngageProps) => Promise<boolean>
+    save: (detail?: BookDetail) => Promise<boolean>
+    share: (props: BookEngageProps) => Promise<boolean>
+    sortChapters: (changedChapter: Chapter) => Promise<Boolean>
+    updateChapter: (chapter: Chapter) => Promise<boolean>
+    updateGenre: (props: ChangeGenreProps) => Promise<boolean>
+    changeCover: (props: ChangeCoverProps) => Promise<BookStub>
+    upsert: (props: BookUpsertProps) => Promise<Boolean>
+  }
+
+  const useBookApi = ():BookApi => {
+    return {
+        query
+        , addChapter
+        , addGallery
+        , detail
+        , slugDetail
+        , follow
+        , like
+        , save
+        , share
+        , sortChapters
+        , updateChapter
+        , updateGenre
+        , changeCover
+        , upsert
+  }}
+
+  export default useBookApi

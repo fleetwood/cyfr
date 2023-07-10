@@ -23,7 +23,7 @@ export const useCommentContext = () => useContext(CommentContext)
 
 const CommentProvider = ({ children }: CommentProviderProps) => {
   const {cyfrUser} = useCyfrUserApi()
-  const [invalidate] = useFeed('post')
+  const {invalidate} = useFeed('post')
   const {commentOnPost} = usePostApi()
   const {notify} = useToast()
   

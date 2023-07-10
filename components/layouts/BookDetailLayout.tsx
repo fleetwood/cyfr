@@ -1,18 +1,19 @@
+import { BookDetail, GenreStub, UserStub } from "prisma/prismaContext"
 import { useRef, useState } from "react"
-import useBookQuery from "../../hooks/useBookQuery"
-import { BookDetail, GenreStub, UserStub } from "../../prisma/prismaContext"
-import BookDetailView from "../containers/Books/BookDetailView"
-import Footer from "../containers/Footer"
-import LeftColumn from "../containers/LeftColumn"
-import Navbar from "../containers/Navbar"
-import RightColumn from "../containers/RightColumn"
-import { useCyfrUserContext } from "../context/CyfrUserProvider"
-import Section from "../ui/section"
-import Toasts from "../ui/toasts"
-import Spinner from "../ui/spinner"
-import ErrorPage from "../../pages/404"
-import useDebug from "../../hooks/useDebug"
 
+import BookDetailView from "components/containers/Books/BookDetailView"
+import Footer from "components/containers/Footer"
+import LeftColumn from "components/containers/LeftColumn"
+import RightColumn from "components/containers/RightColumn"
+import Section from "components/ui/section"
+import Toasts from "components/ui/toasts"
+import ErrorPage from "pages/404"
+
+import Navbar from "components/containers/Navbar"
+import Spinner from "components/ui/spinner"
+import useDebug from "hooks/useDebug"
+import useBookApi from "prisma/hooks/useBookApi"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 const {debug} = useDebug('components/layouts/BookDetailLayout', 'DEBUG')
 
 export type BookDetailLayoutProps = {
@@ -27,9 +28,10 @@ export type BookDetailProps = {
 }
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
-  const {cyfrUser} = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserApi()
   // const bookDetailHook = useBookDetail(props.bookId, cyfrUser)
-  const {data: bookDetail , isLoading, error, invalidate} = useBookQuery({bookSlug: props.bookSlug})
+  const {query} = useBookApi()
+  const {data: book, isLoading, error, invalidate} = query({bookSlug: props.bookSlug})
   
   const [scrollActive, setScrollActive] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
@@ -61,12 +63,12 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
         <Toasts />
         <Section
           className="box-border snap-y min-h-full"
-          sectionTitle={bookDetail?.title}
-          subTitle={bookDetail?.authors?.flatMap((a:UserStub) => a.name).join(' and ')}
+          sectionTitle={book?.data?.title}
+          subTitle={book?.data?.authors?.flatMap((a:UserStub) => a.name).join(' and ')}
         >
           {error && <ErrorPage />}
           {isLoading && <Spinner />}
-          {bookDetail && <BookDetailView bookDetail={bookDetail!} onUpdate={update} />}
+          {book && <BookDetailView bookDetail={book!} onUpdate={update} />}
         </Section>
         <Footer />
       </main>

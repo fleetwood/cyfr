@@ -1,13 +1,9 @@
-import { InferGetServerSidePropsType } from "next";
-import BookStubView from "../../../components/containers/Books/BookStubView";
-import MainLayout from "../../../components/layouts/MainLayout";
-import { Book, BookStub, PrismaUser, UserDetail } from "../../../prisma/prismaContext";
-import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
-import UpsertBook from "../../../components/containers/Books/UpsertBook";
-import { useEffect, useState } from "react";
-import JsonBlock from "../../../components/ui/jsonBlock";
-import useBookQuery from "hooks/useBookQuery";
+import BookStubView from "components/containers/Books/BookStubView";
+import UpsertBook from "components/containers/Books/UpsertBook";
+import { useCyfrUserContext } from "components/context/CyfrUserProvider";
+import MainLayout from "components/layouts/MainLayout";
 import useDebug from "hooks/useDebug";
+import { BookStub, PrismaUser, UserDetail } from "prisma/prismaContext";
 
 const {debug, jsonBlock} = useDebug('pages/user/[id]/books', 'DEBUG')
 

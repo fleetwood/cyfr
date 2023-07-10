@@ -1,27 +1,22 @@
 import BookDetailHeader from "components/containers/Books/BookDetailHeader"
 import ChapterList from "components/containers/Chapter/ChapterList"
 import CreateCharacterModal, { OpenCharacterModalPlus } from "components/containers/Characters/CharacterCreateModal"
-import CharacterList from "components/containers/Characters/CharacterList"
 import GalleryCreateModal, { OpenGalleryModalPlus } from "components/containers/Gallery/GalleryCreateModal"
 import GalleryPhotoswipe from "components/containers/Gallery/GalleryPhotoswipe"
-import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { useToast } from "components/context/ToastContextProvider"
 import { InlineTextarea } from "components/forms"
 import HtmlContent from "components/ui/htmlContent"
 import { PhotoIcon } from "components/ui/icons"
-import Tabs from "components/ui/tabs"
 import useDebug from "hooks/useDebug"
 import router from "next/router"
 import ErrorPage from "pages/404"
-import { useBookApi } from "prisma/hooks/useBookApi"
-import { BookDetail, Chapter, ChapterListItem } from "prisma/prismaContext"
+import useBookApi from "prisma/hooks/useBookApi"
+import { BookDetail, ChapterListItem } from "prisma/prismaContext"
 import { useState } from "react"
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 
-const { jsonBlock, debug } = useDebug(
-  "components/Books/BookDetailComponent",
-  "DEBUG"
-)
+const { jsonBlock, debug } = useDebug("components/Books/BookDetailComponent","DEBUG")
 
 export type BookViewProps = {
   bookDetail: BookDetail
@@ -29,10 +24,10 @@ export type BookViewProps = {
 }
 
 const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
-  const {save} = useBookApi
+  const {save} = useBookApi()
 
   const { notify } = useToast()
-  const {cyfrUser} = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserApi()
 
   const [back, setBack] = useState<string|null|undefined>(bookDetail.back)
   const [synopsis, setSynopsis] = useState<string|null|undefined>(bookDetail.synopsis)
