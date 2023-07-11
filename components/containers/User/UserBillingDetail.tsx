@@ -1,33 +1,35 @@
+import { useToast } from 'components/context/ToastContextProvider'
 import { CheckBadge } from 'components/ui/icons'
 import useDebug from 'hooks/useDebug'
-import { useCyfrUserApi } from 'prisma/hooks/useCyfrUserApi'
-import { AudienceLevels } from 'prisma/prismaContext'
+import { cadenceInterval, useCyfrUserApi } from 'prisma/hooks/useCyfrUserApi'
 import { useState } from 'react'
-import { sendApi } from 'utils/api'
 import { uniqueKey } from 'utils/helpers'
 
 const { debug } = useDebug('UserBillingDetail')
 
 // TODO: This should pull from MembershipType instead, since these values can change. Will prolly need an API for that
 type PlanType = {
-  audience: AudienceLevels
-  label: string
-  description: string
+  id:           string
+  paid:         boolean
+  label:        string
+  description:  string
   cta: {
-    monthly: string
+    monthly:  string
     annually: string
   }
   price: {
-    monthly: number
+    monthly:  number
     annually: number
   }
 }
+
+// TODO: This should come from db
 const plans: PlanType[] = [
   {
-    audience: 'USER',
-    label: 'Free Tier',
-    description:
-      'Everything you need to write a story and get feedback from the larger Cyfr community!',
+    id: '42755F765367489AB2BD7067247194F5',
+    paid: false,
+    label: 'Reader',
+    description: `Just here for the books? Great! You're our favorite people!!!`,
     cta: {
       monthly: `What's better than free???`,
       annually: `What's better than free???`,
@@ -38,11 +40,12 @@ const plans: PlanType[] = [
     },
   },
   {
-    audience: 'MEMBER',
-    label: 'Author Tier',
+    id: '78D2A222D7E24DBA90F7895481AA621B',
+    paid: true,
+    label: 'Author',
     description: `Once your story is ready, switch to Author Tier to sell your book! Or use the additional
-                      features to collaborate even more deeply during the writing process, including collaboration
-                      groups, Agent prospecting, story and author dashboards, A/B testing and more!`,
+                  features to collaborate even more deeply during the writing process, including collaboration
+                  groups, Agent prospecting, story and author dashboards, A/B testing and more!`,
     cta: {
       monthly: `Budget-friendly monthly subscription!`,
       annually: `Get two free months!! Eeeep!!`,
@@ -53,10 +56,26 @@ const plans: PlanType[] = [
     },
   },
   {
-    audience: 'AGENT',
+    id: 'AE54C97A0C604EAA9DA5B3ED4A9DFAAC',
+    paid: true,
+    label: 'Artist',
+    description: `Whether you're an illustrator or a cover designer, or even if you're an author that illustrates
+                  your own books, start here!`,
+    cta: {
+      monthly: `Budget-friendly monthly subscription!`,
+      annually: `Get two free months!! Eeeep!!`,
+    },
+    price: {
+      monthly: 9,
+      annually: 89,
+    },
+  },
+  {
+    id: '38F97FF088CC487CA29A6C2C3AEA55B5',
+    paid: true,
     label: 'Agent',
     description: `Interact with Authors: track your favorites, including collaboration and analytics, conduct
-                      manuscript events and wishlists, and a submission form and tracker!`,
+                  manuscript events and wishlists, and a submission form and tracker!`,
     cta: {
       monthly: ``,
       annually: `Get two months free!!! So much coolness!`,
@@ -69,21 +88,18 @@ const plans: PlanType[] = [
 ]
 
 const UserBillingDetail = () => {
-  const { cyfrUser, isLoading, error, invalidate } = useCyfrUserApi()
-  const initialPlan = plans[cyfrUser?.membership?.type?.level ?? 0]
-  const [plan, setPlan] = useState<PlanType>(initialPlan)
+  const { cyfrUser, isLoading, error, invalidate, updateUser, setMembership } = useCyfrUserApi()
+  const {notify} = useToast()
+  const [plan, setPlan] = useState<PlanType>(plans.find((p) => p.id === cyfrUser?.membership?.typeId) ?? plans[0])
 
-  const isPlan = (plan: PlanType) => initialPlan
+  const isPlan = (p: PlanType) => p.id === plan.id
+  const currentPlan = (p:PlanType) => cyfrUser?.membership?.typeId === p.id
 
-  const choosePlan = async (plan: PlanType, cadence: string) => {
-    debug('choosePlan', { plan: plan.audience.toString(), cadence })
-    // TODO: move this to user api
-    const user = await sendApi('user/membership/choose', {
-      audience: plan.audience,
-      cadence,
-    })
-    if (user && user.data.result) {
-      debug('choosePlan', { result: user.data.result })
+  const choosePlan = async (typeId: string, cadence: cadenceInterval) => {
+    debug('choosePlan', { id: typeId, cadence })
+    const result = await setMembership({typeId, cadence})
+    if (result) {
+      notify('Congratulations on your new membership!')
     }
     invalidate()
   }
@@ -91,22 +107,15 @@ const UserBillingDetail = () => {
   return (
     <div className="lg:flex lg:flex-row items-center justify-between my-6 p-4 rounded-lg bg-base-200">
       <div className="lg:w-1/2 w-full">
+        
         <p className="text-base leading-4 text-base-content text-opacity-70">
-          Choose your plan
-        </p>
-        <h1
-          role="heading"
-          className="md:text-5xl text-3xl font-bold leading-10 mt-3 text-base-content "
-        >
-          Our pricing plan
-        </h1>
-        <p
-          role="contentinfo"
-          className="text-base leading-5 mt-5 text-base-content text-opacity-70"
-        >
+          Choose your plan</p>
+        <h1 role="heading" className="md:text-5xl text-3xl font-bold leading-10 mt-3 text-base-content">
+          Our pricing plan</h1>
+        <p role="contentinfo" className="text-base leading-5 mt-5 text-base-content text-opacity-70">
           We’re working on a suite of tools to make writing a social effort, for
-          everyone for free.
-        </p>
+          everyone for free. <strong>TODO: Tie this to the db.</strong></p>
+
         <div className="flex flex-col space-y-6 mt-6">
           {plans.map((p) => (
             <div
@@ -114,7 +123,7 @@ const UserBillingDetail = () => {
               text-base leading-none text-base-content text-opacity-70 bg-base-100 rounded-md 
               cursor-pointer shadow border-l-8
               hover:shadow-lg hover:border-primary
-              ${p === plan ? 'border-secondary' : 'border-base-100'}
+              ${isPlan(p) ? 'border-secondary' : 'border-base-100'}
             `}
               key={uniqueKey(cyfrUser, p)}
               onClick={() => setPlan(p)}
@@ -122,13 +131,14 @@ const UserBillingDetail = () => {
               <h2 className="text-2xl font-semibold leading-6 text-base-content ">
                 {p.label}
               </h2>
-              {p === initialPlan && (
+              {currentPlan(p) && (
                 <span className="text-success text-xl">{CheckBadge}</span>
               )}
             </div>
           ))}
         </div>
       </div>
+
       <div className="xl:w-1/2 lg:w-7/12 relative w-full px-8 flex-grow">
         <h2 className="text-2xl font-semibold leading-6 text-base-content">
           {plan.label}
@@ -143,10 +153,10 @@ const UserBillingDetail = () => {
               ${plan.price.monthly}/mo
             </h2>
             <p className="my-2 text-sm flex-grow">{plan.cta.monthly}</p>
-            {plan.audience !== 'USER' && (
+            {plan.paid && (
               <button
                 className="btn bg-base-content bottom-0"
-                onClick={() => choosePlan(plan, 'monthly')}
+                onClick={() => choosePlan(plan.id, 'M')}
               >
                 Choose {plan.label} monthly
               </button>
@@ -158,27 +168,28 @@ const UserBillingDetail = () => {
               ${plan.price.annually}/yr
             </h2>
             <p className="my-2 text-sm flex-grow">{plan.cta.annually}</p>
-            {plan.audience !== 'USER' && (
+            {plan.paid && (
               <button
                 className="btn btn-success bottom-0"
-                onClick={() => choosePlan(plan, 'annually')}
+                onClick={() => choosePlan(plan.id, 'y')}
               >
                 Choose {plan.label} annually
               </button>
             )}
           </div>
         </div>
-        {plan.audience === 'USER' && (
+        {!plan.paid && (
           <div>
             <button
               className="btn bg-base-content"
-              onClick={() => choosePlan(plan, 'free')}
+              onClick={() => choosePlan(plan.id, 'M')}
             >
               Choose {plan.label}
             </button>
           </div>
         )}
       </div>
+
     </div>
   )
 }

@@ -46,7 +46,7 @@ const UserGalleryPage = ({ user, galleries }:UserGalleryPageProps) => {
     <div className="flex flex-col space-y-4">
       {isLoading && <Spinner  size="md" />}
       {error && <ErrorPage message="Could not load galleries..." />}
-      {cyfrUser?.id === user.id && 
+      {cyfrUser?.id === user?.id && 
         <>
           <OpenGalleryModalButton />
           <GalleryCreateModal  />

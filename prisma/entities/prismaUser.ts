@@ -12,13 +12,18 @@ import {
   CyfrUser,
   CyfrUserInclude,
   Follow,
+  Membership,
+  MembershipType,
   prisma, User, UserDetail, UserDetailInclude, UserFeed,
   UserFollowProps,
   UserInfo,
   UserInfoInclude,
   UserStub
 } from "prisma/prismaContext"
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser")
+import dayjs from "dayjs"
+import { cadenceInterval } from "prisma/hooks/useCyfrUserApi"
+import { MembershipStub } from "prisma/types/membership.def"
+const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG')
 
 type AllPostQueryParams = {
   limit?: Number
@@ -304,27 +309,51 @@ const userInSessionContext = async (context: GetSessionParams | undefined): Prom
 }
 
 const setMembership = async (
-  userId: string,
-  typeId: string,
-  cadence: string
-): Promise<UserFeed | null> => {
+  user:     CyfrUser,
+  typeId:   string,
+  cadence:  cadenceInterval,
+): Promise<MembershipStub> => {
   try {
-    debug("setMembership", { userId, typeId, cadence })
-    const user = await prisma.user.update({
+    debug("setMembership", { user, typeId, cadence })
+    const expiresAt = new Date(dayjs().add(1, cadence).format('YYYY-MM-DD HH:mm:ss.sssZ'))
+
+    let membership = user.membership ?? await prisma.membership.create({
+      data: {
+        visible: true,
+        typeId,
+        expiresAt
+      },
+      include: {
+        type: true
+      }
+    })
+
+    debug('got membership', membership)
+
+    if (membership.type?.id !== typeId || !(dayjs(membership.expiresAt).isSame(expiresAt))) {
+      debug('updating that membership tho...')
+      membership = await prisma.membership.update({
+        where: {
+          id: membership.id
+        },
+        data: {
+          typeId,
+          expiresAt
+        },
+        include: {
+          type: true
+        }
+      })
+      debug('Did that', membership)
+    }
+
+    const result = await prisma.user.update({
       where: {
-        id: userId,
+        id: user.id,
       },
       data: {
-        membership: {
-          upsert: {
-            update: {
-              typeId
-            },
-            create: {
-              typeId
-            }
-        },
-      }},
+        membershipId: membership.id
+      },
       include: {
         membership: {
           include: {
@@ -333,11 +362,13 @@ const setMembership = async (
         }
       }
     })
-    if (user) {
-      return (user as unknown as UserFeed) || null
+    debug('Updated the user then', result)
+
+    if (result) {
+      return result.membership as MembershipStub
     }
-    debug("setMembership", "Null response when updating")
-    return null
+
+    throw({code: 'prismaUser.setMembership', message: 'Failed setting membership'})
   } catch (e) {
     throw e
   }

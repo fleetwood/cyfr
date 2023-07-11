@@ -15,6 +15,8 @@ import Typography from '@mui/material/Typography'
 import useDebug from 'hooks/useDebug'
 import UserBillingDetail from 'components/containers/User/UserBillingDetail'
 import { UserNameAndAvatar } from 'components/containers/User/UserNameAndAvatar'
+import EZButton from 'components/ui/ezButton'
+import ShrinkableLink from 'components/ui/shrinkableLink'
 
 const {debug} = useDebug('user/setup')
 
@@ -40,7 +42,7 @@ const SetupPage = () => {
 
   const showStep = (step:number) => step === activeStep ? 'inline' : 'hidden'
 
-  const steps = ['Change defaults', 'Choose membership', 'Review']
+  const steps = ['Profile', 'Membership', 'Review']
   return (
     <div className="grad-1">
       <div className="grad-2">
@@ -79,26 +81,39 @@ const SetupPage = () => {
                     </Stepper>
                         <div className={showStep(0)}>
                             <Box sx={{display: 'inline', pt: 2}}>
-                                <h3>Profile</h3>
+                                {/* <div className='bg-gradient-to-r from-accent to-primary w-full p-2 mt-2'>
+                                    <h3 className='text-primary-content font-extrabold text-3xl [text-shadow:_0_2px_0_rgb(0_0_0_/_80%)]'>Profile</h3>
+                                </div> */}
                                 <UserNameAndAvatar />
                             </Box>
                         </div>
                         <div className={showStep(1)}>
                             <Box sx={{display: 'inline', pt: 2}}>
-                                <h3>Billing</h3>
+                                {/* <div className='bg-gradient-to-r from-accent to-primary w-full p-2 mt-2'>
+                                    <h3 className='text-primary-content font-extrabold text-3xl [text-shadow:_0_2px_0_rgb(0_0_0_/_80%)]'>Billing</h3>
+                                </div> */}
                                 <UserBillingDetail />
                             </Box>
                         </div>
                         <div className={showStep(2)}>
-                            <Typography sx={{ mt: 2, mb: 1 }}>
-                                All steps complete!
-                            </Typography>
+                        <p className="text-base leading-4 text-base-content text-opacity-70">
+                            That's everything!</p>
+                        <h1 role="heading" className="md:text-5xl text-3xl font-bold leading-10 mt-3 text-base-content">
+                            Welcome to Cyfr!</h1>
+                        <p role="contentinfo" className="text-base leading-5 mt-5 text-base-content text-opacity-70">
+                            We hope you will find your time with us productive, educational and fun! For real. <br/>
+                            <strong>Where to?</strong></p>
+                            {cyfrUser &&
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                                <ShrinkableLink label='Look at Posts!' className='bg-secondary px-4' href='/' />
                                 <Box sx={{ flex: '1 1 auto' }} />
-                                <Button onClick={handleReset}>Reset</Button>
+                                <ShrinkableLink label='Create a Gallery!' className='bg-secondary px-4' href={`/user/${cyfrUser.slug}/gallery`} />
+                                <Box sx={{ flex: '1 1 auto' }} />
+                                <ShrinkableLink label='Start a Book!' className='bg-secondary px-4' href={`/user/${cyfrUser.slug}/books`} />
                             </Box>
+                            }
                         </div>
-                        
+
                         <div>
                             <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
                                 <Button

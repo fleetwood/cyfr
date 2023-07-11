@@ -69,8 +69,9 @@ const Avatar = ({
     user && user._count && user._count.sessions && user._count.sessions > 0
       ? "online"
       : ""
+      
   // @ts-ignore
-  const member = user?.membership?.level.toLowerCase() || ""
+  const member = user?.membership?.type ? user.membership.type.level : 0
   
   const init = async () => {
     debug('init')

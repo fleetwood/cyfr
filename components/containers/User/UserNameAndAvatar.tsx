@@ -53,7 +53,7 @@ export const UserNameAndAvatar = () => {
   }
 
   useEffect(() => {
-    setCyfrName(() => cyfrUser.name)
+    if (cyfrUser) setCyfrName(() => cyfrUser.name)
   }, [cyfrUser])
 
   return (

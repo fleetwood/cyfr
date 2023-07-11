@@ -111,7 +111,7 @@ export default NextAuth({
     // signOut: '/auth/signout', // Displays form with sign out button
     // error: '/auth/error', // Error code passed in query string as ?error=
     // verifyRequest: '/auth/verify-request', // Used for check email page
-    newUser: "/account", // If set, new users will be directed here on first sign in
+    newUser: "/user/setup", // If set, new users will be directed here on first sign in
   },
 
   // Callbacks are asynchronous functions you can use to control what happens
@@ -135,9 +135,21 @@ export default NextAuth({
           include: { membership: true },
         })
         if (isNewUser || prismaUser?.membership === null) {
-          debug(`>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+          debug(`
+          >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
           This user needs to select a membership!
-          >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`, user)
+          >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+          `, user)
+
+          //make sure they have an initial slug
+          prisma.user.update({
+            where: {
+              id: user.id
+            },
+            data: {
+              slug: user.name?.replaceAll(' ', '-').toLowerCase()
+            }
+          })
         }
       } catch (e) {
         err('signIn Error',{error: e,user})

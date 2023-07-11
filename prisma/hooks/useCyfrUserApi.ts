@@ -1,13 +1,21 @@
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import useDebug from "hooks/useDebug"
-import { CyfrUser } from "prisma/prismaContext"
+import { CyfrUser, Membership, MembershipType } from "prisma/prismaContext"
 import { sendApi } from "utils/api"
 
 const {debug, info, fileMethod} = useDebug('/prisma/hooks/useCyfrUserApi')
 
+export type cadenceInterval = 'M' | 'y'
+export type SetMembershipProps = {
+  typeId:   string
+  cadence:  cadenceInterval
+}
+
 type CyfrUserApi = {
-    invalidate: () => void
-    updateUser: (data: CyfrUser) => Promise<CyfrUser>
+    invalidate:     () => void
+    updateUser:     (data: CyfrUser) => Promise<CyfrUser>
+    setMembership:  (props:SetMembershipProps) => Promise<Membership>
+    
     cyfrUser:   CyfrUser
     isLoading:  boolean
     error:      boolean
@@ -16,6 +24,14 @@ type CyfrUserApi = {
 export const useCyfrUserApi = ():CyfrUserApi => {
     const {data:cyfrUser, isLoading, error, invalidate} = useCyfrUserContext()
     
+    /**
+     * Provide the typeId and cadence in 
+     * 
+     * @param props {@link SetMembershipProps}
+     * @returns 
+     */
+    const setMembership = async (props:SetMembershipProps):Promise<Membership> => await (await sendApi('user/membership/choose', props)).data as Membership
+
     // TODO: this needs a better name, because it's not updating preferences
     const updateUser = async (data:CyfrUser) => {
       debug('updateUser', data)
@@ -39,6 +55,6 @@ export const useCyfrUserApi = ():CyfrUserApi => {
       }
     }
   
-    return { invalidate, updateUser, cyfrUser, isLoading, error }
+    return { invalidate, updateUser, cyfrUser, isLoading, error, setMembership }
   }
   
