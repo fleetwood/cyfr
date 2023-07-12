@@ -15,6 +15,7 @@ import useDebug from "hooks/useDebug"
 import { SizeProps } from "types/props"
 import UserApi from "prisma/hooks/userApi"
 import { abbrNum } from "utils/helpers"
+import Link from "next/link"
 
 const {debug, jsonBlock} = useDebug('avatar')
 
@@ -69,7 +70,7 @@ const Avatar = ({
     user && user._count && user._count.sessions && user._count.sessions > 0
       ? "online"
       : ""
-      
+
   // @ts-ignore
   const member = user?.membership?.type ? user.membership.type.level : 0
   
@@ -126,7 +127,7 @@ const Avatar = ({
             `}
             >
               <div className="px-3 py-2 bg-primary text-primary-content rounded-t-lg">
-                <h3 className="font-semibold">{userInfo?.name}</h3>
+                <Link href={`/user/${user.slug}`}><h3 className="font-semibold">{userInfo?.name}</h3></Link>
               </div>
 
               <div className="px-3 py-2 flex flex-row">

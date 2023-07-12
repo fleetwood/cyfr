@@ -10,7 +10,7 @@ import useFeed from "hooks/useFeed"
 import { CommentThreadDetails } from "prisma/prismaContext"
 import { useSession } from "hooks/useSession"
 
-const {debug, info, todo} = useDebug('pages/user/inbox')
+const {debug, info} = useDebug('pages/user/inbox')
 
 const Inbox = ({}) => {
     useSession({required: true, redirectTo: '/login'})

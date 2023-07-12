@@ -8,10 +8,11 @@ import { BookStub, PrismaUser, UserDetail } from "prisma/prismaContext";
 const {debug, jsonBlock} = useDebug('pages/user/[id]/books', 'DEBUG')
 
 export async function getServerSideProps(context: any) {
-  const user = await PrismaUser.detail({slug: context.query.id})
-  const books = await PrismaUser.books({slug: context.query.id})
+  const {slug} = context.query
+  const user = await PrismaUser.detail({slug})
+  const books = await PrismaUser.books({slug})
 
-  debug('getServerSideProps', {slug: context.query.id, user: user.name, books: (books??[]).length})
+  debug('getServerSideProps', {slug, user: user.name, books: (books??[]).length})
 
   return {
     props: {

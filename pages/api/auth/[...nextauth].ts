@@ -134,7 +134,7 @@ export default NextAuth({
           where: { email: user.email || undefined },
           include: { membership: true },
         })
-        if (isNewUser || prismaUser?.membership === null) {
+        if (isNewUser || prismaUser?.membership === null || prismaUser?.slug === null) {
           debug(`
           >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
           This user needs to select a membership!
@@ -142,17 +142,14 @@ export default NextAuth({
           `, user)
 
           //make sure they have an initial slug
-          prisma.user.update({
-            where: {
-              id: user.id
-            },
-            data: {
-              slug: user.name?.replaceAll(' ', '-').toLowerCase()
-            }
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { slug: user.name?.replaceAll(' ', '-').toLowerCase() }
           })
         }
       } catch (e) {
         err('signIn Error',{error: e,user})
+        throw e
       }
     },
   },

@@ -1,14 +1,11 @@
 import useApiHandler from "hooks/useApiHandler"
-import { PrismaUser } from "prisma/prismaContext"
+import { PrismaComment, PrismaUser } from "prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from 'next'
 
 const request = async (req:NextApiRequest, res: NextApiResponse) => {
-  const limit = Number(req.query.limit ?? 100)
-  const offset = Number(req.query.offset ?? 0)
-  const data = {limit, offset}
+  const user = await PrismaUser.userInSessionReq(req)
   return useApiHandler(res,
-    '/users',
-    PrismaUser.allUsersQuery(data)
+    'api/user/[slug]/inbox',
+    PrismaComment.userInbox(user!.id)
 )}
-
 export default request

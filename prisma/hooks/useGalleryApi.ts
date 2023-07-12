@@ -1,7 +1,7 @@
 import useFeed from "hooks/useFeed"
-import useDebug from "../../hooks/useDebug"
-import { sendApi } from "../../utils/api"
-import { GalleryCreateProps, GalleryEngageProps } from "../prismaContext"
+import useDebug from "hooks/useDebug"
+import { sendApi } from "utils/api"
+import { GalleryCreateProps, GalleryEngageProps } from "prisma/prismaContext"
 
 const {debug} = useDebug('hooks/useGalleryApi')
 

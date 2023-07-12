@@ -63,14 +63,12 @@ const like = async ({
   creatorId,
 }: GalleryEngageProps): Promise<Like> => {
   try {
-    const like = await prisma.like.create({
+    return await prisma.like.create({
       data: {
         galleryId,
         creatorId
       }
     })
-    if (like) return like
-    throw {code: fileMethod('like'), message: 'Unable to create like'}
   } catch (error) {
     throw error
   }
@@ -83,21 +81,17 @@ const like = async ({
  * @param creatorId: String
  * @returns: {@link Share}
  */
-const share = async ({
-  galleryId,
-  creatorId,
-}: GalleryEngageProps): Promise<Post> => {
+const share = async ({galleryId,creatorId,}: GalleryEngageProps): Promise<Post> => {
   debug(`share`, { galleryId, creatorId })
-  const share = await prisma.post.create({
-    data: {
-      creatorId,
-      galleryId
-    }
-  })
-  if (share) {
-    return share
+  try {
+    return await prisma.post.create({
+      data: {
+        creatorId,
+        galleryId
+    }})    
+  } catch (error) { 
+    throw { code: fileMethod, message: "Feature not implemented" }
   }
-  throw { code: fileMethod, message: "Feature not implemented" }
 }
 
 /**

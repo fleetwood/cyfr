@@ -1,31 +1,12 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import useDebug from "../../../hooks/useDebug"
-import { PrismaChapter } from "../../../prisma/prismaContext"
-import {
-  GetResponseError,
-  ResponseError,
-  ResponseResult
-} from "../../../types/response"
+import useApiHandler from 'hooks/useApiHandler'
+import { PrismaChapter } from 'prisma/entities'
+import { NextApiRequest, NextApiResponse } from 'next'
 
-const {debug, err, fileMethod} = useDebug('api/chapter/upsert')
-
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  try {
-    const {chapter} = req.body
-    debug('handle', {chapter})
-    const result = await PrismaChapter.upsert(chapter)
-    if (result) {
-      debug('result', {result})
-      res.status(200).json(result)
-    }
-    throw { code: fileMethod('upsert'), message: "Fail upsert chapterrrrr!!!!" }
-    
-  } catch (e: Error | ResponseError | any) {
-    err("\tFAIL", e)
-    const error = GetResponseError(e)
-    res.status(500).json({ error })
-  }
+const request = (req:NextApiRequest, res: NextApiResponse) => {
+  const { chapter } = req.body
+  return useApiHandler(res,
+    'api/chapter/upsert',
+    PrismaChapter.upsert(chapter)
+  )
 }
+export default request

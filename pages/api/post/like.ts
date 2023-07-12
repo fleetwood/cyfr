@@ -1,28 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import { Like, PostEngageProps, PrismaPost } from "prisma/prismaContext"
-import { ResponseResult, ResponseError, GetResponseError } from "types/response"
-import { logError } from "utils/log"
+import useApiHandler from "hooks/useApiHandler"
+import { PostEngageProps, PrismaPost } from "prisma/prismaContext"
+import { NextApiRequest, NextApiResponse } from 'next'
 
-/**
- * 
- * @param req (@type PostEngageProps)
- * @param res (@type ResponseResult:Post)
- */
-export default async function handle(
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) {
-    const { postId, creatorId } = req.body as PostEngageProps
-    try {
-      const result = await PrismaPost.likePost({postId, creatorId})
-      if (result) {
-        res.status(200).json(result)
-      } else {
-        throw { code: "api/post/like", message: "Failed to like post" }
-      }
-    } catch (e: Error | ResponseError | any) {
-      logError("\tFAIL", e)
-      const error = GetResponseError(e)
-      res.status(500).json({ error })
-    }
-  }
+const request = (req:NextApiRequest, res: NextApiResponse) => useApiHandler(res,'api/post/feed',PrismaPost.likePost(req.body as PostEngageProps))
+export default request

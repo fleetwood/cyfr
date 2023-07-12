@@ -8,15 +8,14 @@ import { BookStub, GalleryStub, PostStub } from "prisma/prismaContext"
 import { useState } from "react"
 import { uniqueKey } from 'utils/helpers'
 
-type UserDetailViewProps = {
-  slug: string
-}
-
+type UserDetailViewProps = {slug: string}
 const UserDetailView = ({slug}:UserDetailViewProps) => {
   const {cyfrUser} = useCyfrUserContext()
-  const {query, followUser, stanUser } = userApi()
+  const {query, followUser } = userApi()
+
   const {data: currentUser, isLoading, error, invalidate} = query({slug})
-  const {followers, follows } = currentUser
+  const {followers, follows } = currentUser??{followers:[], follows:[]}
+  
   const { notify, notifyNotImplemented } = useToast()
   const [activeTab, setActiveTab] = useState("Posts")
 
@@ -43,7 +42,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
   const clickStan = async () => {
     if (!cyfrUser || !currentUser) return
 
-    const result = await stanUser({
+    const result = await followUser({
       followerId: cyfrUser.id,
       followingId: currentUser.id,
       isFan: true
@@ -61,26 +60,9 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
         <img src={currentUser.image||''} className="-mt-2 mb-2 rounded-md min-w-full" />
       }
       <div
-        className="
-        grid grid-cols-9
-        mx-2 mb-4
-        md:mx-4 md:mb-8
-        md:p-4
-        rounded-md p-2 
-        bg-base-100 bg-opacity-20 
-        text-neutral-content
-        "
-      >
+        className="grid grid-cols-9 mx-2 mb-4 md:mx-4 md:mb-8 md:p-4 rounded-md p-2 bg-base-100 bg-opacity-20 text-neutral-content">
         <div className="col-span-7">
-          <div
-            className="
-            flex items-start
-            flex-col
-            md:flex-row
-            justify-between
-            h-[50%]
-            "
-          >
+          <div className="flex items-start flex-col md:flex-row justify-between h-[50%]">
             <div>
               <strong>Posts:</strong> {(currentUser?.posts||[]).length}
             </div>
@@ -97,20 +79,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
               <strong>Stans:</strong> (NI)
             </div>
           </div>
-          <div
-            className="
-            flex 
-            items-start
-            md:items-end 
-            justify-end 
-            space-x-4 
-            md:justify-start
-            md:space-x-8
-            md:border-t 
-            border-base-content 
-            border-opacity-50
-            h-[50%]"
-          >
+          <div className="flex items-start md:items-end justify-end space-x-4 md:justify-start md:space-x-8 md:border-t border-base-content border-opacity-50 h-[50%]">
             <ShrinkableIconButton
               label="Follow"
               icon={HeartIcon}

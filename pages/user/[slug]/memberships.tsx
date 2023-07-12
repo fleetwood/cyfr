@@ -1,6 +1,6 @@
-import UserBillingDetail from "../../../components/containers/User/UserBillingDetail";
-import { useCyfrUserContext } from "../../../components/context/CyfrUserProvider";
-import MainLayout from "../../../components/layouts/MainLayout";
+import UserBillingDetail from "components/containers/User/UserBillingDetail";
+import { useCyfrUserContext } from "components/context/CyfrUserProvider";
+import MainLayout from "components/layouts/MainLayout";
 
 const UserMembershipPage = () => {
   const {cyfrUser} = useCyfrUserContext()

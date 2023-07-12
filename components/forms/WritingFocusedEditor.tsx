@@ -1,13 +1,14 @@
 import { CountExtension } from "@remirror/extension-count"
+import { FindExtension } from '@remirror/extension-find'
 import { Node } from "@remirror/pm/dist-types/model"
 import {
   CommandButtonGroup,
   CommandMenuItem,
   DecreaseFontSizeButton,
   DropdownButton,
-  IncreaseFontSizeButton,
   EditorComponent,
   FindReplaceComponent,
+  IncreaseFontSizeButton,
   IndentationButtonGroup,
   Remirror,
   TextAlignmentButtonGroup,
@@ -38,16 +39,16 @@ import {
   FontSizeExtension,
   ItalicExtension,
   NodeFormattingExtension,
+  StrikeExtension,
   SubExtension,
   SupExtension,
-  StrikeExtension,
 } from "remirror/extensions"
-import { FindExtension } from '@remirror/extension-find'
-import useDebug from "../../hooks/useDebug"
-import { InlineTextareaProps } from "../../types/props"
-import { SaveIcon } from "../ui/icons"
-import ShrinkableIconButton from "../ui/shrinkableIconButton"
-const {debug, todo} = useDebug("InlineTextArea")
+import useDebug from "hooks/useDebug"
+import { InlineTextareaProps } from "types/props"
+import ShrinkableIconButton from "components/ui/shrinkableIconButton"
+import { SaveIcon } from "components/ui/icons"
+
+const {debug } = useDebug("WritingFocusedEditor")
 
 const WritingFocusedEditor = ({
   placeholder,

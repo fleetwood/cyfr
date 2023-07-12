@@ -1,7 +1,7 @@
 import JsonBlock from "../components/ui/jsonBlock"
 import { __logLevel__ } from "../utils/constants"
 
-type DebugProps = 'DEBUG'|'INFO'|'ERROR'
+export type DebugProps = 'DEBUG'|'INFO'|'ERROR'
 
 const useDebug = (fileName:string, level:DebugProps=__logLevel__ as unknown as DebugProps) => {
   const fileMethod = (method: string) => `${fileName}.${method}`
@@ -25,28 +25,19 @@ ${lineBreak()}
   
   const err = (method: string, data?: any) => log(method, {error: lineBreak('!', 'ERROR'), data})
   
-  const debug = (method: string, data?: any) => {
-    if(level === 'DEBUG') {
+  const debug = (method: string, data?: any, overrideLevel=false) => {
+    if(overrideLevel === true || level === 'DEBUG') {
       log(method, {level, data})
     }
   }
-  const info  = (method: string, data?: any) => {
-    if(level === 'DEBUG' || level === 'INFO') {
+  const info  = (method: string, data?: any, overrideLevel=false) => {
+    if(overrideLevel === true || level === 'DEBUG' || level === 'INFO') {
       log(method, {level, data})
     }
   }
   
-  const todo  = (method: string, message: string) => {
-    if(level === 'DEBUG' || level === 'INFO') {log(`
-${lineBreak('*','TODO')}
-${fileMethod(method)} 
-${message}
-${lineBreak('*','TODO')}
-`
-  )}}
+  const jsonBlock = (data:any) => level === 'DEBUG' ? <JsonBlock data={data} debug={true} /> : <></>
 
-  const jsonBlock = (data:any) => level === 'DEBUG' ? <JsonBlock data={data} /> : <></>
-
-  return {debug, info, err, todo, stringify, level, jsonBlock, fileMethod}
+  return {debug, info, err, stringify, level, jsonBlock, fileMethod}
 }
 export default useDebug

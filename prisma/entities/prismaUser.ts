@@ -23,7 +23,7 @@ import {
 import dayjs from "dayjs"
 import { cadenceInterval } from "prisma/hooks/useCyfrUserApi"
 import { MembershipStub } from "prisma/types/membership.def"
-const { fileMethod, debug, todo, info, err } = useDebug("entities/prismaUser", 'DEBUG')
+const { fileMethod, debug, info, err } = useDebug("entities/prismaUser", 'DEBUG')
 
 type AllPostQueryParams = {
   limit?: Number
@@ -76,10 +76,10 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
         data,
         include
       })
-    if (!follow) {
-      throw({code: fileMethod('follow'), message: 'Unable to follow user'})
+    if (follow) {
+      return follow
     }
-    return follow
+    throw({code: fileMethod('follow'), message: 'Unable to follow user'})
   } catch (error) {
     debug(`follow ERROR`, {
       ...{ props },
@@ -234,29 +234,7 @@ const books = async (props:UserDetailProps): Promise<any> => {
   return books
 }
 
-
-const cyfrUser = async (email:string): Promise<CyfrUser|null> => {
-  try {
-    if (!email) {
-      return null
-    }
-    debug('cyfrUser', {email})
-    const user = await prisma.user.findUnique({
-      where: { email },
-      include: CyfrUserInclude
-    })
-    if (user) {
-      debug('success', user)
-      return user as unknown as CyfrUser
-    }
-    debug('cyfrUser: Did not find a user', email)
-    return null
-
-  } catch (error) {
-    info(`cyfrUser FAIL`, error)
-    throw error
-  }
-}
+const cyfrUser = async (email:string): Promise<CyfrUser> => await prisma.user.findUnique({where: { email },include: CyfrUserInclude}) as unknown as CyfrUser
 
 type MentionSearchProps = {
   search?:  string
@@ -287,26 +265,9 @@ const canMention = async ({search, all = false}:MentionSearchProps):Promise<any>
   }
 }
 
-const userInSessionReq = async (req: NextApiRequest): Promise<CyfrUser | null> => {
-  try {
-    const session = await getSession({ req })
-    debug('userInSessionReq', session)
-    return cyfrUser(session?.user?.email||'')
-  } catch (e) {
-    debug('userInSessionReq FAIL', e)
-    return null
-  }
-}
+const userInSessionReq = async (req: NextApiRequest): Promise<CyfrUser> => cyfrUser((await getSession({ req }))?.user?.email||'')
 
-const userInSessionContext = async (context: GetSessionParams | undefined): Promise<CyfrUser | null> => {
-  try {
-    const session = await getSession(context)
-    return cyfrUser(session?.user?.email||'')
-  } catch (error) {
-    info(fileMethod("userInSessionContext"), { error })
-    return null
-  }
-}
+const userInSessionContext = async (context: GetSessionParams | undefined): Promise<CyfrUser> => cyfrUser((await getSession(context))?.user?.email||'')
 
 const setMembership = async (
   user:     CyfrUser,
@@ -328,8 +289,6 @@ const setMembership = async (
       }
     })
 
-    debug('got membership', membership)
-
     if (membership.type?.id !== typeId || !(dayjs(membership.expiresAt).isSame(expiresAt))) {
       debug('updating that membership tho...')
       membership = await prisma.membership.update({
@@ -344,7 +303,6 @@ const setMembership = async (
           type: true
         }
       })
-      debug('Did that', membership)
     }
 
     const result = await prisma.user.update({

@@ -1,27 +1,17 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import { GalleryEngageProps, Post, PrismaGallery } from "prisma/prismaContext"
-import { GetResponseError, ResponseError, ResponseResult } from "types/response"
-import { logError } from "utils/log"
+import useApiHandler from "hooks/useApiHandler"
+import { GalleryEngageProps, PrismaGallery } from "prisma/prismaContext"
+import { NextApiRequest, NextApiResponse } from 'next'
+import useDebug from "hooks/useDebug"
+const {debug} = useDebug('api/gallery/share', 'DEBUG')
 
-/**
- * @param req (@type PostEngageProps)
- * @param res (@type ResponseResult:Post)
- */
-export default async function handle(
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) {
-    const { galleryId, creatorId } = req.body as GalleryEngageProps
-    try {
-      const result = await PrismaGallery.share({galleryId, creatorId})
-      if (result) {
-        res.status(200).json(result)
-      } else {
-        throw { code: "api/gallery/share", message: "Failed to share gallery" }
-      }
-    } catch (e: Error | ResponseError | any) {
-      logError("\tFAIL", e)
-      const error = GetResponseError(e)
-      res.status(500).json({ error })
-    }
-  }
+const request = async (req:NextApiRequest, res: NextApiResponse) => {
+  const props:GalleryEngageProps = req.body as GalleryEngageProps
+  debug('request', props)
+
+  return useApiHandler(res,
+    'api/gallery/share',
+    PrismaGallery.share(props),
+    'DEBUG'
+)}
+
+export default request

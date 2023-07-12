@@ -20,7 +20,7 @@ import {
   prisma
 } from "../prismaContext"
 
-const { debug, info, todo, fileMethod } = useDebug("entities/prismaBook")
+const { debug, info, fileMethod } = useDebug("entities/prismaBook")
 
 type BookQueryProps = {
   id?:    string
@@ -89,10 +89,8 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
           }
         }
         debug('upsert PROPS', {id, title, slug, status, visible, words, completeAt})
-        todo('upsert',`
-            1. if a cover hasn't been uploaded, obtain the default for the genre
-            2. categories, oy
-        `)
+        //TODO 1. if a cover hasn't been uploaded, obtain the default for the genre
+        //TODO 2. categories, oy
         const result = id 
           ? await prisma.book.update({
             where: {id},
@@ -387,7 +385,7 @@ const sortChapters = async (currentChapers:Chapter[], changedChapter:Chapter) =>
 const deleteBook = async ({bookId,creatorId}:BookEngageProps): Promise<Book | undefined> => {
   try {
     debug("deleteBook", { bookId, creatorId })
-    todo("deleteBook", "Make sure author deleting the book is an owner.")
+    // TODO "Make sure author deleting the book is an owner.
     throw { code: fileMethod("deleteBook"), message: "Not implemented" }
   } catch (error) {
     info("deleteBook ERROR: ", error)

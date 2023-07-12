@@ -1,7 +1,7 @@
 import { NotImplemented } from "utils/api"
-import useDebug from "../../hooks/useDebug"
-import { Cover, CoverDeleteProps, CoverDetail, CoverStub, CoverStubInclude, CoverUpsertProps, Like } from "../prismaContext"
-const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage')
+import useDebug from "hooks/useDebug"
+import { Cover, CoverDeleteProps, CoverDetail, CoverStub, CoverUpsertProps, Like } from "prisma/prismaContext"
+const {debug, info, fileMethod} = useDebug('entities/prismaCover')
 
 const detail = async (id: string): Promise<CoverDetail | null> => await prisma.cover.findUnique({where: {id}}) as unknown as CoverDetail
 const details = async (): Promise<CoverDetail[]> => await prisma.cover.findMany() as unknown as CoverDetail[]
@@ -26,8 +26,8 @@ const upsert = async (props: CoverUpsertProps): Promise<Cover> => {
 
 const remove = async ({coverId, creatorId}: CoverDeleteProps): Promise<Cover> => {
   try {
-    todo('deleteImage','Need to make sure the user in session matches the user making the request')
-    debug("deleteImage", {coverId, creatorId})
+    //TODO: Need to make sure the user in session matches the user making the request
+    debug("remove", {coverId, creatorId})
     return await prisma.cover.update({ 
       where: {
         id: coverId,
@@ -37,8 +37,8 @@ const remove = async ({coverId, creatorId}: CoverDeleteProps): Promise<Cover> =>
       }
     })
   } catch (error) {
-    debug("deleteImage ERROR: ", error)
-    throw { code: "images/create", message: "Image was not created!" }
+    debug("remove ERROR: ", error)
+    throw { code: "cover/remove", message: "Cover was not removed!" }
   }
 }
 

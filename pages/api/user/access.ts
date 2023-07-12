@@ -1,22 +1,13 @@
-import useDebug from "hooks/useDebug"
-import { NextApiRequest, NextApiResponse } from "next"
-import { PrismaUser } from "prisma/prismaContext"
-import { ResponseError } from "types/response"
-const {debug,err} = useDebug('api/user/access', 'DEBUG')
+import useApiHandler from 'hooks/useApiHandler'
+import { PrismaUser } from 'prisma/prismaContext'
+import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  try {
-    const {level} = req.body
-    const cyfrUser = await PrismaUser.userInSessionReq(req)
-    const result = await PrismaUser.canAccess(level,cyfrUser??undefined)
-    debug('handle', {level, user: cyfrUser?.name, id:cyfrUser?.id??'NA', membership: cyfrUser?.membership?.type.level??'NA', result})
-    
-    res.status(200).json(result)
-  } catch (e: Error | ResponseError | any) {
-    err(`FAIL`, e)
-    res.status(200).json({ })
-  }
-}
+const request = async (req:NextApiRequest, res: NextApiResponse) => {
+  const { level } = req.body
+  const cyfrUser = await PrismaUser.userInSessionReq(req)
+
+  return useApiHandler(res,
+    'api/user/access',
+    PrismaUser.canAccess(level, cyfrUser ?? undefined)
+)}
+export default request

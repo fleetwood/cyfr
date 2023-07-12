@@ -4,7 +4,7 @@ import userApi from "prisma/hooks/userApi";
 import { UserDetail } from "prisma/prismaContext";
 
 export async function getServerSideProps(context: any) {
-  const slug = context.params.id
+  const {slug} = context.params
   return {
     props: {
       slug,
@@ -29,11 +29,11 @@ const UserDetailPage = ({layout='main', ...props}:UserDetailProps) => {
         subTitle={currentUser?.name || ""}
       >
         {currentUser && 
-          <UserDetailView slug={currentUser!.slug??currentUser.name!} />
+          <UserDetailView slug={currentUser!.slug!} />
         }
       </MainLayout>
     }
-    { layout==='none' && currentUser && <UserDetailView slug={currentUser!.slug??currentUser.name!} /> }
+    { layout==='none' && currentUser && <UserDetailView slug={currentUser!.slug!} /> }
     </>
 )}
 

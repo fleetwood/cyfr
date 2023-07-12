@@ -3,7 +3,7 @@ import { PrismaUser } from "prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from 'next'
 
 const request = async (req:NextApiRequest, res: NextApiResponse) => useApiHandler(res,
-    'api/me',
-    PrismaUser.userInSessionReq(req)
+  'api/user/[slug]/info',
+  PrismaUser.userInfo(req.query.slug!.toString())
 )
 export default request

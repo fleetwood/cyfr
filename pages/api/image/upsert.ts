@@ -1,62 +1,9 @@
+import useApiHandler from "hooks/useApiHandler"
+import { ImageUpsertProps, PrismaImage } from "prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from 'next'
-import useDebug from 'hooks/useDebug'
-import {
-  ImageUpsertProps,
-  PrismaImage,
-  Image,
-} from 'prisma/prismaContext'
-import {
-  GetResponseError,
-  ResponseError,
-  ResponseResult,
-} from 'types/response'
-const { debug, fileMethod, err } = useDebug('api/image/upsert', 'DEBUG')
 
-/**
- *
- * @param req.body: {@link ImageUpsertProps}
- * @param res
- */
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const props = req.body as ImageUpsertProps
-  const {
-    id,
-    creatorId,
-    url,
-    visible,
-    height,
-    width,
-    title,
-    galleryId,
-    postId,
-    commentThreadId,
-  } = props
-  const imageUpsert = {
-    id,
-    creatorId,
-    url,
-    visible,
-    height,
-    width,
-    title,
-    galleryId,
-    postId,
-    commentThreadId,
-  }
-  debug('upsert', { ...req.body, imageUpsert })
-  try {
-    const result = await PrismaImage.upsert(imageUpsert)
-    if (result) {
-      res.status(200).json(result)
-    } else {
-      throw { code: fileMethod('handle'), message: 'Failed to upsert image' }
-    }
-  } catch (e: Error | ResponseError | any) {
-    err('handle \tFAIL', e)
-    const error = GetResponseError(e)
-    res.status(500).json({ error })
-  }
-}
+const request = (req:NextApiRequest, res: NextApiResponse) => useApiHandler(res,
+    'api/image/upsert',
+    PrismaImage.upsert(req.body as ImageUpsertProps)
+)
+export default request

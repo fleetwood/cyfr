@@ -1,7 +1,7 @@
 
 import useDebug from "hooks/useDebug"
 import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, prisma, PostStubInclude, PostDetailInclude } from "prisma/prismaContext"
-const {debug, err, info, fileMethod} = useDebug('entities/prismaPost', 'DEBUG')
+const {debug, err, info, fileMethod} = useDebug('entities/prismaPost')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
   try {

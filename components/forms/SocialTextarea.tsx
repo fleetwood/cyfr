@@ -8,7 +8,10 @@ import {
   Remirror,
   useRemirror
 } from "@remirror/react"
+import useDebug from "hooks/useDebug"
 import dynamic from "next/dynamic"
+import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
+import UserApi from "prisma/hooks/userApi"
 import {
   Dispatch,
   SetStateAction,
@@ -17,19 +20,16 @@ import {
   useState
 } from "react"
 import {
-  prosemirrorNodeToHtml, RemirrorEventListenerProps
+  RemirrorEventListenerProps,
+  prosemirrorNodeToHtml
 } from "remirror"
 import {
   BoldExtension, EmojiExtension, ItalicExtension,
   MentionAtomExtension, MentionAtomNodeAttributes, PlaceholderExtension
 } from "remirror/extensions"
 import data from "svgmoji/emoji.json"
-import useDebug from "../../hooks/useDebug"
-import { useCyfrUserContext } from "../context/CyfrUserProvider"
-import UserApi from "../../prisma/hooks/userApi"
-import { UserStub } from "../../prisma/prismaContext"
 
-const {debug, todo} = useDebug("SocialTextArea")
+const {debug} = useDebug("SocialTextArea")
 
 type MentionItem = { id: string, label: string }
 
@@ -49,7 +49,7 @@ const SocialTextarea = ({
   maxChar = -1,
   setValid,
 }: SocialTextareaProps) => {
-  const [ cyfrUser ] = useCyfrUserContext()
+  const  {cyfrUser } = useCyfrUserApi()
   const {mentions} = UserApi()
   const [mentionList, setMentionList] = useState<MentionItem[]>([])
   const [search, setSearch] = useState<string>()

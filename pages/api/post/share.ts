@@ -1,28 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import { Post } from "prisma/prismaContext"
-import { ResponseResult, ResponseError, GetResponseError } from "types/response"
-import { NotImplemented } from "utils/api"
-import { logError } from "utils/log"
+import useApiHandler, { NotImplemented } from "hooks/useApiHandler"
+import { PostEngageProps, PrismaPost } from "prisma/prismaContext"
+import { NextApiRequest, NextApiResponse } from 'next'
 
-/**
- * @param req @type PostEngageProps
- * @param res @type ResponseResult:Post
- */
-export default async function handle(
-    req: NextApiRequest,
-    res: NextApiResponse<ResponseResult<Post>>
-  ) {
-    const { postId, creatorId,  } = req.body
-    throw NotImplemented('api/post/share')
-    // try {
-    //   if (result) {
-    //     res.status(200).json(result)
-    //   } else {
-    //     throw { code: "api/post/share", message: "Failed to share post" }
-    //   }
-    // } catch (e: Error | ResponseError | any) {
-    //   logError("\tFAIL", e)
-    //   const error = GetResponseError(e)
-    //   res.status(500).json({ error })
-    // }
-  }
+
+const request = (req:NextApiRequest, res: NextApiResponse) => useApiHandler(res,'api/post/share', NotImplemented()) //PrismaPost.sharePost(req.body as PostEngageProps))
+export default request

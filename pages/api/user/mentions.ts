@@ -1,25 +1,12 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import useDebug from "../../../hooks/useDebug"
-import { PrismaUser } from "../../../prisma/prismaContext"
+import useApiHandler from "hooks/useApiHandler"
+import { PrismaUser } from "prisma/prismaContext"
+import { NextApiRequest, NextApiResponse } from 'next'
 
-const {debug, todo, info} = useDebug('api/user/mentions')
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  try {
-    const {search, all} = req.body
-    const result = await PrismaUser.canMention({search, all})
-    if (result) {
-      debug('handle: result',{result: result.length})
-      res.status(200).json(result)
-      res.end()
-      return
-    } else {
-      throw { code: "api/user/mentions", message: `No results from Mentions` }
-    }
-  } catch (e: Error | any) {
-    info("FAIL", e)
-    res.status(200).json({ })
-  }
-}
+const request = async (req:NextApiRequest, res: NextApiResponse) => {
+  const {search, all} = req.body
+  
+  return useApiHandler(res,
+    'api/user/mentions',
+    PrismaUser.canMention({search, all})
+)}
+export default request

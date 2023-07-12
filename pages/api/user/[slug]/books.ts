@@ -1,13 +1,11 @@
 import useApiHandler from "hooks/useApiHandler"
-import { GalleryEngageProps, PrismaGallery } from "prisma/prismaContext"
+import { PrismaUser } from "prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from 'next'
 
 const request = (req:NextApiRequest, res: NextApiResponse) => {
-  const { galleryId, creatorId } = req.body as GalleryEngageProps
-
+  const slug = req.query.slug!.toString()
   return useApiHandler(res,
-    'api/gallery/like',
-    PrismaGallery.like({galleryId, creatorId})
+    'user/[slug]/books',
+    PrismaUser.books({slug})
 )}
-
 export default request

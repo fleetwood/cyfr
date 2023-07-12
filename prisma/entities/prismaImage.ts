@@ -1,6 +1,6 @@
-import { Image, Like, ImageDetail,ImageFeed, ImageDeleteProps, ImageEngageProps, ImageDetailInclude, ImageFeedInclude, ImageUpsertProps, ImageStub } from "../prismaContext"
-import useDebug from "../../hooks/useDebug"
-const {debug, info, todo, fileMethod} = useDebug('entities/prismaImage')
+import useDebug from "hooks/useDebug"
+import { Image, ImageDeleteProps, ImageEngageProps, ImageUpsertProps, Like } from "prisma/prismaContext"
+const {debug, info, fileMethod} = useDebug('entities/prismaImage')
 
 const detail = async (id: string): Promise<Image | null> => await prisma.image.findUnique({where: {id}})
 const details = async (): Promise<Image[]> => await prisma.image.findMany()
@@ -25,7 +25,7 @@ const upsert = async (props: ImageUpsertProps): Promise<Image> => {
 
 const deleteImage = async ({imageId, creatorId}: ImageDeleteProps): Promise<Image> => {
   try {
-    todo('deleteImage','Need to make sure the user in session matches the user making the request')
+    // TODO: Need to make sure the user in session matches the user making the request
     debug("deleteImage", {imageId, creatorId})
     return await prisma.image.update({ 
       where: {

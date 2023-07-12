@@ -17,7 +17,7 @@ import GalleryStubView from "components/containers/Gallery/GalleryStubView"
 const {debug, jsonBlock} = useDebug('pages/user/id/gallery','DEBUG')
 
 export async function getServerSideProps(context: any) {
-  const {id: slug} = context.params
+  const {slug} = context.params
   const user = await PrismaUser.detail({slug})
   const galleries = user ? await PrismaGallery.userGalleries(user.id) : []
 

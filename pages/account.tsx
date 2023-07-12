@@ -9,7 +9,7 @@ import { TabClassNames } from "components/ui/tabs"
 import useDebug from "hooks/useDebug"
 import { useSession } from "hooks/useSession"
 import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
-import UserDetailPage from "./user/[id]"
+import UserDetailPage from "./user/[slug]"
 const {debug, info} = useDebug('pages/account')
 
 const Account = () => {
