@@ -36,7 +36,7 @@ ${lineBreak()}
     }
   }
   
-  const jsonBlock = (data:any) => level === 'DEBUG' ? <JsonBlock data={data} debug={true} /> : <></>
+  const jsonBlock = (data:any) => <JsonBlock data={data} debug={level === 'DEBUG'} />
 
   return {debug, info, err, stringify, level, jsonBlock, fileMethod}
 }

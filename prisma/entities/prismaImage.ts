@@ -1,6 +1,6 @@
 import useDebug from "hooks/useDebug"
-import { Image, ImageDeleteProps, ImageEngageProps, ImageUpsertProps, Like } from "prisma/prismaContext"
-const {debug, info, fileMethod} = useDebug('entities/prismaImage')
+import { Image, ImageDeleteProps, ImageEngageProps, ImageUpsertProps, Like, Post } from "prisma/prismaContext"
+const {debug, info, fileMethod} = useDebug('entities/prismaImage', 'DEBUG')
 
 const detail = async (id: string): Promise<Image | null> => await prisma.image.findUnique({where: {id}})
 const details = async (): Promise<Image[]> => await prisma.image.findMany()
@@ -41,38 +41,33 @@ const deleteImage = async ({imageId, creatorId}: ImageDeleteProps): Promise<Imag
   }
 }
 
-const likeImage = async (props: ImageEngageProps): Promise<Like> => {
-  const data = { ...props }
+/**
+ * Params {@link ImageEngageProps}
+ * @param imageId: String
+ * @param creatorId: String
+ * @returns: {@link Like}
+ */
+const like = async ({imageId, creatorId}: ImageEngageProps): Promise<Like> => {
+  debug('like', {imageId, creatorId})
   try {
-    debug("likeImage", data)
-    const success = await prisma.like.create({
-      data: {...props}
-    })
-    if (success) {
-      return success
-    }  
-    throw new Error("Unable to connect like to image")
+    return await prisma.like.create({data: {imageId, creatorId}})
   } catch (error) {
-    info("likeImage ERROR: ", error)
-    throw { code: fileMethod('likeImage'), ...{error} }
+    throw error
   }
 }
 
-const shareImage = async (props: ImageEngageProps): Promise<Image> => {
-  const { creatorId, imageId } = props
+/**
+ * Params {@link ImageEngageProps}
+ * @param imageId: String
+ * @param creatorId: String
+ * @returns: {@link Post}
+ */
+const share = async ({imageId, creatorId}: ImageEngageProps): Promise<Post> => {
+  debug('like', {imageId, creatorId})
   try {
-    debug("shareImage", props)
-    const image = await prisma.image.findUnique({ where: { id: imageId } })
-
-    const updateImage = await prisma.image.update({
-      where: { id: imageId },
-      data: { shares: { create: { creatorId },},
-    }})
-
-    return updateImage
+    return await prisma.post.create({data: {imageId, creatorId}})
   } catch (error) {
-    info("shareImage ERROR: ", error)
-    throw { code: "images/share", message: "Image not shared!" }
+    throw error
   }
 }
 
@@ -103,4 +98,4 @@ const commentOnImage = async (props: any): Promise<Image> => {
   }
 }
 
-export const PrismaImage = { detail, details, stub, stubs, upsert, deleteImage, likeImage, shareImage, commentOnImage }
+export const PrismaImage = { detail, details, stub, stubs, upsert, deleteImage, like, share, commentOnImage }

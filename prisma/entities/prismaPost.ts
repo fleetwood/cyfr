@@ -1,16 +1,12 @@
 
 import useDebug from "hooks/useDebug"
 import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, prisma, PostStubInclude, PostDetailInclude } from "prisma/prismaContext"
-const {debug, err, info, fileMethod} = useDebug('entities/prismaPost')
+const {debug, err, info, fileMethod} = useDebug('entities/prismaPost','DEBUG')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
   try {
     debug('postDetail', id)
-    const result = await prisma.post.findUnique({where: {id}, include: PostDetailInclude})
-    if (result) {
-      return result as unknown as PostDetail
-    }
-    throw {code: 'prismaPost/postDetail', message: `No post was returned for ${id}`}
+    return await prisma.post.findUnique({where: {id}, include: PostDetailInclude}) as unknown as PostDetail
   } catch (error) {
     err('postDetail error', {error})
     throw {code: 'prismaPost/postDetail', message: `No post was returned for ${id}`}
@@ -25,7 +21,7 @@ type PaginationProps = {
 const feed = async ({take=10, skip=0}:PaginationProps): Promise<PostStub[]> => {
   debug('feed')
   try {
-    const posts = await prisma.post.findMany({
+    return await prisma.post.findMany({
       //TODO: blocked users
       where: {visible: true},
       // TODO: review all stubs and details
@@ -34,11 +30,7 @@ const feed = async ({take=10, skip=0}:PaginationProps): Promise<PostStub[]> => {
       orderBy: {createdAt: "desc"},
       //TODO: pagination
       take, skip
-    })
-    if (posts) {
-      return posts as unknown as PostStub[]
-    }
-    throw { code: fileMethod('all'), message: "No posts were returned!" }
+    }) as unknown as PostStub[]
   } catch (error) {
     info('prismaPost.feed ERROR',error)
     throw error
@@ -88,21 +80,34 @@ const deletePost = async ({postId, creatorId}: PostDeleteProps): Promise<Post> =
   }
 }
 
-const likePost = async (props: PostEngageProps): Promise<Like> => {
-  const data = { ...props }
+const likePost = async ({postId, creatorId}: PostEngageProps): Promise<Like> => {
   try {
-    debug("likePost", data)
-    const success = await prisma.like.create({
-      data: {...props}
+    debug("likePost", {postId, creatorId})
+    return await prisma.like.create({
+      data: {postId, creatorId}
     })
-    if (success) {
-      return success
-    } else {
-      throw new Error("Unable to connect like to post")
-    }
-    throw new Error("Unable to find user and post to like")
   } catch (error) {
-    info("likePost ERROR: ", error)
+    info("likePost ERROR: ", {error, postId, creatorId})
+    throw { code: fileMethod('likePost'), ...{error} }
+  }
+}
+
+/**
+ * Params {@link PostEngageProps}
+ * @param postId: String
+ * @param creatorId: String
+ * @returns: {@link Post}
+ */
+const sharePost = async ({postId,creatorId,}: PostEngageProps): Promise<Post> => {
+  debug(`share`, { postId, creatorId })
+  try {
+    return await prisma.post.create({
+      data: {
+        creatorId,
+        postId
+    }})    
+  } catch (error) { 
+    info("sharePost ERROR: ", {error, postId, creatorId})
     throw { code: fileMethod('likePost'), ...{error} }
   }
 }
@@ -157,4 +162,4 @@ const commentOnPost = async (props: PostCommentProps): Promise<PostDetail> => {
   }
 }
 
-export const PrismaPost = { feed, postDetail, createPost, deletePost, likePost, commentOnPost }
+export const PrismaPost = { feed, postDetail, createPost, deletePost, likePost, sharePost, commentOnPost }

@@ -20,7 +20,7 @@ import Link from "next/link"
 const {debug, jsonBlock} = useDebug('avatar')
 
 type AvatarProps = {
-  user?: CyfrUser | UserDetail | UserFeed | User | UserStub | UserFollow
+  user?: CyfrUser | UserDetail | UserFeed | UserStub | UserFollow | User
   link?: boolean
   shadow?: boolean
   className?: string

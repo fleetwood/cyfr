@@ -1,14 +1,14 @@
 import { BookStub, CharacterStub, GalleryStub, ImageStub, PostStub } from 'prisma/prismaContext'
 
-import JsonBlock from 'components/ui/jsonBlock'
 import HtmlContent from 'components/ui/htmlContent'
-import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
 import useDebug from 'hooks/useDebug'
-import ImageStubView from '../Image/ImageStubView'
 import BookStubView from '../Books/BookStubView'
-import GalleryStubView from '../Gallery/GalleryStubView'
-import PostCommentThread from '../Comment/PostCommentThread'
 import CharacterStubView from '../Characters/CharacterStubView'
+import PostCommentThread from '../Comment/PostCommentThread'
+import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
+import GalleryStubView from '../Gallery/GalleryStubView'
+import ImageStubView from '../Image/ImageStubView'
+import SharedPostStubView from './SharedPostStubView'
 
 const { debug, jsonBlock } = useDebug('PostStubView','DEBUG')
 
@@ -23,11 +23,11 @@ const PostStubView = ({ post }: PostFeedItemProps) => {
     <div>
       {post.content && <HtmlContent content={post.content} className="font-feed" />}
 
-      {post.images?.length > 0 && post.images[0] !== null && <GalleryPhotoswipe images={post.images} />}
+      {post.images[0] && <GalleryPhotoswipe images={post.images} />}
 
-      {post.post && <PostStubView post={post.post as PostStub} />}
+      {post.post && <SharedPostStubView post={post.post} />}
 
-      {post.image && <ImageStubView image={post.image as unknown as ImageStub} />}
+      {post.image && <ImageStubView image={post.image as ImageStub} />}
 
       {post.gallery && <GalleryStubView gallery={post.gallery as GalleryStub} />}
 
@@ -37,7 +37,7 @@ const PostStubView = ({ post }: PostFeedItemProps) => {
 
       {post.commentThread && <PostCommentThread postStub={post} /> }
 
-      <JsonBlock data={post} />
+      {/* {jsonBlock(post.post)} */}
     </div>
   ) : (
     <></>

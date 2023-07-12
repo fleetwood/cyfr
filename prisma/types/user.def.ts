@@ -236,6 +236,10 @@ export const CreatorStubInclude = {
   }
 }
 
+export type CreatorAndLikesAndCount = CreatorStub & LikesAndCount
+
+export const CreatorLikesCountInclude = {include: {...CreatorStubInclude,...LikesAndCountsInclude}}
+
 export type UserInfo = User & {
   _count: {
     likes:      number

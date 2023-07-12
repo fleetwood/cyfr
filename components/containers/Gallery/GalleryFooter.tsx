@@ -1,7 +1,7 @@
 import { useCommentContext } from "components/context/CommentContextProvider"
 import { useToast } from "components/context/ToastContextProvider"
 import AvatarList from "components/ui/avatarList"
-import { ShareIcon, ReplyIcon, HeartIcon } from "components/ui/icons"
+import { ShareIcon, ReplyIcon, HeartIcon, GalleryIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
 import useFeed from "hooks/useFeed"
@@ -82,6 +82,7 @@ const GalleryFooter = ({
 
   return (
     <div className="min-w-full p-4 flex justify-around space-x-4">
+      <div>{GalleryIcon}</div>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={HeartIcon}

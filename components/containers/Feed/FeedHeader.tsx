@@ -1,5 +1,5 @@
 import React from "react"
-import { PostStub, UserStub } from "prisma/prismaContext"
+import { CreatorStub, PostStub, UserStub } from "prisma/prismaContext"
 import { isShare, timeDifference } from "utils/helpers"
 import Link from "next/link"
 import Avatar from "components/ui/avatar"
@@ -22,13 +22,14 @@ const FeedHeader = ({ item, isShared }: FeedHeaderProps) => {
                      item.cover?.createdAt ??
                      item.image?.createdAt ??
                      item.gallery?.createdAt ??
+                     item.post?.createdAt ??
                      item.createdAt
 
-  const originalAuthor:UserStub = item.creator
   // TODO: get creator for shared items
-  // : (item.sharedPost ? item.sharedPost.creator
-  // : item.gallery ? item.gallery.creator
-  // : item.creator) as UserStub
+  const originalAuthor:UserStub = 
+    item.post ? item.post.creator :
+    item.gallery ? item.gallery.creator : 
+    item.creator
   
   const originalAuthors:UserStub[] = [] 
   // TODO: get authors for books or characters

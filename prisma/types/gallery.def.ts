@@ -1,23 +1,20 @@
 import {
   Commune,
-  EngageInclude,
-  EngageList,
   Gallery,
   Image,
   Like,
   LikesCountInclude,
   LikesInclude,
-  User,
   UserStub
-} from "../prismaContext";
-import { ImageFeed, ImageFeedInclude, ImageStub, ImageUpsertProps } from './image.def';
+} from "prisma/prismaContext";
+import { ImageStub, ImageUpsertProps } from './image.def';
 
 export type GalleryUpsertProps = {
   galleryId?: string|null
   creatorId: string
   title?: string|null
   description?: string|null
-  images?: ImageFeed[]|Image[]|null
+  images?: ImageStub[]|Image[]|null
   files?: ImageUpsertProps[]|null
 }
 

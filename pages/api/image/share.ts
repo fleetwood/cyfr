@@ -1,13 +1,13 @@
 import useApiHandler from "hooks/useApiHandler"
-import { GalleryEngageProps, PrismaGallery } from "prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from 'next'
+import { ImageEngageProps, PrismaImage } from "prisma/prismaContext"
 
 const request = async (req:NextApiRequest, res: NextApiResponse) => {
-  const props:GalleryEngageProps = req.body as GalleryEngageProps
+  const props:ImageEngageProps = req.body as ImageEngageProps
 
   return useApiHandler(res,
-    'api/gallery/share',
-    PrismaGallery.share(props)
+    'api/image/share',
+    PrismaImage.share(props)
 )}
 
 export default request

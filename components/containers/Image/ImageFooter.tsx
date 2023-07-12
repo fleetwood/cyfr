@@ -1,30 +1,29 @@
 
 import useFeed from "hooks/useFeed"
-import { PostDetail, PostStub, SharedPostStub } from "prisma/prismaContext"
+import { ImageDetail, ImageStub, PostDetail, PostStub, SharedPostStub } from "prisma/prismaContext"
 
 import { useCommentContext } from "components/context/CommentContextProvider"
 import { useToast } from "components/context/ToastContextProvider"
 import AvatarList from "components/ui/avatarList"
-import { FeedIcon, HeartIcon, ShareIcon } from "components/ui/icons"
+import { HeartIcon, PhotoIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
 import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import usePostApi from "prisma/hooks/usePostApi"
 import { abbrNum } from "utils/helpers"
 import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
+import useImageApi from "prisma/hooks/useImageApi"
 const { debug } = useDebug("PostItemFooter")
 
-type PostFooterProps = {
-  post: PostDetail | PostStub | SharedPostStub
+type ImageFooterProps = {
+  image:      ImageDetail | ImageStub
   onUpdate?:  () => void
 }
-const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
+const ImageFooter = ({ image, onUpdate }: ImageFooterProps) => {
   const {cyfrUser} = useCyfrUserApi()
-  const comments:PostStub[] = []
   const {invalidate} = useFeed('post')
   const { notify, notifyLoginRequired } = useToast()
-  const { setPostId, showComment, hideComment } = useCommentContext()
-  const {share, like} = usePostApi()
+  const {share, like} = useImageApi()
 
   const isLoggedIn = () => {
     if (!cyfrUser) {
@@ -41,19 +40,19 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
 
   const handleComment = async () => {
     if (!isLoggedIn()) return
-    debug(`handleComment`)
-    setPostId(post.id)
-    showComment()
+    debug(`handleComment Not Implemented`)
+    // setPostId(post.id)
+    // showComment()
     update()
   }
 
   const handleLike = async () => {
     if (!isLoggedIn()) return
 
-    debug(`handleLike`)
-    const liked = await like({ postId: post.id, creatorId: cyfrUser!.id })
+    debug(`handleLike Not Implemented`)
+    const liked = await like({ imageId: image.id, creatorId: cyfrUser!.id })
     if (liked) {
-      notify("You liked this post!!!!!!!!!!!", "success")
+      notify("You liked this image! ♥", "success")
       update()
       return
     }
@@ -63,10 +62,10 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   const handleShare = async () => {
     if (!isLoggedIn()) return
 
-    debug(`handleShare`)
-    const shared = await share({ postId: post.id, creatorId: cyfrUser!.id })
+    debug(`handleShare Not Implemented`)
+    const shared = await share({ imageId: image.id, creatorId: cyfrUser!.id })
     if (shared) {
-      notify("You shared this post", "success")
+      notify("You shared this image...", "success")
       update()
       return
     }
@@ -75,18 +74,18 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
 
   return (
     <div className="flex flex-row justify-around py-4">
-      <div>{FeedIcon}</div>
+    <div>{PhotoIcon}</div>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={HeartIcon}
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Like (${abbrNum(post._count.likes)})`}
+          label={`Like (${abbrNum(image._count.likes)})`}
           onClick={() => handleLike()}
         />
         {/* @ts-ignore */}
-        {post.likes && <AvatarList users={post.likes} sz="xs" />}
+        {image.likes && <AvatarList users={image.likes} sz="xs" />}
       </div>
 
       <div className="font-semibold uppercase">
@@ -104,7 +103,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
       </div>
 
       <div className="font-semibold uppercase">
-        <CreateCommentFooterButton postId={post.id} comments={(post.commentThread?.comments??[]).length} />
+        <CreateCommentFooterButton postId={image.id} comments={(image.commentThread?.comments??[]).length} />
         {/* <AvatarList
           users={(post.post_comments || []).map((a) => a.creator)}
           sz="xs"
@@ -114,4 +113,4 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   )
 }
 
-export default PostFooter
+export default ImageFooter

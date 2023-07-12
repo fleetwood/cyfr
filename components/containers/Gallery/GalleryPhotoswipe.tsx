@@ -2,10 +2,10 @@
 import "photoswipe/dist/photoswipe.css"
 
 import { Gallery as PhotoGallery, Item } from "react-photoswipe-gallery"
-import { ImageFeed, Image, Gallery  } from "../../../prisma/prismaContext"
-import { uniqueKey, uuid } from "../../../utils/helpers"
-import { cloudinary } from "../../../utils/cloudinary"
-import useDebug from "../../../hooks/useDebug"
+import { ImageFeed, Image, Gallery  } from "prisma/prismaContext"
+import { uniqueKey, uuid } from "utils/helpers"
+import { cloudinary } from "utils/cloudinary"
+import useDebug from "hooks/useDebug"
 import { useState, useEffect } from "react"
 
 const {debug} = useDebug('containers/Gallery/GalleryPhotoswipe')

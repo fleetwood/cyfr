@@ -167,18 +167,18 @@ model News {
 }
 
 model Gallery {
-  id                String     @id @default(cuid())
-  createdAt         DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt         DateTime   @default(now()) @db.Timestamptz(3)
-  visible           Boolean    @default(true)
-  title             String?
-  description       String?
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @db.Timestamptz(3)
+  visible     Boolean  @default(true)
+  title       String?
+  description String?
 
-  creatorId         String
-  creator           User       @relation("user_galleries", fields: [creatorId], references: [id])
+  creatorId String
+  creator   User   @relation("user_galleries", fields: [creatorId], references: [id])
 
-  commentThreadId   String?        @unique
-  commentThread     CommentThread? @relation("gallery_comments", fields: [commentThreadId], references: [id])
+  commentThreadId String?        @unique
+  commentThread   CommentThread? @relation("gallery_comments", fields: [commentThreadId], references: [id])
 
   // shareId           String?
   blocking          Block[]    @relation("blocked_from_gallery")

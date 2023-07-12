@@ -1,4 +1,4 @@
-// TODO Need to add the ability to change fill, stroke and class
+
 export type svgProps = {
   fill?: string
   stroke?: string
@@ -246,6 +246,22 @@ export const ChatSendIcon = (
   </svg>
 )
 
+export const GalleryIcon = (
+  <svg xmlns="http://www.w3.org/2000/svg"
+    fill="currentColor"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="none"
+    className="w-6 h-6">
+    <g>
+		<circle cx="6" cy="6" r="2"/>
+    </g>
+    <g>
+      <path d="M24,23H4v-4H0V0h20v4h4V23z M6,21h16V6h-2v13H6V21z M3.2,17H18v-1.6l-4-4.8l-3.9,4.9l-3-3L3.2,17z M2,2v13.3l4.9-5.8l3,3 L14,7.4l4,4.8V2H2z"/>
+    </g>
+  </svg>
+)
+
 export const PhotoIcon = (
   <svg xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -396,5 +412,18 @@ export const NextIcon = (
    >
     <path d="M7.9,256c0,-137 111.1,-248.1 248.1,-248.1c137,0 248.1,111.1 248.1,248.1c0,137 -111.1,248.1 -248.1,248.1c-137,0 -248.1,-111.1 -248.1,-248.1z"></path>
     <path d="M357.4,237.8c-37.6,-37.6 -75.2,-75.2 -112.8,-112.8c-26.8,-26.8 -68.2,14.9 -41.3,41.8c30.6,30.6 61.3,61.2 91.9,91.9c-30.7,30.7 -61.4,61.4 -92.1,92.1c-26.8,26.8 14.9,68.2 41.8,41.3c37.6,-37.6 75.2,-75.2 112.8,-112.8c11.2,-11.3 10.9,-30.3 -0.3,-41.5z" opacity={1}></path>
+  </svg>
+)
+
+export const FeedIcon = (
+  <svg xmlns="http://www.w3.org/2000/svg" 
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    className="w-6 h-6"
+   >
+  <circle cx="7.5" cy="7.5" r="2.5"/> 
+  <path d="M22 13H2"/> <path d="M18 6h-5m5 3h-5"/> <path d="M5 2h14a3 3 0 0 1 3 3v17H2V5a3 3 0 0 1 3-3z"/> 
   </svg>
 )
