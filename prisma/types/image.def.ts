@@ -31,7 +31,6 @@ export type ImageStubViewProps = {
 
 export type ImageFeed = Image & {
   creator: UserStub
-  // likes: UserStub[]
   galleryId?: string
   postId?: string
 }
@@ -54,7 +53,7 @@ export type ImageStub = Image & {
   likes: UserStub[]
   gallery: Gallery
   // post: PostStub
-  creator: UserStub[]
+  creator: UserStub
   _count: {
     likes: number
   }
@@ -66,7 +65,7 @@ export type ImageStub = Image & {
 }
 
 export const ImageStubInclude = { include : {
-  creator: UserStubSelect,
+  creator: {select: UserStubSelect},
   gallery: true,
   // post: {include: {
   //     creator: true,

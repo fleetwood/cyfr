@@ -29,7 +29,7 @@ export const CreateCommentFooterButton = ({postId, comments}:{postId: string, co
       className="bg-opacity-0 hover:shadow-none"
       iconClassName="text-primary"
       labelClassName="text-primary"
-      label={`Comment (${comments})`}
+      label={comments.toString()}
       onClick={() => {toggleModal(true)}}
     />
 )

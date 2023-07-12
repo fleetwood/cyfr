@@ -74,17 +74,16 @@ const ImageFooter = ({ image, onUpdate }: ImageFooterProps) => {
 
   return (
     <div className="flex flex-row justify-around py-4">
-    <div>{PhotoIcon}</div>
+      <div>{PhotoIcon}</div>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={HeartIcon}
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Like (${abbrNum(image._count.likes)})`}
+          label={abbrNum(image._count.likes)}
           onClick={() => handleLike()}
         />
-        {/* @ts-ignore */}
         {image.likes && <AvatarList users={image.likes} sz="xs" />}
       </div>
 
@@ -94,7 +93,7 @@ const ImageFooter = ({ image, onUpdate }: ImageFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          // label={`Shares (${abbrNum(post._count.shares)})`}
+          label={abbrNum(0)}
           onClick={() => handleShare()}
         />
         {/* {post.shares &&

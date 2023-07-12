@@ -28,6 +28,7 @@ const FeedHeader = ({ item, isShared }: FeedHeaderProps) => {
   // TODO: get creator for shared items
   const originalAuthor:UserStub = 
     item.post ? item.post.creator :
+    item.image ? item.image.creator :
     item.gallery ? item.gallery.creator : 
     item.creator
   

@@ -1,4 +1,5 @@
-import { ImageStubViewProps } from "../../../prisma/prismaContext"
+import { ImageStubViewProps } from "prisma/prismaContext"
+import ImageFooter from "./ImageFooter"
 
 const ImageStubView = ({ image, className }:ImageStubViewProps) => {
 
@@ -7,23 +8,13 @@ const ImageStubView = ({ image, className }:ImageStubViewProps) => {
       {image && 
       <>
         <img className="rounded-lg drop-shadow-md" src={image.url} />
-
         {image.title &&
           <div className="image-header">
-            <span>{image.title}</span>
+            {image.title}
           </div>
         }
-        <div className="image-footer">
-           {/* @ts-ignore */}
-          {image.likes !== undefined &&
-           // @ts-ignore
-            <span>Likes {image.likes.length || 0}</span>
-          }
-          {/* @ts-ignore */}
-          {image.shares !== undefined &&
-            // @ts-ignore
-            <span>Shares {image.shares.length || 0}</span>
-          }
+        <div className="image-footer w-full">
+          <ImageFooter image={image} />
         </div>
       </>
       }

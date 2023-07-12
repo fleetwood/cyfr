@@ -168,12 +168,16 @@
         @apply bottom-0
     }
 
+    .image-header, .image-footer {
+        @apply text-primary font-sans
+    }
+
     .image-header {
-        @apply absolute w-full -top-20 transition-all duration-200 ease-linear p-4 bg-primary bg-opacity-50 flex justify-around space-x-4 
+        @apply absolute w-full -top-20 transition-all duration-200 ease-linear p-4 bg-white bg-opacity-75 flex justify-around space-x-4 
     }
 
     .image-footer {
-        @apply absolute w-full -bottom-20 transition-all duration-200 ease-linear p-4 bg-primary bg-opacity-50 flex justify-around space-x-4
+        @apply absolute w-full -bottom-20 transition-all duration-200 ease-linear p-4 bg-white bg-opacity-75 flex justify-around space-x-4
     }
 
     .user-mention {

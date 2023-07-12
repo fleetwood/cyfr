@@ -1,11 +1,11 @@
-import { GalleryStub, MainFeed, PostStub } from "../../../prisma/prismaContext"
+import { GalleryStub, MainFeed, PostStub } from "prisma/prismaContext"
 
-import useDebug from "../../../hooks/useDebug"
+import useDebug from "hooks/useDebug"
 import PostFooter from "../Post/PostFooter"
 import GalleryFooter from "../Gallery/GalleryFooter"
 import BookFooter from "../Books/BookFooter"
 import CharacterFooter from "../Characters/CharacterFooter"
-import useFeed, { FeedTypes } from "../../../hooks/useFeed"
+import useFeed, { FeedTypes } from "hooks/useFeed"
 import ImageFooter from "../Image/ImageFooter"
 const { debug } = useDebug("PostItemFooter")
 
@@ -25,8 +25,7 @@ const FeedFooter = ({ item }: FeedFooterProps) => {
     <>
       {
         gallery ? <GalleryFooter gallery={gallery as GalleryStub} onUpdate={onInvalidate} /> :
-        image ? <ImageFooter image={image} onUpdate={onInvalidate} /> :
-        // book ? <BookFooter bookStub={book} onUpdate={onInvalidate} /> :
+        image || book ? <></> :
         // character ? <CharacterFooter character={character} onUpdate={onInvalidate} /> :
         <PostFooter post={(item.post ?? item)} onUpdate={onInvalidate} />
       }
