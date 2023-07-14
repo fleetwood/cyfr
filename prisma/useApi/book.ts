@@ -58,7 +58,7 @@ const detailById = (bookId:string) => useRocketQuery<BookDetail>({
  */
 const detailBySlug = (bookSlug:string) => useRocketQuery<BookDetail>({
     name: [`bookDetail-${bookSlug}`, { type: 'book'}],
-    url: `book/slug/${bookSlug}`
+    url: `book/${bookSlug}`
 })
 
 const follow = async (props:BookFollowProps):Promise<boolean> => await (await sendApi("book/follow", props)).data

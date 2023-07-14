@@ -30,7 +30,7 @@ export type BookUpsertProps = {
   synopsis?:    string
   words?:       number
   categories?:  BookCategory[] | null
-  authors?:      User[]|CyfrUser[]
+  authors:      AuthorStub[]
 }
 
 export type BookCreateProps = {
@@ -192,9 +192,9 @@ export type BookDetail = Book & {
 }
 
 export const BookDetailInclude = { include: {
-  agent:      AgentStubInclude,
-  authors:    AuthorStubInclude,
-  artists:    ArtistStubInclude,
+  agent:      {include: { user: { select: {id: true,name: true,image: true,slug: true}}}},
+  authors:      {include: { user: { select: {id: true,name: true,image: true,slug: true}}}},
+  artists:      {include: { user: { select: {id: true,name: true,image: true,slug: true}}}},
   publisher:  true,
   genre:      true,
   gallery:    true,
@@ -213,7 +213,37 @@ export const BookDetailInclude = { include: {
       thumbnail: true
     }
   },
-  cover: CoverStubInclude,
+  cover: { include: {
+    image: true,
+    creator: {
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        slug: true,
+        membership: true
+      }
+    },
+    artists: {
+      include: {
+        user: {
+          select: {
+            name: true,
+            id: true,
+            slug: true,
+            image: true,
+          },
+        },
+      },
+    },
+    genre: true,
+    _count: {
+      select: {
+        likes: true,
+        shares: true
+      }
+    }
+  }},
   follows: {
     include: {
       follower: {

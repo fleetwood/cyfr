@@ -4,6 +4,7 @@ import { useCyfrUserContext } from "components/context/CyfrUserProvider";
 import MainLayout from "components/layouts/MainLayout";
 import useDebug from "hooks/useDebug";
 import { BookStub, PrismaUser, UserDetail } from "prisma/prismaContext";
+import useApi from "prisma/useApi";
 
 const {debug, jsonBlock} = useDebug('pages/user/[id]/books', 'DEBUG')
 
@@ -28,9 +29,9 @@ type UserBooksPageProps = {
 }
 
 const UserBooksPage = ({ user, books }:UserBooksPageProps) => {  
-  const {cyfrUser} = useCyfrUserContext()
+  const {cyfrUser} = useApi.cyfrUser()
   const title = `Books by ${user ? user.name : 'Somebody'}`
-  const isOwner = user && cyfrUser ? user.id === cyfrUser.id : false
+  const isOwner = user && cyfrUser ? user.id === cyfrUser?.id : false
 
   return user ? (
     <MainLayout pageTitle={title} sectionTitle={title}>

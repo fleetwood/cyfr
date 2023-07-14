@@ -28,7 +28,6 @@ export type BookDetailProps = {
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
   const {cyfrUser} = useApi.cyfrUser()
-  // const bookDetailHook = useBookDetail(props.bookId, cyfrUser)
   const {detailBySlug} = useApi.book()
   const {data: book, error, isLoading, invalidate} = detailBySlug(props.bookSlug)
   
@@ -62,8 +61,8 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
         <Toasts />
         <Section
           className="box-border snap-y min-h-full"
-          sectionTitle={book.title}
-          subTitle={book.authors?.map((a:AuthorStub) => a.user).flatMap((a:UserStub) => a.name).join(' and ')}
+          sectionTitle={book?.title}
+          subTitle={book?.authors?.map((a:AuthorStub) => a.user).flatMap((a:UserStub) => a.name).join(' and ')}
         >
           {error && <ErrorPage />}
           {isLoading && <Spinner />}

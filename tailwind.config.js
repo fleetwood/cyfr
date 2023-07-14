@@ -21,7 +21,7 @@ module.exports = {
     utils: true,
     prefix: "",
     themes: [
-      "light",
+      "emerald",
     ],
   },
   plugins: [

@@ -1,15 +1,17 @@
 import useDebug from "hooks/useDebug"
 import {
-  Book,
+  AuthorStub,
+  BookDetail,
   BookStatus,
   BookUpsertProps,
+  Cover,
   Gallery,
-  Image
+  Image,
+  UserStub
 } from "prisma/prismaContext"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { ItemProps } from "react-photoswipe-gallery"
 import { KeyVal } from "types/props"
-import { getApi } from "utils/api"
 import { uuid } from "utils/helpers"
 
 import { useToast } from "components/context/ToastContextProvider"
@@ -18,13 +20,13 @@ import Dropzone from "components/forms/Dropzone"
 import EZButton from "components/ui/ezButton"
 import Toggler from "components/ui/toggler"
 import Link from "next/link"
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 import useApi from "prisma/useApi"
+import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
 
 const { debug } = useDebug("components/containers/Books/UpsertBook")
 
 type UpsertBookProps = {
-  book?: Book
+  book?: BookDetail
   link?: boolean
   onUpsert?: Function
 }
@@ -42,14 +44,14 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   const [prospect, setProspect] = useState<boolean>(book?.prospect || false)
   const [fiction, setFiction] = useState<boolean>(book?.fiction || true)
   const [status, setStatus] = useState<BookStatus>(book?.status || "DRAFT")
-  // const [cover, setCover] = useState<Cover|null>(book?.cover || null)
+  const [cover, setCover] = useState<Cover|null>(book?.cover || null)
   const [genreId, setGenreId] = useState<string | null>(book?.genreId || null)
   // const [categories, setCategories] = useState<BookCategory[]>(book?.categories || [])
   const [hook, setHook] = useState<string | null>(book?.hook || null)
   const [synopsis, setSynopsis] = useState<string | null>(book?.synopsis || null)
   const [back, setBack] = useState<string | null>(book?.back || null)
   const [words, setWords] = useState<number>(book?.words || 0)
-  // const [authors, setAuthors] = useState<UserStub[]>(book?.authors || [])
+  const [authors, setAuthors] = useState<AuthorStub[]>(book?.authors || [])
   // const [chapters, setChapters] = useState<Chapter[]>(book?.chapters || [])
   // const [characters, setCharacters] = useState<Character[]>(book?.characters || [])
   // const [gallery, setGallery] = useState<GalleryStub | null>(book?.gallery || null)
@@ -76,7 +78,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
       back: back ?? '',
       words,
       // cover,
-      // authors: authors!,
+      authors: authors!,
       //   chapters,
       //   characters,
       //   gallery,
@@ -110,24 +112,6 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   const selectCover = (item: ItemProps) => {
     debug("selectCover", { item })
   }
-
-  useEffect(() => {
-    const getGenres = async () => {
-      const genres = await getApi("/genre/stubs")
-      if (genres && genres.result) {
-        const g = genres.result
-        setGenreList(() => g)
-      }
-    }
-    getGenres()
-    // setAuthors(() => cyfrUser 
-    //   ? [
-    //       ...authors,
-    //       {id: cyfrUser.id, name: cyfrUser.name, image: cyfrUser.image} as UserStub
-    //     ]
-    //   : authors
-    // )
-  }, [])
 
   return (
     <div className="bg-base-100 rounded-lg p-4">

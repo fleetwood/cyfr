@@ -1,6 +1,6 @@
-import useDebug from "../../hooks/useDebug"
-import { GenericResponseError, ResponseError } from "../../types/response"
-import { dedupe, now } from '../../utils/helpers'
+import useDebug from "hooks/useDebug"
+import { GenericResponseError, ResponseError } from "types/response"
+import { dedupe, now } from 'utils/helpers'
 import {
   Book,
   BookDetail,
@@ -18,9 +18,9 @@ import {
   Post,
   PrismaChapter,
   prisma
-} from "../prismaContext"
+} from "prisma/prismaContext"
 
-const { debug, info, fileMethod } = useDebug("entities/prismaBook")
+const { debug, info, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
 
 type BookQueryProps = {
   id?:    string
@@ -35,28 +35,6 @@ const details = async ():Promise<BookDetail[]> => await prisma.book.findMany({..
 const stub = async (props:BookQueryProps):Promise<BookStub> => await prisma.book.findUnique({ where: { ...props }, ...BookStubInclude}) as unknown as BookStub
 
 const stubs = async ():Promise<BookStub[]> => await prisma.book.findMany({...BookStubInclude}) as unknown as BookStub[]
-
-const byUser = async (id: string): Promise<BookDetail[]> => {
-  try {
-    const books = await prisma.$queryRaw`
-      SELECT * FROM v_book_detail
-      WHERE id IN (
-          SELECT "A"
-          FROM _user_books
-          WHERE "B" = ${id}
-      )`
-    if (books) {
-      return books as unknown as BookDetail[]
-    }
-    throw {
-      code: fileMethod("byUser"),
-      message: `Failed to find books for ${id}`,
-    }
-  } catch (error) {
-    info(fileMethod("byUser"), { id, error })
-    return []
-  }
-}
 
 const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
     try {
@@ -421,7 +399,6 @@ export const PrismaBook = {
   , details
   , stub
   , stubs
-  , byUser
   , upsert
   , updateWordCount
   , follow

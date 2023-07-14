@@ -10,7 +10,7 @@ import { UserInfo } from "prisma/types"
 import { ReactNode, useEffect, useState } from "react"
 import useApi from "prisma/useApi"
 
-const {debug} = useDebug('Navbar', 'DEBUG')
+const {debug} = useDebug('Navbar')
 
 type NavbarProps = {
   className?: string
