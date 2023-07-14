@@ -173,11 +173,11 @@
     }
 
     .image-header {
-        @apply absolute w-full -top-20 transition-all duration-200 ease-linear p-4 bg-white bg-opacity-75 flex justify-around space-x-4 
+        @apply absolute w-full -top-32 transition-all duration-150 ease-linear p-4 bg-white bg-opacity-75 flex justify-around space-x-4 
     }
 
     .image-footer {
-        @apply absolute w-full -bottom-20 transition-all duration-200 ease-linear p-4 bg-white bg-opacity-75 flex justify-around space-x-4
+        @apply absolute w-full -bottom-32 transition-all duration-150 ease-linear p-4 bg-white bg-opacity-75 flex justify-around space-x-4
     }
 
     .user-mention {

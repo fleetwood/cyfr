@@ -4,7 +4,7 @@ import ImageFooter from "./ImageFooter"
 const ImageStubView = ({ image, className }:ImageStubViewProps) => {
 
   return(
-  <div className={`relative rounded-lg overflow-clip ${className} image-preview`}>
+  <div className={`relative rounded-lg overflow-hidden ${className} image-preview`}>
       {image && 
       <>
         <img className="rounded-lg drop-shadow-md" src={image.url} />

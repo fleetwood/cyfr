@@ -69,7 +69,7 @@ const ImageFooter = ({ image, onUpdate }: ImageFooterProps) => {
   }
 
   return (
-    <div className="flex flex-row justify-around py-4">
+    <div className="flex flex-row justify-around">
       <div>{PhotoIcon}</div>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton

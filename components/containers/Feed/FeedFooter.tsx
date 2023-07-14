@@ -24,8 +24,7 @@ const FeedFooter = ({ item }: FeedFooterProps) => {
   return (
     <>
       {
-        gallery ? <GalleryFooter gallery={gallery as GalleryStub} onUpdate={onInvalidate} /> :
-        image || book ? <></> :
+        image || book || gallery ? <></> :
         // character ? <CharacterFooter character={character} onUpdate={onInvalidate} /> :
         <PostFooter post={(item.post ?? item)} onUpdate={onInvalidate} />
       }
