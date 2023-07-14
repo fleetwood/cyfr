@@ -4,10 +4,8 @@ import AvatarList from "components/ui/avatarList"
 import { ShareIcon, ReplyIcon, HeartIcon, GalleryIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
-import useFeed from "hooks/useFeed"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
-import useGalleryApi from "prisma/hooks/useGalleryApi"
 import { GalleryDetail, GalleryStub } from "prisma/prismaContext"
+import useApi from "prisma/useApi"
 import { abbrNum } from "utils/helpers"
 
 type GalleryFooterProps = {
@@ -21,8 +19,8 @@ const GalleryFooter = ({
   gallery,
   onUpdate
 }: GalleryFooterProps) => {
-  const {cyfrUser} = useCyfrUserApi()
-  const {feed, like, share} = useGalleryApi()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
+  const {feed, like, share} = useApi.gallery()
   const {invalidate} = feed()
   const { notify, notifyLoginRequired } = useToast()
   const { setPostId, showComment, hideComment } = useCommentContext()

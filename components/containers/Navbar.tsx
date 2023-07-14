@@ -5,10 +5,10 @@ import ShrinkableLink from "components/ui/shrinkableLink"
 import useDebug from "hooks/useDebug"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
-import UserApi from "prisma/hooks/userApi"
+import UserApi from "prisma/useApi/user"
 import { UserInfo } from "prisma/types"
 import { ReactNode, useEffect, useState } from "react"
+import useApi from "prisma/useApi"
 
 const {debug} = useDebug('Navbar', 'DEBUG')
 
@@ -27,7 +27,7 @@ const Navbar = ({
   rightChildren,
   pageScrolled: active,
 }: NavbarProps) => {
-  const {cyfrUser, isLoading} = useCyfrUserApi()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
   const [userInfo, setUserInfo] = useState<UserInfo>()
   const {info} = UserApi()
   const [isPageScrolled, setIsPageScrolled] = useState(false)

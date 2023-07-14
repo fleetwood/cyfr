@@ -15,9 +15,8 @@ import Toggler from "components/ui/toggler"
 import TailwindDatepicker from "components/forms/TailwindDatepicker"
 import BookCover, { BookCoverVariant } from "./BookCover"
 import BookEditCover from "./BookEditCover"
-import useGenreApi from "prisma/hooks/useGenreApi"
 import GenreSelector from "../Genre/GenreSelector"
-import useBookApi from "prisma/hooks/useBookApi"
+import useApi from "prisma/useApi"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -52,8 +51,8 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 
 const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, notifyLoginRequired } = useToast()
-  const {cyfrUser} = useCyfrUserContext()
-  const {share, follow, like, save, updateGenre} = useBookApi()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
+  const {share, follow, like, save, updateGenre} = useApi.book()
   const bookId = bookDetail.id
   const engageProps:BookEngageProps|undefined = bookDetail && cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined

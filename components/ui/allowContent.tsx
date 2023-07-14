@@ -2,7 +2,7 @@ import { useRouter } from "next/router"
 import ErrorPage from "pages/404"
 import { ReactNode } from "react"
 import useDebug from "../../hooks/useDebug"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
+import useApi from "prisma/useApi"
 const {debug} = useDebug('components/ui/allowContent')
 
 type AllowContentProps = {
@@ -12,7 +12,7 @@ type AllowContentProps = {
 }
 
 const AllowContent = ({redirect,required,children}: AllowContentProps) => {
-  const {cyfrUser} = useCyfrUserApi()
+  const {cyfrUser} = useApi.cyfrUser()
   const level = cyfrUser?.membership?.type?.level ?? null
   const allowed = level !== null
 

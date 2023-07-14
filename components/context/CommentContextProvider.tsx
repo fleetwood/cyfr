@@ -2,9 +2,9 @@ import { createContext, FormEvent, ReactNode, useContext, useEffect, useRef, use
 import useFeed from "../../hooks/useFeed"
 import { useToast } from "./ToastContextProvider"
 
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import useDebug from "../../hooks/useDebug"
-import usePostApi from "../../prisma/hooks/usePostApi"
+import usePostApi from "../../prisma/useApi/post"
+import useApi from "prisma/useApi"
 const {debug} = useDebug("CommentContextProvider")
 
 type CommentProviderProps = {
@@ -22,10 +22,9 @@ export const CommentContext = createContext({} as CommentProviderType)
 export const useCommentContext = () => useContext(CommentContext)
 
 const CommentProvider = ({ children }: CommentProviderProps) => {
-  const {cyfrUser} = useCyfrUserApi()
-  const {invalidate} = useFeed('post')
-  const {commentOnPost} = usePostApi()
-  const {notify} = useToast()
+  const {cyfrUser} = useApi.cyfrUser()
+  
+  const {notify, notifyNotImplemented} = useToast()
   
   const commentPostModal = 'commentPostModal'
   const modal = useRef<HTMLInputElement>(null)
@@ -51,20 +50,21 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
       return
     }
 
-    const post = await commentOnPost({
-      content: content!,
-      creatorId: cyfrUser.id,
-      postId: postId!,
-    })
+    notifyNotImplemented()
+    // const post = await commentOnPost({
+    //   content: content!,
+    //   creatorId: cyfrUser.id,
+    //   postId: postId!,
+    // })
 
-    hideComment()
+    // hideComment()
 
-    if (post) {
-      debug(`handleSubmit success`)
-      invalidate()
-    } else {
-      notify(`Hm. That didn't work....`,'warning')
-    }
+    // if (post) {
+    //   debug(`handleSubmit success`)
+    //   invalidate()
+    // } else {
+    //   notify(`Hm. That didn't work....`,'warning')
+    // }
   }
 
   useEffect(() => {

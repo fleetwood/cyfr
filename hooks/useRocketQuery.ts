@@ -26,9 +26,6 @@ export const useRocketQuery = <T>({name, url, body, timeout=30000}:RocketQueryPr
 
   const query = useQuery<T>(queryKey, method,{
       refetchInterval: timeout,
-      onSuccess(data) {
-        debug(`onSuccess(${queryKey})`, data)
-      },
       onSettled(data,error) {
         if (error || data === undefined) {
           debug(`onSettled(${queryKey}) ERROR`,{ error, data })

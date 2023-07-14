@@ -10,7 +10,7 @@ import { KeyVal } from "types/props"
 import { abbrNum, uuid } from "utils/helpers"
 import BookEditHeader from "./BookEditHeader"
 import BookCover, { BookCoverVariant } from "./BookCover"
-import useBookApi from "prisma/hooks/useBookApi"
+import useApi from "prisma/useApi"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailHeader")
 
@@ -45,8 +45,8 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
 
 const BookDetailHeader = ({bookDetail, onUpdate}:BookDetailProps) => {  
   const { notify, notifyLoginRequired } = useToast()
-  const {cyfrUser} = useCyfrUserContext()
-  const {share, follow, like, save} = useBookApi()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
+  const {share, follow, like, save} = useApi.book()
   const bookId = bookDetail.id
   const engageProps:BookEngageProps|undefined = bookDetail && cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined
   const followProps = bookDetail && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined

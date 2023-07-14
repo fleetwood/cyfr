@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { sendApi } from 'utils/api'
 
 import { Dropzone, TailwindInput } from 'components/forms'
-import { useCyfrUserApi } from 'prisma/hooks/useCyfrUserApi'
 import GalleryPhotoswipe from './GalleryPhotoswipe'
+import useApi from 'prisma/useApi'
 
 const {debug} = useDebug('Gallery/GalleryUpsertForm')
 
@@ -20,7 +20,7 @@ export type GalleryNestedProps = {
 }
 
 const GalleryUpsertForm = ({gallery, onUpsert, limit = 5, variant=null, className='', labelClassName='', label='Gallery'}:GalleryNestedProps) => {
-    const {cyfrUser} = useCyfrUserApi()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
     const [images, setImages] = useState<ImageStub[]>(gallery?.images ?? [])
     const [title, setTitle] = useState<string|null>(gallery?.title ?? null)
     const [description, setDescription] = useState<string|null>(null)

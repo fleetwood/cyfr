@@ -29,7 +29,8 @@ const {debug} = useDebug('prisma/api/userApi', 'DEBUG')
   const detail = async (props: UserDetailProps):Promise<UserDetail> => await (await sendApi('user/detail', props)).data as UserDetail
 
   const mentions = async (search:string|undefined):Promise<UserStub[]> => {
-    debug('mentions', search)
+    debug('mentions (Not Implemented)', search)
+    return []
     const list = await (await sendApi(`user/mentions`,{search,all:search===undefined})).data
     if (list) {
       return list as unknown as UserStub[]

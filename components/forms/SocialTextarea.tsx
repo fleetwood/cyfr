@@ -10,8 +10,7 @@ import {
 } from "@remirror/react"
 import useDebug from "hooks/useDebug"
 import dynamic from "next/dynamic"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
-import UserApi from "prisma/hooks/userApi"
+import useApi from "prisma/useApi"
 import {
   Dispatch,
   SetStateAction,
@@ -49,8 +48,8 @@ const SocialTextarea = ({
   maxChar = -1,
   setValid,
 }: SocialTextareaProps) => {
-  const  {cyfrUser } = useCyfrUserApi()
-  const {mentions} = UserApi()
+  const  {cyfrUser } = useApi.cyfrUser()
+  const {mentions} = useApi.user()
   const [mentionList, setMentionList] = useState<MentionItem[]>([])
   const [search, setSearch] = useState<string>()
   const [count, setCount] = useState(-1)

@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { ChapterViews } from "../../../pages/book/[bookSlug]/chapter/[chapterId]";
-import useChapterApi from "../../../prisma/hooks/useChapterApi";
+import useChapterApi from "../../../prisma/useApi/chapter";
 import { ChapterDetail, ChapterStub } from "../../../prisma/prismaContext";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import { ChapterDetailIcon, FeatherIcon, ReadsIcon, StarIcon } from "../../ui/icons";

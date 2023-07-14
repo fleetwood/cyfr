@@ -3,12 +3,12 @@ import { useToast } from 'components/context/ToastContextProvider'
 import OpenModal from 'components/ui/openModal'
 import Spinner from 'components/ui/spinner'
 import useDebug from 'hooks/useDebug'
-import useCoverApi from 'prisma/hooks/useCoverApi'
 import { Genre, Image } from 'prisma/prismaContext'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
 import GenreSelector from '../Genre/GenreSelector'
 import { ItemProps } from 'react-photoswipe-gallery'
+import useApi from 'prisma/useApi'
 const {debug, info} = useDebug("Cover/FindCoverModal")
 
 const findCoverModal = 'FindCoverModal'
@@ -22,8 +22,8 @@ type FindCoverModalType = {
 }
 
 const FindCoverModal = ({genre, onSelect}:FindCoverModalType) => {
-  const [cyfrUser, isLoading, error] = useCyfrUserContext()
-  const {findCover} = useCoverApi()
+  const {cyfrUser, isLoading, error} = useApi.cyfrUser()
+  const {findCover} = useApi.cover()
   const { notify } = useToast()
   const container = useRef<HTMLDivElement>(null)
 

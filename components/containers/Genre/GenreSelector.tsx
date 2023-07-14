@@ -1,6 +1,6 @@
 import { TailwindSelectInput } from 'components/forms'
-import useGenreApi from 'prisma/hooks/useGenreApi'
 import { GenreStub } from 'prisma/prismaContext'
+import useApi from 'prisma/useApi'
 import React, { useEffect, useState } from 'react'
 import { KeyVal } from 'types/props'
 
@@ -17,7 +17,7 @@ const GenreSelector = ({genreTitle, onGenreSelect, label='Genre', showLabel=true
   const [genreList, setGenreList] = useState<KeyVal[]>([])
 
   const getGenres = async () => {
-    const {stubs} = useGenreApi()
+    const {stubs} = useApi.genre()
     const genres = await stubs()
     if (genres) {
       const sortMap = genres.sort((a,b) => a.title > b.title ? 1 : -1).map((g:GenreStub) => { return {value: g.id, key: g.title}})

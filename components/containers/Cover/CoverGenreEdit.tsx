@@ -1,7 +1,7 @@
 import { Dropzone } from 'components/forms'
 import useDebug from 'hooks/useDebug'
-import useGenreApi from 'prisma/hooks/useGenreApi'
 import { CoverStub, GenreStub, Image } from 'prisma/prismaContext'
+import useApi from 'prisma/useApi'
 import { useState } from 'react'
 import { cloudinary } from 'utils/cloudinary'
 import { uniqueKey } from 'utils/helpers'
@@ -19,7 +19,7 @@ type CoverGenreEditType = {
 }
 
 const CoverGenreEdit = ({genre, cardClassName, labelClassName, label, onUpdate}:CoverGenreEditType) => {
-  const {addCover} = useGenreApi()
+  const {addCover} = useApi.genre()
   const [covers, setCovers] = useState<CoverStub[]>()
 
   const addImage = async (files:Image[]) => {

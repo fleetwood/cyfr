@@ -5,14 +5,13 @@ import EZButton from 'components/ui/ezButton'
 import Spinner from 'components/ui/spinner'
 import { LoggedIn } from 'components/ui/toasty'
 import useDebug from 'hooks/useDebug'
-import useBookApi from 'prisma/hooks/useBookApi'
 import { BookDetail, Chapter, ChapterListItem } from 'prisma/prismaContext'
+import useApi from 'prisma/useApi'
 import { FormEvent, useRef, useState } from 'react'
 
 const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", 'DEBUG')
 
 const createChapterModal = 'createChapterModal'
-
 
 type ChapterModalButtonVariant = {
   variant?: 'button'|'plus'
@@ -35,7 +34,7 @@ type CreateChapterModalType = {
 const CreateChapterModal = ({bookDetail, onSave}:CreateChapterModalType) => {
   const [cyfrUser, isLoading, error] = useCyfrUserContext()
   const { notify } = useToast()
-  const {addChapter} = useBookApi()
+  const {addChapter} = useApi.book()
 
   const [valid, setIsValid] = useState<boolean>(false)
   const container = useRef<HTMLDivElement>(null)

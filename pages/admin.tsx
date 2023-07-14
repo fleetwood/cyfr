@@ -6,16 +6,15 @@ import { CyfrLogo } from "../components/ui/icons"
 import useDebug from "../hooks/useDebug"
 import { useSession } from "../hooks/useSession"
 
-import { GenreStub } from "../prisma/prismaContext"
-import { getApi } from "../utils/api"
-import { uniqueKey } from "../utils/helpers"
-import useGenreApi from "prisma/hooks/useGenreApi"
+import { GenreStub } from "prisma/prismaContext"
+import { uniqueKey } from "utils/helpers"
+import useApi from "prisma/useApi"
 
 const { debug, jsonBlock } = useDebug("admin page", 'DEBUG')
 
 const AdminPage = ({}) => {
   useSession({ required: true, redirectTo: "/" })
-  const {stubs} = useGenreApi()
+  const {stubs} = useApi.genre()
   const [genres, setGenres] = useState<Array<GenreStub>>([])
   const [editGenre, setEditGenre] = useState<GenreStub|null>(null)
   

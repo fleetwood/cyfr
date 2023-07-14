@@ -1,11 +1,10 @@
 
-import { useCyfrUserContext } from 'components/context/CyfrUserProvider'
 import { ToastNotifyType, useToast } from 'components/context/ToastContextProvider'
 import { BookIcon, DollarIcon, FireIcon, FollowIcon, HeartIcon, ReplyIcon, ShareIcon, StarIcon } from 'components/ui/icons'
 import ShrinkableIconLabel from 'components/ui/shrinkableIconLabel'
 import Spinner from 'components/ui/spinner'
-import useBookApi from 'prisma/hooks/useBookApi'
 import { BookDetail, BookEngageProps, BookStub, UserFollow } from 'prisma/prismaContext'
+import useApi from 'prisma/useApi'
 import { abbrNum } from 'utils/helpers'
 
 type BookFooterProps = {
@@ -19,8 +18,8 @@ const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
   if (!book) return <Spinner size='sm' />
 
   const { notify, notifyLoginRequired } = useToast()
-  const {cyfrUser} = useCyfrUserContext()
-  const {share, follow, like} = useBookApi()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
+  const {share, follow, like} = useApi.book()
   const bookId = book.id
   const engageProps:BookEngageProps|undefined = cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined
   const followProps = book && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined

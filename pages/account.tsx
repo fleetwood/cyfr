@@ -8,13 +8,13 @@ import MainLayout from "components/layouts/StaticLayout"
 import { TabClassNames } from "components/ui/tabs"
 import useDebug from "hooks/useDebug"
 import { useSession } from "hooks/useSession"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import UserDetailPage from "./user/[slug]"
+import useApi from "prisma/useApi"
 const {debug, info} = useDebug('pages/account')
 
 const Account = () => {
   useSession({required: true, redirectTo: '/login'})
-  const {cyfrUser, isLoading, error, invalidate} = useCyfrUserApi()
+  const {cyfrUser, isLoading, error, invalidate} = useApi.cyfrUser()
   const {notify} = useToast()
   const [activeTab, setActiveTab] = useState('Preferences' )
 

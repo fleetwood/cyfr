@@ -1,6 +1,6 @@
 import useDebug from "../../../hooks/useDebug"
 import { ChapterViews } from '../../../pages/book/[bookSlug]/chapter/[chapterId]'
-import useChapterApi from "../../../prisma/hooks/useChapterApi"
+import useChapterApi from "../../../prisma/useApi/chapter"
 import { ChapterDetail } from "../../../prisma/prismaContext"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"

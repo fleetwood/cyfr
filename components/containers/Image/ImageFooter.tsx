@@ -1,18 +1,14 @@
 
-import useFeed from "hooks/useFeed"
-import { ImageDetail, ImageStub, PostDetail, PostStub, SharedPostStub } from "prisma/prismaContext"
+import { ImageDetail, ImageStub } from "prisma/prismaContext"
 
-import { useCommentContext } from "components/context/CommentContextProvider"
 import { useToast } from "components/context/ToastContextProvider"
 import AvatarList from "components/ui/avatarList"
 import { HeartIcon, PhotoIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
-import usePostApi from "prisma/hooks/usePostApi"
+import useApi from "prisma/useApi"
 import { abbrNum } from "utils/helpers"
 import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
-import useImageApi from "prisma/hooks/useImageApi"
 const { debug } = useDebug("PostItemFooter")
 
 type ImageFooterProps = {
@@ -20,10 +16,10 @@ type ImageFooterProps = {
   onUpdate?:  () => void
 }
 const ImageFooter = ({ image, onUpdate }: ImageFooterProps) => {
-  const {cyfrUser} = useCyfrUserApi()
-  const {invalidate} = useFeed('post')
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
+  const {invalidate} = useApi.post().feed()
   const { notify, notifyLoginRequired } = useToast()
-  const {share, like} = useImageApi()
+  const {share, like} = useApi.image()
 
   const isLoggedIn = () => {
     if (!cyfrUser) {

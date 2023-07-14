@@ -1,4 +1,4 @@
-import UserApi from 'prisma/hooks/userApi'
+import UserApi from 'prisma/useApi/user'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import Footer from '../containers/Footer'
 import LeftColumn from '../containers/LeftColumn'

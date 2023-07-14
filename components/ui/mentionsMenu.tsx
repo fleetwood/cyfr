@@ -5,7 +5,7 @@ import { uniqueKey } from "../../utils/helpers"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
 import Avatar from "./avatar"
 import Spinner from "./spinner"
-import UserApi from "../../prisma/hooks/userApi"
+import UserApi from "../../prisma/useApi/user"
 
 const {debug} = useDebug('components/ui/mentionsMenu')
 

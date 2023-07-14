@@ -10,7 +10,7 @@ import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
 import useDebug from "../../../hooks/useDebug"
-import useChapterApi from "../../../prisma/hooks/useChapterApi"
+import useChapterApi from "../../../prisma/useApi/chapter"
 
 const {debug, jsonBlock} = useDebug('ChapterDetailLayout')
 

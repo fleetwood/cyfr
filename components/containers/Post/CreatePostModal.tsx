@@ -1,14 +1,14 @@
 import { FormEvent, useState } from "react"
-import useDebug from "../../../hooks/useDebug"
-import useFeed from "../../../hooks/useFeed"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { useToast } from "../../context/ToastContextProvider"
-import Dropzone from "../../forms/Dropzone"
-import RemirrorEditor from "../../forms/SocialTextarea"
-import { CyfrLogo } from "../../ui/icons"
-import { LoggedIn } from "../../ui/toasty"
-import { Image } from "./../../../prisma/prismaContext"
-import usePostApi from "../../../prisma/hooks/usePostApi"
+import useDebug from "hooks/useDebug"
+import useFeed from "hooks/useFeed"
+
+import { Image } from "prisma/prismaContext"
+import { CyfrLogo } from "components/ui/icons"
+import { useToast } from "components/context/ToastContextProvider"
+import { Dropzone, SocialTextarea } from "components/forms"
+import { LoggedIn } from "components/ui/toasty"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import useApi from "prisma/useApi"
 
 const {debug} = useDebug("components/containers/Post/CreatePost")
 const createPostModal = 'createPostModal'
@@ -21,12 +21,12 @@ export const CreatePostModalButton = () => (
 )
 
 const CreatePostModal = (): JSX.Element => { 
-  const {cyfrUser} = useCyfrUserContext()
+  const {cyfrUser} = useApi.cyfrUser()
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [valid, setIsValid] = useState<boolean>(false)
   const {invalidate} = useFeed('post')
-  const {createPost } = usePostApi()
+  const {createPost } = useApi.post()
   const [images, setImages] = useState<Image[]>([])
 
   const onFilesComplete = async(files: Image[]) => {
@@ -80,7 +80,7 @@ const CreatePostModal = (): JSX.Element => {
             <div className="w-full mx-auto p-2 sm:p-6 lg:p-4">
               <form className=" flex flex-col" onSubmit={handleSubmit}>
                 <i className="tw twa-black-cat" />
-                <RemirrorEditor
+                <SocialTextarea
                   content={content}
                   setContent={setContent}
                   maxChar={512}

@@ -1,9 +1,9 @@
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import { useRef } from "react"
 import useDebug from "hooks/useDebug"
 
 import GalleryUpsertForm from "./GalleryUpsertForm"
 import OpenModal from "components/ui/openModal"
+import useApi from "prisma/useApi"
 
 const {debug} = useDebug('components/containers/GalleryGalleryCreateView')
 
@@ -37,7 +37,7 @@ const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
     if (onUpsert) onUpsert()
   }
 
-  const {cyfrUser} = useCyfrUserApi()  
+  const {cyfrUser} = useApi.cyfrUser()
 
   return (
     <>

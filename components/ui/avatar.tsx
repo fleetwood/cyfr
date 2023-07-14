@@ -13,7 +13,7 @@ import { cloudinary } from "utils/cloudinary"
 import Spinner from "./spinner"
 import useDebug from "hooks/useDebug"
 import { SizeProps } from "types/props"
-import UserApi from "prisma/hooks/userApi"
+import UserApi from "prisma/useApi/user"
 import { abbrNum } from "utils/helpers"
 import Link from "next/link"
 

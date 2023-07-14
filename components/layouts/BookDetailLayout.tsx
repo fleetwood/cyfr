@@ -1,4 +1,4 @@
-import { BookDetail, GenreStub, UserStub } from "prisma/prismaContext"
+import { AuthorStub, BookDetail, GenreStub, UserStub } from "prisma/prismaContext"
 import { useRef, useState } from "react"
 
 import BookDetailView from "components/containers/Books/BookDetailView"
@@ -12,13 +12,12 @@ import ErrorPage from "pages/404"
 import Navbar from "components/containers/Navbar"
 import Spinner from "components/ui/spinner"
 import useDebug from "hooks/useDebug"
-import useBookApi from "prisma/hooks/useBookApi"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
+import useApi from "prisma/useApi"
 const {debug} = useDebug('components/layouts/BookDetailLayout', 'DEBUG')
 
 export type BookDetailLayoutProps = {
   // bookId?:    string
-  bookSlug?:  string
+  bookSlug:  string
   genres:     GenreStub[]
 }
 
@@ -28,10 +27,10 @@ export type BookDetailProps = {
 }
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
-  const {cyfrUser} = useCyfrUserApi()
+  const {cyfrUser} = useApi.cyfrUser()
   // const bookDetailHook = useBookDetail(props.bookId, cyfrUser)
-  const {query} = useBookApi()
-  const {data: book, isLoading, error, invalidate} = query({bookSlug: props.bookSlug})
+  const {detailBySlug} = useApi.book()
+  const {data: book, error, isLoading, invalidate} = detailBySlug(props.bookSlug)
   
   const [scrollActive, setScrollActive] = useState(false)
   const mainRef = useRef<HTMLElement>(null)
@@ -63,8 +62,8 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
         <Toasts />
         <Section
           className="box-border snap-y min-h-full"
-          sectionTitle={book?.data?.title}
-          subTitle={book?.data?.authors?.flatMap((a:UserStub) => a.name).join(' and ')}
+          sectionTitle={book.title}
+          subTitle={book.authors?.map((a:AuthorStub) => a.user).flatMap((a:UserStub) => a.name).join(' and ')}
         >
           {error && <ErrorPage />}
           {isLoading && <Spinner />}

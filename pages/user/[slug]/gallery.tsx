@@ -9,10 +9,9 @@ import GalleryStubView from "components/containers/Gallery/GalleryStubView"
 import Spinner from "components/ui/spinner"
 import useDebug from "hooks/useDebug"
 import ErrorPage from "pages/404"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
-import useGalleryApi from "prisma/hooks/useGalleryApi"
 import useRocketQuery from "hooks/useRocketQuery"
 import { uniqueKey } from "utils/helpers"
+import useApi from "prisma/useApi"
 
 const {debug, jsonBlock} = useDebug('user/[slug]/gallery','DEBUG')
 
@@ -34,11 +33,8 @@ type UserGalleryPageProps = {
 }
 
 const UserGalleryPage = ({ user, slug }:UserGalleryPageProps) => {
-  const {cyfrUser, isLoading:userLoading, error:userError} = useCyfrUserApi()
-  const {data, isLoading, error, invalidate} = useRocketQuery<GalleryStub[]>({
-    name: [`userGalleries-${slug}`],
-    url: `/user/${slug}/galleries`
-  })
+  const {cyfrUser, isLoading:userLoading, error:userError} = useApi.cyfrUser()
+  const {data, isLoading, error, invalidate} = useApi.gallery().userGalleries(slug)
 
   return (
   <MainLayout sectionTitle="Galleries" subTitle={user?.name || ""}>

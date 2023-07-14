@@ -1,6 +1,6 @@
 import UserDetailView from "components/containers/User/UserDetailView";
 import MainLayout from "components/layouts/MainLayout";
-import userApi from "prisma/hooks/userApi";
+import userApi from "prisma/useApi/user";
 import { UserDetail } from "prisma/prismaContext";
 
 export async function getServerSideProps(context: any) {

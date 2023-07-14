@@ -1,5 +1,5 @@
 import useDebug from "hooks/useDebug"
-import useRocketQuery from "hooks/useRocketQuery"
+import useRocketQuery, { RocketQuery } from "hooks/useRocketQuery"
 import { BookDetail, BookEngageProps, BookFollowProps, BookStub, BookUpsertProps, ChangeCoverProps, ChangeGenreProps, Chapter } from "prisma/prismaContext"
 import { NotImplemented, getApi, sendApi } from "utils/api"
 
@@ -11,10 +11,7 @@ type UseBookQueryProps = {
     bookId?:    string
     bookSlug?:  string
 }
-const query = ({bookId, bookSlug}:UseBookQueryProps) => useRocketQuery<BookDetail>({
-    name: [`bookDetail-${bookId||bookSlug}`, { type: 'book'}],
-    url: bookSlug ? `/book/slug/${bookSlug}` : `/book/${bookId}`
-})
+const query = ({bookId, bookSlug}:UseBookQueryProps) => bookId ? detailById(bookId) : detailBySlug(bookSlug!)
 
 const addChapter = async (
     bookId: string,
@@ -49,14 +46,20 @@ const addGallery = async (bookId: string, galleryId?: string) => {
  * @param {string} bookId 
  * @returns BookDetail
  */
-const detail = async (bookId:string):Promise<BookDetail> => await (await getApi(`book/${bookId}`)).data
+const detailById = (bookId:string) => useRocketQuery<BookDetail>({
+    name: [`bookDetail-${bookId}`, { type: 'book'}],
+    url: `book/${bookId}`
+})
 
 /**
  * Get {@link BookDetail} using the book slug
  * @param {string} bookSlug 
  * @returns BookDetail
  */
-const slugDetail = async (bookSlug:string):Promise<BookDetail> => await (await getApi(`book/slug/${bookSlug}`)).data
+const detailBySlug = (bookSlug:string) => useRocketQuery<BookDetail>({
+    name: [`bookDetail-${bookSlug}`, { type: 'book'}],
+    url: `book/slug/${bookSlug}`
+})
 
 const follow = async (props:BookFollowProps):Promise<boolean> => await (await sendApi("book/follow", props)).data
 
@@ -107,16 +110,11 @@ const changeCover = async (props:ChangeCoverProps): Promise<BookStub> => await (
 const upsert = async (props:BookUpsertProps):Promise<Boolean> => await (await sendApi('book/upsert', {props})).data
 
 type BookApi = {
-    query: ({ bookId, bookSlug }: UseBookQueryProps) => {
-        data: any;
-        isLoading: boolean;
-        error: unknown;
-        invalidate: () => void;
-    }
+    query: ({ bookId, bookSlug }: UseBookQueryProps) => RocketQuery<BookDetail>
     addChapter: (bookId: string, title: string, order: number) => Promise<any>
     addGallery: (bookId: string, galleryId?: string) => Promise<any>
-    detail: (bookId: string) => Promise<BookDetail>
-    slugDetail: (bookSlug: string) => Promise<BookDetail>
+    detailById: (bookId: string) => RocketQuery<BookDetail>
+    detailBySlug: (bookSlug: string) => RocketQuery<BookDetail>
     follow: (props: BookFollowProps) => Promise<boolean>
     like: (props: BookEngageProps) => Promise<boolean>
     save: (detail?: BookDetail) => Promise<boolean>
@@ -133,8 +131,8 @@ type BookApi = {
         query
         , addChapter
         , addGallery
-        , detail
-        , slugDetail
+        , detailById
+        , detailBySlug
         , follow
         , like
         , save

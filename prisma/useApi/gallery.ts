@@ -9,8 +9,8 @@ const {debug} = useDebug('hooks/useGalleryApi')
 const useGalleryApi = () => {
 
   const userGalleries = (slug:string) => useRocketQuery<GalleryStub[]>({
-    name: [`userGalleries-${slug}`, { type: 'gallery'}, { type: 'image'}, { type: 'user'}],
-    url: `/gallery/${slug}`
+    name: [`userGalleries-${slug}`],
+    url: `/user/${slug}/galleries`
   })
 
   const feed = () => useRocketQuery({

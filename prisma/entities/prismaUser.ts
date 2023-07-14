@@ -1,32 +1,27 @@
+import dayjs from "dayjs"
+import useDebug from "hooks/useDebug"
 import { NextApiRequest } from "next"
 import { getSession, GetSessionParams } from "next-auth/react"
-import useDebug from "hooks/useDebug"
-import {
-  GenericResponseError,
-  ResponseError
-} from "types/response"
 import {
   AudienceLevels,
   audienceToLevel,
   BookStubInclude,
-  CommentThreadStubInclude,
-  CreatorStubInclude,
   CyfrUser,
   CyfrUserInclude,
   Follow,
   GalleryStub,
-  GalleryStubInclude,
-  Membership,
-  MembershipType,
-  prisma, User, UserDetail, UserDetailInclude, UserFeed,
+  MembershipStub,
+  prisma, User, UserDetail,
   UserFollowProps,
   UserInfo,
   UserInfoInclude,
   UserStub
 } from "prisma/prismaContext"
-import dayjs from "dayjs"
-import { cadenceInterval } from "prisma/hooks/useCyfrUserApi"
-import { MembershipStub } from "prisma/types/membership.def"
+import { cadenceInterval } from "prisma/useApi/cyfrUser"
+import {
+  GenericResponseError,
+  ResponseError
+} from "types/response"
 const { fileMethod, debug, info, err } = useDebug("entities/prismaUser", 'DEBUG')
 
 type AllPostQueryParams = {

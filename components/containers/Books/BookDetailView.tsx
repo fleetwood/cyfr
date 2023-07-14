@@ -10,11 +10,10 @@ import { PhotoIcon } from "components/ui/icons"
 import useDebug from "hooks/useDebug"
 import router from "next/router"
 import ErrorPage from "pages/404"
-import useBookApi from "prisma/hooks/useBookApi"
 import { BookDetail, ChapterListItem } from "prisma/prismaContext"
 import { useState } from "react"
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
+import useApi from "prisma/useApi"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailComponent","DEBUG")
 
@@ -24,10 +23,10 @@ export type BookViewProps = {
 }
 
 const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
-  const {save} = useBookApi()
+  const {save} = useApi.book()
 
   const { notify } = useToast()
-  const {cyfrUser} = useCyfrUserApi()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
 
   const [back, setBack] = useState<string|null|undefined>(bookDetail.back)
   const [synopsis, setSynopsis] = useState<string|null|undefined>(bookDetail.synopsis)

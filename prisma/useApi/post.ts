@@ -5,9 +5,14 @@ import { PostCommentProps, PostCreateProps, PostDetail, PostEngageProps } from "
 
 const {debug} = useDebug('hooks/usePostApi')
 
-  const query = (postId:string) => useRocketQuery<PostDetail>({
+  const detail = (postId:string) => useRocketQuery<PostDetail>({
     name: [`postDetail-${postId}`, { type: 'post'}],
     url: `/post/${postId}`
+  })
+
+  const feed = () => useRocketQuery<PostDetail>({
+    name: [`feed`, { type: 'post'}],
+    url: `/post/stubs`
   })
 
   const share = async (props: PostEngageProps):Promise<boolean> =>  await (await sendApi("post/share", props)).data
@@ -22,7 +27,8 @@ const {debug} = useDebug('hooks/usePostApi')
 
 const usePostApi = () => {
   return {
-    query,
+    detail,
+    feed,
     share,
     like,
     createPost,

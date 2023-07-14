@@ -3,7 +3,6 @@ import { useToast } from 'components/context/ToastContextProvider'
 import Section from 'components/ui/section'
 import Toasts from 'components/ui/toasts'
 import { useSession } from 'hooks/useSession'
-import { useCyfrUserApi } from 'prisma/hooks/useCyfrUserApi'
 import React, { useRef, useState } from 'react'
 
 import Box from '@mui/material/Box'
@@ -17,12 +16,13 @@ import UserBillingDetail from 'components/containers/User/UserBillingDetail'
 import { UserNameAndAvatar } from 'components/containers/User/UserNameAndAvatar'
 import EZButton from 'components/ui/ezButton'
 import ShrinkableLink from 'components/ui/shrinkableLink'
+import useApi from 'prisma/useApi'
 
 const {debug} = useDebug('user/setup')
 
 const SetupPage = () => {
   useSession({ required: true, redirectTo: '/login' })
-  const {cyfrUser, isLoading, error, invalidate, updateUser} = useCyfrUserApi()
+  const {cyfrUser, isLoading, error, invalidate, updateUser} = useApi.cyfrUser()
   const {notify} = useToast()
 
   const mainRef = useRef<HTMLElement>(null)

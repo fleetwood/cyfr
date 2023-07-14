@@ -1,7 +1,8 @@
 import { useToast } from 'components/context/ToastContextProvider'
 import { CheckBadge } from 'components/ui/icons'
 import useDebug from 'hooks/useDebug'
-import { cadenceInterval, useCyfrUserApi } from 'prisma/hooks/useCyfrUserApi'
+import useApi from 'prisma/useApi'
+import { cadenceInterval } from 'prisma/useApi/cyfrUser'
 import { useState } from 'react'
 import { uniqueKey } from 'utils/helpers'
 
@@ -88,7 +89,7 @@ const plans: PlanType[] = [
 ]
 
 const UserBillingDetail = () => {
-  const { cyfrUser, isLoading, error, invalidate, updateUser, setMembership } = useCyfrUserApi()
+  const { cyfrUser, isLoading, error, invalidate, updateUser, setMembership } = useApi.cyfrUser()
   const {notify} = useToast()
   const [plan, setPlan] = useState<PlanType>(plans.find((p) => p.id === cyfrUser?.membership?.typeId) ?? plans[0])
 

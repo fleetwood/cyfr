@@ -3,7 +3,7 @@ import { useToast } from "components/context/ToastContextProvider"
 import { FireIcon, HeartIcon } from "components/ui/icons"
 import JsonBlock from "components/ui/jsonBlock"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
-import userApi from "prisma/hooks/userApi"
+import userApi from "prisma/useApi/user"
 import { BookStub, GalleryStub, PostStub } from "prisma/prismaContext"
 import { useState } from "react"
 import { uniqueKey } from 'utils/helpers'

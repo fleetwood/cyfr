@@ -12,7 +12,6 @@ import { KeyVal } from "types/props"
 import { getApi } from "utils/api"
 import { uuid } from "utils/helpers"
 
-import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { useToast } from "components/context/ToastContextProvider"
 import { AutoInput, TailwindInput, TailwindTextarea } from "components/forms"
 import Dropzone from "components/forms/Dropzone"
@@ -20,7 +19,7 @@ import EZButton from "components/ui/ezButton"
 import Toggler from "components/ui/toggler"
 import Link from "next/link"
 import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
-import useBookApi from "prisma/hooks/useBookApi"
+import useApi from "prisma/useApi"
 
 const { debug } = useDebug("components/containers/Books/UpsertBook")
 
@@ -31,9 +30,9 @@ type UpsertBookProps = {
 }
 
 const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
-  const {cyfrUser} = useCyfrUserContext()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
   const { notify } = useToast()
-  const {upsert} = useBookApi()
+  const {upsert} = useApi.book()
 
   const [genreList, setGenreList] = useState<any[]>([])
   const [coverGallery, setCoverGallery] = useState<Gallery | null>()

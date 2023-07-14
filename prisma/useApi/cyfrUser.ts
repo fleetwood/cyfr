@@ -21,7 +21,7 @@ type CyfrUserApi = {
     error:      boolean
 }
 
-export const useCyfrUserApi = ():CyfrUserApi => {
+const useCyfrUserApi = ():CyfrUserApi => {
     const {data:cyfrUser, isLoading, error, invalidate} = useCyfrUserContext()
     
     /**
@@ -58,3 +58,4 @@ export const useCyfrUserApi = ():CyfrUserApi => {
     return { invalidate, updateUser, cyfrUser, isLoading, error, setMembership }
   }
   
+  export default useCyfrUserApi

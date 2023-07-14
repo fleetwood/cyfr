@@ -3,16 +3,15 @@ import { Dropzone, TailwindInput } from 'components/forms'
 import { SaveIcon } from 'components/ui/icons'
 import Spinner from 'components/ui/spinner'
 import useDebug from 'hooks/useDebug'
-import { useCyfrUserApi } from 'prisma/hooks/useCyfrUserApi'
 import { CyfrUser, Image } from 'prisma/prismaContext'
 import React, { useEffect, useState } from 'react'
 import { cloudinary } from 'utils/cloudinary'
+import useApi from 'prisma/useApi'
 
 const { debug } = useDebug('containers/User/UserNameAndAvatar')
 
 export const UserNameAndAvatar = () => {
-  const { cyfrUser, isLoading, error, invalidate, updateUser } =
-    useCyfrUserApi()
+  const { cyfrUser, isLoading, error, invalidate, updateUser } = useApi.cyfrUser()
   const { notify } = useToast()
   const [cyfrName, setCyfrName] = useState<string | null>(cyfrUser?.name)
 

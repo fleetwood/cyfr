@@ -8,10 +8,9 @@ import AvatarList from "components/ui/avatarList"
 import { FeedIcon, HeartIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
-import usePostApi from "prisma/hooks/usePostApi"
 import { abbrNum } from "utils/helpers"
 import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
+import useApi from "prisma/useApi"
 const { debug } = useDebug("PostItemFooter")
 
 type PostFooterProps = {
@@ -19,12 +18,12 @@ type PostFooterProps = {
   onUpdate?:  () => void
 }
 const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
-  const {cyfrUser} = useCyfrUserApi()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
   const comments:PostStub[] = []
   const {invalidate} = useFeed('post')
   const { notify, notifyLoginRequired } = useToast()
   const { setPostId, showComment, hideComment } = useCommentContext()
-  const {share, like} = usePostApi()
+  const {share, like} = useApi.post()
 
   const isLoggedIn = () => {
     if (!cyfrUser) {

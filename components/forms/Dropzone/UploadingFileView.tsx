@@ -6,12 +6,12 @@ import useDebug from "hooks/useDebug"
 import { sendApi } from "utils/api"
 import { ImageUpsertProps, Image } from "prisma/prismaContext"
 import Link from "next/link"
-import { useCyfrUserApi } from "prisma/hooks/useCyfrUserApi"
 import Spinner from "components/ui/spinner"
+import useApi from "prisma/useApi"
 const {debug} = useDebug("forms/Dropzone/UploadingFileView")
 
 const UploadFileView = ({file, showUploadProgress = true, onUploadComplete, onUploadChange}: UploadFileViewProps) => {
-  const {cyfrUser, isLoading} = useCyfrUserApi()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
   const [fileProgress, setFileProgress] = useState<number>(0)
   const [fileErrors, setFileErrors] = useState<FileError[]>([])
   const [image, setImage] = useState<Image | null>(null)
