@@ -26,7 +26,7 @@ type GalleryDetailPageProps = {
 const GalleryDetailPage = () => {
   const router = useRouter()
   const { id } = router?.query
-  const {data: gallery, isLoading, error} = useRocketQuery({name: `gallery-${id}`, url: `gallery/${id}`})
+  const {data: gallery, isLoading, error} = useRocketQuery<GalleryDetail>({name: `gallery-${id}`, url: `gallery/${id}`})
   const creatorName = gallery?.creator?.name ? `by ${gallery?.creator?.name}` :``
 
   return (

@@ -7,11 +7,12 @@ import useDebug from "hooks/useDebug"
 import useFeed from "hooks/useFeed"
 import { uniqueKey } from "utils/helpers"
 import ErrorPage from "./404"
+import { PostStub } from "prisma/prismaContext"
 
 const {debug, jsonBlock} = useDebug('pages/index', 'DEBUG')
 
 const HomePage = () => {
-  const {data, isLoading, error} = useFeed('post')
+  const {data, isLoading, error} = useFeed<PostStub[]>('post')
 
   const CyfrHome = 
     <div className="flex">

@@ -14,7 +14,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
   const {query, followUser } = userApi()
 
   const {data: currentUser, isLoading, error, invalidate} = query({slug})
-  const {followers, follows } = currentUser??{followers:[], follows:[]}
+  // const {followers, follows } = currentUser
   
   const { notify, notifyNotImplemented } = useToast()
   const [activeTab, setActiveTab] = useState("Posts")
@@ -182,7 +182,6 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
             {/* {followers.map((follow:UserFollow) => (
               <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
             ))} */}
-            <JsonBlock data={followers} />
           </div>
         </div>
         <div className="col-span-1">
@@ -191,7 +190,6 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
             {/* {follows.map((follow:UserFollow) => (
               <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
             ))} */}
-            <JsonBlock data={follows} />
           </div>
         </div>
       </div>

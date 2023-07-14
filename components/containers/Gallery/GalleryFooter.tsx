@@ -22,7 +22,8 @@ const GalleryFooter = ({
   onUpdate
 }: GalleryFooterProps) => {
   const {cyfrUser} = useCyfrUserApi()
-  const {invalidate, like, share} = useGalleryApi()
+  const {feed, like, share} = useGalleryApi()
+  const {invalidate} = feed()
   const { notify, notifyLoginRequired } = useToast()
   const { setPostId, showComment, hideComment } = useCommentContext()
 

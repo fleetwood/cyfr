@@ -1,13 +1,14 @@
-import Link from "next/link";
-import { GalleryStub } from "../../../prisma/prismaContext";
-import GalleryFooter from "./GalleryFooter";
-import GalleryPhotoswipe from "./GalleryPhotoswipe";
+import Link from "next/link"
+import { GalleryStub } from "prisma/prismaContext"
+import GalleryFooter from "./GalleryFooter"
+import GalleryPhotoswipe from "./GalleryPhotoswipe"
 
 type GalleryStubViewProps = {
-  gallery: GalleryStub
-};
+  gallery:      GalleryStub
+  showFooter?:  boolean
+}
 
-const GalleryStubView = ({gallery}: GalleryStubViewProps) => {
+const GalleryStubView = ({gallery, showFooter=true}: GalleryStubViewProps) => {
   
   return (
     <div className="rounded-lg bg-base-300 text-base-content my-4">
@@ -24,7 +25,8 @@ const GalleryStubView = ({gallery}: GalleryStubViewProps) => {
       <div className="min-w-full p-4 space-x-2">
         <GalleryPhotoswipe gallery={gallery} />
       </div>
+      {showFooter && <GalleryFooter gallery={gallery}/>}
     </div>
 )}
 
-export default GalleryStubView;
+export default GalleryStubView

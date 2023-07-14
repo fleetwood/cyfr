@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import CommentThreadDetail from "components/containers/Comment/CommentThreadDetail"
 import InboxThreadList from "components/containers/Comment/InboxThreadList"
 import SendMessageDetail from "components/containers/Comment/SendMessageDetail"
@@ -7,15 +6,16 @@ import MainLayout from "components/layouts/MainLayout"
 import { CyfrLogo } from "components/ui/icons"
 import useDebug from "hooks/useDebug"
 import useFeed from "hooks/useFeed"
-import { CommentThreadDetails } from "prisma/prismaContext"
 import { useSession } from "hooks/useSession"
+import { CommentThreadDetails } from "prisma/prismaContext"
+import { useEffect, useState } from "react"
 
 const {debug, info} = useDebug('pages/user/inbox')
 
 const Inbox = ({}) => {
     useSession({required: true, redirectTo: '/login'})
     const {cyfrUser} = useCyfrUserContext()
-    const {data, invalidate} = useFeed('inbox')
+    const {data, invalidate} = useFeed<CommentThreadDetails[]>('inbox')
     const [party, setParty] = useState<string|null>(null)
     const [activeThread, setActiveThread] = useState<CommentThreadDetails|null>(null)
     const [showModal, setShowModal] = useState(false)

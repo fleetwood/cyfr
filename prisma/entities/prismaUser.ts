@@ -9,9 +9,13 @@ import {
   AudienceLevels,
   audienceToLevel,
   BookStubInclude,
+  CommentThreadStubInclude,
+  CreatorStubInclude,
   CyfrUser,
   CyfrUserInclude,
   Follow,
+  GalleryStub,
+  GalleryStubInclude,
   Membership,
   MembershipType,
   prisma, User, UserDetail, UserDetailInclude, UserFeed,
@@ -234,6 +238,48 @@ const books = async (props:UserDetailProps): Promise<any> => {
   return books
 }
 
+const galleries = async (props:UserDetailProps): Promise<GalleryStub[]> => {
+  const {id, name, email, slug} = props
+  const user = 
+      name ? { name: name}
+      : email ? { email: email}
+      : slug ? { slug : slug.toLowerCase() }
+      : { id : id}
+  debug('galleries', {props, user})
+  const result = await prisma.gallery.findMany({
+    where: { 
+      creator: {
+        ...user
+      }
+    },
+    include: {
+      creator: {
+        select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true
+        }
+      },
+      images: {
+        include: {
+        _count: {
+          select: {
+            likes: true
+          }
+        }}
+      },
+      _count: {
+        select: {
+          likes: true,
+          shares: true
+        }
+      }
+    }
+  }) as GalleryStub[]
+  return result
+}
+
 const cyfrUser = async (email:string): Promise<CyfrUser> => await prisma.user.findUnique({where: { email },include: CyfrUserInclude}) as unknown as CyfrUser
 
 type MentionSearchProps = {
@@ -391,6 +437,7 @@ export const PrismaUser = {
   canAccess,
   cyfrUser,
   detail,
+  galleries,
   userInfo,
   userInSessionContext,
   userInSessionReq,

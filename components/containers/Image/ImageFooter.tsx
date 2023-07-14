@@ -81,7 +81,7 @@ const ImageFooter = ({ image, onUpdate }: ImageFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={abbrNum(image._count.likes)}
+          label={abbrNum(image._count?.likes??0)}
           onClick={() => handleLike()}
         />
         {image.likes && <AvatarList users={image.likes} sz="xs" />}

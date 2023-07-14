@@ -11,13 +11,13 @@ const {debug, info} = useDebug('useFeed')
 
 export type FeedTypes = 'post'|'gallery'|'inbox'|'image'
 
-export const useFeed = (type:FeedTypes) => {
+export const useFeed = <T>(type:FeedTypes) => {
   const name = ['feed', type.toString()]
-  return  type === 'gallery' ? useRocketQuery<GalleryStub[]>({name, url: 'gallery/feed', body: {take:0, skip: 0}}) :
-          type === 'inbox' ? useRocketQuery<CommentThread>({name, url: 'user/inbox'}) :
-          type === 'image' ? useRocketQuery<ImageStub[]>({name, url: 'image/feed', body: {take:0, skip: 0}}) :
+  return  type === 'gallery' ? useRocketQuery<T>({name, url: 'gallery/feed', body: {take:0, skip: 0}}) :
+          type === 'inbox' ? useRocketQuery<T>({name, url: 'user/inbox'}) :
+          type === 'image' ? useRocketQuery<T>({name, url: 'image/feed', body: {take:0, skip: 0}}) :
           // default to post
-          useRocketQuery<PostStub[]>({name, url: 'post/feed', body: {take:0, skip: 0}})
+          useRocketQuery<T>({name, url: 'post/feed', body: {take:0, skip: 0}})
 }
 
 export default useFeed

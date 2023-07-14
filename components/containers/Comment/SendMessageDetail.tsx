@@ -1,15 +1,14 @@
-import { useState } from "react";
-import { CommentThreadDetails, CyfrUser, UpsertInboxProps, User } from "../../../prisma/prismaContext";
-import { uniqueKey, timeDifference } from "../../../utils/helpers";
-import TailwindInput from "../../forms/TailwindInput";
-import Avatar from "../../ui/avatar";
-import { ChatSendIcon } from "../../ui/icons";
-import RemirrorEditor from "../../forms/SocialTextarea";
-import ReactHtmlParser from "react-html-parser"
-import MentionsMenu from "../../ui/mentionsMenu";
-import useDebug from "../../../hooks/useDebug";
-import useFeed from "../../../hooks/useFeed";
-import { useToast } from "../../context/ToastContextProvider";
+import { useToast } from "components/context/ToastContextProvider"
+import { ChatSendIcon } from "components/ui/icons"
+import MentionsMenu from "components/ui/mentionsMenu"
+import useDebug from "hooks/useDebug"
+import useFeed from "hooks/useFeed"
+import { SocialTextarea } from "components/forms"
+import { CommentThreadDetails, CyfrUser, UpsertInboxProps, User } from "prisma/prismaContext"
+import { useState } from "react"
+import { uniqueKey, timeDifference } from "utils/helpers"
+import HtmlContent from "components/ui/htmlContent"
+import Avatar from "components/ui/avatar"
 
 const {debug} = useDebug('components/containers/SendMessageDetail')
 
@@ -82,13 +81,13 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
                   comment.creatorId === cyfrUser.id ? "bg-base-200" : "bg-base-300"
                 }`}
             >
-              {ReactHtmlParser(comment.content!)}
+              <HtmlContent content={comment.content} />
             </div>
           </div>
         ))}
       </div>
       <div className="pb-12">
-        <RemirrorEditor
+        <SocialTextarea
           content={message}
           setContent={setMessage}
           setValid={setValid}

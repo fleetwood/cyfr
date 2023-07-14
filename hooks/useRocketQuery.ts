@@ -11,14 +11,24 @@ export type RocketQueryProps = {
   timeout?: number
 }
 
-export const useRocketQuery = <T>({name, url, body, timeout=30000}:RocketQueryProps) => {
+export type RocketQuery<T> = {
+    data:       T
+    isLoading:  boolean
+    error:      any
+    invalidate: () => void
+}
+
+export const useRocketQuery = <T>({name, url, body, timeout=30000}:RocketQueryProps):RocketQuery<T> => {
   const qc = useQueryClient()
   const queryKey = Array.isArray(name) ? [...name] : [name]
-  const method = async () => body !== undefined ? (await sendApi(url, body)).data : await getApi(url)
+  const method = async () => body !== undefined ? (await sendApi(url, body)).data as T : await getApi(url) as T
+  debug('useRocketQuery', {name, url})
 
-  const query = useQuery(queryKey, method,
-    {
+  const query = useQuery<T>(queryKey, method,{
       refetchInterval: timeout,
+      onSuccess(data) {
+        debug(`onSuccess(${queryKey})`, data)
+      },
       onSettled(data,error) {
         if (error || data === undefined) {
           debug(`onSettled(${queryKey}) ERROR`,{ error, data })
@@ -37,7 +47,7 @@ export const useRocketQuery = <T>({name, url, body, timeout=30000}:RocketQueryPr
     qc.invalidateQueries(queryKey)
   }
   
-  return { ...query, invalidate }
+  return { ...query, invalidate } as RocketQuery<T>
 }
 
 export default useRocketQuery
