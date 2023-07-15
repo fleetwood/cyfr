@@ -1,5 +1,8 @@
-import { Grid } from '@mui/material'
+import { Dialog, DialogContent, DialogContentText, Grid, Slide } from '@mui/material'
+import { TransitionProps } from '@mui/material/transitions'
+import Semibold from 'components/ui/semibold'
 import React, { ReactNode, useEffect, useState } from 'react'
+
 
 type GridItemProps = {
     level: string
@@ -52,21 +55,21 @@ const BookPermissions = ({level, children}:GridItemProps) => {
     }, [canRead])
 
   return <>
-        <div className='text-primary font-bold my-4'>{level}</div>
-        {children && <div className='text-sm -mt-4 mb-4'>{children}</div>}
-        <div className='px-4'>
-            <Grid container spacing={2}>
-                <Grid xs={1} display="flex" justifyContent="center" alignItems="center" className={`cursor-pointer ${itemBG(all)}`} onClick={toggleAll} >
-                    <span>Toggle All</span>
-                </Grid>
-                
-                <GridItem label='Read' val={canRead} setVal={setCanRead} />
-                <GridItem label='Share' val={canShare} setVal={setCanShare} />
-                <GridItem label='Comment' val={canComment} setVal={setCanComment} />
-                <GridItem label='Feedback' val={canFeedback} setVal={setCanFeedback} />
-
+    <div className='text-primary font-bold my-4'>{level}</div>
+    {children && <div className='text-sm -mt-4 mb-4'>{children}</div>}
+    <div className='px-4'>
+        <Grid container spacing={2}>
+            <Grid xs={1} display="flex" justifyContent="center" alignItems="center" className={`cursor-pointer ${itemBG(all)}`} onClick={toggleAll} >
+                <span>Toggle All</span>
             </Grid>
-        </div>
+            
+            <GridItem label='Read' val={canRead} setVal={setCanRead} />
+            <GridItem label='Share' val={canShare} setVal={setCanShare} />
+            <GridItem label='Comment' val={canComment} setVal={setCanComment} />
+            <GridItem label='Feedback' val={canFeedback} setVal={setCanFeedback} />
+
+        </Grid>
+    </div> 
   </>
 }
 
