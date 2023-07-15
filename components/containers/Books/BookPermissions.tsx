@@ -6,7 +6,7 @@ type GridItemProps = {
     children?:ReactNode
 }
 
-const UserPermissionsGridItem = ({level, children}:GridItemProps) => {
+const BookPermissions = ({level, children}:GridItemProps) => {
     const [canRead, setCanRead] = useState(false)
     const [canComment, setCanComment] = useState(false)
     const [canFeedback, setCanFeedback] = useState(false)
@@ -38,8 +38,8 @@ const UserPermissionsGridItem = ({level, children}:GridItemProps) => {
 
     const GridItem = ({label, val, setVal}:{label:string, val:boolean, setVal: React.Dispatch<React.SetStateAction<boolean>>}) => (
         <Grid sm className={`cursor-pointer ${itemBG(val)}`} onClick={() => setItem(val, setVal)}>
-            <div className={`text-center p-2 items-center`}>{label}</div>
-            <div className={`text-center p-2 items-center`}><input type='checkbox' checked={val} className={checkedBG(val)} /></div>
+            <div className={`text-center p-1 items-center`}>{label}</div>
+            <div className={`text-center p-1 items-center`}><input type='checkbox' checked={val} className={checkedBG(val)} /></div>
         </Grid>
     )
 
@@ -70,4 +70,4 @@ const UserPermissionsGridItem = ({level, children}:GridItemProps) => {
   </>
 }
 
-export default UserPermissionsGridItem
+export default BookPermissions
