@@ -96,22 +96,22 @@ const SetupPage = () => {
                             </Box>
                         </div>
                         <div className={showStep(2)}>
-                        <p className="text-base leading-4 text-base-content text-opacity-70">
-                            That's everything!</p>
-                        <h1 role="heading" className="md:text-5xl text-3xl font-bold leading-10 mt-3 text-base-content">
-                            Welcome to Cyfr!</h1>
-                        <p role="contentinfo" className="text-base leading-5 mt-5 text-base-content text-opacity-70">
-                            We hope you will find your time with us productive, educational and fun! For real. <br/>
-                            <strong>Where to?</strong></p>
-                            {cyfrUser &&
-                            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                                <ShrinkableLink label='Look at Posts!' className='bg-secondary px-4' href='/' />
-                                <Box sx={{ flex: '1 1 auto' }} />
-                                <ShrinkableLink label='Create a Gallery!' className='bg-secondary px-4' href={`/user/${cyfrUser.slug}/gallery`} />
-                                <Box sx={{ flex: '1 1 auto' }} />
-                                <ShrinkableLink label='Start a Book!' className='bg-secondary px-4' href={`/user/${cyfrUser.slug}/books`} />
-                            </Box>
-                            }
+                          <p className="text-base leading-4 text-base-content text-opacity-70">
+                              That's everything!</p>
+                          <h1 role="heading" className="md:text-5xl text-3xl font-bold leading-10 mt-3 text-base-content">
+                              Welcome to Cyfr!</h1>
+                          <p role="contentinfo" className="text-base leading-5 mt-5 text-base-content text-opacity-70">
+                              We hope you will find your time with us productive, educational and fun! For real. <br/>
+                              <strong>Where to?</strong></p>
+                          {cyfrUser &&
+                          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                              <ShrinkableLink label='Look at Posts!' className='bg-secondary px-4' href='/' />
+                              <Box sx={{ flex: '1 1 auto' }} />
+                              <ShrinkableLink label='Create a Gallery!' className='bg-secondary px-4' href={`/user/${cyfrUser.slug}/gallery`} />
+                              <Box sx={{ flex: '1 1 auto' }} />
+                              <ShrinkableLink label='Start a Book!' className='bg-secondary px-4' href={`/user/${cyfrUser.slug}/books`} />
+                          </Box>
+                          }
                         </div>
 
                         <div>

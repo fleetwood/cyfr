@@ -1,5 +1,5 @@
 import React from "react"
-import { TailwindFormProps } from "../../types/props"
+import { TailwindFormProps } from "types/props"
 
 type twInputProps = TailwindFormProps & {
   type: "text" | "email" | "date" | "checkbox"

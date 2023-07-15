@@ -8,12 +8,24 @@ type GenreSelectorProps = {
     label?:         string
     showLabel?:     boolean
     genreTitle?:    string
+    className?:     string
     allowAll?:      boolean
+    required?:      boolean
     sendTitle?:     boolean
     onGenreSelect?: (value:string) => void
 }
 
-const GenreSelector = ({genreTitle, onGenreSelect, label='Genre', showLabel=true, allowAll=false, sendTitle=false}:GenreSelectorProps) => {
+const GenreSelector = ({
+  genreTitle, 
+  onGenreSelect, 
+  label='Genre', 
+  showLabel=true, 
+  allowAll=false, 
+  sendTitle=false, 
+  className='', 
+  required=false
+}:GenreSelectorProps) => {
+
   const [genreList, setGenreList] = useState<KeyVal[]>([])
 
   const getGenres = async () => {
@@ -35,9 +47,9 @@ const GenreSelector = ({genreTitle, onGenreSelect, label='Genre', showLabel=true
   }, [])
   
   return (
-    <div>
+    <div className={className}>
         {showLabel &&
-        <label className="font-semibold w-[50%]">{label}</label>
+          <label className="font-semibold w-[50%]">{label}{required && <>*</>}</label>
         }
         <TailwindSelectInput
             value={genreTitle}

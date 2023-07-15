@@ -6,7 +6,7 @@ const {debug} = useDebug('hooks/useGenreApi', 'DEBUG')
 
 const useGenreApi = () => {
 
-  const stubs = async ():Promise<GenreStub[]> => (await getApi('genre/stubs')).result as GenreStub[]
+  const stubs = async ():Promise<GenreStub[]> => await(await getApi('genre/stubs')) as GenreStub[]
   const addCover = async (props: GenreAddCoverProps):Promise<GenreStub> => await (await sendApi("genre/addCover", props)).data
 
   return {
