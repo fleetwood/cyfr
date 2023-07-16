@@ -25,16 +25,7 @@ export type CyfrUser = User & {
   membership?:  Membership & {
     type:   MembershipType
   }
-  books:        Book & {
-    authors: User[]
-    chapters: {
-      id:     string
-      title:  string
-      order:  number
-      active: boolean
-      words:  number
-    }
-  }[]
+  books:        BookStub[]
   galleries: {
         id: string
         createdAt: string
