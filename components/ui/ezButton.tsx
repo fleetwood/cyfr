@@ -1,9 +1,10 @@
 import { MouseEventHandler, ReactNode } from "react"
+import { VariantProps } from "types/props"
 
-export type EZButtonVariant = "base" | "primary" | "secondary" | "accent" | "success" | "info" | "warning" | undefined
+
 
 type EzButtonProps = {
-    variant?: EZButtonVariant
+    variant?: VariantProps
     label: ReactNode
     onClick?: MouseEventHandler<HTMLButtonElement> | undefined
     disabled?: boolean

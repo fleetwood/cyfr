@@ -48,6 +48,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
   const [genreId, setGenreId] = useState<string | null>(book?.genreId || null)
   // const [categories, setCategories] = useState<BookCategory[]>(book?.categories || [])
   const [hook, setHook] = useState<string | null>(book?.hook || null)
+  const [synopsis, setSynopsis] = useState<string | null>(book?.synopsis || null)
   const [back, setBack] = useState<string | null>(book?.back || null)
   const [authors, setAuthors] = useState<AuthorStub[]>(book?.authors || [])
   // const [chapters, setChapters] = useState<Chapter[]>(book?.chapters || [])
@@ -74,7 +75,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
       hook: hook ?? '',
       synopsis: synopsis ?? '',
       back: back ?? '',
-      words,
+      words:0,
       // cover,
       authors: authors!,
       //   chapters,

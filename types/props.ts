@@ -50,3 +50,5 @@ export type InlineTextAreaUpdate = {
   chars:  number
   words:  number
 }
+
+export type VariantProps = "base" | "primary" | "secondary" | "accent" | "success" | "info" | "warning" | undefined
