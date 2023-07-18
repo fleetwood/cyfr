@@ -21,3 +21,4 @@ export type IsAuthorProps = {
 }
 
 export const isAuthor = ({book, chapter, cyfrUser}:IsAuthorProps) => cyfrUser && ((book||chapter?.book)!.authors??[]).filter((a:AuthorStub) => a.user.id === cyfrUser?.id).length > 0
+

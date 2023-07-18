@@ -1,4 +1,4 @@
-import { Book, BookStub, Follow, Gallery, GalleryStub, GalleryStubInclude, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, MembershipType, Post, PostStub, PostStubInclude, User } from "prisma/prismaContext"
+import { Agent, Artist, Author, Book, BookStub, Editor, Follow, Gallery, GalleryStub, GalleryStubInclude, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, MembershipType, Post, PostStub, PostStubInclude, Reader, User } from "prisma/prismaContext"
 
 export type UserFeed = User & {
   _count:       { sessions: number }
@@ -25,6 +25,11 @@ export type CyfrUser = User & {
   membership?:  Membership & {
     type:   MembershipType
   }
+  userAgent?:  Agent  // user is an agent
+  userArtist?: Artist // user is an artist
+  userAuthor?: Author 
+  userEditor?: Editor // user is an editor
+  userReader?: Reader // user is a reader
   books:        BookStub[]
   galleries: {
         id: string
@@ -56,6 +61,11 @@ export const CyfrUserInclude = {
       following: true
     }
   },
+  userAgent: true,
+  userArtist: true,
+  userAuthor: true,
+  userEditor: true,
+  userReader: true,
   galleries: {
     include: {
       _count: {

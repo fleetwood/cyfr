@@ -1,3 +1,4 @@
+import { NotImplemented } from "utils/api"
 import useDebug from "../../hooks/useDebug"
 import { CommentThreadDetails, CommentThreadDetailsInclude, UpsertInboxProps } from "../prismaContext"
 const {debug, fileMethod} = useDebug('entities/prismaComment')
@@ -35,6 +36,7 @@ const threadById = async (threadId: string, userId: string): Promise<CommentThre
 const userInbox = async (userId: string): Promise<any[]> => {
   try {
     debug(`userInbox`, userId)
+    throw NotImplemented()
     const inbox = await prisma.commentThread.findMany({
       where: {
         commune: {
@@ -43,7 +45,7 @@ const userInbox = async (userId: string): Promise<any[]> => {
               userId
             },
             none: {
-              role: 'BLOCKED'
+              // role: 'BLOCKED'
             }
           }
         }
@@ -71,6 +73,7 @@ const upsertInbox = async ({
   messages
 }: UpsertInboxProps): Promise<any> => {
   try {
+    throw NotImplemented()
     const thread = await prisma.commentThread.upsert({
       where: {
         id: threadId,
@@ -83,7 +86,6 @@ const upsertInbox = async ({
         }
       },
       create: {
-        requiredRole: "OWNER",
         comments: {
           createMany: {
             data: messages?.map(m => { return {...m, threadType: 'INBOX'}}) || []
@@ -95,8 +97,8 @@ const upsertInbox = async ({
             users: {
               createMany: {
                 data: [
-                  { userId: userId, role: "OWNER" },
-                  { userId: partyId, role: "OWNER" },
+                  // { userId: userId, role: "OWNER" },
+                  // { userId: partyId, role: "OWNER" },
                 ],
               },
             },

@@ -190,6 +190,9 @@ model Gallery {
   likes             Like[]     @relation("gallery_likes")
   shares            Post[]     @relation("gallery_shares")
   artist            Artist[]   @relation("gallery_artists")
+
+  permissionId String?     @unique
+  permission   Permission? @relation("gallery_permission", fields: [permissionId], references: [id])
 }
 
 model Image {
@@ -291,7 +294,6 @@ model CommentThread {
   id           String     @id @default(cuid())
   createdAt    DateTime   @default(now()) @db.Timestamptz(3)
   updatedAt    DateTime   @default(now()) @db.Timestamptz(3)
-  requiredRole Role       @default(VIEW)
   blocked      Block[]    @relation("blocked_from_thread")
   book         Book?      @relation("book_comments")
   chapter      Chapter?   @relation("chapter_comments")
@@ -369,6 +371,9 @@ model Event {
   attendees       User[]         @relation("event_attendees")
   hosts           User[]         @relation("event_hosts")
   likes           Like[]         @relation("event_likes")
+
+  permissionId String?     @unique
+  permission   Permission? @relation("event_permission", fields: [permissionId], references: [id])
 }
 
 model Submission {
@@ -440,17 +445,19 @@ model Comment {
 }
 
 model Commune {
-  id          String         @id @default(cuid())
-  createdAt   DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime       @default(now()) @db.Timestamptz(3)
-  description String?
-  ownerId     String
-  galleryId   String?        @unique
-  threadId    String?        @unique
-  gallery     Gallery?       @relation("gallery_commune", fields: [galleryId], references: [id])
-  owner       User           @relation("commune_owner", fields: [ownerId], references: [id])
-  thread      CommentThread? @relation("thread_commune", fields: [threadId], references: [id])
-  users       CommuneUser[]  @relation("commune_users")
+  id           String         @id @default(cuid())
+  createdAt    DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime       @default(now()) @db.Timestamptz(3)
+  description  String?
+  ownerId      String
+  galleryId    String?        @unique
+  threadId     String?        @unique
+  permissionId String?        @unique
+  permission   Permission?    @relation("commune_permission", fields: [permissionId], references: [id])
+  gallery      Gallery?       @relation("gallery_commune", fields: [galleryId], references: [id])
+  owner        User           @relation("commune_owner", fields: [ownerId], references: [id])
+  thread       CommentThread? @relation("thread_commune", fields: [threadId], references: [id])
+  users        CommuneUser[]  @relation("commune_users")
 }
 
 model CommuneUser {
@@ -459,7 +466,6 @@ model CommuneUser {
   updatedAt DateTime @default(now()) @db.Timestamptz(3)
   communeId String
   userId    String
-  role      Role     @default(VIEW)
   commune   Commune  @relation("commune_users", fields: [communeId], references: [id])
   user      User     @relation("user_in_commune", fields: [userId], references: [id])
 }
@@ -535,6 +541,7 @@ model Book {
   galleryId       String?        @unique
   commentThreadId String?        @unique
   publisherId     String?
+  permissionId    String?        @unique
   commentThread   CommentThread? @relation("book_comments", fields: [commentThreadId], references: [id])
   gallery         Gallery?       @relation("book_gallery", fields: [galleryId], references: [id])
   genre           Genre          @relation("book_genre", fields: [genreId], references: [id])
@@ -552,6 +559,26 @@ model Book {
   artists         Artist[]       @relation("book_artists")
   readers         Reader[]       @relation("book_readers")
   reviews         Review[]       @relation("book_reviews")
+  permission      Permission?    @relation("book_permission", fields: [permissionId], references: [id])
+}
+
+model Permission {
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime   @default(now()) @db.Timestamptz(3)
+  book      Book?      @relation("book_permission")
+  chapter   Chapter?   @relation("chapter_permission")
+  character Character? @relation("character_permission")
+  event     Event?     @relation("event_permission")
+  gallery   Gallery?   @relation("gallery_permission")
+  commune   Commune?   @relation("commune_permission")
+  public    Role[]     
+  member    Role[]     
+  reader    Role[]     
+  editor    Role[]     
+  author    Role[]     
+  artist    Role[]     
+  agent     Role[]     
 }
 
 model Character {
@@ -573,33 +600,41 @@ model Character {
   galleryId       String?        @unique
   commentThreadId String?        @unique
   commentThread   CommentThread? @relation("character_comments", fields: [commentThreadId], references: [id])
-  gallery         Gallery?       @relation("character_gallery", fields: [galleryId], references: [id])
-  follows         Follow[]       @relation("character_follows")
-  likes           Like[]         @relation("character_likes")
-  shares          Post[]         @relation("character_shares")
-  books           Book[]         @relation("book_characters")
-  chapters        Chapter[]      @relation("chapter_characters")
-  reviews         Review[]       @relation("character_reviews")
+
+  permissionId String?     @unique
+  permission   Permission? @relation("character_permission", fields: [permissionId], references: [id])
+
+  gallery  Gallery?  @relation("character_gallery", fields: [galleryId], references: [id])
+  follows  Follow[]  @relation("character_follows")
+  likes    Like[]    @relation("character_likes")
+  shares   Post[]    @relation("character_shares")
+  books    Book[]    @relation("book_characters")
+  chapters Chapter[] @relation("chapter_characters")
+  reviews  Review[]  @relation("character_reviews")
 }
 
 model Chapter {
-  id              String         @id @default(cuid())
-  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
-  visible         Boolean        @default(true)
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime @default(now()) @db.Timestamptz(3)
+  visible         Boolean  @default(true)
   order           Int
   title           String
-  content         String         @default("")
-  words           Int            @default(0)
-  reads           Int            @default(0)
+  content         String   @default("")
+  words           Int      @default(0)
+  reads           Int      @default(0)
   bookId          String
-  galleryId       String?        @unique
-  commentThreadId String?        @unique
-  book            Book           @relation("book_chapters", fields: [bookId], references: [id])
-  commentThread   CommentThread? @relation("chapter_comments", fields: [commentThreadId], references: [id])
-  gallery         Gallery?       @relation("chapter_gallery", fields: [galleryId], references: [id])
-  characters      Character[]    @relation("chapter_characters")
-  reviews         Review[]       @relation("chapter_reviews")
+  galleryId       String?  @unique
+  commentThreadId String?  @unique
+
+  permissionId String?     @unique
+  permission   Permission? @relation("chapter_permission", fields: [permissionId], references: [id])
+
+  book          Book           @relation("book_chapters", fields: [bookId], references: [id])
+  commentThread CommentThread? @relation("chapter_comments", fields: [commentThreadId], references: [id])
+  gallery       Gallery?       @relation("chapter_gallery", fields: [galleryId], references: [id])
+  characters    Character[]    @relation("chapter_characters")
+  reviews       Review[]       @relation("chapter_reviews")
 }
 
 model Post {
@@ -714,12 +749,12 @@ model Session {
 
 enum Role {
   BLOCKED
-  VIEW
+  NONE
+  READ
   COMMENT
-  REVIEW
-  EDIT
-  ADMIN
+  FEEDBACK
   OWNER
+  ADMIN
 }
 
 enum BookStatus {
