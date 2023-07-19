@@ -44,16 +44,14 @@ const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
     <input type="checkbox" ref={modal} id={createGalleryModal} className="modal-toggle" onChange={()=>{}} />
     <div className="modal modal-bottom sm:modal-middle">
       <div className="modal-box bg-opacity-0 shadow-none">
-      <label htmlFor={createGalleryModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-        <div className="mb-3 rounded-xl w-full bg-primary text-primary-content md:bg-blend-hard-light md:bg-opacity-80">
-          {cyfrUser && (
-            <div className="w-full mx-auto p-2 sm:p-6 lg:p-4 drop-shadow-xl">
-              <form className="flex flex-col space-y-2 bg-secondary p-2 rounded-lg drop-shadow-lg border border-base-100 border-opacity-50" onSubmit={(e) => {e.preventDefault()}}>
-                <GalleryUpsertForm limit={limit} onUpsert={onGalleryUpsert} />
-              </form>
-            </div>
-          )}
-        </div>
+        {cyfrUser && (
+          <div className="w-full mx-auto drop-shadow-xl">
+            <form className="bg-base-100 p-2 rounded-lg drop-shadow-lg" onSubmit={(e) => {e.preventDefault()}}>
+              <GalleryUpsertForm limit={limit} onUpsert={onGalleryUpsert} className="flex flex-col space-y-2" />
+            </form>
+          </div>
+        )}
+        <label htmlFor={createGalleryModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
       </div>
     </div>
     </>

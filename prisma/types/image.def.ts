@@ -9,8 +9,8 @@ export type ImageUpsertProps = {
   width:            number
   title?:           string | null
   galleryId?:       string | null
-  postId:           string | null
-  commentThreadId:  string | null
+  postId?:          string | null
+  commentThreadId?: string | null
 }
 
 export type ImageDeleteProps = {

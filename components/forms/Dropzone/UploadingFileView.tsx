@@ -12,6 +12,7 @@ const {debug} = useDebug("forms/Dropzone/UploadingFileView")
 
 const UploadFileView = ({file, showUploadProgress = true, onUploadComplete, onUploadChange}: UploadFileViewProps) => {
   const {cyfrUser, isLoading} = useApi.cyfrUser()
+  const {upsert} = useApi.image()
   const [fileProgress, setFileProgress] = useState<number>(0)
   const [fileErrors, setFileErrors] = useState<FileError[]>([])
   const [image, setImage] = useState<Image | null>(null)
@@ -33,7 +34,7 @@ const UploadFileView = ({file, showUploadProgress = true, onUploadComplete, onUp
   const uploadComplete = async (file:CompleteFile) => {
     debug('uploadComplete', file)
     // convert completeFile to ImageUpsertProps
-    const props = {
+    const props:ImageUpsertProps = {
       creatorId: cyfrUser.id,
       url: file.secure_url,
       visible: true,
@@ -41,11 +42,11 @@ const UploadFileView = ({file, showUploadProgress = true, onUploadComplete, onUp
       width: file.width,
       title: file.original_filename
     }
-    const image = await(await sendApi('image/upsert', props)).data
+    const image = await upsert(props)
     if (image) {
       debug('uploadComplete.image', image)
       setImage(image)
-      if (onUploadComplete) onUploadComplete(image)
+      if (onUploadComplete) onUploadComplete([image])
     }else{
       debug('uploadComplete image upsert failed')
     }

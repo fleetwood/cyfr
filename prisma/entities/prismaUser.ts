@@ -22,7 +22,7 @@ import {
   GenericResponseError,
   ResponseError
 } from "types/response"
-const { fileMethod, debug, info, err } = useDebug("entities/prismaUser", 'DEBUG')
+const { fileMethod, debug, info, err } = useDebug("entities/prismaUser")
 
 type AllPostQueryParams = {
   limit?: Number
@@ -264,6 +264,7 @@ const galleries = async (props:UserDetailProps): Promise<GalleryStub[]> => {
           }
         }}
       },
+      permission: true,
       _count: {
         select: {
           likes: true,

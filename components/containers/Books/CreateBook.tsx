@@ -44,13 +44,13 @@ const CreateBook = () => {
         id: uniqueKey(),
         createdAt: now(),
         updatedAt: now(),
-        public: [Role.NONE],
-        member: [Role.NONE],
-        reader: [Role.NONE],
-        editor: [Role.NONE],
-        author: [Role.NONE],
-        artist: [Role.NONE],
-        agent : [Role.NONE]
+        public: ['NONE'],
+        member: ['NONE'],
+        reader: ['NONE'],
+        editor: ['NONE'],
+        author: ['NONE'],
+        artist: ['NONE'],
+        agent : ['NONE']
     })
     // const [characters, setCharacters] = useState<Character[]>(book?.characters || [])
     // const [gallery, setGallery] = useState<GalleryStub | null>(book?.gallery || null)

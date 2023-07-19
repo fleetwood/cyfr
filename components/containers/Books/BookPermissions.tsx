@@ -1,6 +1,4 @@
-import { Dialog, DialogContent, DialogContentText, Grid, Slide } from '@mui/material'
-import { TransitionProps } from '@mui/material/transitions'
-import Semibold from 'components/ui/semibold'
+import { Grid } from '@mui/material'
 import React, { ReactNode, useEffect, useState } from 'react'
 
 

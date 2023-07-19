@@ -1,5 +1,5 @@
 import useDebug from "hooks/useDebug"
-import { ImageEngageProps } from "prisma/prismaContext"
+import { ImageEngageProps, ImageUpsertProps, Image } from "prisma/prismaContext"
 import { sendApi } from "utils/api"
 
 const {debug} = useDebug('hooks/useImageApi')
@@ -10,9 +10,12 @@ const useImageApi = () => {
 
   const like = async (props: ImageEngageProps):Promise<boolean>  => await (await sendApi("image/like", props)).data
 
+  const upsert = async (props: ImageUpsertProps):Promise<Image>  => await (await sendApi("image/upsert", props)).data
+
   return {
     share,
-    like
+    like,
+    upsert
   }
 }
 

@@ -32,6 +32,7 @@ const BookPermissionsDialog = () => (
                 <p>
                   This includes all visible Chapters, Characters and Galleries.
                 </p>
+                <p>Note that all of the subsequent permissions, <Semibold>SHARE, COMMENT and FEEDBACK</Semibold> require READ. If you enable one of them, READ will also be enabled. Conversely, if you disable READ, it will disable the others.</p>
               </>
             }
           />

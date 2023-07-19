@@ -13,10 +13,10 @@ const upsert = async (props: ImageUpsertProps): Promise<Image> => {
   const {url} = props
   try {
     return await prisma.image.upsert({ 
-        where: { url },
-        create: {...props},
-        update: {...props}
-      })
+      where: { url },
+      create: {...props},
+      update: {...props}
+    })
   } catch (error) {
     info("upsert ERROR: ", error)
     throw error

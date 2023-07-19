@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('BLOCKED', 'VIEW', 'COMMENT', 'REVIEW', 'EDIT', 'ADMIN', 'OWNER');
+CREATE TYPE "Role" AS ENUM ('BLOCKED', 'NONE', 'READ', 'SHARE', 'COMMENT', 'FEEDBACK', 'OWNER', 'ADMIN');
 
 -- CreateEnum
 CREATE TYPE "BookStatus" AS ENUM ('PRIVATE', 'DRAFT', 'MANUSCRIPT', 'PUBLISHED');
@@ -127,10 +127,11 @@ CREATE TABLE "Gallery" (
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "visible" BOOLEAN NOT NULL DEFAULT true,
-    "creatorId" TEXT NOT NULL,
     "title" TEXT,
     "description" TEXT,
-    "shareId" TEXT,
+    "creatorId" TEXT NOT NULL,
+    "commentThreadId" TEXT,
+    "permissionId" TEXT,
 
     CONSTRAINT "Gallery_pkey" PRIMARY KEY ("id")
 );
@@ -215,7 +216,6 @@ CREATE TABLE "CommentThread" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "requiredRole" "Role" NOT NULL DEFAULT 'VIEW',
 
     CONSTRAINT "CommentThread_pkey" PRIMARY KEY ("id")
 );
@@ -274,6 +274,7 @@ CREATE TABLE "Event" (
     "description" TEXT NOT NULL,
     "commentThreadId" TEXT,
     "addressId" TEXT,
+    "permissionId" TEXT,
 
     CONSTRAINT "Event_pkey" PRIMARY KEY ("id")
 );
@@ -333,6 +334,7 @@ CREATE TABLE "Commune" (
     "ownerId" TEXT NOT NULL,
     "galleryId" TEXT,
     "threadId" TEXT,
+    "permissionId" TEXT,
 
     CONSTRAINT "Commune_pkey" PRIMARY KEY ("id")
 );
@@ -344,7 +346,6 @@ CREATE TABLE "CommuneUser" (
     "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "communeId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "role" "Role" NOT NULL DEFAULT 'VIEW',
 
     CONSTRAINT "CommuneUser_pkey" PRIMARY KEY ("id")
 );
@@ -422,8 +423,25 @@ CREATE TABLE "Book" (
     "galleryId" TEXT,
     "commentThreadId" TEXT,
     "publisherId" TEXT,
+    "permissionId" TEXT,
 
     CONSTRAINT "Book_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Permission" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "public" "Role"[],
+    "member" "Role"[],
+    "reader" "Role"[],
+    "editor" "Role"[],
+    "author" "Role"[],
+    "artist" "Role"[],
+    "agent" "Role"[],
+
+    CONSTRAINT "Permission_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -445,6 +463,7 @@ CREATE TABLE "Character" (
     "archetype" TEXT NOT NULL,
     "galleryId" TEXT,
     "commentThreadId" TEXT,
+    "permissionId" TEXT,
 
     CONSTRAINT "Character_pkey" PRIMARY KEY ("id")
 );
@@ -463,6 +482,7 @@ CREATE TABLE "Chapter" (
     "bookId" TEXT NOT NULL,
     "galleryId" TEXT,
     "commentThreadId" TEXT,
+    "permissionId" TEXT,
 
     CONSTRAINT "Chapter_pkey" PRIMARY KEY ("id")
 );
@@ -682,6 +702,12 @@ CREATE UNIQUE INDEX "News_postId_key" ON "News"("postId");
 CREATE UNIQUE INDEX "News_commentThreadId_key" ON "News"("commentThreadId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Gallery_commentThreadId_key" ON "Gallery"("commentThreadId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Gallery_permissionId_key" ON "Gallery"("permissionId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Image_url_key" ON "Image"("url");
 
 -- CreateIndex
@@ -715,6 +741,9 @@ CREATE UNIQUE INDEX "Event_commentThreadId_key" ON "Event"("commentThreadId");
 CREATE UNIQUE INDEX "Event_addressId_key" ON "Event"("addressId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Event_permissionId_key" ON "Event"("permissionId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Review_commentThreadId_key" ON "Review"("commentThreadId");
 
 -- CreateIndex
@@ -722,6 +751,9 @@ CREATE UNIQUE INDEX "Commune_galleryId_key" ON "Commune"("galleryId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Commune_threadId_key" ON "Commune"("threadId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Commune_permissionId_key" ON "Commune"("permissionId");
 
 -- CreateIndex
 CREATE INDEX "Membership_id_idx" ON "Membership"("id");
@@ -748,16 +780,25 @@ CREATE UNIQUE INDEX "Book_galleryId_key" ON "Book"("galleryId");
 CREATE UNIQUE INDEX "Book_commentThreadId_key" ON "Book"("commentThreadId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Book_permissionId_key" ON "Book"("permissionId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Character_galleryId_key" ON "Character"("galleryId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Character_commentThreadId_key" ON "Character"("commentThreadId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Character_permissionId_key" ON "Character"("permissionId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Chapter_galleryId_key" ON "Chapter"("galleryId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Chapter_commentThreadId_key" ON "Chapter"("commentThreadId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Chapter_permissionId_key" ON "Chapter"("permissionId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Post_commentThreadId_key" ON "Post"("commentThreadId");
@@ -907,6 +948,12 @@ ALTER TABLE "News" ADD CONSTRAINT "News_commentThreadId_fkey" FOREIGN KEY ("comm
 ALTER TABLE "Gallery" ADD CONSTRAINT "Gallery_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Gallery" ADD CONSTRAINT "Gallery_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Gallery" ADD CONSTRAINT "Gallery_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Image" ADD CONSTRAINT "Image_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -967,6 +1014,9 @@ ALTER TABLE "Event" ADD CONSTRAINT "Event_addressId_fkey" FOREIGN KEY ("addressI
 ALTER TABLE "Event" ADD CONSTRAINT "Event_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Event" ADD CONSTRAINT "Event_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Submission" ADD CONSTRAINT "Submission_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -1012,6 +1062,9 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_creatorId_fkey" FOREIGN KEY ("crea
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_threadId_fkey" FOREIGN KEY ("threadId") REFERENCES "CommentThread"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Commune" ADD CONSTRAINT "Commune_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Commune" ADD CONSTRAINT "Commune_galleryId_fkey" FOREIGN KEY ("galleryId") REFERENCES "Gallery"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -1045,10 +1098,19 @@ ALTER TABLE "Book" ADD CONSTRAINT "Book_genreId_fkey" FOREIGN KEY ("genreId") RE
 ALTER TABLE "Book" ADD CONSTRAINT "Book_publisherId_fkey" FOREIGN KEY ("publisherId") REFERENCES "Publisher"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Book" ADD CONSTRAINT "Book_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Character" ADD CONSTRAINT "Character_commentThreadId_fkey" FOREIGN KEY ("commentThreadId") REFERENCES "CommentThread"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Character" ADD CONSTRAINT "Character_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Character" ADD CONSTRAINT "Character_galleryId_fkey" FOREIGN KEY ("galleryId") REFERENCES "Gallery"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Chapter" ADD CONSTRAINT "Chapter_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "Permission"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Chapter" ADD CONSTRAINT "Chapter_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

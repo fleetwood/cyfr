@@ -1,17 +1,12 @@
 import GalleryCreateModal, { OpenGalleryModalButton } from "components/containers/Gallery/GalleryCreateModal"
 import MainLayout from "components/layouts/MainLayout"
-import {
-  GalleryStub,
-  PrismaUser, UserDetail
-} from "prisma/prismaContext"
-
+import {GalleryStub,PrismaUser, UserDetail} from "prisma/prismaContext"
 import GalleryStubView from "components/containers/Gallery/GalleryStubView"
 import Spinner from "components/ui/spinner"
 import useDebug from "hooks/useDebug"
 import ErrorPage from "pages/404"
-import useRocketQuery from "hooks/useRocketQuery"
-import { uniqueKey } from "utils/helpers"
 import useApi from "prisma/useApi"
+import { uniqueKey } from "utils/helpers"
 
 const {debug, jsonBlock} = useDebug('user/[slug]/gallery','DEBUG')
 
@@ -19,12 +14,7 @@ export async function getServerSideProps(context: any) {
   const {slug} = context.params
   const user = await PrismaUser.detail({slug})
 
-  return {
-    props: {
-      user,
-      slug
-    },
-  }
+  return { props: { user, slug }}
 }
 
 type UserGalleryPageProps = {

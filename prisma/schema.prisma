@@ -291,22 +291,22 @@ model ChatMessage {
 }
 
 model CommentThread {
-  id           String     @id @default(cuid())
-  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt    DateTime   @default(now()) @db.Timestamptz(3)
-  blocked      Block[]    @relation("blocked_from_thread")
-  book         Book?      @relation("book_comments")
-  chapter      Chapter?   @relation("chapter_comments")
-  character    Character? @relation("character_comments")
-  comments     Comment[]  @relation("thread_comments")
-  commune      Commune?   @relation("thread_commune")
-  cover        Cover?     @relation("cover_comments")
-  event        Event?     @relation("event_comments")
-  image        Image?     @relation("image_comments")
-  news         News?      @relation("news_comments")
-  post         Post?      @relation("post_comments")
-  review       Review?    @relation("review_comments")
-  gallery      Gallery?   @relation("gallery_comments")
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime   @default(now()) @db.Timestamptz(3)
+  blocked   Block[]    @relation("blocked_from_thread")
+  book      Book?      @relation("book_comments")
+  chapter   Chapter?   @relation("chapter_comments")
+  character Character? @relation("character_comments")
+  comments  Comment[]  @relation("thread_comments")
+  commune   Commune?   @relation("thread_commune")
+  cover     Cover?     @relation("cover_comments")
+  event     Event?     @relation("event_comments")
+  image     Image?     @relation("image_comments")
+  news      News?      @relation("news_comments")
+  post      Post?      @relation("post_comments")
+  review    Review?    @relation("review_comments")
+  gallery   Gallery?   @relation("gallery_comments")
 }
 
 model Address {
@@ -572,13 +572,13 @@ model Permission {
   event     Event?     @relation("event_permission")
   gallery   Gallery?   @relation("gallery_permission")
   commune   Commune?   @relation("commune_permission")
-  public    Role[]     
-  member    Role[]     
-  reader    Role[]     
-  editor    Role[]     
-  author    Role[]     
-  artist    Role[]     
-  agent     Role[]     
+  public    Role[]
+  member    Role[]
+  reader    Role[]
+  editor    Role[]
+  author    Role[]
+  artist    Role[]
+  agent     Role[]
 }
 
 model Character {
@@ -751,6 +751,7 @@ enum Role {
   BLOCKED
   NONE
   READ
+  SHARE
   COMMENT
   FEEDBACK
   OWNER
