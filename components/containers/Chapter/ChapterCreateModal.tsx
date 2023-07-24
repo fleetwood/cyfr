@@ -2,6 +2,7 @@ import { useCyfrUserContext } from 'components/context/CyfrUserProvider'
 import { useToast } from 'components/context/ToastContextProvider'
 import { TailwindInput } from 'components/forms'
 import EZButton from 'components/ui/ezButton'
+import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from 'components/ui/modalCheckbox'
 import Spinner from 'components/ui/spinner'
 import { LoggedIn } from 'components/ui/toasty'
 import useDebug from 'hooks/useDebug'
@@ -19,11 +20,11 @@ type ChapterModalButtonVariant = {
 export const OpenChapterModalButton = ({variant='button'}:ChapterModalButtonVariant) => (
   variant === 'button' 
   ?
-    <label htmlFor={createChapterModal} className="btn btn-info space-x-2">
+    <ModalOpenButton id={createChapterModal} className="btn btn-info space-x-2">
       <span className="text-info-content">New Chapter</span>
-    </label>
+    </ModalOpenButton>
   :
-    <label htmlFor={createChapterModal} className="btn btn-sm btn-info btn-circle">+</label>
+    <ModalOpenButton id={createChapterModal} className="btn btn-sm btn-info btn-circle">+</ModalOpenButton>
 )
 
 type CreateChapterModalType = {
@@ -73,10 +74,10 @@ const CreateChapterModal = ({bookDetail, onSave}:CreateChapterModalType) => {
 
   return (
     <>
-    <input type="checkbox" id={createChapterModal} className="modal-toggle" />
+    <ModalCheckbox id={createChapterModal} />
     <div ref={container} id='createChapterModalContainer' className="modal bg-opacity-0 modal-bottom sm:modal-middle">
       <div className="modal-box shadow-none overflow-visible scrollbar-hide">
-        <label htmlFor={createChapterModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+        <ModalCloseButton id={createChapterModal} />
         <div className="mb-3 rounded-xl w-full bg-primary text-primary-content  md:bg-blend-hard-light md:bg-opacity-80">
           {isLoading && <Spinner />}
           {!isLoading && !cyfrUser &&

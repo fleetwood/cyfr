@@ -26,6 +26,8 @@ export type TailwindFormProps = {
   cardClassName?: string
   labelClassName?: string
   inputClassName?: string
+  validate?: () => void
+  error?:    string
 }
 
 export type InlineTextareaProps = {

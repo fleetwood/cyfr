@@ -63,6 +63,8 @@ const detailBySlug = (bookSlug:string) => useRocketQuery<BookDetail>({
 
 const follow = async (props:BookFollowProps):Promise<boolean> => await (await sendApi("book/follow", props)).data
 
+const isTitleUnique = async(title:string):Promise<boolean> => await (await sendApi('/book/unique', title)).data
+
 const like = async (props: BookEngageProps):Promise<boolean>  => await (await sendApi("book/like", props)).data
 
 const save = async (detail?:BookDetail) => {

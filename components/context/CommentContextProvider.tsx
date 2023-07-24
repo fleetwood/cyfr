@@ -5,6 +5,7 @@ import { useToast } from "./ToastContextProvider"
 import useDebug from "../../hooks/useDebug"
 import usePostApi from "../../prisma/useApi/post"
 import useApi from "prisma/useApi"
+import ModalCheckbox, { ModalCloseButton } from "components/ui/modalCheckbox"
 const {debug} = useDebug("CommentContextProvider")
 
 type CommentProviderProps = {
@@ -27,7 +28,6 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
   const {notify, notifyNotImplemented} = useToast()
   
   const commentPostModal = 'commentPostModal'
-  const modal = useRef<HTMLInputElement>(null)
   
   const [checked, setChecked] = useState(false)
   const [content, setContent] = useState<string | null>(null)
@@ -76,11 +76,11 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
 
   return (
     <CommentContext.Provider value={value}>
-        <input type="checkbox" ref={modal} id={commentPostModal} className="modal-toggle" checked={checked} onChange={()=>{}} />
+        <ModalCheckbox id={commentPostModal} />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box bg-opacity-0 overflow-visible scrollbar-hide">
             
-            <label onClick={hideComment} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+            <ModalCloseButton id={commentPostModal} />
 
             <div className="
               mb-3 rounded-xl w-full 

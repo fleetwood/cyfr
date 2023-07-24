@@ -1,34 +1,36 @@
 import { Grid } from '@mui/material'
+import { RoleString } from 'prisma/prismaContext'
 import React, { ReactNode, useEffect, useState } from 'react'
 
 
 type GridItemProps = {
     level: string
     children?:ReactNode
+    onChange?: (permList:RoleString[]) => void
 }
 
-const BookPermissions = ({level, children}:GridItemProps) => {
-    const [canRead, setCanRead] = useState(false)
-    const [canComment, setCanComment] = useState(false)
-    const [canFeedback, setCanFeedback] = useState(false)
-    const [canShare, setCanShare] = useState(false)
+const BookPermissions = ({level, onChange, children}:GridItemProps) => {
+    const [read, setRead] = useState(false)
+    const [comment, setComment] = useState(false)
+    const [feedback, setFeedback] = useState(false)
+    const [share, setShare] = useState(false)
     
-    const allPermissions = [canRead, canComment, canFeedback, canShare]
+    const allPermissions = [read, comment, feedback, share]
 
     const all = allPermissions.filter(c => c===true).length===allPermissions.length
 
     const toggleAll = () => {
         const set = !all
-        setCanRead(() => set)
-        setCanComment(() => set)
-        setCanFeedback(() => set)
-        setCanShare(() => set)
+        setRead(() => set)
+        setComment(() => set)
+        setFeedback(() => set)
+        setShare(() => set)
     }
 
     const setItem = (val:boolean, setVal:React.Dispatch<React.SetStateAction<boolean>>) => {
         const n = !val
         if (n === true) {
-            setCanRead(() => true)
+            setRead(() => true)
         }
         setVal(n)
     }
@@ -39,18 +41,31 @@ const BookPermissions = ({level, children}:GridItemProps) => {
 
     const GridItem = ({label, val, setVal}:{label:string, val:boolean, setVal: React.Dispatch<React.SetStateAction<boolean>>}) => (
         <Grid sm className={`cursor-pointer ${itemBG(val)}`} onClick={() => setItem(val, setVal)}>
-            <div className={`text-center p-1 items-center`}>{label}</div>
-            <div className={`text-center p-1 items-center`}><input type='checkbox' checked={val} className={checkedBG(val)} /></div>
+            <div className={`text-center items-center text-sm`}>{label}</div>
+            <div className={`text-center items-center text-sm`}><input type='checkbox' checked={val} className={checkedBG(val)} onChange={() => {}} /></div>
         </Grid>
     )
 
     useEffect(() => {
-        if (!canRead) {
-            setCanShare(false)
-            setCanComment(false)
-            setCanFeedback(false)
+        if (!read) {
+            setShare(false)
+            setComment(false)
+            setFeedback(false)
         }
-    }, [canRead])
+    }, [read])
+
+    useEffect(() => {
+        let params:RoleString[] = []
+        if (read) {
+            params.push('READ')
+            if (share) params.push('SHARE')
+            if (comment) params.push('COMMENT')
+            if (feedback) params.push('FEEDBACK')
+        } else {
+            params.push('NONE')
+        }
+        onChange && onChange(params)
+    }, [read, share, comment, feedback])
 
   return <>
     <div className='text-primary font-bold my-4'>{level}</div>
@@ -61,10 +76,10 @@ const BookPermissions = ({level, children}:GridItemProps) => {
                 <span>Toggle All</span>
             </Grid>
             
-            <GridItem label='Read' val={canRead} setVal={setCanRead} />
-            <GridItem label='Share' val={canShare} setVal={setCanShare} />
-            <GridItem label='Comment' val={canComment} setVal={setCanComment} />
-            <GridItem label='Feedback' val={canFeedback} setVal={setCanFeedback} />
+            <GridItem label='Read' val={read} setVal={setRead} />
+            <GridItem label='Share' val={share} setVal={setShare} />
+            <GridItem label='Comment' val={comment} setVal={setComment} />
+            <GridItem label='Feedback' val={feedback} setVal={setFeedback} />
 
         </Grid>
     </div> 

@@ -1,33 +1,37 @@
-import { Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Slide } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import Stepper from '@mui/material/Stepper'
+import { useToast } from 'components/context/ToastContextProvider'
 import { TailwindInput, TailwindTextarea } from 'components/forms'
 import EZButton from 'components/ui/ezButton'
 import { ArrowLeftIcon, ArrowRightIcon, CyfrLogo, SaveIcon } from 'components/ui/icons'
-import Toggler from 'components/ui/toggler'
+import Semibold from 'components/ui/semibold'
 import useDebug from 'hooks/useDebug'
-import React, { useState } from 'react'
+import { Genre, Image, Permission, Role, RoleString, RoleVals, getRoles } from 'prisma/prismaContext'
+import useApi from 'prisma/useApi'
+import React, { useEffect, useState } from 'react'
+import { now, uniqueKey } from 'utils/helpers'
+import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
 import GenreSelector from '../Genre/GenreSelector'
 import UserSelector from '../User/UserSelector'
 import BookPermissions from './BookPermissions'
-import Semibold from 'components/ui/semibold'
-import { TransitionProps } from '@mui/material/transitions'
 import BookPermissionsDialog from './BookPermissionsDialog'
-import { Role, Permission } from 'prisma/prismaContext'
-import { now, uniqueKey } from 'utils/helpers'
+import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from 'components/ui/modalCheckbox'
 
-const {debug} = useDebug("components/containers/Books/CreateBook")
+const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",'DEBUG')
 const createBookModal = 'createBookModal'
 
 export const CreateBookModalButton = () => (
-    <label htmlFor={createBookModal} className="btn btn-info space-x-2">
+    <ModalOpenButton id={createBookModal} className='btn btn-info space-x-2' variant='component'>
         <CyfrLogo className="animate-pulse text-info-content w-[1.25rem]" />
         <span className="text-info-content">New Book!</span>
-    </label>
+    </ModalOpenButton>
 )
 
 const CreateBook = () => {
+    const {notify} = useToast()
+
     const [title, setTitle] = useState<string|null>(null)
     const [visible, setVisible] = useState(false)
     const [prospect, setProspect] = useState(false)
@@ -35,6 +39,7 @@ const CreateBook = () => {
     const [status, setStatus] = useState()
     const [cover, setCover] = useState()
     const [genreId, setGenreId] = useState()
+    const [genre, setGenre] = useState<Genre>()
     // const [categories, setCategories] = useState<BookCategory[]>(book?.categories || [])
     const [hook, setHook] = useState<string|null>(null)
     const [synopsis, setSynopsis] = useState<string|null>(null)
@@ -44,17 +49,47 @@ const CreateBook = () => {
         id: uniqueKey(),
         createdAt: now(),
         updatedAt: now(),
-        public: ['NONE'],
-        member: ['NONE'],
-        reader: ['NONE'],
-        editor: ['NONE'],
-        author: ['NONE'],
+        agent : ['NONE'],
         artist: ['NONE'],
-        agent : ['NONE']
+        author: ['NONE'],
+        editor: ['NONE'],
+        member: ['NONE'],
+        public: ['NONE'],
+        reader: ['NONE'],
     })
+    
+    const changeAgent = (perms:RoleString[]) => setPermissions(() => {return {...permissions, agent: perms.flatMap(a => a) as Role[]}})
+    const changeArtist = (perms:RoleString[]) => setPermissions(() => {return {...permissions, artist: perms.flatMap(a => a) as Role[]}})
+    const changeAuthor = (perms:RoleString[]) => setPermissions(() => {return {...permissions, author: perms.flatMap(a => a) as Role[]}})
+    const changeEditor = (perms:RoleString[]) => setPermissions(() => {return {...permissions, editor: perms.flatMap(a => a) as Role[]}})
+    const changeMember = (perms:RoleString[]) => setPermissions(() => {return {...permissions, member: perms.flatMap(a => a) as Role[]}})
+    const changePublic = (perms:RoleString[]) => setPermissions(() => {return {...permissions, public: perms.flatMap(a => a) as Role[]}})
+    const changeReader = (perms:RoleString[]) => setPermissions(() => {return {...permissions, reader: perms.flatMap(a => a) as Role[]}})
+    
+
+    const [uniqueError, setUniqueError] = useState<string>()
+    const isTitleUnique = () => {
+        debug('isTitleUniqe', {title})
+    }
     // const [characters, setCharacters] = useState<Character[]>(book?.characters || [])
     // const [gallery, setGallery] = useState<GalleryStub | null>(book?.gallery || null)
     const [images, setImages] = useState()
+
+    const upsertProps = {
+        title,
+        visible,
+        prospect,
+        fiction,
+        status,
+        cover,
+        genreId,
+        genre,
+        hook,
+        synopsis,
+        back,
+        authors,
+        permissions
+    }
 
   const [activeStep, setActiveStep] = React.useState(0)
 
@@ -74,12 +109,35 @@ const CreateBook = () => {
     createModal!.checked = show || false
   }
 
+
+  const {findCover} = useApi.cover()
+  const [coversByGenre, setByGenre] = useState<string>()
+  const [covers, setCovers] = useState<Image[]>([])
+  const onGenreSelect = (genre:string) => {
+    notify(genre ? `Genre selected ${genre}` : 'All genres selected')
+    setByGenre(() => genre)
+  }
+
+  const getCovers = async () => {
+    debug('getCovers', {coversByGenre})
+    const found = await findCover(coversByGenre === 'All' ? '' : coversByGenre)
+    if (found) {
+      setCovers(() => found.map(c => c.image))
+    } else {
+      info('No covers found')
+    }
+  }
+
+  useEffect(() => {
+    getCovers()
+  }, ['',coversByGenre])
+
   return (
     <>
-    <input type="checkbox" id={createBookModal} className="modal-toggle" />
+    <ModalCheckbox id={createBookModal} />
     <div className="modal modal-middle">
       <div className="modal-box min-w-full min-h-screen bg-black bg-opacity-20 shadow-none overflow-visible scrollbar-hide">
-        <label htmlFor={createBookModal} className="btn btn-sm btn-circle btn-warning absolute right-0 top-6">✕</label>
+        <ModalCloseButton id={createBookModal} />
         <div className="mb-3 rounded-xl w-full h-full bg-gray-100 text-primary-content m-4 p-4">
             <Stepper activeStep={activeStep}>{steps.map((label, index) => (
                 <Step key={label}>
@@ -92,7 +150,7 @@ const CreateBook = () => {
                     <h3 className='mt-2'>Name and Author</h3>
                     <Box className='flex flex-col'>
                         <p className='text-sm mt-4'>Give your book a <span className='font-semibold'>unique name.</span></p>
-                        <TailwindInput type='text' value={title} setValue={setTitle} label='Title' />
+                        <TailwindInput type='text' value={title} setValue={setTitle} label='Title' error={uniqueError} validate={isTitleUnique} />
                         <p className='text-sm mt-4'>If you're co-authoring with another member of <Semibold>Cyfr</Semibold>, add them here. Note: this person will have <span className='font-semibold'>full access and privileges to the book</span>, so you have to be friends (as in: you Follow each other). Would be kinda weird otherwise.</p>
                         <UserSelector label='Authors' />
                     </Box>
@@ -101,7 +159,6 @@ const CreateBook = () => {
                 <div className={showStep(1)}>
                     <h3 className='mt-2'>Entice your audience!</h3>
                     <Box className='flex flex-col'>
-                        <GenreSelector required={true} className='mt-4' />
                         <p className='text-sm mt-4'>A short blurb to tease the book to readers.</p>
                         <TailwindTextarea value={hook} setValue={setHook} label='Hook' required={false} />
                         <p className='text-sm mt-4'>The summary that goes on the back cover. You may not have this yet, but if you do, great!</p>
@@ -116,11 +173,14 @@ const CreateBook = () => {
                         </Grid>
                     </div>
                     <Box className='flex flex-col'>
-                        <BookPermissions level='Public'><p>This is anybody who visits the site, including <Semibold>bots and search engines</Semibold>.</p></BookPermissions>
-                        <BookPermissions level='Members'><p>This is anybody who is <Semibold>logged in</Semibold> to the site, which will exclude bots and search engines.</p></BookPermissions>
-                        <BookPermissions level='Friends'><p>Only members who you <Semibold>mutually follow</Semibold>; meaning you follow them and they follow you back.</p></BookPermissions>
-                        <BookPermissions level='Editors'><p>Are you shopping for a good editor? Join the club! Better yet, invite them to yours! :)</p></BookPermissions>
-                        <BookPermissions level='Agents'><p>This will allow agents to interact with your book. This inlcudes <Semibold>submissions</Semibold>, so if you're shopping your book, give them <Semibold>Read</Semibold> access at a minimum.</p></BookPermissions>
+                        <BookPermissions level='Agents' onChange={changeAgent}><p>This will allow agents to interact with your book. This inlcudes <Semibold>submissions</Semibold>, so if you're shopping your book, give them <Semibold>Read</Semibold> access at a minimum.</p></BookPermissions>
+                        <BookPermissions level='Author' onChange={changeAuthor}><p></p></BookPermissions>
+                        <BookPermissions level='Artist' onChange={changeArtist}><p></p></BookPermissions>
+                        <BookPermissions level='Editors' onChange={changeEditor}><p>Are you shopping for a good editor? Join the club! Better yet, invite them to yours! :)</p></BookPermissions>
+                        <BookPermissions level='Members' onChange={changeMember}><p>This is anybody who is <Semibold>logged in</Semibold> to the site, which will exclude bots and search engines.</p></BookPermissions>
+                        <BookPermissions level='Public' onChange={changePublic}><p>This is anybody who visits the site, including <Semibold>bots and search engines</Semibold>.</p></BookPermissions>
+                        <BookPermissions level='Reader' onChange={changeReader}><p></p></BookPermissions>
+                        {/* <BookPermissions level='Friends' onChange={changePermissions.friend}><p>Only members who you <Semibold>mutually follow</Semibold>; meaning you follow them and they follow you back.</p></BookPermissions> */}
                         <>
                             <div className='text-primary font-bold my-4'>Communes</div>
                             <div className='text-sm -mt-4 mb-4'>Give specific members specific access. You can set it for the whole book, for certain chapters or certain characters; you can even create multiple communes for different situations. Set these up later once you have created the book!</div>
@@ -129,7 +189,9 @@ const CreateBook = () => {
 
                 </div>
                 <div className={showStep(3)}>
-                    <h3>Pick a Cover</h3>
+                    <h3>Genre and Cover</h3>
+                    <GenreSelector allowAll={true} genre={genre} setGenre={() => onGenreSelect} sendTitle={true} />
+                    <GalleryPhotoswipe images={covers} onClick={setCover} />
                 </div>
                 <div className={showStep(4)}>
                     <h3>All Good?</h3>
@@ -139,6 +201,7 @@ const CreateBook = () => {
             <Box className='flex justify-evenly mt-8'>
                 <EZButton className={activeStep>0 ? 'inline' : 'hidden'} label={ArrowLeftIcon} onClick={() => setActiveStep(activeStep-1)} />
                 <Box sx={{ flex: '1 1 auto' }} />
+                {jsonDialog(upsertProps)}
                 <EZButton className={activeStep<4 ? 'inline' : 'hidden'} label={ArrowRightIcon} onClick={() => setActiveStep(activeStep+1)}  />
                 <EZButton className={activeStep==4 ? 'inline' : 'hidden'} label={SaveIcon} />
             </Box>
@@ -150,3 +213,4 @@ const CreateBook = () => {
 }
 
 export default CreateBook
+

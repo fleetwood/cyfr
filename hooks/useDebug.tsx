@@ -1,3 +1,4 @@
+import OpenDialog from "components/ui/openDialog"
 import JsonBlock from "../components/ui/jsonBlock"
 import { __logLevel__ } from "../utils/constants"
 
@@ -38,6 +39,8 @@ ${lineBreak()}
   
   const jsonBlock = (data:any) => <JsonBlock data={data} debug={level === 'DEBUG'} />
 
-  return {debug, info, err, stringify, level, jsonBlock, fileMethod}
+  const jsonDialog = (data:any, label = 'DEBUG') => <OpenDialog label={label} content={jsonBlock(data)} />
+
+  return {debug, info, err, stringify, level, jsonBlock, jsonDialog, fileMethod}
 }
 export default useDebug

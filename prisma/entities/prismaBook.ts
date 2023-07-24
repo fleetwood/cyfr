@@ -371,6 +371,8 @@ const deleteBook = async ({bookId,creatorId}:BookEngageProps): Promise<Book | un
   }
 }
 
+const isTitleUnique = async (title:string):Promise<Boolean> => await prisma.book.findFirst({where: {title: {equals: title, mode: 'insensitive'}}}) === null
+
 const updateWordCount = async (bookId:string):Promise<Boolean> => {
   try {
     const book = await prisma.book.findFirstOrThrow({
@@ -402,6 +404,7 @@ export const PrismaBook = {
   , upsert
   , updateWordCount
   , follow
+  , isTitleUnique
   , like
   , share
   , addChapter

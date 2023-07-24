@@ -6,21 +6,16 @@ import { useToast } from "../../context/ToastContextProvider"
 import SocialTextarea from "../../forms/SocialTextarea"
 import { CyfrLogo, ReplyIcon } from "../../ui/icons"
 import { LoggedIn } from "../../ui/toasty"
+import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from "components/ui/modalCheckbox"
 
 const {debug} = useDebug("components/containers/Post/CreateCommentModal")
 const createCommentModal = 'createCommentModal'
 
-const toggleModal = (show?:boolean) => {
-  const createModal = document.getElementById(createCommentModal)
-  // @ts-ignore
-  createModal!.checked = show || false
-}
-
 export const CreateCommentModalButton = () => (
-  <label htmlFor={createCommentModal} className="btn btn-info space-x-2">
+  <ModalOpenButton id={createCommentModal} className="btn btn-info space-x-2">
     <CyfrLogo className="animate-pulse text-info-content w-[1.25rem]" />
     <span className="text-info-content">New Post</span>
-  </label>
+  </ModalOpenButton>
 )
 
 export const CreateCommentFooterButton = ({postId, comments}:{postId: string, comments: number}) => (
@@ -30,7 +25,10 @@ export const CreateCommentFooterButton = ({postId, comments}:{postId: string, co
       iconClassName="text-primary"
       labelClassName="text-primary"
       label={comments.toString()}
-      onClick={() => {toggleModal(true)}}
+      onClick={() => {
+        debug('CreateCommentFooterButton needs manual modal toggle')
+        // toggleModal(true)
+      }}
     />
 )
 
@@ -55,17 +53,14 @@ const CreateCommentModal = (): JSX.Element => {
 
     notify('handleSubmit on CreateCommentModal Not Implemented', 'warning')
 
-    const createModal = document.getElementById(createCommentModal)
-    // @ts-ignore
-    createModal!.checked = false
   }
 
   return (
     <>
-    <input type="checkbox" id={createCommentModal} className="modal-toggle" />
+    <ModalCheckbox id={createCommentModal} />
     <div className="modal modal-bottom sm:modal-middle">
       <div className="modal-box bg-opacity-0 shadow-none overflow-visible scrollbar-hide">
-        <label htmlFor={createCommentModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+        <ModalCloseButton id={createCommentModal} />
         <div
           className="mb-3 rounded-xl w-full 
           bg-primary text-primary-content 

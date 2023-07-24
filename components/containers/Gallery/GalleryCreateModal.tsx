@@ -2,15 +2,15 @@ import { useRef } from "react"
 import useDebug from "hooks/useDebug"
 
 import GalleryUpsertForm from "./GalleryUpsertForm"
-import OpenModal from "components/ui/openModal"
 import useApi from "prisma/useApi"
+import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from "components/ui/modalCheckbox"
 
 const {debug} = useDebug('components/containers/GalleryGalleryCreateView')
 
 const createGalleryModal = "createGalleryModal"
 
-export const OpenGalleryModalButton = () => <OpenModal htmlFor={createGalleryModal} label='Create Gallery' />
-export const OpenGalleryModalPlus = () => <OpenModal htmlFor={createGalleryModal} variant='plus' />
+export const OpenGalleryModalButton = () => <ModalOpenButton id={createGalleryModal} label='Create Gallery' />
+export const OpenGalleryModalPlus = () => <ModalOpenButton id={createGalleryModal} variant='plus' />
 
 type GalleryCreateModalProps = {
   onUpsert?:  (galleryId?:string) => void
@@ -25,10 +25,7 @@ const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
   const modal = useRef<HTMLInputElement>(null)
 
   const closeModal = (e?:any) => {
-    debug('closeModal')
-    const galleryModal = document.getElementById(createGalleryModal)
-    // @ts-ignore
-    galleryModal!.checked = false
+    debug('closeModal TODO: create a manual close for modal')
   }
 
   const onGalleryUpsert = (galleryId?:string) => {
@@ -41,7 +38,7 @@ const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
 
   return (
     <>
-    <input type="checkbox" ref={modal} id={createGalleryModal} className="modal-toggle" onChange={()=>{}} />
+    <ModalCheckbox id={createGalleryModal} />
     <div className="modal modal-bottom sm:modal-middle">
       <div className="modal-box bg-opacity-0 shadow-none">
         {cyfrUser && (
@@ -51,7 +48,7 @@ const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
             </form>
           </div>
         )}
-        <label htmlFor={createGalleryModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+        <ModalCloseButton id={createGalleryModal} />Z
       </div>
     </div>
     </>

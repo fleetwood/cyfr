@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, MutableRefObject, SelectHTMLAttributes, useRef, useState } from "react";
+import { ChangeEventHandler, InputHTMLAttributes, MutableRefObject, SelectHTMLAttributes, useRef, useState } from "react";
 import { KeyVal } from "../../types/props";
 
 type TailwindDropdownProps =  InputHTMLAttributes<HTMLInputElement> & {
@@ -6,6 +6,7 @@ type TailwindDropdownProps =  InputHTMLAttributes<HTMLInputElement> & {
   itemClassName?: string
   value?:         string
   setValue?:      (val:string) => void
+  onChange?:      (kv: KeyVal) => void
   placeholder?:   string
 }
 
@@ -36,6 +37,10 @@ const TailwindSelectInput = (props:TailwindDropdownProps) => {
     setShowList(false)
   }
 
+  const onPropClick = (opt: KeyVal) => {
+    props.onChange && props.onChange(opt)
+  }
+
   return (
     <div ref={ref}>
       <select 
@@ -44,7 +49,7 @@ const TailwindSelectInput = (props:TailwindDropdownProps) => {
         onChange={optionClick}
         >
           {options.map(opt => (
-            <option value={opt.value??opt.key} selected={opt.key===value} key={opt.key} >{opt.key}</option>
+            <option value={opt.value??opt.key} selected={opt.key===value} key={opt.key} onClick={() => onPropClick(opt)} >{opt.key}</option>
           ))}
       </select>
     </div>

@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react"
 import { BookDetailHook, Chapter, ChapterListItem, ChapterStub } from "../../../prisma/prismaContext"
 import useDebug from "hooks/useDebug"
 import Spinner from "components/ui/spinner"
+import ModalCheckbox from "components/ui/modalCheckbox"
 
 type ChapterListProps = {
     chapters:   ChapterListItem[]
@@ -71,10 +72,11 @@ const ChapterList = ({chapters, onSort, onSelect}:ChapterListProps) => {
 
   return (
     <div className="relative flex">
+      <div>TODO: spinnerModal needs a manual toggle</div>
       <ul>
         {bookChapters.map((chapter:ChapterListItem, index:number) => chapterItem(chapter, index))}
       </ul>
-        <input type="checkbox" id={spinnerModal} className="modal-toggle" />
+        <ModalCheckbox id={spinnerModal} />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box bg-opacity-0 shadow-none overflow-visible scrollbar-hide">
             <div className="mb-3 rounded-xl w-full bg-primary text-primary-content md:bg-blend-hard-light md:bg-opacity-80">

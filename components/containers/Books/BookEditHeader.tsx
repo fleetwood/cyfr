@@ -140,8 +140,8 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
 
   const updateStatus = (value:string) => update({status: value as BookStatus || 'DRAFT'}, false)
   
-  const onGenreSelect = async (value: string) => {
-    const changed = await updateGenre({bookId: bookDetail.id, genreId: value})
+  const onGenreSelect = async (kv: KeyVal) => {
+    const changed = await updateGenre({bookId: bookDetail.id, genreId: kv.key})
     if (changed) {
       updated('Genre updated!')
     } else {
@@ -182,7 +182,7 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
           />
         </div>
         <div className="flex">
-          <GenreSelector genreTitle={bookDetail.genre.title} onGenreSelect={onGenreSelect} />
+          <GenreSelector genre={bookDetail.genre} setGenre={(kv) => onGenreSelect(kv as KeyVal)} />
           {/* TODO Categories view is broken in db */}
           <div>
             <label className="font-semibold w-[50%]">Categories</label>

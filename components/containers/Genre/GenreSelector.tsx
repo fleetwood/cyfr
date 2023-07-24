@@ -1,23 +1,39 @@
 import { TailwindSelectInput } from 'components/forms'
-import { GenreStub } from 'prisma/prismaContext'
+import useDebug from 'hooks/useDebug'
+import { Genre, GenreStub } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
-import React, { useEffect, useState } from 'react'
+import React, { Key, useEffect, useState } from 'react'
 import { KeyVal } from 'types/props'
 
+const {debug} = useDebug('containers/Genre/GenreSelector', 'DEBUG')
+
+    /**
+    * @param setGenre Provides a {@link KeyVal} of `genre.id` and `genre.title`. **Do not set this to a `useState<Genre>` parameter**, point it to a handler instead.
+    */
 type GenreSelectorProps = {
     label?:         string
     showLabel?:     boolean
-    genreTitle?:    string
     className?:     string
     allowAll?:      boolean
     required?:      boolean
     sendTitle?:     boolean
-    onGenreSelect?: (value:string) => void
+    genre?:         GenreStub|Genre
+    genreId?:       string
+    setGenre?:      (genre:KeyVal|string) => void
 }
 
+/**
+ * 
+ * @param label Sets the label for the input, not the value of the input
+ * @param genre Will accept {@link GenreStub}|{@link Genre} as an initial value. This will be mapped to a {@link KeyVal} of `{key: id, value: title}`
+ * @param genreId Will accept {string} `genre.id` as an initial value. This will be compared to {@link useApi.genre()}{@link useApi.genre().stubs()} to find the matching {@link GenreStub} and its covers.
+ * @param sendTitle If this flag is set, {@link setGenre} will try to send the `kv.value` (?? `kv.key`) instead of {@link KeyVal}
+ * @returns 
+ */
 const GenreSelector = ({
-  genreTitle, 
-  onGenreSelect, 
+  genre, 
+  genreId, 
+  setGenre, 
   label='Genre', 
   showLabel=true, 
   allowAll=false, 
@@ -32,14 +48,14 @@ const GenreSelector = ({
     const {stubs} = useApi.genre()
     const genres = await stubs()
     if (genres) {
-      const sortMap = genres.sort((a,b) => a.title > b.title ? 1 : -1).map((g:GenreStub) => { return {value: g.id, key: g.title}})
+      const sortMap = genres.sort((a,b) => a.title > b.title ? 1 : -1).map((g:GenreStub) => { return {value: g.id, key: g.title} as KeyVal})
       setGenreList(() => allowAll ? [{key: 'All', value: ''},...sortMap] : sortMap)
     }
   }
 
-  const onGenreChange = (value:string) => {
-    if (!onGenreSelect) return
-    onGenreSelect(!sendTitle ? value : genreList.find(g => g.value === value)!.key )
+  const onChange = (kv:KeyVal) => {
+    if (!setGenre) return
+    setGenre(sendTitle ? (kv.value ?? kv.key).toString() : kv)
   }
 
   useEffect(() => {
@@ -52,8 +68,8 @@ const GenreSelector = ({
           <label className="font-semibold w-[50%]">{label}{required && <>*</>}</label>
         }
         <TailwindSelectInput
-            value={genreTitle}
-            setValue={onGenreChange}
+            value={(genre?.id??genreId)!}
+            onChange={() => onChange}
             options={genreList}
         />
     </div>

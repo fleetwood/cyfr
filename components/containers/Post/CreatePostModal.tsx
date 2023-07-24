@@ -66,7 +66,8 @@ const CreatePostModal = (): JSX.Element => {
 
   return (
     <>
-    <input type="checkbox" id={createPostModal} className="modal-toggle" />
+    
+    <input type="checkbox" id={createPostModal} className="modal-toggle" onChange={() => {}} />
     <div className="modal modal-bottom sm:modal-middle">
       <div className="modal-box bg-opacity-0 shadow-none overflow-visible scrollbar-hide">
         <label htmlFor={createPostModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
