@@ -5,7 +5,7 @@ import Stepper from '@mui/material/Stepper'
 import { useToast } from 'components/context/ToastContextProvider'
 import { TailwindInput, TailwindTextarea } from 'components/forms'
 import EZButton from 'components/ui/ezButton'
-import { ArrowLeftIcon, ArrowRightIcon, CyfrLogo, SaveIcon } from 'components/ui/icons'
+import { ArrowLeftIcon, ArrowRightIcon, CheckmarkIcon, CyfrLogo, SaveIcon } from 'components/ui/icons'
 import Semibold from 'components/ui/semibold'
 import useDebug from 'hooks/useDebug'
 import { Genre, Image, Permission, Role, RoleString, RoleVals, getRoles } from 'prisma/prismaContext'
@@ -18,6 +18,7 @@ import UserSelector from '../User/UserSelector'
 import BookPermissions from './BookPermissions'
 import BookPermissionsDialog from './BookPermissionsDialog'
 import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from 'components/ui/modalCheckbox'
+import useDebounce from 'hooks/useDebounce'
 
 const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",'DEBUG')
 const createBookModal = 'createBookModal'
@@ -31,6 +32,7 @@ export const CreateBookModalButton = () => (
 
 const CreateBook = () => {
     const {notify} = useToast()
+    const {isTitleUnique} = useApi.book()
 
     const [title, setTitle] = useState<string|null>(null)
     const [visible, setVisible] = useState(false)
@@ -67,10 +69,29 @@ const CreateBook = () => {
     const changeReader = (perms:RoleString[]) => setPermissions(() => {return {...permissions, reader: perms.flatMap(a => a) as Role[]}})
     
 
-    const [uniqueError, setUniqueError] = useState<string>()
-    const isTitleUnique = () => {
-        debug('isTitleUniqe', {title})
+    const [titleError, setTitleError] = useState<string>()
+    const [titleOK, setTitleOK] = useState(false)
+    const checkTitle = useDebounce({value: title, ms: 500})
+    const checkUnique = async () => {
+        setTitleOK(() => false)
+        if (checkTitle===null||checkTitle!.trim().length<=0) {
+            setTitleError(() => 'Title is required')
+            return
+        }
+        setTitleError(() => undefined)
+        const isUnique = await isTitleUnique(checkTitle!)
+        debug('checkUnique', {title, checkTitle, isUnique})
+        if (!isUnique || isUnique !== true) {
+            setTitleError(() => 'Title is not unique!')
+        }
+        else if (isUnique===true) {
+            setTitleOK(() => true)
+        }
     }
+
+    useEffect(() => {
+        checkUnique()
+    }, [checkTitle])
     // const [characters, setCharacters] = useState<Character[]>(book?.characters || [])
     // const [gallery, setGallery] = useState<GalleryStub | null>(book?.gallery || null)
     const [images, setImages] = useState()
@@ -103,17 +124,11 @@ const CreateBook = () => {
 
   const steps = ['Name', 'About', 'Access', 'Cover', 'Review']
 
-  const toggleModal = (show?:boolean) => {
-    const createModal = document.getElementById(createBookModal)
-    // @ts-ignore
-    createModal!.checked = show || false
-  }
-
-
   const {findCover} = useApi.cover()
   const [coversByGenre, setByGenre] = useState<string>()
   const [covers, setCovers] = useState<Image[]>([])
   const onGenreSelect = (genre:string) => {
+    debug('onGenreSelect', genre)
     notify(genre ? `Genre selected ${genre}` : 'All genres selected')
     setByGenre(() => genre)
   }
@@ -150,7 +165,8 @@ const CreateBook = () => {
                     <h3 className='mt-2'>Name and Author</h3>
                     <Box className='flex flex-col'>
                         <p className='text-sm mt-4'>Give your book a <span className='font-semibold'>unique name.</span></p>
-                        <TailwindInput type='text' value={title} setValue={setTitle} label='Title' error={uniqueError} validate={isTitleUnique} />
+                        <TailwindInput type='text' value={title} setValue={setTitle} label='Title' error={titleError} />
+                        <span className={titleOK ? 'text-success' : 'opacity-0'}>{CheckmarkIcon}</span>
                         <p className='text-sm mt-4'>If you're co-authoring with another member of <Semibold>Cyfr</Semibold>, add them here. Note: this person will have <span className='font-semibold'>full access and privileges to the book</span>, so you have to be friends (as in: you Follow each other). Would be kinda weird otherwise.</p>
                         <UserSelector label='Authors' />
                     </Box>
@@ -168,8 +184,8 @@ const CreateBook = () => {
                 <div className={showStep(2)}>
                     <div className='flex mt-2'>
                         <Grid container columns={12}>
-                            <Grid xs={6}><h3>Share it or Not</h3></Grid>
-                            <Grid xs={6}><BookPermissionsDialog /></Grid>
+                            <Grid columns={6}><h3>Share it or Not</h3></Grid>
+                            <Grid columns={6}><BookPermissionsDialog /></Grid>
                         </Grid>
                     </div>
                     <Box className='flex flex-col'>
@@ -180,7 +196,7 @@ const CreateBook = () => {
                         <BookPermissions level='Members' onChange={changeMember}><p>This is anybody who is <Semibold>logged in</Semibold> to the site, which will exclude bots and search engines.</p></BookPermissions>
                         <BookPermissions level='Public' onChange={changePublic}><p>This is anybody who visits the site, including <Semibold>bots and search engines</Semibold>.</p></BookPermissions>
                         <BookPermissions level='Reader' onChange={changeReader}><p></p></BookPermissions>
-                        {/* <BookPermissions level='Friends' onChange={changePermissions.friend}><p>Only members who you <Semibold>mutually follow</Semibold>; meaning you follow them and they follow you back.</p></BookPermissions> */}
+                        {/* <BookPermissions level='Friends' onChange={changeFriend}><p>Only members who you <Semibold>mutually follow</Semibold>; meaning you follow them and they follow you back.</p></BookPermissions> */}
                         <>
                             <div className='text-primary font-bold my-4'>Communes</div>
                             <div className='text-sm -mt-4 mb-4'>Give specific members specific access. You can set it for the whole book, for certain chapters or certain characters; you can even create multiple communes for different situations. Set these up later once you have created the book!</div>

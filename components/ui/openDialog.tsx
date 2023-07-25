@@ -5,10 +5,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Slide,
   SlideProps
 } from '@mui/material'
-import { TransitionProps } from '@mui/material/transitions'
 import EZButton from 'components/ui/ezButton'
 import { XIcon } from 'components/ui/icons'
 import React, { ReactNode } from 'react'
@@ -88,7 +86,6 @@ const OpenDialog = (props:OpenDialogProps) => {
           </Box>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
             <div
               className={`flex flex-col space-y-3 ${
                 props.contentClassname ?? ''
@@ -111,7 +108,6 @@ const OpenDialog = (props:OpenDialogProps) => {
                 }
               </Box>
             )}
-          </DialogContentText>
         </DialogContent>
         {props.footer && (
           <DialogActions>

@@ -10,6 +10,7 @@ import {
   CyfrUserInclude,
   Follow,
   GalleryStub,
+  Membership,
   MembershipStub,
   prisma, User, UserDetail,
   UserFollowProps,
@@ -22,6 +23,7 @@ import {
   GenericResponseError,
   ResponseError
 } from "types/response"
+import { dedupe } from "utils/helpers"
 const { fileMethod, debug, info, err } = useDebug("entities/prismaUser")
 
 type AllPostQueryParams = {
@@ -278,6 +280,71 @@ const galleries = async (props:UserDetailProps): Promise<GalleryStub[]> => {
 
 const cyfrUser = async (email:string): Promise<CyfrUser> => await prisma.user.findUnique({where: { email },include: CyfrUserInclude}) as unknown as CyfrUser
 
+type FriendStub = {
+  follower: {
+    id: string,
+    name: string,
+    email: string,
+    image?: string,
+    slug: string,
+    membership: Membership
+  }
+  following: {
+    id: string,
+    name: string,
+    email: string,
+    image?: string,
+    slug: string,
+    membership: Membership
+  }
+}
+const friends = async(id:string, search?: string): Promise<UserStub[]> => {
+  const f = await prisma.follow.findMany({
+    where: {
+      OR:[ 
+        {followerId: id},
+        {followingId: id}
+      ],
+      AND: {
+        OR: [
+          {follower: {name: {contains: search, mode: 'insensitive'}}},
+          {following: {name: {contains: search, mode: 'insensitive'}}}
+        ]
+      }
+    },
+    select: {
+      follower: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          slug: true,
+          membership: true
+        }
+      },
+      following: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          slug: true,
+          membership: true
+        }
+      }
+    }
+  }) as FriendStub[]
+
+  const users = f.filter((u:FriendStub) => 
+      f.find((x:FriendStub) => x.following.id === u.follower.id && x.follower.id === u.following.id)
+    ).map((fr:FriendStub) => {
+      return fr.follower.id !== id ? {...fr.follower} : {...fr.following}
+    })
+
+  return dedupe(users, 'id') as UserStub[]
+}
+
 type MentionSearchProps = {
   search?:  string
   all?:     boolean
@@ -433,6 +500,7 @@ export const PrismaUser = {
   canAccess,
   cyfrUser,
   detail,
+  friends,
   galleries,
   userInfo,
   userInSessionContext,

@@ -40,7 +40,7 @@ const BookPermissions = ({level, onChange, children}:GridItemProps) => {
     const checkedBG = (active:boolean) => active ? `checkbox checkbox-primary` : `checkbox checkbox-content`
 
     const GridItem = ({label, val, setVal}:{label:string, val:boolean, setVal: React.Dispatch<React.SetStateAction<boolean>>}) => (
-        <Grid sm className={`cursor-pointer ${itemBG(val)}`} onClick={() => setItem(val, setVal)}>
+        <Grid className={`cursor-pointer ${itemBG(val)}`} onClick={() => setItem(val, setVal)}>
             <div className={`text-center items-center text-sm`}>{label}</div>
             <div className={`text-center items-center text-sm`}><input type='checkbox' checked={val} className={checkedBG(val)} onChange={() => {}} /></div>
         </Grid>
@@ -72,7 +72,7 @@ const BookPermissions = ({level, onChange, children}:GridItemProps) => {
     {children && <div className='text-sm -mt-4 mb-4'>{children}</div>}
     <div className='px-4'>
         <Grid container spacing={2}>
-            <Grid xs={1} display="flex" justifyContent="center" alignItems="center" className={`cursor-pointer ${itemBG(all)}`} onClick={toggleAll} >
+            <Grid columns={1} display="flex" justifyContent="center" alignItems="center" className={`cursor-pointer ${itemBG(all)}`} onClick={toggleAll} >
                 <span>Toggle All</span>
             </Grid>
             

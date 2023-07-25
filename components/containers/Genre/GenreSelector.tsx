@@ -54,6 +54,7 @@ const GenreSelector = ({
   }
 
   const onChange = (kv:KeyVal) => {
+    debug('onChange')
     if (!setGenre) return
     setGenre(sendTitle ? (kv.value ?? kv.key).toString() : kv)
   }

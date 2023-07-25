@@ -26,6 +26,8 @@ const {debug} = useDebug('prisma/api/userApi', 'DEBUG')
     }
   }
 
+  const friends = async (id:string, search?:string):Promise<UserStub[]> => await getApi(`user/${id}/friends${search?`?s=${search}`:''}`)
+
   const detail = async (props: UserDetailProps):Promise<UserDetail> => await (await sendApi('user/detail', props)).data as UserDetail
 
   const mentions = async (search:string|undefined):Promise<UserStub[]> => {
@@ -49,6 +51,7 @@ const UserApi = () => {
     followUser,
     mentions,
     books,
+    friends,
     info,
     detail
   }
