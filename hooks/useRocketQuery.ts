@@ -40,7 +40,7 @@ export const useRocketQuery = <T>({name, url, body, timeout=30000}:RocketQueryPr
   )
 
   const invalidate = () => {
-    debug(`invalidate`,{queryKey})
+    debug(`invalidate`,{queryKey}, true)
     qc.invalidateQueries(queryKey)
   }
   

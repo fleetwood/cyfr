@@ -1,22 +1,30 @@
+import { Grid } from "@mui/material"
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { useToast } from "components/context/ToastContextProvider"
+import Avatar from "components/ui/avatar"
 import { FireIcon, HeartIcon } from "components/ui/icons"
 import JsonBlock from "components/ui/jsonBlock"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
-import userApi from "prisma/useApi/user"
-import { BookStub, GalleryStub, PostStub } from "prisma/prismaContext"
+import { BookStub, FollowStub, GalleryStub, PostStub, UserFollow, UserStub } from "prisma/prismaContext"
+import useApi from "prisma/useApi"
 import { useState } from "react"
-import { uniqueKey } from 'utils/helpers'
+import { abbrNum, uniqueKey } from 'utils/helpers'
+import PostStubView from "../Post/PostStubView"
+import BookCover from "../Books/BookCover"
+import GalleryStubView from "../Gallery/GalleryStubView"
 
 type UserDetailViewProps = {slug: string}
 const UserDetailView = ({slug}:UserDetailViewProps) => {
-  const {cyfrUser} = useCyfrUserContext()
-  const {query, followUser } = userApi()
+  const {cyfrUser} = useApi.cyfrUser()
+  const {query, followUser } = useApi.user()
 
   const {data: currentUser, isLoading, error, invalidate} = query({slug})
-  // const {followers, follows } = currentUser
+  const followers = currentUser?.following.filter(f => f.isFan === false) ?? []
+  const fans = currentUser?.following.filter(f => f.isFan === true) ?? []
+  const following = currentUser?.follower.filter(f => f.isFan === false) ?? []
+  const stans = currentUser?.follower.filter(f => f.isFan === true) ?? []
   
-  const { notify, notifyNotImplemented } = useToast()
+  const { notify, notifyNotImplemented, notifyError } = useToast()
   const [activeTab, setActiveTab] = useState("Posts")
 
   const activeTabClass = (tab: string) =>
@@ -25,8 +33,6 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
       : `btn-primary -mt-1`
 
   const clickFollow = async () => {
-    if (!cyfrUser || !currentUser) return
-
     const result = await followUser({
       followerId: cyfrUser.id,
       followingId: currentUser.id,
@@ -35,6 +41,8 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
 
     if (result) {
       notify(`You are now following ${currentUser.name}!`,"success",)
+    } else {
+      notifyError()
     }
     invalidate()
   }
@@ -50,6 +58,8 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
 
     if (result) {
       notify(`You are stanning ${currentUser.name}!!! Nice!`,"success")
+    } else {
+      notifyError()
     }
     invalidate()
   }
@@ -59,46 +69,39 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
       {currentUser &&
         <img src={currentUser.image||''} className="-mt-2 mb-2 rounded-md min-w-full" />
       }
-      <div
-        className="grid grid-cols-9 mx-2 mb-4 md:mx-4 md:mb-8 md:p-4 rounded-md p-2 bg-base-100 bg-opacity-20 text-neutral-content">
-        <div className="col-span-7">
-          <div className="flex items-start flex-col md:flex-row justify-between h-[50%]">
-            <div>
-              <strong>Posts:</strong> {(currentUser?.posts||[]).length}
-            </div>
-            <div>
-              <strong>Followers:</strong> (NI)
-            </div>
-            <div>
-              <strong>Follows:</strong> (NI)
-            </div>
-            <div>
-              <strong>Fans:</strong> (NI)
-            </div>
-            <div>
-              <strong>Stans:</strong> (NI)
-            </div>
+      <Grid>
+          <Grid>
+            <strong>Posts:</strong> {(currentUser?.posts||[]).length}
+          </Grid>
+          <div>
+            <strong>Followers:</strong> ({followers.length})
           </div>
-          <div className="flex items-start md:items-end justify-end space-x-4 md:justify-start md:space-x-8 md:border-t border-base-content border-opacity-50 h-[50%]">
-            <ShrinkableIconButton
-              label="Follow"
+          <div>
+            <strong>Fans:</strong> ({fans.length})
+          </div>
+          <div>
+            <strong>Follows:</strong> ({following.length})
+          </div>
+          <div>
+            <strong>Stans:</strong> ({stans.length})
+          </div>
+          <ShrinkableIconButton
+              label={`Followers (${abbrNum(followers.length)})`}
               icon={HeartIcon}
               className="bg-opacity-0 hover:shadow-none"
               iconClassName="text-primary"
               labelClassName="text-primary"
               onClick={clickFollow}
             />
-            <ShrinkableIconButton
-              label="Fan"
-              icon={FireIcon}
-              className="bg-opacity-0 hover:shadow-none"
-              iconClassName="text-primary"
-              labelClassName="text-primary"
-              onClick={clickStan}
-            />
-          </div>
-        </div>
-      </div>
+          <ShrinkableIconButton
+            label={`Fans (${abbrNum(fans.length)})`}
+            icon={FireIcon}
+            className="bg-opacity-0 hover:shadow-none"
+            iconClassName="text-primary"
+            labelClassName="text-primary"
+            onClick={clickStan}
+          />
+      </Grid>
 
       {/* TAB BUTTONS */}
       <div className="border-b-8 border-secondary flex justify-between space-x-2">
@@ -121,29 +124,28 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
           Books
         </button>
         <button
-          className={`btn ${activeTabClass("Follow")} w-[15%]`}
-          onClick={() => setActiveTab("Follow")}
+          className={`btn ${activeTabClass("Followers")} w-[15%]`}
+          onClick={() => setActiveTab("Followers")}
         >
-          Follow
+          Followers
         </button>
         <button
-          className={`btn ${activeTabClass("Fan")} w-[15%]`}
-          onClick={() => setActiveTab("Fan")}
+          className={`btn ${activeTabClass("Following")} w-[15%]`}
+          onClick={() => setActiveTab("Following")}
         >
-          Fan
+          Following
         </button>
       </div>
 
       {/* GALLERIES */}
       {activeTab === "Galleries" && (
         <div className="flex flex-col space-y-4 my-4">
-
+          <h2 className="subtitle">Galleries ({abbrNum(currentUser?.galleries?.length??0)})</h2>
           <div className="bg-base-100 my-4 p-4 rounded-md">
             {currentUser?.galleries && 
               currentUser.galleries.map((gallery: GalleryStub) => 
               <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
-                <JsonBlock data={gallery} />
-                {/* <GalleryStubView gallery={gallery}/> */}
+                <GalleryStubView gallery={gallery}/>
               </div>
             )}
           </div>
@@ -151,66 +153,64 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
       )}
       {/* BOOKS */}
       {activeTab === "Books" && (
-        <div>
-          <h2 className="subtitle">Books</h2>
+        <div className="flex flex-col space-y-4 my-4">
+          <h2 className="subtitle">Books ({abbrNum(currentUser?.books?.length??0)})</h2>
           <div className="bg-base-100 my-4 p-4 rounded-md">
             {currentUser?.books?.map((book:BookStub) => (
-              // <BookCover book={book} key={book.id} />
-              <JsonBlock data={book} key={book.id} />
+              <BookCover book={book} key={book.id} />
             ))}
           </div>
         </div>
       )}
       {/* POSTS */}
       {activeTab === "Posts" && (
-        <>
-          <h2 className="subtitle">Posts</h2>
-          <div className="my-4">
+        <div className="flex flex-col space-y-4 my-4">
+          <h2 className="subtitle">Posts ({abbrNum(currentUser?.posts?.length??0)})</h2>
+          <div className="bg-base-100 my-4 p-4 rounded-md">
           {currentUser?.posts?.map((post:PostStub) => (
-              // <PostStubView post={post} key={post.id} />
-              <JsonBlock data={post} key={post.id} />
+              <PostStubView post={post} key={post.id} />
           ))}
           </div>
-        </>
+        </div>
       )}
       {/* FOLLOWERS */}
-      {activeTab === "Follow" && (
+      {activeTab === "Followers" && (
         <div className="bg-base-300 rounded-md p-4 my-4 grid grid-cols-2 gap-2">
         <div className="col-span-1">
-          <h2 className="h-subtitle">Followers</h2>
+          <h2 className="h-subtitle">Fans</h2>
           <div className="flex space-x-2 space-y-2">
-            {/* {followers.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
-            ))} */}
+            {fans.map((follow:FollowStub) => (
+              <Avatar user={follow.follower} sz='md' key={uniqueKey(currentUser, follow)} />
+            ))}
           </div>
         </div>
         <div className="col-span-1">
-          <h2 className="h-subtitle">Follows</h2>
+          <h2 className="h-subtitle">Followers</h2>
           <div className="flex space-x-2 space-y-2">
-            {/* {follows.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
-            ))} */}
+            {followers.map((follow:FollowStub) => (
+              <Avatar user={follow.follower} sz='md' key={uniqueKey(currentUser, follow)} />
+            ))}
           </div>
         </div>
       </div>
       )}
       {/* FANS */}
-      {activeTab === "Fan" && (
+      {activeTab === "Following" && (
         <div className="bg-base-300 rounded-md p-4 my-4 grid grid-cols-2 gap-2">
-        <div className="col-span-1">
-          <h2 className="h-subtitle">Fans</h2>
-          <div className="flex space-x-2 space-y-2">
-            {/* {fans.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)}/>
-            ))} */}
-          </div>
-        </div>
         <div className="col-span-1">
           <h2 className="h-subtitle">Stans</h2>
           <div className="flex space-x-2 space-y-2">
-            {/* {stans.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)}/>
-            ))} */}
+            {stans.map((follow:FollowStub) => (
+              <Avatar user={follow.following} sz='md' key={uniqueKey(currentUser, follow)} />
+            ))}
+          </div>
+        </div>
+        <div className="col-span-1">
+          <h2 className="h-subtitle">Following</h2>
+          <div className="flex space-x-2 space-y-2">
+            {following.map((follow:FollowStub) => (
+              <Avatar user={follow.following} sz='md' key={uniqueKey(currentUser, follow)} />
+            ))}
           </div>
         </div>
       </div>

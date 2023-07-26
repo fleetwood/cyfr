@@ -14,7 +14,7 @@ const UserBillingDetail = () => {
   const { cyfrUser, isLoading, error, invalidate, updateUser, setMembership } = useApi.cyfrUser()
   const { notify } = useToast()
   const [ types, setTypes] = useState<MembershipType[]>()
-  const [membershipType, setMembershipType] = useState<MembershipType|null>(cyfrUser.membership?.type ?? (types ? types[0] : null))
+  const [membershipType, setMembershipType] = useState<MembershipType|null>(cyfrUser?.membership?.type ?? (types ? types[0] : null))
 
   const isPlan = (p: MembershipType) => p.id === membershipType?.id ?? false
   const currentPlan = (p:MembershipType) => cyfrUser?.membership?.typeId === p.id
@@ -23,7 +23,7 @@ const UserBillingDetail = () => {
     debug('chooseMembership', { id: typeId, cadence })
     const result = await setMembership({typeId, cadence})
     if (result) {
-      notify('Congratulations on your new membership!')
+      notify('Congratulations on your new membership!', 'success')
     }
     invalidate()
   }
@@ -49,7 +49,7 @@ const UserBillingDetail = () => {
           Our pricing plan</h1>
         <p role="contentinfo" className="text-base leading-5 mt-5 text-base-content text-opacity-70">
           We’re working on a suite of tools to make writing a social effort, for
-          everyone for free. <strong>TODO: Tie this to the db.</strong></p>
+          everyone for free.</p>
 
         <div className="flex flex-col space-y-6 mt-6">
           {types && types.map((t:MembershipType) => (

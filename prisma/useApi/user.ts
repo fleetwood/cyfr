@@ -16,15 +16,7 @@ const {debug} = useDebug('prisma/api/userApi', 'DEBUG')
 
   const canAccess = async (level:AudienceLevels) => await (await sendApi("user/access", {level})).data === true
 
-  const followUser = async (props: UserFollowProps):Promise<boolean>  => {
-    const like = await (await sendApi("user/follow", props)).data
-    if (like.result) {
-      return true
-    } else {
-      debug("Did not get right result?", like.result)
-      return false
-    }
-  }
+  const followUser = async (props: UserFollowProps):Promise<boolean>  => await (await sendApi("user/follow", props)).data
 
   const friends = async (id:string, search?:string):Promise<UserStub[]> => await getApi(`user/${id}/friends${search?`?s=${search}`:''}`)
 

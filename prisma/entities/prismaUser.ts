@@ -65,7 +65,7 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
     })
     const data = {followerId,followingId,isFan}
     const include = {follower: true,following: true}
-    debug('follow', {followerId, followingId, data})
+    debug('follow', {followerId, followingId, data}, true)
 
     const follow = exists 
       ? await prisma.follow.update({
@@ -77,15 +77,12 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
         data,
         include
       })
-    if (follow) {
-      return follow
-    }
-    throw({code: fileMethod('follow'), message: 'Unable to follow user'})
+    return follow
   } catch (error) {
     debug(`follow ERROR`, {
       ...{ props },
       ...{ error },
-    })
+    }, true)
     throw GenericResponseError(error as unknown as ResponseError)
   }
 }
@@ -181,6 +178,14 @@ const detail = async (props:UserDetailProps): Promise<UserDetail> => {
       following: {
         include: {
           follower: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              slug: true,
+            }
+          },
+          following: {
             select: {
               id: true,
               name: true,

@@ -1,3 +1,5 @@
+import { Follow, UserStub } from "prisma/prismaContext"
+
 export type UserFollowProps = {
   followingId: string
   followerId: string
@@ -11,3 +13,8 @@ export type BookFollowProps = {
   isFan?: boolean
   active?:  boolean
 }
+
+export type FollowStub = (Follow & {
+  following:  UserStub
+  follower:   UserStub
+})
