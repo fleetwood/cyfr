@@ -52,12 +52,11 @@ const CreateBook = () => {
         createdAt: now(),
         updatedAt: now(),
         agent : ['NONE'],
-        artist: ['NONE'],
-        author: ['NONE'],
-        editor: ['NONE'],
+        fan : ['NONE'],
+        follower : ['NONE'],
+        friend : ['NONE'],
         member: ['NONE'],
-        public: ['NONE'],
-        reader: ['NONE'],
+        public: ['NONE']
     })
     
     const changeAgent = (perms:RoleString[]) => setPermissions(() => {return {...permissions, agent: perms.flatMap(a => a) as Role[]}})

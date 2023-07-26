@@ -5,7 +5,7 @@ import {Permission, Role} from 'prisma/prismaContext'
  * Note there are no values for `Audience.NONE` or `Audience.BLOCKED` as these don't exist
  * in the `Permission` model. 
  */
-export type Audience = 'agent'|'artist'|'author'|'editor'|'member'|'public'|'reader'
+export type Audience = 'public'|'agent '|'fan'|'follower'|'friend'|'member'
 
 export type RoleString = 'BLOCKED'|'NONE'|'READ'|'SHARE'|'COMMENT'|'FEEDBACK'|'OWNER'|'ADMIN'
 type RoleVal = {
@@ -44,11 +44,10 @@ export const RoleVals = {
 export const getRoles = ({a,p}:RoleCheck) => {
     switch (a.toLowerCase()) {
         case 'agent': return p.agent
-        case 'artist': return p.artist
-        case 'author': return p.author
-        case 'editor': return p.editor
+        case 'fan': return p.fan
+        case 'follower': return p.follower
+        case 'friend': return p.friend
         case 'member': return p.member
-        case 'reader': return p.reader
     }
     return p.public
 }

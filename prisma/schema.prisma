@@ -485,11 +485,19 @@ model Membership {
 }
 
 model MembershipType {
-  id          String       @id @default(cuid())
-  createdAt   DateTime     @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime     @default(now()) @db.Timestamptz(3)
-  level       Int
-  name        String
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime @default(now()) @db.Timestamptz(3)
+  level       Int      @default(-1)
+  paid        Boolean  @default(false)
+  name        String   @default("Need a name")
+  description String   @default("No description")
+
+  monthlyDescription String @default("No description")
+  monthlyPrice       Int    @default(-1)
+  annualDescription  String @default("No description")
+  annualPrice        Int    @default(-1)
+
   memberships Membership[] @relation("membership_type")
 
   @@index([id])
@@ -573,12 +581,11 @@ model Permission {
   gallery   Gallery?   @relation("gallery_permission")
   commune   Commune?   @relation("commune_permission")
   public    Role[]
-  member    Role[]
-  reader    Role[]
-  editor    Role[]
-  author    Role[]
-  artist    Role[]
   agent     Role[]
+  fan       Role[]
+  follower  Role[]
+  friend    Role[]
+  member    Role[]
 }
 
 model Character {

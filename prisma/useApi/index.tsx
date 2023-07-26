@@ -7,6 +7,7 @@ import useGalleryApi from "./gallery"
 import useImageApi from "./image"
 import useInboxApi from "./inbox"
 import usePostApi from "./post"
+import useMembershipApi from "./membership"
 import UserApi from "./user"
 
 export default {
@@ -19,5 +20,6 @@ export default {
     image: useImageApi,
     inbox: useInboxApi,
     post: usePostApi,
-    user: UserApi
+    user: UserApi,
+    membership: useMembershipApi
 }

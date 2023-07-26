@@ -1,0 +1,67 @@
+[
+  {
+    "id": "E3D83089-58A6-49E7-A5C0-84C6448DA010",
+    "createdAt": "2023-07-25 22:15:21+00",
+    "updatedAt": "2023-07-25 22:15:23+00",
+    "level": 100,
+    "name": "Reader",
+    "annualDescription": "What's better than free??",
+    "annualPrice": 0,
+    "description": "Just here for the books? Great! You're our favorite people!!! New author and not ready for the spotlight just yet? Yeah we got you.",
+    "monthlyDescription": "What's better than free??",
+    "monthlyPrice": 0,
+    "paid": false
+  },
+  {
+    "id": "908B7B16-D5DC-4836-B3CE-35B4296653BC",
+    "createdAt": "2023-07-25 22:19:04+00",
+    "updatedAt": "2023-07-25 22:19:07+00",
+    "level": 200,
+    "name": "Author",
+    "annualDescription": "Get two free months!! Eeeep!!",
+    "annualPrice": 89,
+    "description": "Once your story is ready, switch to Author Tier to sell your book! Or use the additional\n                  features to collaborate even more deeply during the writing process, including collaboration\n                  groups, Agent prospecting, story and author dashboards, A/B testing and more!",
+    "monthlyDescription": "Budget-friendly monthly subscription!",
+    "monthlyPrice": 9,
+    "paid": true
+  },
+  {
+    "id": "14D48983-5D69-49E1-AC9D-7A0B867EF7A6",
+    "createdAt": "2023-07-25 22:21:42+00",
+    "updatedAt": "2023-07-25 22:21:44+00",
+    "level": 250,
+    "name": "Artist",
+    "annualDescription": "Get two free months!! Eeeep!!",
+    "annualPrice": 89,
+    "description": "You're either an illustrator, or a cover artist, or the topic of your own book. Or an iconoclast. We see you.",
+    "monthlyDescription": "Budget-friendly monthly subscription!",
+    "monthlyPrice": 9,
+    "paid": true
+  },
+  {
+    "id": "6C937F1B-0EA6-471B-A4A5-8AF7DF2C5E12",
+    "createdAt": "2023-07-25 22:22:07+00",
+    "updatedAt": "2023-07-25 22:22:09+00",
+    "level": 500,
+    "name": "Editor",
+    "annualDescription": "Get two free months!! Eeeep!!",
+    "annualPrice": 89,
+    "description": "The most and least popular of everybody. Kinda like bassists. Without you, there is no song.",
+    "monthlyDescription": "Budget-friendly monthly subscription!",
+    "monthlyPrice": 9,
+    "paid": true
+  },
+  {
+    "id": "D0C41B50-7E8D-4240-8AC0-B4C6D22054EE",
+    "createdAt": "2023-07-25 22:22:45+00",
+    "updatedAt": "2023-07-25 22:22:47+00",
+    "level": 1000,
+    "name": "Agent",
+    "annualDescription": "Get two months free!!! So much coolness!",
+    "annualPrice": 499,
+    "description": "Interact with Authors: track your favorites, including collaboration and analytics, conduct\n                  manuscript events and wishlists, and a submission form and tracker!",
+    "monthlyDescription": " ",
+    "monthlyPrice": 49,
+    "paid": true
+  }
+]
