@@ -8,10 +8,10 @@ import EZButton from 'components/ui/ezButton'
 import { ArrowLeftIcon, ArrowRightIcon, CheckmarkIcon, CyfrLogo, SaveIcon } from 'components/ui/icons'
 import Semibold from 'components/ui/semibold'
 import useDebug from 'hooks/useDebug'
-import { Genre, Image, Permission, Role, RoleString, RoleVals, getRoles } from 'prisma/prismaContext'
+import { Genre, Image, Permission, Role, RoleString, RoleVals, UserStub, getRoles } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, { useEffect, useState } from 'react'
-import { now, uniqueKey } from 'utils/helpers'
+import { dedupe, now, uniqueKey } from 'utils/helpers'
 import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
 import GenreSelector from '../Genre/GenreSelector'
 import UserSelector from '../User/UserSelector'
@@ -19,6 +19,7 @@ import BookPermissions from './BookPermissions'
 import BookPermissionsDialog from './BookPermissionsDialog'
 import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from 'components/ui/modalCheckbox'
 import useDebounce from 'hooks/useDebounce'
+import Avatar from 'components/ui/avatar'
 
 const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",'DEBUG')
 const createBookModal = 'createBookModal'
@@ -46,7 +47,7 @@ const CreateBook = () => {
     const [hook, setHook] = useState<string|null>(null)
     const [synopsis, setSynopsis] = useState<string|null>(null)
     const [back, setBack] = useState<string|null>(null)
-    const [authors, setAuthors] = useState()
+    const [authors, setAuthors] = useState<UserStub[]>([])
     const [permissions, setPermissions] = useState<Permission>({
         id: uniqueKey(),
         createdAt: now(),
@@ -67,8 +68,7 @@ const CreateBook = () => {
     const changePublic = (perms:RoleString[]) => setPermissions(() => {return {...permissions, public: perms.flatMap(a => a) as Role[]}})
     const changeReader = (perms:RoleString[]) => setPermissions(() => {return {...permissions, reader: perms.flatMap(a => a) as Role[]}})
     
-
-    const [titleError, setTitleError] = useState<string>()
+        const [titleError, setTitleError] = useState<string>()
     const [titleOK, setTitleOK] = useState(false)
     const checkTitle = useDebounce({value: title, ms: 500})
     const checkUnique = async () => {
@@ -91,6 +91,10 @@ const CreateBook = () => {
     useEffect(() => {
         checkUnique()
     }, [checkTitle])
+    
+    const addAuthor = (user:any) => setAuthors((a) => dedupe([...a, user], 'id'))
+    const removeAuthor = (user:UserStub) => setAuthors((a) => a?.filter(a => a.id !== user.id))
+    
     // const [characters, setCharacters] = useState<Character[]>(book?.characters || [])
     // const [gallery, setGallery] = useState<GalleryStub | null>(book?.gallery || null)
     const [images, setImages] = useState()
@@ -167,7 +171,17 @@ const CreateBook = () => {
                         <TailwindInput type='text' value={title} setValue={setTitle} label='Title' error={titleError} />
                         <span className={titleOK ? 'text-success' : 'opacity-0'}>{CheckmarkIcon}</span>
                         <p className='text-sm mt-4'>If you're co-authoring with another member of <Semibold>Cyfr</Semibold>, add them here. Note: this person will have <span className='font-semibold'>full access and privileges to the book</span>, so you have to be friends (as in: you Follow each other). Would be kinda weird otherwise.</p>
-                        <UserSelector label='Authors' />
+                        <Grid>
+                            {authors?.map(a => 
+                                <Avatar className='opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200' 
+                                    sz='sm' 
+                                    user={a} 
+                                    onClick={() => removeAuthor(a)} 
+                                    variant={['no-profile']} 
+                                />
+                            )}
+                            <UserSelector label='Authors' onClick={addAuthor} select='UserStub' />
+                        </Grid>
                     </Box>
                 </div>
 

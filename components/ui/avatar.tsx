@@ -2,6 +2,7 @@ import { Transition } from "@headlessui/react"
 import { useState } from "react"
 import {
   CyfrUser,
+  MembershipType,
   User,
   UserDetail,
   UserFeed,
@@ -19,14 +20,17 @@ import Link from "next/link"
 
 const {debug, jsonBlock} = useDebug('avatar')
 
+export type AvatarUser = CyfrUser | UserDetail | UserFeed | UserStub | UserFollow | User
+
 type AvatarProps = {
-  user?: CyfrUser | UserDetail | UserFeed | UserStub | UserFollow | User
+  user?: AvatarUser
   link?: boolean
   shadow?: boolean
   className?: string
   placeholder?: string
   variant?: AvatarVariants[]
   sz: SizeProps
+  onClick?: (user:AvatarUser) => void
 }
 
 export type AvatarVariants = 'default'|'no-profile'
@@ -38,6 +42,7 @@ const Avatar = ({
   shadow,
   sz,
   link = true,
+  onClick,
   variant = ['default'],
 }: AvatarProps) => {
   if (!user) return <></>
@@ -72,7 +77,7 @@ const Avatar = ({
       : ""
 
   // @ts-ignore
-  const member = user?.membership?.type ? user.membership.type.level : 0
+  const member = user?.membership?.type ? (user?.membership?.type as unknown as MembershipType).name.toLowerCase() : ''
   
   const init = async () => {
     debug('init')
@@ -98,15 +103,18 @@ const Avatar = ({
       setIsLoading(() => false)
     }
   }
+
+  const otherClasses = [online, member, className].join(' ').trim()
   
   return (
     <div 
-      className={`avatar ${online} ${member} relative`} 
+      className={`avatar relative ${otherClasses}`} 
       onMouseOverCapture={() => allowProfile ? init() : {}}
       onMouseOutCapture={() => setShowProfile(() => false)}
+      onClickCapture={() => onClick && onClick(user)}
     >
       <div className={`mask mask-squircle`}>
-        {link && user ? <a href={`/user/${user.slug}`}>{content}</a> : content}
+        {!onClick && link && user ? <a href={`/user/${user.slug}`}>{content}</a> : content}
       </div>
       {allowProfile && userInfo && 
       <Transition

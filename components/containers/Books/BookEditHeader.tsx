@@ -153,7 +153,7 @@ const BookEditHeader = ({bookDetail, onUpdate}:BookDetailProps) => {
   const updateCompletedAt = (value:Date|null) => {
     const d = value ?? ''
     debug('updateCompletedAt', {value, d})
-    update({completeAt: d}, true)
+    update({completeAt: d})
   }
 
 

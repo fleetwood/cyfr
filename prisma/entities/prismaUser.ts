@@ -65,7 +65,7 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
     })
     const data = {followerId,followingId,isFan}
     const include = {follower: true,following: true}
-    debug('follow', {followerId, followingId, data}, true)
+    debug('follow', {followerId, followingId, data})
 
     const follow = exists 
       ? await prisma.follow.update({
@@ -312,8 +312,8 @@ const friends = async(id:string, search?: string): Promise<UserStub[]> => {
       ],
       AND: {
         OR: [
-          {follower: {name: {contains: search, mode: 'insensitive'}}},
-          {following: {name: {contains: search, mode: 'insensitive'}}}
+          {follower: {name: {contains: search, mode: 'insensitive'}, id: { not: id}}},
+          {following: {name: {contains: search, mode: 'insensitive'}, id: { not: id}}}
         ]
       }
     },
