@@ -1,11 +1,10 @@
-import { User, UserStub, } from 'prisma/prismaContext'
+import { Grid } from '@mui/material'
 import { TailwindInput } from 'components/forms'
-import React, { useEffect, useState } from 'react'
-import { TailwindFormProps } from 'types/props'
-import useDebounce from 'hooks/useDebounce'
-import useApi from 'prisma/useApi'
-import { Button, Grid, Menu, MenuItem } from '@mui/material'
 import Avatar, { AvatarUser } from 'components/ui/avatar'
+import useDebounce from 'hooks/useDebounce'
+import { UserStub } from 'prisma/prismaContext'
+import useApi from 'prisma/useApi'
+import React, { useEffect, useState } from 'react'
 import { uniqueKey } from 'utils/helpers'
 
 type UserSelectorProps = {
@@ -49,6 +48,8 @@ const UserSelector = (props:UserSelectorProps) => {
       setUsers(() => [])
       return
     }
+    // TODO: we may not always want just friends from the selector.
+    //        so add a variant and change the api call here
     const f = await friends(cyfrUser.id, search)
     if (f && f.length>0) {
       setUsers(() => f)
