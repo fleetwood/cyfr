@@ -219,7 +219,7 @@ const CreateBook = () => {
                 </div>
                 <div className={showStep(3)}>
                     <h3>Genre and Cover</h3>
-                    <GenreSelector allowAll={true} genre={genre} setGenre={setGenre} />
+                    <GenreSelector genre={genre} setGenre={setGenre} />
                     <GalleryPhotoswipe images={covers} onClick={setCover} />
                 </div>
                 <div className={showStep(4)}>

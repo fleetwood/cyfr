@@ -1,5 +1,6 @@
 import { Menu, MenuItem } from '@mui/material'
 import { TailwindSelectInput } from 'components/forms'
+import TailwindLabel from 'components/forms/TailwindLabel'
 import useDebug from 'hooks/useDebug'
 import { Genre, GenreStub } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
@@ -68,9 +69,12 @@ const GenreSelector = ({
     handleClose()
   }
 
-  const ITEM_HEIGHT = 48
+  const ITEM_HEIGHT = 64
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
+  const border = required ? 
+    (!genre ? 'border-warning': 'border-success') : 
+     !genre ? 'border-info' : 'border-success'
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -85,19 +89,17 @@ const GenreSelector = ({
   }, [])
   
   return (
-    <div className={className}>
-        {showLabel &&
-          <label className="font-semibold w-[50%]">{label}{required && <>*</>}</label>
-        }
-        <div 
-          aria-controls={open ? 'long-menu' : undefined}
-          aria-expanded={open ? 'true' : undefined}
-          aria-haspopup="true"
-          onClick={handleClick}
-          >
-          {genre?.title ?? "Choose genre"}
-        </div>
-        <Menu
+    <TailwindLabel label='Genre' cardClassName={className} valid={genre!==undefined&&genre!==null} required={required} >
+      <div 
+        aria-controls={open ? 'long-menu' : undefined}
+        aria-expanded={open ? 'true' : undefined}
+        aria-haspopup="true"
+        onClick={handleClick}
+        className={`bg-base-300 bg-opacity-50 border rounded-md p-2 cursor-pointer ${border}`}
+        >
+        {genre?.title ?? "Choose genre"}
+      </div>
+      <Menu
           id="long-menu"
           MenuListProps={{
             'aria-labelledby': 'long-button',
@@ -105,25 +107,15 @@ const GenreSelector = ({
           anchorEl={anchorEl}
           open={open}
           onClose={handleClose}
-          PaperProps={{
-            style: {
-              maxHeight: ITEM_HEIGHT * 4.5,
-              width: '20ch',
-            },
-          }}
+          PaperProps={{style: {maxHeight: ITEM_HEIGHT * 8}}}
         >
         {genreList.map((option) => (
-          <MenuItem key={option.key} selected={option.value===genre?.id} onClick={() => onChange(option)}>
-            {option.key}
+          <MenuItem key={option.key} selected={option.value===genre?.id} onClick={() => onChange(option)} className=' hover:text-primary'>
+            <div className='p-2'>{option.key}</div>
           </MenuItem>
         ))}
       </Menu>
-        {/* <TailwindSelectInput
-            value={(genre?.id??genreId)!}
-            onChange={() => onChange}
-            options={genreList}
-        /> */}
-    </div>
+    </TailwindLabel>
   )
 }
 
