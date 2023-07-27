@@ -1,3 +1,4 @@
+import { Menu, MenuItem } from '@mui/material'
 import { TailwindSelectInput } from 'components/forms'
 import useDebug from 'hooks/useDebug'
 import { Genre, GenreStub } from 'prisma/prismaContext'
@@ -17,9 +18,9 @@ type GenreSelectorProps = {
     allowAll?:      boolean
     required?:      boolean
     sendTitle?:     boolean
-    genre?:         GenreStub|Genre
     genreId?:       string
-    setGenre?:      (genre:KeyVal|string) => void
+    genre?:         Genre|GenreStub
+    setGenre?:      (genre:Genre|GenreStub) => void
 }
 
 /**
@@ -31,32 +32,52 @@ type GenreSelectorProps = {
  * @returns 
  */
 const GenreSelector = ({
+  genreId,
   genre, 
-  genreId, 
   setGenre, 
   label='Genre', 
   showLabel=true, 
   allowAll=false, 
-  sendTitle=false, 
   className='', 
   required=false
 }:GenreSelectorProps) => {
 
   const [genreList, setGenreList] = useState<KeyVal[]>([])
+  const [genres, setGenres] = useState<GenreStub[]>([])
 
   const getGenres = async () => {
     const {stubs} = useApi.genre()
     const genres = await stubs()
     if (genres) {
+      setGenres(() => genres)
       const sortMap = genres.sort((a,b) => a.title > b.title ? 1 : -1).map((g:GenreStub) => { return {value: g.id, key: g.title} as KeyVal})
       setGenreList(() => allowAll ? [{key: 'All', value: ''},...sortMap] : sortMap)
+    }
+    if (!genre && genreId !== undefined && setGenre) {
+      const defaultGenre = genres.find((g:GenreStub) => g.id === genreId)
+      if (defaultGenre !== undefined && setGenre !== undefined) setGenre(defaultGenre)
     }
   }
 
   const onChange = (kv:KeyVal) => {
-    debug('onChange')
+    debug('onChange', kv)
     if (!setGenre) return
-    setGenre(sendTitle ? (kv.value ?? kv.key).toString() : kv)
+    const g = genres.find((g:Genre) => g.id === kv.value)
+    debug('setting Genre', g)
+    setGenre(g!)
+    handleClose()
+  }
+
+  const ITEM_HEIGHT = 48
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+  
+  const handleClose = () => {
+    setAnchorEl(null)
   }
 
   useEffect(() => {
@@ -68,11 +89,40 @@ const GenreSelector = ({
         {showLabel &&
           <label className="font-semibold w-[50%]">{label}{required && <>*</>}</label>
         }
-        <TailwindSelectInput
+        <div 
+          aria-controls={open ? 'long-menu' : undefined}
+          aria-expanded={open ? 'true' : undefined}
+          aria-haspopup="true"
+          onClick={handleClick}
+          >
+          {genre?.title ?? "Choose genre"}
+        </div>
+        <Menu
+          id="long-menu"
+          MenuListProps={{
+            'aria-labelledby': 'long-button',
+          }}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          PaperProps={{
+            style: {
+              maxHeight: ITEM_HEIGHT * 4.5,
+              width: '20ch',
+            },
+          }}
+        >
+        {genreList.map((option) => (
+          <MenuItem key={option.key} selected={option.value===genre?.id} onClick={() => onChange(option)}>
+            {option.key}
+          </MenuItem>
+        ))}
+      </Menu>
+        {/* <TailwindSelectInput
             value={(genre?.id??genreId)!}
             onChange={() => onChange}
             options={genreList}
-        />
+        /> */}
     </div>
   )
 }

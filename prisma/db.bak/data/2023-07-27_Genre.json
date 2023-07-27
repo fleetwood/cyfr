@@ -1,0 +1,178 @@
+[
+  {
+    "id": "clfw25dg1000fbuxbelc3r7cu",
+    "createdAt": "2023-03-31 04:41:48.625+00",
+    "updatedAt": "2023-03-31 04:41:48.625+00",
+    "slug": "travel",
+    "title": "Travel",
+    "description": "Travel guides, travel hacks (such as how to travel for cheap or even FREE!) or in-depth reviews of different travel destinations, this genre covers places, people, food, culture and sometimes even regional history."
+  },
+  {
+    "id": "clgbb9l5j0002nn0gnuxctwz5",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "romance",
+    "title": "Romance",
+    "description": "In this book genre, the romance is the center point of the plot. The entire novel moves around the relationship, though other plot points may be present.  The requirement of a Happy Ending is the subject of some debate, though the popular consensus is by far in favor."
+  },
+  {
+    "id": "clgbb9l5j0003nn0glpwimt43",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "fantasy",
+    "title": "Fantasy",
+    "description": "Fantasy is the genre of magic. Fireballs, wizards and dragons, of course, but also lore, fairy tales, e.g. the Arthurian Legends and Alice in Wonderland, and a bajillion possibilities of wondrous worlds."
+  },
+  {
+    "id": "clgbb9l5j0001nn0gi5923uiw",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "contemporary",
+    "title": "Contemporary",
+    "description": "This book genre is among the most popular, though most writers aren’t sure of what this category even is. It’s actually more of the absence of a genre. You may have heard this genre lumped in with others, like Contemporary Fantasy or Contemporary Romance."
+  },
+  {
+    "id": "clgbb9l5j0004nn0gsd78ilvj",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "dystopian",
+    "title": "Dystopian",
+    "description": "This genre was recently popularized to describe a book genre in which the current government or society has been destroyed or subverted; the book centers around the aftermath or plight.  Writing dystopian fiction can give you a ton of freedom in how you develop society while lowering the worldbuilding you’d have to do for a fantasy or sci-fi novel."
+  },
+  {
+    "id": "clgbb9l5j0005nn0g0nfockeq",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "mystery",
+    "title": "Mystery",
+    "description": "This book genre is defined by the plot focusing on solving a mystery, most often by the main character(s).  Many other genres can have mysteries within them (in fact, most do), but in this genre, the mystery itself is the main plot and purpose."
+  },
+  {
+    "id": "clgbb9l5j0006nn0gr74q1b8t",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "horror",
+    "title": "Horror",
+    "description": "Horror stories are intended to frighten, titillate or disturb. This can be on-the-nose hack-and-slash or gore, or more psychological and subversive, or even the scintillating horror of Poe. And who doesn’t love a spooky ghost story?"
+  },
+  {
+    "id": "clgbb9l5j0007nn0grka22mjh",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "thriller",
+    "title": "Thriller",
+    "description": "A good thriller is wrought with suspense, danger or dread, and often psychologically stimulating. Many have a nice juicy twist at the end as well; the twistier the juicier. Hitchcock’s Psycho is a classic example, and Palahniuk’s Fight Club"
+  },
+  {
+    "id": "clgbb9l5j0008nn0g2r2xjyyg",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "paranormal",
+    "title": "Paranormal",
+    "description": "Arguably the biggest distinction between Paranormal and Fantasy genres is that Paranormal embraces the possibilities of what could possibly be real. A fantasy ghost story might be perhaps more of a faerie tale, while a paranormal story more like a haunting. Clairvoyance, telekinesis, demons and vampires all fit nicely into the paranormal nomenclature; it’s all about the presumption of possibility."
+  },
+  {
+    "id": "clgbb9l5j0009nn0gvqs2cbsw",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "historical-fiction",
+    "title": "Historical Fiction",
+    "description": "Often historical fiction centers around well-known events or people, but whether a multi-verse or divergence or complete fiction, it is a story about a distinct time in the past."
+  },
+  {
+    "id": "clgbb9l5j000ann0gi38uah1n",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "science-fiction",
+    "title": "Science Fiction",
+    "description": "Lasers, light speed and Dyson spheres do not the whole of this genre make. Yes Sci-Fi can be futuristic, it can be technological, it can be alien; but the greatest of Sci-Fi counts among the most important and most human stories ever told; viz. Harrison Bergeron, Stranger in a Strange Land and of course 1984."
+  },
+  {
+    "id": "clgbb9l5j000bnn0ggayqfcbx",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "memoir",
+    "title": "Memoir",
+    "description": "Memoirs differ from autobiographies in the sense that an autobiography is more of a timeline of your life, events, and accomplishments whereas a memoir is more of a collection of the most significant moments, pulled together by a theme or message you wish to share with readers."
+  },
+  {
+    "id": "clgbb9l5j000cnn0gwr372r8w",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "cookbook",
+    "title": "Cookbook",
+    "description": "Recipes. Some include the history of the dish as well. And yummy pics."
+  },
+  {
+    "id": "clgbb9l5j000dnn0gafooe7mm",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "art",
+    "title": "Art",
+    "description": "Picture books, art history, lessons, and of course the beloved coffee-table book. <3"
+  },
+  {
+    "id": "clgbb9l5j000enn0gsvb6veme",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "self-help",
+    "title": "Self-help",
+    "description": "From positive prayer to psychological healing, self-help is the process of empowering oneself to live the life they want or need."
+  },
+  {
+    "id": "clgbb9l5j000fnn0gz1e9t46x",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "health",
+    "title": "Health",
+    "description": "Ranging from fitness, holistic healing, to more complex medical topics and in-depth coverage of different health conditions or treatments, this is a vast genre."
+  },
+  {
+    "id": "clgbb9l5j000gnn0guhh4fnd4",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "history",
+    "title": "History",
+    "description": "Historical facts of any kind would fall under this category. These can be written in a more entertaining fashion, rather than a factual play-by-play textbook, or they can challenge the popular consensus of historical fact, or both! The importance of this genre cannot be overstated; \"Those who do not know their history....\""
+  },
+  {
+    "id": "clgbb9l5j000hnn0gy620lilo",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "childrens-books",
+    "title": "Childrens Books",
+    "description": "Whether a picture book or written story, the audience is generally 9 years old or below, though the best of them resonate with us throughout our adulthood, and teach us about what it means to be alive in our world."
+  },
+  {
+    "id": "clgbb9l5j000inn0gxj27acfb",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "religion",
+    "title": "Religion",
+    "description": "There are over 4,000 religions globally, and 12 major religions, or 5. Or 4. Inarguably, they are the most prolific and impactful books of humankind."
+  },
+  {
+    "id": "clgbb9l5j0000nn0g1olxyvk6",
+    "createdAt": "2023-04-10 20:53:34.415+00",
+    "updatedAt": "2023-04-10 20:53:34.415+00",
+    "slug": "humor",
+    "title": "Humor",
+    "description": "Because laughter is the best medicine."
+  },
+  {
+    "id": "clfw24u6g000dbuxbny7br2zr",
+    "createdAt": "2023-03-31 04:41:23.656+00",
+    "updatedAt": "2023-03-31 04:41:23.656+00",
+    "slug": "adventure",
+    "title": "Adventure",
+    "description": "Whether through a trip, journey, or quest of some kind, your average adventure novel often focuses on both the character’s physical journey as well as the internal journey."
+  },
+  {
+    "id": "clj51cji70005bukppvcbd8mu",
+    "createdAt": "2023-06-21 01:28:26.007+00",
+    "updatedAt": "2023-06-21 01:28:26.007+00",
+    "slug": "young-adult",
+    "title": "Young Adult",
+    "description": "YA isn’t really a genre, but a category of fiction based on readers’ ages. It represents a certain demographic’s level of reading, worldview, and maturity, and exists in many genres such as fantasy, mystery, and science fiction.  It captures the common concepts and emotions that teens usually struggle with, including friendship, finding their identity, and forming romantic relationships."
+  }
+]

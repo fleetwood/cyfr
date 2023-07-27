@@ -8,7 +8,7 @@ import EZButton from 'components/ui/ezButton'
 import { ArrowLeftIcon, ArrowRightIcon, CheckmarkIcon, CyfrLogo, SaveIcon } from 'components/ui/icons'
 import Semibold from 'components/ui/semibold'
 import useDebug from 'hooks/useDebug'
-import { Genre, Image, Permission, Role, RoleString, RoleVals, UserStub, getRoles } from 'prisma/prismaContext'
+import { Genre, GenreStub, Image, Permission, Role, RoleString, RoleVals, UserStub, getRoles } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, { useEffect, useState } from 'react'
 import { dedupe, now, uniqueKey } from 'utils/helpers'
@@ -128,17 +128,17 @@ const CreateBook = () => {
   const steps = ['Name', 'About', 'Access', 'Cover', 'Review']
 
   const {findCover} = useApi.cover()
-  const [coversByGenre, setByGenre] = useState<string>()
   const [covers, setCovers] = useState<Image[]>([])
-  const onGenreSelect = (genre:string) => {
+
+  const onGenreSelect = (genre:Genre|GenreStub) => {
     debug('onGenreSelect', genre)
     notify(genre ? `Genre selected ${genre}` : 'All genres selected')
-    setByGenre(() => genre)
+    setGenre(() => genre)
   }
 
   const getCovers = async () => {
-    debug('getCovers', {coversByGenre})
-    const found = await findCover(coversByGenre === 'All' ? '' : coversByGenre)
+    debug('getCovers', {coversByGenre: covers})
+    const found = await findCover(genre?.title ?? 'All')
     if (found) {
       setCovers(() => found.map(c => c.image))
     } else {
@@ -148,7 +148,7 @@ const CreateBook = () => {
 
   useEffect(() => {
     getCovers()
-  }, ['',coversByGenre])
+  }, ['',genre])
 
   return (
     <>
@@ -208,7 +208,7 @@ const CreateBook = () => {
                         <BookPermissions level='Editors' onChange={changeEditor}><p>Are you shopping for a good editor? Join the club! Better yet, invite them to yours! :)</p></BookPermissions>
                         <BookPermissions level='Members' onChange={changeMember}><p>This is anybody who is <Semibold>logged in</Semibold> to the site, which will exclude bots and search engines.</p></BookPermissions>
                         <BookPermissions level='Public' onChange={changePublic}><p>This is anybody who visits the site, including <Semibold>bots and search engines</Semibold>.</p></BookPermissions>
-                        <BookPermissions level='Reader' onChange={changeReader}><p></p></BookPermissions>
+                        <BookPermissions level='Reader' onChange={changeReader}><p>This is anybody who has a paid membership, but is not a content creator. A better way of saying perhaps: <Semibold>this is your audience.</Semibold></p></BookPermissions>
                         {/* <BookPermissions level='Friends' onChange={changeFriend}><p>Only members who you <Semibold>mutually follow</Semibold>; meaning you follow them and they follow you back.</p></BookPermissions> */}
                         <>
                             <div className='text-primary font-bold my-4'>Communes</div>
@@ -219,7 +219,7 @@ const CreateBook = () => {
                 </div>
                 <div className={showStep(3)}>
                     <h3>Genre and Cover</h3>
-                    <GenreSelector allowAll={true} genre={genre} setGenre={() => onGenreSelect} sendTitle={true} />
+                    <GenreSelector allowAll={true} genre={genre} setGenre={setGenre} />
                     <GalleryPhotoswipe images={covers} onClick={setCover} />
                 </div>
                 <div className={showStep(4)}>
