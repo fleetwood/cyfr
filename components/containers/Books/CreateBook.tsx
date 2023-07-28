@@ -3,7 +3,7 @@ import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import Stepper from '@mui/material/Stepper'
 import { useToast } from 'components/context/ToastContextProvider'
-import { TailwindInput, TailwindTextarea } from 'components/forms'
+import { Dropzone, TailwindInput, TailwindTextarea } from 'components/forms'
 import EZButton from 'components/ui/ezButton'
 import { ArrowLeftIcon, ArrowRightIcon, CheckmarkIcon, CyfrLogo, SaveIcon } from 'components/ui/icons'
 import Semibold from 'components/ui/semibold'
@@ -20,6 +20,9 @@ import BookPermissionsDialog from './BookPermissionsDialog'
 import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from 'components/ui/modalCheckbox'
 import useDebounce from 'hooks/useDebounce'
 import Avatar from 'components/ui/avatar'
+import FindCoverModal, { OpenFindCoverModalButton } from '../Cover/FindCoverModal'
+import { ItemProps } from 'react-photoswipe-gallery'
+import GalleryPhotoswipeInteractive from '../Gallery/GalleryPhotoswipeInteractive'
 
 const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",'DEBUG')
 const createBookModal = 'createBookModal'
@@ -115,13 +118,13 @@ const CreateBook = () => {
         permissions
     }
 
-  const [activeStep, setActiveStep] = React.useState(0)
+  const [activeStep, setActiveStep] = React.useState(3)
 
   const handleNext = () => setActiveStep((prevActiveStep) => prevActiveStep + 1)
 
   const handleBack = () => setActiveStep((prevActiveStep) => prevActiveStep - 1)
 
-  const handleReset = () => setActiveStep(0)
+  const handleReset = () => setActiveStep(3)
 
   const showStep = (step:number) => step === activeStep ? 'inline' : 'hidden'
 
@@ -129,6 +132,15 @@ const CreateBook = () => {
 
   const {findCover} = useApi.cover()
   const [covers, setCovers] = useState<Image[]>([])
+
+  const onCoverSelected = async (item: ItemProps) => {
+    debug('onCoverSelected', item)
+  }
+
+  const onCoverImageAdded = async (files:Image[]) => {
+    const image = files[0]
+    debug('onCoverImageAdded', {files, image})
+  }
 
   const onGenreSelect = (genre:Genre|GenreStub) => {
     debug('onGenreSelect', genre)
@@ -202,25 +214,38 @@ const CreateBook = () => {
                         </Grid>
                     </div>
                     <Box className='flex flex-col'>
-                        <BookPermissions level='Agents' onChange={changeAgent}><p>This will allow agents to interact with your book. This inlcudes <Semibold>submissions</Semibold>, so if you're shopping your book, give them <Semibold>Read</Semibold> access at a minimum.</p></BookPermissions>
+                        <BookPermissions level='Public' onChange={changePublic}><p>This is anybody who visits the site, including <Semibold>bots and search engines</Semibold>.</p></BookPermissions>
+                        <BookPermissions level='Members' onChange={changeMember}><p>This is anybody who is <Semibold>logged in</Semibold> to the site, which will exclude bots and search engines.</p></BookPermissions>
+                        <BookPermissions level='Reader' onChange={changeReader}><p>This is anybody who has a paid membership, but is not a content creator. A better way of saying perhaps: <Semibold>this is your audience.</Semibold></p></BookPermissions>
                         <BookPermissions level='Author' onChange={changeAuthor}><p></p></BookPermissions>
                         <BookPermissions level='Artist' onChange={changeArtist}><p></p></BookPermissions>
                         <BookPermissions level='Editors' onChange={changeEditor}><p>Are you shopping for a good editor? Join the club! Better yet, invite them to yours! :)</p></BookPermissions>
-                        <BookPermissions level='Members' onChange={changeMember}><p>This is anybody who is <Semibold>logged in</Semibold> to the site, which will exclude bots and search engines.</p></BookPermissions>
-                        <BookPermissions level='Public' onChange={changePublic}><p>This is anybody who visits the site, including <Semibold>bots and search engines</Semibold>.</p></BookPermissions>
-                        <BookPermissions level='Reader' onChange={changeReader}><p>This is anybody who has a paid membership, but is not a content creator. A better way of saying perhaps: <Semibold>this is your audience.</Semibold></p></BookPermissions>
+                        <BookPermissions level='Agents' onChange={changeAgent}><p>This will allow agents to interact with your book. This inlcudes <Semibold>submissions</Semibold>, so if you're shopping your book, give them <Semibold>Read</Semibold> access at a minimum.</p></BookPermissions>
                         {/* <BookPermissions level='Friends' onChange={changeFriend}><p>Only members who you <Semibold>mutually follow</Semibold>; meaning you follow them and they follow you back.</p></BookPermissions> */}
-                        <>
+                        {/* <>
                             <div className='text-primary font-bold my-4'>Communes</div>
                             <div className='text-sm -mt-4 mb-4'>Give specific members specific access. You can set it for the whole book, for certain chapters or certain characters; you can even create multiple communes for different situations. Set these up later once you have created the book!</div>
-                        </>
+                        </> */}
                     </Box>
 
                 </div>
                 <div className={showStep(3)}>
                     <h3>Genre and Cover</h3>
                     <GenreSelector genre={genre} setGenre={setGenre} />
-                    <GalleryPhotoswipe images={covers} onClick={setCover} />
+                    {genre && 
+                        <Grid>
+                            <div>
+                                Default Cover
+                            </div>
+                            <div>
+                                <Dropzone limit={1} onDropComplete={onCoverImageAdded} />
+                            </div>
+                            <span>OR choose from the following</span>
+                            <div>
+                                <GalleryPhotoswipeInteractive images={covers} onClick={setCover} />
+                            </div>
+                        </Grid>
+                    }
                 </div>
                 <div className={showStep(4)}>
                     <h3>All Good?</h3>

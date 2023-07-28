@@ -1,5 +1,7 @@
 import { ImageStubViewProps } from "prisma/prismaContext"
 import ImageFooter from "./ImageFooter"
+import { MagnifyIcon } from "components/ui/icons"
+import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 
 const ImageStubView = ({ image, className }:ImageStubViewProps) => {
 

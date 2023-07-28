@@ -63,11 +63,7 @@ const GalleryPhotoswipe = ({gallery, items, images, onClick, key = uuid()}:Galle
           {imageList.map(item => (
               <Item {...item} key={uniqueKey(key,item)} >
               {({ ref, open }) => (
-                // <ImageStubView image={item} />
-                  <div className="cursor-pointer relative transition-all duration-200 ease-out" onClick={open} ref={ref}>
-                    <ImageStubView image={item} />
-                    {/* <label className="z-10 absolute btn btn-xs btn-circle bg-success border-success hover:bg-primary right-0 top-0" onClickCapture={() => onClick ? onClick(item) : {}}>✓</label> */}
-                  </div>
+                <img className="rounded-lg drop-shadow-md cursor-zoom-in" src={item.url}  onClick={open} ref={ref} />
               )}
               </Item>
           ))}

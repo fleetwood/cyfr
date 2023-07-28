@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
+import { createContext, ReactNode, useContext, useState } from "react"
 import { uuid } from "../../utils/helpers"
 import Toasty from "../ui/toasty"
 
