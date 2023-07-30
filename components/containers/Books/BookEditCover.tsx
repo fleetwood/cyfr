@@ -1,7 +1,7 @@
 import { Dropzone } from "components/forms"
 import { CheckBadge } from "components/ui/icons"
 import useDebug from "hooks/useDebug"
-import { BookDetail, BookStub, CoverStub, Image } from "prisma/prismaContext"
+import { BookDetail, BookStub, Cover, CoverStub, Image } from "prisma/prismaContext"
 import useApi from "prisma/useApi"
 import { ItemProps } from "react-photoswipe-gallery"
 import { cloudinary } from "utils/cloudinary"
@@ -45,14 +45,14 @@ const BookEditCover = ({book, onUpdate}:BookCoverProps) => {
   
   debug('BookCover', {cyfrUser: cyfrUser?.name ?? 'No cyfrUser', isOwner})
 
-  const onCoverSelected = async (item: ItemProps) => {
-    debug('onCoverSelected', item)
-    if (item) {
-      const result = await changeCover({book, imageId: (item.id??'').toString()})
+  const onCoverSelected = async (cover: Cover|CoverStub) => {
+    debug('onCoverSelected', cover)
+    if (cover) {
+      const result = await changeCover({book, cover})
       if (result) {
         onUpdate ? onUpdate() : () => {}
       } else {
-        debug('onCoverSelected', {message: 'Failed to changeCover', item})
+        debug('onCoverSelected', {message: 'Failed to changeCover', item: cover})
       }
     }
   }
@@ -85,7 +85,7 @@ const BookEditCover = ({book, onUpdate}:BookCoverProps) => {
         <span>-OR-</span>
         <div>
           <OpenFindCoverModalButton />
-          <FindCoverModal genre={book.genre} onSelect={onCoverSelected} />
+          <FindCoverModal genre={book.genre} selectCover={onCoverSelected} />
         </div>
       </div>
     {/* <JsonBlock data={book} /> */}

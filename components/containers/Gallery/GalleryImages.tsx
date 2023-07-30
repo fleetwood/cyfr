@@ -1,30 +1,41 @@
 // @ts-nocheck
 import "photoswipe/dist/photoswipe.css"
 
+import { useToast } from "components/context/ToastContextProvider"
 import useDebug from "hooks/useDebug"
 import { Image } from "prisma/prismaContext"
+import useApi from "prisma/useApi"
 import { useEffect, useState } from "react"
 import { Item, Gallery as PhotoGallery } from "react-photoswipe-gallery"
 import { cloudinary } from "utils/cloudinary"
 import { uniqueKey, uuid } from "utils/helpers"
-import ImageStubView from "../Image/ImageStubView"
 import ImageFooter from "../Image/ImageFooter"
-import useApi from "prisma/useApi"
-import { useToast } from "components/context/ToastContextProvider"
 
-const {debug} = useDebug('containers/Gallery/GalleryPhotoswipeInteractive', 'DEBUG')
+const {debug} = useDebug('containers/Gallery/GalleryImages', 'DEBUG')
 
-type GalleryPhotoswipeProps = {
-  gallery?: GalleryDetail | null
-  items?: ItemProps[]
-  images?: ImageStub[]|Image[]
-  key?: string
-  onClick?: (image: ItemProps) => void
+type GalleryImagesProps = {
+  gallery?:     GalleryDetail | null
+  items?:       ItemProps[]
+  images?:      ImageStub[]|Image[]
+  key?:         string
+  selectable?:  Boolean
+  onSelect?:    (image: ImageStub | ImageStub) => void
 }
 
-const itemClick = (item) => console.log({...item})
-
-const GalleryPhotoswipeInteractive = ({gallery, items, images, onClick, key = uuid()}:GalleryPhotoswipeProps) => {
+/**
+ * 
+ * @param param0 
+ * @see https://github.com/dromru/react-photoswipe-gallery/discussions/1220
+ * @returns 
+ */
+const GalleryImages = ({
+  gallery, 
+  items, 
+  images, 
+  key = uuid(),
+  selectable = false,
+  onSelect
+}:GalleryImagesProps) => {
   const {like, share} = useApi.image()
   const {cyfrUser} = useApi.cyfrUser()
   const {notify} = useToast()
@@ -32,29 +43,30 @@ const GalleryPhotoswipeInteractive = ({gallery, items, images, onClick, key = uu
   const likeButton = {
     name: `like-button`,
     ariaLabel: 'Like',
-    order: 11,
+    order: 12,
     isButton: true,
-    tagName: 'a',
+    tagName: 'div',
     appendTo: 'bar',
-    html: {
-      isCustomSVG: true,
-      inner: `<path d="M22.229,4.514c-2.547,0-4.85,1.334-5.919,3.414c-1.07-2.079-3.401-3.414-5.948-3.414  c-3.981,0-9.319,3.209-6.888,11.963C6.251,25.034,16.31,30.065,16.31,30.063c0,0.002,10.044-5.029,12.821-13.586  C31.562,7.723,26.209,4.514,22.229,4.514z" />`,
-      outlineID: 'pswp__icn-like'
-    },
-    onClick: (e, item, pswp) => {
-      const likey = async () => {
-        const liked = await like({creatorId: cyfrUser.id, imageId: pswp.currSlide.data.pid})
-        if (liked) {
-          notify('You liked this image. Domo! ^___^', 'success')
-        }
+    html: `
+      <svg aria-hidden="true" class="absolute left-0 pswp__icn" viewBox="0 0 32 32" width="32" height="32">
+        {/* <use class="pswp__icn-shadow" xlink:href="#pswp__icn-like"></use> */}
+        <path d="M22.229,4.514c-2.547,0-4.85,1.334-5.919,3.414c-1.07-2.079-3.401-3.414-5.948-3.414  c-3.981,0-9.319,3.209-6.888,11.963C6.251,25.034,16.31,30.065,16.31,30.063c0,0.002,10.044-5.029,12.821-13.586  C31.562,7.723,26.209,4.514,22.229,4.514z"></path>
+      </svg>
+    `,
+    onClick: async (e, item, pswp) => {
+      // userid is provided by context
+      if (await like({creatorId: cyfrUser.id, imageId: pswp.currSlide.data.pid})) {
+        notify('You liked this image.', 'success')
       }
-      likey()
+    },
+    onInit: (btn, pswp) => {
+      console.log('onInit', btn, pswp)
     }
   }
   const shareButton = {
     name: `share-button`,
     ariaLabel: 'Share',
-    order: 10,
+    order: 11,
     isButton: true,
     tagName: 'a',
     appendTo: 'bar',
@@ -72,6 +84,20 @@ const GalleryPhotoswipeInteractive = ({gallery, items, images, onClick, key = uu
       }
       sharey()
     }
+  }
+  const selectButton = {
+    name: `select-button`,
+    ariaLabel: 'Choose this cover',
+    order: 10,
+    isButton: true,
+    tagName: 'a',
+    appendTo: 'bar',
+    html: {
+      isCustomSVG: true,
+      inner: '<path d="M30.171,6.131l-0.858-0.858c-0.944-0.945-2.489-0.945-3.433,0L11.294,19.859l-5.175-5.174  c-0.943-0.944-2.489-0.944-3.432,0.001l-0.858,0.857c-0.943,0.944-0.943,2.489,0,3.433l7.744,7.75c0.944,0.945,2.489,0.945,3.433,0  L30.171,9.564C31.112,8.62,31.112,7.075,30.171,6.131z" />',
+      outlineID: 'pswp__icn-share'
+    },
+    onClick: (e, item, pswp) => onSelect(pswp.currSlide.data)
   }
 
   const [imageList, setImageList] = useState<Array<ItemProps>>([])
@@ -103,8 +129,10 @@ const GalleryPhotoswipeInteractive = ({gallery, items, images, onClick, key = uu
     }
   }, [items, images, gallery])
   
+  const elements = selectable ? [shareButton,likeButton, selectButton] : [shareButton,likeButton]
+
   return (
-    <PhotoGallery uiElements={[likeButton, shareButton]}>
+    <PhotoGallery uiElements={elements}>
       <div className="min-w-full">
         <div className="columns-2 md:columns-4 lg:columns-6 space-y-1 justify-evenly">
           {imageList.map(item => (
@@ -120,7 +148,7 @@ const GalleryPhotoswipeInteractive = ({gallery, items, images, onClick, key = uu
                       </div>
                     }
                     <div className="image-footer w-full">
-                      <ImageFooter image={item} />
+                      <ImageFooter image={item} selectable={selectable} onSelect={onSelect} />
                     </div>
                   </div>
                 </div>
@@ -132,4 +160,4 @@ const GalleryPhotoswipeInteractive = ({gallery, items, images, onClick, key = uu
     </PhotoGallery>
   )
 }
-export default GalleryPhotoswipeInteractive
+export default GalleryImages

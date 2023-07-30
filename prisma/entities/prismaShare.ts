@@ -1,4 +1,4 @@
-import useDebug from "../../hooks/useDebug"
+import useDebug from "hooks/useDebug"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaShare')
 

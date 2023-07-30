@@ -1,5 +1,6 @@
 import useDebug from "hooks/useDebug"
 import { Image, ImageDeleteProps, ImageEngageProps, ImageUpsertProps, Like, Post } from "prisma/prismaContext"
+import { NotImplemented } from "utils/api"
 const {debug, info, fileMethod} = useDebug('entities/prismaImage', 'DEBUG')
 
 const detail = async (id: string): Promise<Image | null> => await prisma.image.findUnique({where: {id}})
@@ -63,9 +64,10 @@ const like = async ({imageId, creatorId}: ImageEngageProps): Promise<Like> => {
  * @returns: {@link Post}
  */
 const share = async ({imageId, creatorId}: ImageEngageProps): Promise<Post> => {
-  debug('like', {imageId, creatorId})
+  debug('share', {imageId, creatorId})
   try {
-    return await prisma.post.create({data: {imageId, creatorId}})
+    throw NotImplemented('prismaImage/share')
+    // return await prisma.post.create({data: {imageId, creatorId}})
   } catch (error) {
     throw error
   }

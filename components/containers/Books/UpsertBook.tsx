@@ -21,7 +21,7 @@ import EZButton from "components/ui/ezButton"
 import Toggler from "components/ui/toggler"
 import Link from "next/link"
 import useApi from "prisma/useApi"
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
+import GalleryPhotoswipe from "../Gallery/GalleryImages"
 
 const { debug } = useDebug("components/containers/Books/UpsertBook")
 
@@ -160,7 +160,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
                 <h3>Cover Gallery</h3>
                 <GalleryPhotoswipe
                   gallery={coverGallery}
-                  onClick={selectCover}
+                  onSelect={selectCover}
                 />
                 <p>--or upload your own--</p>
                 <Dropzone limit={1} onDropComplete={onFilesComplete} />

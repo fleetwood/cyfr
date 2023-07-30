@@ -19,6 +19,7 @@ import {
   PrismaChapter,
   prisma
 } from "prisma/prismaContext"
+import { NotImplemented } from "utils/api"
 
 const { debug, info, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
 
@@ -193,43 +194,43 @@ const share = async (props:{creatorId:String, bookId:String}): Promise<Post> => 
 
   try {
     // we have to do this crazy little dance because composites in Follow model
-    const exists = await prisma.post.findFirst({
-      where: {
-        creatorId: creatorId.toString(),
-        bookId: bookId.toString()
-      }
-    })
-    const data = {
-      creatorId: creatorId.toString(),
-      bookId: bookId.toString(),
-      visible: exists ? !exists.visible : true
-    }
+    // const exists = await prisma.share.findFirst({
+    //   where: {
+    //     creatorId: creatorId.toString(),
+    //     bookId: bookId.toString()
+    //   }
+    // })
+    // const data = {
+    //   creatorId: creatorId.toString(),
+    //   bookId: bookId.toString(),
+    //   visible: exists ? !exists.visible : true
+    // }
 
-    debug('Share', {creatorId, bookId, data})
-
-    const share = exists 
-      ? await prisma.post.update({
-        where: {id: exists.id},
-        data
-      })
-      : await prisma.post.create({
-        data: {
-          creator: {
-            connect: {
-              id: creatorId.toString()
-            }
-          },
-          book: {
-            connect: {
-              id: bookId!.toString()
-            }
-          }
-        }
-      })
-    if (!share) {
-      throw({code: fileMethod('Share'), message: 'Unable to share book'})
-    }
-    return share;
+    debug('Share', {creatorId, bookId})
+    throw NotImplemented('prismaBook/share')
+    // const share = exists 
+    //   ? await prisma.post.update({
+    //     where: {id: exists.id},
+    //     data
+    //   })
+    //   : await prisma.share.create({
+    //     data: {
+    //       creator: {
+    //         connect: {
+    //           id: creatorId.toString()
+    //         }
+    //       },
+    //       book: {
+    //         connect: {
+    //           id: bookId!.toString()
+    //         }
+    //       }
+    //     }
+    //   })
+    // if (!share) {
+    //   throw({code: fileMethod('Share'), message: 'Unable to share book'})
+    // }
+    // return share;
   } catch (error) {
     debug(`share ERROR`, {
       ...{ props },

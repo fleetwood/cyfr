@@ -3,7 +3,7 @@ import { ImageDetail, ImageStub } from "prisma/prismaContext"
 
 import { useToast } from "components/context/ToastContextProvider"
 import AvatarList from "components/ui/avatarList"
-import { HeartIcon, PhotoIcon, ShareIcon } from "components/ui/icons"
+import { CheckmarkIcon, HeartIcon, PhotoIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
 import useApi from "prisma/useApi"
@@ -14,8 +14,10 @@ const { debug } = useDebug("PostItemFooter")
 type ImageFooterProps = {
   image:      ImageDetail | ImageStub
   onUpdate?:  () => void
+  selectable?:Boolean
+  onSelect?:  (image: ImageDetail | ImageStub) => void
 }
-const ImageFooter = ({ image, onUpdate }: ImageFooterProps) => {
+const ImageFooter = ({ image, onUpdate, selectable = false, onSelect }: ImageFooterProps) => {
   const {cyfrUser, isLoading} = useApi.cyfrUser()
   const {invalidate} = useApi.post().feed()
   const { notify, notifyLoginRequired } = useToast()
@@ -96,6 +98,17 @@ const ImageFooter = ({ image, onUpdate }: ImageFooterProps) => {
           <AvatarList users={post.shares} sz="xs" />
         } */}
       </div>
+      
+      {selectable &&
+      <div className="font-semibold uppercase">
+        <ShrinkableIconButton
+          icon={CheckmarkIcon}
+          className="bg-opacity-0 hover:shadow-none px-2"
+          iconClassName="text-primary"
+          onClick={() => onSelect ? onSelect(image) : {}}
+          />
+      </div>
+      }
 
       <div className="font-semibold uppercase">
         <CreateCommentFooterButton postId={image.id} comments={(image.commentThread?.comments??[]).length} />

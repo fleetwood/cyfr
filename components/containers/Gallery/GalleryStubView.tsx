@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { GalleryStub } from "prisma/prismaContext"
 import GalleryFooter from "./GalleryFooter"
-import GalleryPhotoswipe from "./GalleryPhotoswipe"
+import GalleryPhotoswipe from "./GalleryImages"
 
 type GalleryStubViewProps = {
   gallery:      GalleryStub

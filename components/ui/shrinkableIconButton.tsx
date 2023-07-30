@@ -1,13 +1,13 @@
-import React, { MouseEventHandler } from "react";
+import React, { MouseEventHandler } from "react"
 
 type ShrinkableIconButtonProps = {
-  icon: JSX.Element;
-  label?: string;
-  className?: string;
-  iconClassName?: string;
-  labelClassName?: string;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-};
+  icon: JSX.Element
+  label?: string
+  className?: string
+  iconClassName?: string
+  labelClassName?: string
+  onClick?: MouseEventHandler<HTMLButtonElement>
+}
 
 const ShrinkableIconButton = (props: ShrinkableIconButtonProps) => {
   const {
@@ -17,7 +17,7 @@ const ShrinkableIconButton = (props: ShrinkableIconButtonProps) => {
     iconClassName,
     labelClassName,
     onClick
-  } = props;
+  } = props
 
   return (
     <button
@@ -28,7 +28,7 @@ const ShrinkableIconButton = (props: ShrinkableIconButtonProps) => {
       transition-colors ease-linear duration-200
       flex space-x-1 ${className || "btn-primary"}
       `}
-      onClick={onClick}
+      onClickCapture={onClick}
     >
       <span className={iconClassName}>{icon}</span>
       {label && (
@@ -37,7 +37,7 @@ const ShrinkableIconButton = (props: ShrinkableIconButtonProps) => {
         </span>
       )}
     </button>
-  );
-};
+  )
+}
 
-export default ShrinkableIconButton;
+export default ShrinkableIconButton

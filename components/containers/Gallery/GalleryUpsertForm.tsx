@@ -9,7 +9,7 @@ import { useState } from 'react'
 import { sendApi } from 'utils/api'
 
 import { Dropzone, TailwindInput } from 'components/forms'
-import GalleryPhotoswipe from './GalleryPhotoswipe'
+import GalleryPhotoswipe from './GalleryImages'
 import useApi from 'prisma/useApi'
 
 const { debug, jsonBlock } = useDebug('Gallery/GalleryUpsertForm', 'DEBUG')

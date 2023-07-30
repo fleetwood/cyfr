@@ -6,8 +6,9 @@ import useGenreApi from "./genre"
 import useGalleryApi from "./gallery"
 import useImageApi from "./image"
 import useInboxApi from "./inbox"
-import usePostApi from "./post"
 import useMembershipApi from "./membership"
+import usePostApi from "./post"
+import useShareApi from "./share"
 import UserApi from "./user"
 
 export default {
@@ -19,7 +20,8 @@ export default {
     genre: useGenreApi,
     image: useImageApi,
     inbox: useInboxApi,
+    membership: useMembershipApi,
     post: usePostApi,
+    share: useShareApi,
     user: UserApi,
-    membership: useMembershipApi
 }

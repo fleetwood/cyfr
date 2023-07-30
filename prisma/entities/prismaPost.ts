@@ -1,6 +1,7 @@
 
 import useDebug from "hooks/useDebug"
 import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, prisma, PostStubInclude, PostDetailInclude } from "prisma/prismaContext"
+import { NotImplemented } from "utils/api"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPost')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
@@ -101,14 +102,10 @@ const likePost = async ({postId, creatorId}: PostEngageProps): Promise<Like> => 
 const sharePost = async ({postId,creatorId,}: PostEngageProps): Promise<Post> => {
   debug(`share`, { postId, creatorId })
   try {
-    return await prisma.post.create({
-      data: {
-        creatorId,
-        postId
-    }})    
+    throw NotImplemented('sharePost')
   } catch (error) { 
     info("sharePost ERROR: ", {error, postId, creatorId})
-    throw { code: fileMethod('likePost'), ...{error} }
+    throw { code: fileMethod('sharePost'), ...{error} }
   }
 }
 

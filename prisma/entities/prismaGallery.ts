@@ -7,6 +7,7 @@ import {
   GalleryStubInclude,
   GalleryUpsertProps, ImageUpsertProps, Like, Post
 } from "prisma/prismaContext"
+import { NotImplemented } from "utils/api"
 import { now } from "utils/helpers"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGallery')
@@ -84,11 +85,12 @@ const like = async ({
 const share = async ({galleryId,creatorId,}: GalleryEngageProps): Promise<Post> => {
   debug(`share`, { galleryId, creatorId })
   try {
-    return await prisma.post.create({
-      data: {
-        creatorId,
-        galleryId
-    }})    
+    throw NotImplemented('prismaGallery/share')
+    // return await prisma.post.create({
+    //   data: {
+    //     creatorId,
+    //     galleryId
+    // }})    
   } catch (error) { 
     throw { code: fileMethod, message: "Feature not implemented" }
   }

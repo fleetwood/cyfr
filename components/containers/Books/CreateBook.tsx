@@ -8,11 +8,11 @@ import EZButton from 'components/ui/ezButton'
 import { ArrowLeftIcon, ArrowRightIcon, CheckmarkIcon, CyfrLogo, SaveIcon } from 'components/ui/icons'
 import Semibold from 'components/ui/semibold'
 import useDebug from 'hooks/useDebug'
-import { Genre, GenreStub, Image, Permission, Role, RoleString, RoleVals, UserStub, getRoles } from 'prisma/prismaContext'
+import { Cover, CoverStub, Genre, GenreStub, Image, ImageStub, Permission, Role, RoleString, RoleVals, UserStub, getRoles } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, { useEffect, useState } from 'react'
 import { dedupe, now, uniqueKey } from 'utils/helpers'
-import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
+import GalleryPhotoswipe from '../Gallery/GalleryImages'
 import GenreSelector from '../Genre/GenreSelector'
 import UserSelector from '../User/UserSelector'
 import BookPermissions from './BookPermissions'
@@ -22,7 +22,7 @@ import useDebounce from 'hooks/useDebounce'
 import Avatar from 'components/ui/avatar'
 import FindCoverModal, { OpenFindCoverModalButton } from '../Cover/FindCoverModal'
 import { ItemProps } from 'react-photoswipe-gallery'
-import GalleryPhotoswipeInteractive from '../Gallery/GalleryPhotoswipeInteractive'
+import GalleryCovers from '../Gallery/GalleryCovers'
 
 const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",'DEBUG')
 const createBookModal = 'createBookModal'
@@ -43,7 +43,7 @@ const CreateBook = () => {
     const [prospect, setProspect] = useState(false)
     const [fiction, setFiction] = useState()
     const [status, setStatus] = useState()
-    const [cover, setCover] = useState()
+    const [coverId, setCoverId] = useState<string|null>(null)
     const [genreId, setGenreId] = useState()
     const [genre, setGenre] = useState<Genre>()
     // const [categories, setCategories] = useState<BookCategory[]>(book?.categories || [])
@@ -108,7 +108,7 @@ const CreateBook = () => {
         prospect,
         fiction,
         status,
-        cover,
+        coverId,
         genreId,
         genre,
         hook,
@@ -131,10 +131,11 @@ const CreateBook = () => {
   const steps = ['Name', 'About', 'Access', 'Cover', 'Review']
 
   const {findCover} = useApi.cover()
-  const [covers, setCovers] = useState<Image[]>([])
+  const [covers, setCovers] = useState<CoverStub[]>([])
 
-  const onCoverSelected = async (item: ItemProps) => {
-    debug('onCoverSelected', item)
+  const onCoverSelected = async (cover: CoverStub) => {
+    debug('onCoverSelected', cover)
+    setCoverId(() => cover.id)
   }
 
   const onCoverImageAdded = async (files:Image[]) => {
@@ -152,7 +153,7 @@ const CreateBook = () => {
     debug('getCovers', {coversByGenre: covers})
     const found = await findCover(genre?.title ?? 'All')
     if (found) {
-      setCovers(() => found.map(c => c.image))
+      setCovers(() => covers)
     } else {
       info('No covers found')
     }
@@ -240,10 +241,17 @@ const CreateBook = () => {
                             <div>
                                 <Dropzone limit={1} onDropComplete={onCoverImageAdded} />
                             </div>
+                            {covers && covers.length > 0 &&
                             <span>OR choose from the following</span>
+                            }
+                            {covers && covers.length > 0 &&
                             <div>
-                                <GalleryPhotoswipeInteractive images={covers} onClick={setCover} />
+                                <GalleryCovers covers={covers} selectable={true} onSelect={onCoverSelected} />
                             </div>
+                            }
+                            {!covers || covers.length < 1 && 
+                            <div>Sorry, there are no covers available for this genre. <Semibold>TODO: allow default cover</Semibold></div>
+                            }
                         </Grid>
                     }
                 </div>

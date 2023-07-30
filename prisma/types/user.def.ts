@@ -211,29 +211,23 @@ export type UserEngageProps = {
   active?:      Boolean
 }
 
-export type CreatorStub = {
-  creator: {
-    id: string
-    name: string
-    image: string
-    slug: string
-    membership?: Membership
-  }
+export type CreatorStub = UserStub & {
+  membership?: Membership
 }
 
 export const CreatorStubInclude = {
-  creator: {
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      slug: true,
-      membership: true
-    }
+  select: {
+    id: true,
+    name: true,
+    image: true,
+    slug: true,
+    membership: true
   }
 }
 
-export type CreatorAndLikesAndCount = CreatorStub & LikesAndCount
+export type CreatorAndLikesAndCount = LikesAndCount & {
+  creator: CreatorStub
+}
 
 export const CreatorLikesCountInclude = {include: {...CreatorStubInclude,...LikesAndCountsInclude}}
 

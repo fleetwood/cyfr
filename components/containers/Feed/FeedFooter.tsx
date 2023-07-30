@@ -7,13 +7,14 @@ import BookFooter from "../Books/BookFooter"
 import CharacterFooter from "../Characters/CharacterFooter"
 import useFeed, { FeedTypes } from "hooks/useFeed"
 import ImageFooter from "../Image/ImageFooter"
+import ShareFooter from "../Share/ShareFooter"
 const { debug } = useDebug("PostItemFooter")
 
 type FeedFooterProps = {
   item: PostStub
 }
 const FeedFooter = ({ item }: FeedFooterProps) => {
-  const {post, gallery, image, book, character} = item
+  const {share } = item
 
   const {invalidate} = useFeed('post')
   const onInvalidate = () => {
@@ -23,10 +24,9 @@ const FeedFooter = ({ item }: FeedFooterProps) => {
   
   return (
     <>
-      {
-        image || book || gallery ? <></> :
-        // character ? <CharacterFooter character={character} onUpdate={onInvalidate} /> :
-        <PostFooter post={(item.post ?? item)} onUpdate={onInvalidate} />
+      {share 
+        ? <ShareFooter share={item.share!} /> 
+        : <PostFooter post={(item)} onUpdate={onInvalidate} />
       }
     </>
 )}

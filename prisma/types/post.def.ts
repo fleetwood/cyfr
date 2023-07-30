@@ -1,5 +1,5 @@
 import { Agent } from "http"
-import { Artist, Author, Book, BookStub, BookStubInclude, Character, Comment, CommentThread, CommentThreadStub, Cover, CreatorAndLikesAndCount, Gallery, GalleryStub, Image, ImageFeed, ImageFeedInclude, ImageStub, Like, LikeStub, Post, User, UserStub, UserStubSelect } from "prisma/prismaContext"
+import { Artist, Author, Book, BookStub, BookStubInclude, Character, Comment, CommentThread, CommentThreadStub, Cover, CreatorAndLikesAndCount, CreatorStub, Gallery, GalleryStub, Image, ImageFeed, ImageFeedInclude, ImageStub, Like, LikeStub, Post, ShareStub, User, UserStub, UserStubSelect } from "prisma/prismaContext"
 
 export type PostCreateProps = {
   content: string
@@ -79,54 +79,15 @@ type PostComments = Post & {
 
 export type PostStub = Post & {
   _count: {
-    likes: Number
+    likes:    Number
+    shares:   Number
   }
-  creator:        UserStub
+  creator:        CreatorStub
   images:         ImageFeed[]
   commentThread:  CommentThreadStub
   likes:          LikeStub[]
-  image?:         ImageStub
-  gallery?:       GalleryStub
-  book?:          Book & {
-    agent?:         Agent
-    artists:        Artist[]
-    authors:        (Author & {
-      user:         User
-    })[]
-    cover:          Cover & {
-      image:          Image,
-      artists:        Artist[]
-    },
-    _count: {
-      chapters:   number,
-      characters: number,
-      likes:      number,
-      shares:     number,
-      readers:    number,
-      reviews:    number
-    }
-  }
-  character?:     Character & {
-    books:          Book[]
-    gallery?:       Gallery
-    _count: {
-      likes:  number
-      shares: number
-    }
-  }
-  cover?:         Cover & {
-    image:          ImageStub,
-    artists:        Artist[]
-    _count: {
-      chapters:   number,
-      characters: number,
-      likes:      number,
-      shares:     number,
-      readers:    number,
-      reviews:    number
-    }
-  }
-  post:           SharedPostStub
+  shares:         ShareStub[]
+  share?:         ShareStub
 }
 
 export const PostStubInclude = {
@@ -162,101 +123,6 @@ export const PostStubInclude = {
       },
     },
   },
-  gallery: {
-    include: {
-      creator: true,
-      images: {
-        include: {
-        _count: {
-          select: {
-            likes: true,
-            shares: true
-          }
-        }}
-      },
-      _count: {
-        select: {
-          likes: true,
-          shares: true
-        }
-      }
-    }
-  },
-  character: {
-    include: {
-      books: true,
-      gallery: true,
-      _count: {
-        select: {
-          likes: true,
-          shares: true
-        }
-      }
-    }
-  },
-  image: {
-    include: {
-      creator: { select: UserStubSelect},
-      cover: true,
-      _count: {
-        select: {
-          likes: true,
-          shares: true
-        }
-      }
-    }
-  },
-  book: {
-    include: {
-      agent: true,
-      artists: true,
-      authors: {
-        include: {
-          user: true
-        }
-      },
-      cover: {
-        include: {
-          image: true,
-          artists: true
-        }
-      },
-      _count: {
-        select: {
-          chapters: true,
-          characters: true,
-          likes: true,
-          shares: true,
-          readers: true,
-          reviews: true
-        }
-      }
-    },
-  },
-  cover:
-  {
-    include: {
-      image: {
-        include: {
-          creator: true,
-          cover: true,
-          _count: {
-            select: {
-              likes: true,
-              shares: true
-            }
-          }
-        }
-      },
-      artists: true,
-      _count: {
-        select: {
-        likes:      true,
-        shares:     true
-      }}
-    }
-  },
-  ...SharedPostFeedInclude
 }
 
 export type PostDetail = Post & CreatorAndLikesAndCount & {

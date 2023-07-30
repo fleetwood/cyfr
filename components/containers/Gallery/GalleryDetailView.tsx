@@ -1,7 +1,7 @@
 import JsonBlock from "components/ui/jsonBlock";
 import { GalleryDetail } from "prisma/prismaContext";
 import GalleryFooter from "./GalleryFooter";
-import GalleryPhotoswipe from "./GalleryPhotoswipe";
+import GalleryPhotoswipe from "./GalleryImages";
 
 type GalleryDetailViewProps = {
   gallery: GalleryDetail

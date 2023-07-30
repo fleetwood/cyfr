@@ -1,4 +1,4 @@
-import GalleryPhotoswipe from "components/containers/Gallery/GalleryPhotoswipe"
+import GalleryPhotoswipe from "components/containers/Gallery/GalleryImages"
 import PostFooter from "components/containers/Post/PostFooter"
 import MainLayout from "components/layouts/MainLayout"
 import Avatar from "components/ui/avatar"

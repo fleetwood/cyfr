@@ -1,6 +1,7 @@
 import {
   CommentThreadStub,
   Commune,
+  CreatorStub,
   Gallery,
   Image,
   Like,
@@ -53,7 +54,7 @@ export const GalleryFeedInclude = { include: {
 }}
 
 export type GalleryStub = Gallery & {
-  creator:        UserStub
+  creator:        CreatorStub
   permission:     Permission
   commentThread:  CommentThreadStub
   images:         ImageStub[]

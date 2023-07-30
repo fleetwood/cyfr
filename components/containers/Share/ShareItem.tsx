@@ -1,6 +1,6 @@
-import ReactHtmlParser from 'react-html-parser'
-import Avatar from "../../ui/avatar"
+import HtmlContent from 'components/ui/htmlContent'
 import { PostStub } from 'prisma/types'
+import Avatar from "../../ui/avatar"
 
 type ShareItemProps = {
     post: PostStub
@@ -10,7 +10,7 @@ const ShareItem = ({post}:ShareItemProps) => {
     <>
     {post && 
         <div className="relative">
-            <div>{ReactHtmlParser(post.content!)}</div>
+            {post.content && <HtmlContent content={post.content} className="font-feed" />}
             <div className="absolute -mt-6 right-0">
                 <Avatar shadow={true} user={post.creator} sz="sm" />
             </div>

@@ -42,6 +42,7 @@ model User {
   membership   Membership? @relation("user_membership", fields: [membershipId], references: [id])
   accounts     Account[]
 
+  shares        Share[]       @relation("user_shares")
   likes         Like[]        @relation("user_likes") // for keeping track of how many likes a user has given
   authorLikes   Like[]        @relation("author_likes") // for how many times his user has been liked
   blocks        Block[]       @relation("user_blocks")
@@ -188,7 +189,7 @@ model Gallery {
   commune           Commune?   @relation("gallery_commune")
   images            Image[]    @relation("gallery_images")
   likes             Like[]     @relation("gallery_likes")
-  shares            Post[]     @relation("gallery_shares")
+  shares            Share[]    @relation("gallery_shares")
   artist            Artist[]   @relation("gallery_artists")
 
   permissionId String?     @unique
@@ -215,7 +216,7 @@ model Image {
   gallery         Gallery?       @relation("gallery_images", fields: [galleryId], references: [id])
   post            Post?          @relation("post_images", fields: [postId], references: [id])
   likes           Like[]         @relation("image_likes")
-  shares          Post[]         @relation("image_shares")
+  shares          Share[]        @relation("image_shares")
 }
 
 model Cover {
@@ -244,7 +245,7 @@ model Cover {
   image   Image  @relation("cover_image", fields: [imageId], references: [id])
 
   likes   Like[]   @relation("cover_likes")
-  shares  Post[]   @relation("cover_shares")
+  shares  Share[]  @relation("cover_shares")
   reviews Review[] @relation("cover_reviews")
 }
 
@@ -371,6 +372,7 @@ model Event {
   attendees       User[]         @relation("event_attendees")
   hosts           User[]         @relation("event_hosts")
   likes           Like[]         @relation("event_likes")
+  shares          Share[]        @relation("event_shares")
 
   permissionId String?     @unique
   permission   Permission? @relation("event_permission", fields: [permissionId], references: [id])
@@ -558,7 +560,7 @@ model Book {
   cover           Cover?         @relation("book_cover")
   follows         Follow[]       @relation("book_follows")
   likes           Like[]         @relation("book_likes")
-  shares          Post[]         @relation("book_shares")
+  shares          Share[]        @relation("book_shares")
   agent           Agent[]        @relation("book_agents")
   categories      BookCategory[] @relation("book_categories")
   characters      Character[]    @relation("book_characters")
@@ -614,7 +616,7 @@ model Character {
   gallery  Gallery?  @relation("character_gallery", fields: [galleryId], references: [id])
   follows  Follow[]  @relation("character_follows")
   likes    Like[]    @relation("character_likes")
-  shares   Post[]    @relation("character_shares")
+  shares   Share[]   @relation("character_shares")
   books    Book[]    @relation("book_characters")
   chapters Chapter[] @relation("chapter_characters")
   reviews  Review[]  @relation("character_reviews")
@@ -660,26 +662,54 @@ model Post {
   images Image[] @relation("post_images")
   likes  Like[]  @relation("post_likes")
 
-  postId     String? @unique
-  post       Post?   @relation("shared_post", fields: [postId], references: [id])
-  sharedPost Post?   @relation("shared_post")
+  // this is an attaching post
+  share Share? @relation("share_post")
 
-  galleryId String?
-  gallery   Gallery? @relation("gallery_shares", fields: [galleryId], references: [id])
-
-  imageId String?
-  image   Image?  @relation("image_shares", fields: [imageId], references: [id])
-
-  characterId String?
-  character   Character? @relation("character_shares", fields: [characterId], references: [id])
-
-  bookId String?
-  book   Book?   @relation("book_shares", fields: [bookId], references: [id])
-
-  coverId String?
-  cover   Cover?  @relation("cover_shares", fields: [coverId], references: [id])
+  // this is shares for the original post
+  shares Share[] @relation("post_shares")
 
   @@index([id, creatorId, visible, createdAt])
+}
+
+model Share {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+  visible   Boolean  @default(true)
+  creatorId String
+  creator   User     @relation("user_shares", fields: [creatorId], references: [id])
+
+  // every share creates a post that the shared item is then attached to
+  sharePostId String @unique
+  sharePost   Post   @relation("share_post", fields: [sharePostId], references: [id])
+
+  // this is the post that is shared, not the attaching post
+  postId String?
+  Post   Post?   @relation("post_shares", fields: [postId], references: [id])
+
+  // this is s shared image
+  imageId String?
+  Image   Image?  @relation("image_shares", fields: [imageId], references: [id])
+
+  // this is s shared gallery
+  galleryId String?
+  Gallery   Gallery? @relation("gallery_shares", fields: [galleryId], references: [id])
+
+  // this is s shared book
+  bookId String?
+  Book   Book?   @relation("book_shares", fields: [bookId], references: [id])
+
+  // this is s shared character
+  characterId String?
+  Character   Character? @relation("character_shares", fields: [characterId], references: [id])
+
+  // this is s shared cover
+  coverId String?
+  Cover   Cover?  @relation("cover_shares", fields: [coverId], references: [id])
+
+  // this is s shared event
+  eventId String?
+  Event   Event?  @relation("event_shares", fields: [eventId], references: [id])
 }
 
 model Like {

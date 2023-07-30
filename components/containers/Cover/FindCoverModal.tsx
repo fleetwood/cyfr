@@ -2,13 +2,14 @@ import { useCyfrUserContext } from 'components/context/CyfrUserProvider'
 import { useToast } from 'components/context/ToastContextProvider'
 import Spinner from 'components/ui/spinner'
 import useDebug from 'hooks/useDebug'
-import { Genre, Image } from 'prisma/prismaContext'
+import { Cover, CoverStub, Genre, GenreStub, Image } from 'prisma/prismaContext'
 import { FormEvent, useEffect, useRef, useState } from 'react'
-import GalleryPhotoswipe from '../Gallery/GalleryPhotoswipe'
+import GalleryPhotoswipe from '../Gallery/GalleryImages'
 import GenreSelector from '../Genre/GenreSelector'
 import { ItemProps } from 'react-photoswipe-gallery'
 import useApi from 'prisma/useApi'
 import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from 'components/ui/modalCheckbox'
+import GalleryCovers from '../Gallery/GalleryCovers'
 const {debug, info} = useDebug("Cover/FindCoverModal")
 
 const findCoverModal = 'FindCoverModal'
@@ -16,19 +17,23 @@ const findCoverModal = 'FindCoverModal'
 export const OpenFindCoverModalButton = () => <ModalOpenButton id={findCoverModal} label='Find a Cover' />
 export const OpenFindCoverModalPlus = () => <ModalOpenButton id={findCoverModal} />
 
+/**
+ * To select from pre-defined covers, NOT to create a cover
+ */
 type FindCoverModalType = {
-  genre?: Genre
-  onSelect?: (item:ItemProps) => void
+  genre?: Genre|GenreStub
+  setGenre?: (genre:Genre|GenreStub) => void
+  selectCover?: (cover:Cover|CoverStub) => void
 }
 
-const FindCoverModal = ({genre, onSelect}:FindCoverModalType) => {
+const FindCoverModal = ({genre, setGenre, selectCover}:FindCoverModalType) => {
   const {cyfrUser, isLoading, error} = useApi.cyfrUser()
   const {findCover} = useApi.cover()
   const { notify } = useToast()
   const container = useRef<HTMLDivElement>(null)
 
   const [byGenre, setByGenre] = useState(genre?.title)
-  const [covers, setCovers] = useState<Image[]>([])
+  const [covers, setCovers] = useState<(CoverStub)[]>([])
 
   const handleSubmit = async (e?: FormEvent) => {
     e?.preventDefault()
@@ -44,9 +49,9 @@ const FindCoverModal = ({genre, onSelect}:FindCoverModalType) => {
     createModal!.checked = false
   }
 
-  const onCoverSelect = (item:any) => {
+  const onCoverSelect = (item:Image|Cover) => {
     debug('onCoverSelect', {item})
-    if (onSelect) onSelect(item)
+    
     closeModal()
   }
 
@@ -59,7 +64,7 @@ const FindCoverModal = ({genre, onSelect}:FindCoverModalType) => {
     debug('getCovers', {byGenre})
     const found = await findCover(byGenre === 'All' ? '' : byGenre)
     if (found) {
-      setCovers(() => found.map(c => c.image))
+      setCovers(() => found)
     } else {
       info('No covers found')
     }
@@ -79,8 +84,8 @@ const FindCoverModal = ({genre, onSelect}:FindCoverModalType) => {
           {isLoading && <Spinner />}
           {cyfrUser && genre && (
             <div className="w-full mx-auto m-4 p-2 sm:p-6 lg:p-4 bg-base-300 rounded-lg">
-              <GenreSelector genre={genre} allowAll={true} setGenre={(title) => onGenreSelect(title as string)} sendTitle={true} />
-              <GalleryPhotoswipe images={covers} onClick={onCoverSelect} />
+              <GenreSelector genre={genre} setGenre={setGenre} />
+              <GalleryCovers covers={covers} onSelect={onCoverSelect} />
             </div>
           )}
         </div>
