@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material"
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { useToast } from "components/context/ToastContextProvider"
-import Avatar from "components/ui/avatar"
+import Avatar from "components/ui/avatar/avatar"
 import { FireIcon, HeartIcon } from "components/ui/icons"
 import JsonBlock from "components/ui/jsonBlock"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"

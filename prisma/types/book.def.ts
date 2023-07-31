@@ -1,5 +1,5 @@
 import { UseQueryResult } from "react-query"
-import { Agent, AgentStub, AgentStubInclude, Artist, ArtistStub, ArtistStubInclude, Author, AuthorStub, AuthorStubInclude, Book, BookCategory, BookStatus, ChapterListItem, ChapterStub, CharacterStub, CommentThread, Cover, CoverStub, CoverStubInclude, CyfrUser, Follow, GalleryStub, Genre, Image, Publisher, User, UserFollow, UserStub } from "../prismaContext"
+import { Agent, AgentStub, AgentStubInclude, Artist, ArtistStub, ArtistStubInclude, Author, AuthorStub, AuthorStubInclude, Book, BookCategory, BookStatus, ChapterListItem, ChapterStub, CharacterStub, CommentThread, Cover, CoverStub, CoverStubInclude, CyfrUser, Follow, Gallery, GalleryStub, GalleryStubInclude, Genre, Image, Publisher, User, UserFollow, UserStub, UserStubSelect } from "../prismaContext"
 
 export type BookRelations = {
   genre:        Genre
@@ -120,13 +120,13 @@ export const BookFeedInclude = {
 }
 
 export type BookStub = Book & {
-  agent?:       AgentStub
+  agent?:       Agent
   authors:      AuthorStub[]
-  artists:      ArtistStub[]
+  artists:      Artist[]
   publisher?:   Publisher
   genre:        Genre
-  gallery?:     GalleryStub
-  cover?:       Cover // CoverStub
+  gallery?:     Gallery
+  cover?:       Cover
   _count: {
     chapters:   number
     characters: number
@@ -139,18 +139,66 @@ export type BookStub = Book & {
 }
 
 export const BookStubInclude = { include: {
-  agent:      AgentStubInclude,
-  authors:    AuthorStubInclude,
-  artists:    ArtistStubInclude,
+  agent:      true, // AgentStubInclude, // No stubs in stubs!
+  authors:    {include: {
+    user: {
+      select: {
+        name: true,
+        id: true,
+        slug: true,
+        image: true,
+      },
+    },
+    books: {
+      include: {
+        agent:      true, // AgentStubInclude, // No stubs in stubs!
+        authors:    true, // AuthorStubInclude,
+        artists:    true, // ArtistStubInclude,
+        publisher:  true,
+        genre:      true,
+        gallery:    true, // GalleryStubInclude,
+        cover: true, // 
+        // {
+        //   include: {
+        //     image: true,
+        //     artists: true
+        //   }
+        // },
+        _count: {
+          select: {
+            chapters: true,
+            characters: true,
+            likes: true,
+            shares: true,
+            follows: true,
+            readers: true,
+            reviews: true
+          }
+        }
+      },
+      take: 5
+    },
+    reviews: {
+      take: 5
+    },
+    _count: {
+      select: {
+        books: true,
+        reviews: true
+      }
+    }
+  }}, // AuthorStubInclude,
+  artists:    true, // ArtistStubInclude,
   publisher:  true,
   genre:      true,
-  gallery:    true,
-  cover: {
-    include: {
-      image: true,
-      artists: true
-    }
-  },
+  gallery:    true, // GalleryStubInclude,
+  cover: true, // 
+  // {
+  //   include: {
+  //     image: true,
+  //     artists: true
+  //   }
+  // },
   _count: {
     select: {
       chapters: true,

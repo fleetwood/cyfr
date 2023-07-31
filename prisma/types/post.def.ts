@@ -1,5 +1,5 @@
 import { Agent } from "http"
-import { Artist, Author, Book, BookStub, BookStubInclude, Character, Comment, CommentThread, CommentThreadStub, Cover, CreatorAndLikesAndCount, CreatorStub, Gallery, GalleryStub, Image, ImageFeed, ImageFeedInclude, ImageStub, Like, LikeStub, Post, ShareStub, User, UserStub, UserStubSelect } from "prisma/prismaContext"
+import { Artist, Author, Book, BookStub, BookStubInclude, Character, CharacterStubInclude, Comment, CommentThread, CommentThreadStub, Cover, CoverStubInclude, CreatorAndLikesAndCount, CreatorStub, CreatorStubSelect, EventStubInclude, Gallery, GalleryStub, GalleriesStubInclude, Image, ImageFeed, ImageFeedInclude, ImageStub, ImageStubInclude, Like, LikeStub, Post, ShareStub, ShareStubInclude, User, UserStub, UserStubSelect } from "prisma/prismaContext"
 
 export type PostCreateProps = {
   content: string
@@ -90,12 +90,13 @@ export type PostStub = Post & {
   share?:         ShareStub
 }
 
-export const PostStubInclude = {
+export const PostStubInclude = {include: {
   // images: ImageFeedInclude,
   // // SHARES
   _count: {
     select: {
-      likes: true
+      likes: true,
+      shares: true
     }
   },
   creator: {
@@ -105,6 +106,13 @@ export const PostStubInclude = {
       isBlocked: true
     }
   },
+  likes: {
+    include: {
+      creator: CreatorStubSelect 
+    }
+  },
+  shares: ShareStubInclude,
+  share: ShareStubInclude,
   images: true,
   commentThread: {
     include: {
@@ -123,7 +131,7 @@ export const PostStubInclude = {
       },
     },
   },
-}
+}}
 
 export type PostDetail = Post & CreatorAndLikesAndCount & {
   // This is a shared post, not the main post

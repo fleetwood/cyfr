@@ -1,6 +1,6 @@
 import { SizeProps } from "types/props";
 import { uuid } from "../../utils/helpers";
-import Avatar, { AvatarVariants } from "./avatar";
+import Avatar, { AvatarVariants } from "./avatar/avatar";
 
 type AvatarListProps = {
   sz:     SizeProps

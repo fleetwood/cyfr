@@ -65,44 +65,46 @@ export type GalleryStub = Gallery & {
 }
 
 export const GalleryStubInclude = {include: {
+  creator: true,
+  images: {
+    include: {
+    _count: {
+      select: {
+        likes: true,
+        shares: true
+      }
+    }}
+  },
+  commentThread: {
+    include: {
+      comments: {
+        include: {
+          creator: true
+        },
+        take: 10
+      },
+      _count: {
+        select: {
+          comments: true
+        }
+      }
+    }
+  },
+  permission: true,
+  _count: {
+    select: {
+      likes: true,
+      shares: true
+    }
+  }
+}}
+
+export const GalleriesStubInclude = {include: {
   galleries: {
     where: {
       visible: true
     },
-    include: {
-      creator: true,
-      images: {
-        include: {
-        _count: {
-          select: {
-            likes: true,
-            shares: true
-          }
-        }}
-      },
-      commentThread: {
-        include: {
-          comments: {
-            include: {
-              creator: true
-            },
-            take: 10
-          },
-          _count: {
-            select: {
-              comments: true
-            }
-          }
-        }
-      },
-      permission: true,
-      _count: {
-        select: {
-          likes: true,
-          shares: true
-        }
-      }
-    }
+    ...GalleryStubInclude
   }
 }}
 

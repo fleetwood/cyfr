@@ -1,5 +1,5 @@
 import { User } from '@prisma/client'
-import Avatar from '../../ui/avatar'
+import Avatar from '../../ui/avatar/avatar'
 import { uuid } from '../../../utils/helpers'
 
 type UserDetailFansProps = {

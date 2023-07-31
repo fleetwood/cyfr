@@ -27,7 +27,7 @@ const feed = async ({take=10, skip=0}:PaginationProps): Promise<PostStub[]> => {
       where: {visible: true},
       // TODO: review all stubs and details
       // note that stubs cannot include others stubs in their includes
-      include: PostStubInclude,
+      ...PostStubInclude,
       orderBy: {createdAt: "desc"},
       //TODO: pagination
       take, skip

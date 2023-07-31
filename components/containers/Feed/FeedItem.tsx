@@ -1,7 +1,5 @@
 import { PostStub } from "prisma/types"
 import PostStubView from "../Post/PostStubView"
-import FeedFooter from "./FeedFooter"
-import FeedHeader from "./FeedHeader"
 import ShareHeader from "../Share/ShareHeader"
 import PostHeader from "../Post/PostHeader"
 import ShareFooter from "../Share/ShareFooter"

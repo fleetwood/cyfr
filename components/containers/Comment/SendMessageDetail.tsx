@@ -8,7 +8,7 @@ import { CommentThreadDetails, CyfrUser, UpsertInboxProps, User } from "prisma/p
 import { useState } from "react"
 import { uniqueKey, timeDifference } from "utils/helpers"
 import HtmlContent from "components/ui/htmlContent"
-import Avatar from "components/ui/avatar"
+import Avatar from "components/ui/avatar/avatar"
 
 const {debug} = useDebug('components/containers/SendMessageDetail')
 

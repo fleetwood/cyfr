@@ -4,7 +4,7 @@ import {
   GalleryDetail,
   GalleryDetailInclude, GalleryEngageProps,
   GalleryStub,
-  GalleryStubInclude,
+  GalleriesStubInclude,
   GalleryUpsertProps, ImageUpsertProps, Like, Post
 } from "prisma/prismaContext"
 import { NotImplemented } from "utils/api"

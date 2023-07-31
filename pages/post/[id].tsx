@@ -1,7 +1,7 @@
 import GalleryPhotoswipe from "components/containers/Gallery/GalleryImages"
 import PostFooter from "components/containers/Post/PostFooter"
 import MainLayout from "components/layouts/MainLayout"
-import Avatar from "components/ui/avatar"
+import Avatar from "components/ui/avatar/avatar"
 import HtmlContent from "components/ui/htmlContent"
 import useApi from "prisma/useApi"
 import { timeDifference } from 'utils/helpers'

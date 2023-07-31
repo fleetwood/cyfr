@@ -42,6 +42,7 @@ model User {
   membership   Membership? @relation("user_membership", fields: [membershipId], references: [id])
   accounts     Account[]
 
+  events        Event[]       @relation("user_events")
   shares        Share[]       @relation("user_shares")
   likes         Like[]        @relation("user_likes") // for keeping track of how many likes a user has given
   authorLikes   Like[]        @relation("author_likes") // for how many times his user has been liked
@@ -355,9 +356,13 @@ model Publisher {
 }
 
 model Event {
-  id              String         @id @default(cuid())
-  createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @default(now()) @db.Timestamptz(3)
+
+  creatorId String
+  creator   User   @relation("user_events", fields: [creatorId], references: [id])
+
   startAt         DateTime       @db.Timestamptz(3)
   endAt           DateTime       @db.Timestamptz(3)
   attendeeLimit   Int            @default(0)
@@ -685,31 +690,31 @@ model Share {
 
   // this is the post that is shared, not the attaching post
   postId String?
-  Post   Post?   @relation("post_shares", fields: [postId], references: [id])
+  post   Post?   @relation("post_shares", fields: [postId], references: [id])
 
   // this is s shared image
   imageId String?
-  Image   Image?  @relation("image_shares", fields: [imageId], references: [id])
+  image   Image?  @relation("image_shares", fields: [imageId], references: [id])
 
   // this is s shared gallery
   galleryId String?
-  Gallery   Gallery? @relation("gallery_shares", fields: [galleryId], references: [id])
+  gallery   Gallery? @relation("gallery_shares", fields: [galleryId], references: [id])
 
   // this is s shared book
   bookId String?
-  Book   Book?   @relation("book_shares", fields: [bookId], references: [id])
+  book   Book?   @relation("book_shares", fields: [bookId], references: [id])
 
   // this is s shared character
   characterId String?
-  Character   Character? @relation("character_shares", fields: [characterId], references: [id])
+  character   Character? @relation("character_shares", fields: [characterId], references: [id])
 
   // this is s shared cover
   coverId String?
-  Cover   Cover?  @relation("cover_shares", fields: [coverId], references: [id])
+  cover   Cover?  @relation("cover_shares", fields: [coverId], references: [id])
 
   // this is s shared event
   eventId String?
-  Event   Event?  @relation("event_shares", fields: [eventId], references: [id])
+  event   Event?  @relation("event_shares", fields: [eventId], references: [id])
 }
 
 model Like {

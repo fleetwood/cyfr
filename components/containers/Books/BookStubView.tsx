@@ -1,4 +1,3 @@
-import Avatar from "components/ui/avatar"
 import HtmlContent from "components/ui/htmlContent"
 import useDebug from "hooks/useDebug"
 import Link from "next/link"
@@ -7,6 +6,7 @@ import { SizeProps } from "types/props"
 import { uniqueKey } from "utils/helpers"
 import BookCover, { BookCoverVariant } from "./BookCover"
 import BookFooter from "./BookFooter"
+import AuthorAvatar from "components/ui/avatar/authorAvatar"
 
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent')
 
@@ -30,7 +30,7 @@ const BookStubView = ({book, authorAvatars, size = "md", showAuthors = true, sho
           <div className="flex my-4">
             <span className="pr-2">by</span>
             {book.authors.map((author) => 
-              <Avatar user={author.user} sz={size} key={uniqueKey(book, author)} />
+              <AuthorAvatar author={author} sz={size} key={uniqueKey(book, author)} />
             )}
           </div>
         }

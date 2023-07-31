@@ -3,7 +3,7 @@ import useDebug from "../../hooks/useDebug"
 import { UserDetail, UserStub } from "../../prisma/prismaContext"
 import { uniqueKey } from "../../utils/helpers"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
-import Avatar from "./avatar"
+import Avatar from "./avatar/avatar"
 import Spinner from "./spinner"
 import UserApi from "../../prisma/useApi/user"
 

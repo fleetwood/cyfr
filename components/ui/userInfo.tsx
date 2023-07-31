@@ -1,6 +1,6 @@
 import React from 'react'
 import { CyfrUser, UserStub, v_author_stub } from '../../prisma/prismaContext'
-import Avatar from './avatar'
+import Avatar from './avatar/avatar'
 import { uniqueKey, uuid } from '../../utils/helpers'
 import { SizeProps } from 'types/props'
 

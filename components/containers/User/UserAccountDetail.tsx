@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { PostStub, UserDetail, UserFollow } from "prisma/prismaContext"
 import userApi from "prisma/useApi/user"
-import Avatar from "components/ui/avatar"
+import Avatar from "components/ui/avatar/avatar"
 import PostStubView from "../Post/PostStubView"
 
 const UserAccountDetail = (user:UserDetail) => {

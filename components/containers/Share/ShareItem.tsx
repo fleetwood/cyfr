@@ -1,6 +1,6 @@
 import HtmlContent from 'components/ui/htmlContent'
 import { PostStub } from 'prisma/types'
-import Avatar from "../../ui/avatar"
+import Avatar from "../../ui/avatar/avatar"
 
 type ShareItemProps = {
     post: PostStub

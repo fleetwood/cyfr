@@ -1,14 +1,13 @@
-import { Agent } from 'http'
-import { Author, Book, BookStub, Publisher, Review, UserStub } from 'prisma/prismaContext'
+import { BookStub, Reader, Review, UserStub } from 'prisma/prismaContext'
 
-export type AuthorDetail = Author & {
+export type ReaderDetail = Reader & {
   user: UserStub,
   _count: {
     books: number
   }
 }
 
-export type AuthorStub = Author & {
+export type ReaderStub = Reader & {
   user:     UserStub
   books:    BookStub[]
   reviews:  Review[]
@@ -18,7 +17,7 @@ export type AuthorStub = Author & {
   }
 }
 
-export const AuthorStubInclude = {include: {
+export const ReaderStubInclude = {include: {
     user: {
       select: {
         name: true,
@@ -30,7 +29,7 @@ export const AuthorStubInclude = {include: {
     books: {
       include: {
         agent:      true, // AgentStubInclude, // No stubs in stubs!
-        authors:    true, // AuthorStubInclude,
+        readers:    true, // ReaderStubInclude,
         artists:    true, // ArtistStubInclude,
         publisher:  true,
         genre:      true,

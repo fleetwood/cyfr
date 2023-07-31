@@ -1,4 +1,4 @@
-import Avatar from "components/ui/avatar"
+import Avatar from "components/ui/avatar/avatar"
 import Link from "next/link"
 import { PostStub } from "prisma/prismaContext"
 import { timeDifference } from "utils/helpers"

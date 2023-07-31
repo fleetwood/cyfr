@@ -1,32 +1,53 @@
-import { BookStub, BookStubInclude, ChapterStub, Character, CyfrUser, Gallery, GalleryStub, GalleryStubInclude, LikesInclude, UserFollow, UserStub, UserStubSelect } from "../prismaContext"
+import { BookStub, BookStubInclude, ChapterStub, Character, CyfrUser, Gallery, GalleryStub, GalleriesStubInclude, LikesInclude, UserFollow, UserStub, UserStubSelect, GalleryStubInclude, LikesAndShares, LikesAndSharesInclude, ShareStubInclude } from "../prismaContext"
 
 /**
  * @property characters {@link Character} TODO: should be a CharacterStub
  */
-export type CharacterStub = Character & {
+export type CharacterStub = Character & LikesAndShares & {
   authors:    UserStub[]
   books:      BookStub[]
   gallery:    GalleryStub
-  likes:      UserStub[]
+  // likes:      UserStub[]
 }
 
-export const CharacterStubInclude = {
-  authors: UserStubSelect,
-  books: BookStubInclude,
-  gallery: GalleryStubInclude,
-  likes: LikesInclude
+// TODO: Stubs cannot include other stubs
+export const CharacterStubInclude = { include: {
+    authors: { select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true
+    }},
+    books: BookStubInclude,
+    gallery: GalleryStubInclude
+  },
+  _count: {
+    select: {
+      shares: true
+  }},
+  shares: {
+    ...ShareStubInclude,
+    take: 10
+  }
 }
 
 /** 
  * @property characters {@link Character} TODO: should be a CharacterStub
  */
-export type CharacterDetail = Character & {
+export type CharacterDetail = Character & LikesAndShares & {
   follows?:     UserFollow[]
   likes:        UserStub[]
   books?:       BookStub[]
   chapters?:    ChapterStub[]
   galleryId?:   string
   gallery?:     Gallery
+  _count: {
+    select: {
+      shares: true
+  }},
+  shares: {
+    take: 10
+  }
 }
 
 export type CharacterUpsertProps = {

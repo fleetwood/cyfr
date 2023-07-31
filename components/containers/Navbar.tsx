@@ -1,4 +1,4 @@
-import Avatar from "components/ui/avatar"
+import Avatar from "components/ui/avatar/avatar"
 import { BookIcon, CyfrLogo, HouseIcon, UserIcon } from "components/ui/icons"
 import ShrinkableIconLink from "components/ui/shrinkableIconLink"
 import ShrinkableLink from "components/ui/shrinkableLink"

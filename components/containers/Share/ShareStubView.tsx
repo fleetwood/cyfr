@@ -15,18 +15,19 @@ type SharedPostFeedItemProps = {
 
 const SharedStubView = ({ share }: SharedPostFeedItemProps) => {
   const comments: any[] = []
+  const {book, character, cover, event, gallery, image, post} = share
 
   return (
     <div className='bg-neutral bg-opacity-10 rounded-lg p-4'>
-      {share.post && <PostStubView post={share.post} />}
+      {post && <PostStubView post={post} />}
 
-      {share.image && <ImageStubView image={share.image as ImageStub} />}
+      {image && <ImageStubView image={image as ImageStub} />}
 
-      {share.gallery && <GalleryStubView gallery={share.gallery as GalleryStub} />}
+      {gallery && <GalleryStubView gallery={gallery as GalleryStub} />}
 
-      {share.book && <BookStubView book={share.book as unknown as BookStub} size="sm" showFooter={false} />}
+      {book && <BookStubView book={book as unknown as BookStub} size="sm" showFooter={false} />}
 
-      {share.character && <CharacterStubView characterStub={share.character as unknown as CharacterStub} />}
+      {character && <CharacterStubView characterStub={character as unknown as CharacterStub} />}
     </div>
 )}
 

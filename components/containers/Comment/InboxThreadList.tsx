@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { CommentThreadDetails, CyfrUser } from "../../../prisma/prismaContext"
 import { uniqueKey } from "../../../utils/helpers"
-import Avatar from "../../ui/avatar"
+import Avatar from "../../ui/avatar/avatar"
 
 type InboxThreadListProps = {
   cyfrUser: CyfrUser

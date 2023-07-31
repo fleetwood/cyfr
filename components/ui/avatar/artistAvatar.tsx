@@ -1,61 +1,55 @@
 import { Transition } from "@headlessui/react"
-import { useState } from "react"
-import {
-  CyfrUser,
-  MembershipType,
-  User,
-  UserDetail,
-  UserFeed,
-  UserFollow,
-  UserInfo,
-  UserStub,
-} from "prisma/prismaContext"
-import { cloudinary } from "utils/cloudinary"
-import Spinner from "./spinner"
 import useDebug from "hooks/useDebug"
-import { SizeProps } from "types/props"
-import UserApi from "prisma/useApi/user"
-import { abbrNum } from "utils/helpers"
 import Link from "next/link"
+import {
+  ArtistDetail,
+  ArtistStub,
+  MembershipType,
+  UserInfo
+} from "prisma/prismaContext"
+import useApi from "prisma/useApi"
+import { useState } from "react"
+import { SizeProps } from "types/props"
+import { cloudinary } from "utils/cloudinary"
+import { abbrNum } from "utils/helpers"
+import Spinner from "../spinner"
 
 const {debug, jsonBlock} = useDebug('avatar')
 
-export type AvatarUser = CyfrUser | UserDetail | UserFeed | UserStub | UserFollow | User
+export type ArtistUser = ArtistDetail | ArtistStub
 
 type AvatarProps = {
-  user?: AvatarUser
+  artist?: ArtistUser
   link?: boolean
   shadow?: boolean
   className?: string
   placeholder?: string
   variant?: AvatarVariants[]
   sz: SizeProps
-  onClick?: (user:AvatarUser) => void
+  onClick?: (artist:ArtistUser) => void
 }
 
 export type AvatarVariants = 'default'|'no-profile'
 
-const Avatar = ({
-  user,
-  placeholder,
+const ArtistAvatar = ({
+  artist,
   className,
-  shadow,
   sz,
   link = true,
   onClick,
   variant = ['default'],
 }: AvatarProps) => {
-  if (!user) return <></>
+  if (!artist) return <></>
   
   const [showProfile, setShowProfile] = useState(false)
   
-  const {info} = UserApi()
+  const {info} = useApi.user()
 
   const [isLoading, setIsLoading] = useState(false)
   const [userInfo, setUserInfo] = useState<UserInfo>()
 
-  const numPosts = userInfo?._count.posts
-  const numGalleries = userInfo?._count.galleries
+  const {user} = artist
+
   const numBooks = userInfo?._count.books
   const numFollowers = userInfo?._count.follower
   const numFollowing = userInfo?._count.following
@@ -64,20 +58,19 @@ const Avatar = ({
 
   const allowProfile = variant.indexOf('no-profile')<0
   const content =
-    user && 
+    artist && 
       user.image ? ( <img src={cloudinary.avatar(user.image, sz as unknown as SizeProps)} /> ) : 
-      placeholder ? ( placeholder) : 
-      user ? ( user.name ) :
+      artist ? ( user.name ) :
       ("?")
 
     const online =
     // @ts-ignore
-    user && user._count && user._count.sessions && user._count.sessions > 0
+    artist && artist._count && artist._count.sessions && artist._count.sessions > 0
       ? "online"
       : ""
 
   // @ts-ignore
-  const member = user?.membership?.type ? (user?.membership?.type as unknown as MembershipType).name.toLowerCase() : ''
+  const member = artist?.membership?.type ? (artist?.membership?.type as unknown as MembershipType).name.toLowerCase() : ''
   
   const init = async () => {
     debug('init')
@@ -87,15 +80,15 @@ const Avatar = ({
       return
     }
 
-    if (!user) {
-      debug('aint got no user')
+    if (!artist) {
+      debug('aint got no artist')
       return
     }
 
     setIsLoading(() => true)
-    debug('getting user info....', user.id)
-    // get user infro from api
-    const result = await info(user.id)
+    debug('getting artist info....', artist.id)
+    // get artist infro from api
+    const result = await info(artist.id)
     
     if (result) {
       debug('userInfo', result)
@@ -111,10 +104,10 @@ const Avatar = ({
       className={`avatar relative ${otherClasses}`} 
       onMouseOverCapture={() => allowProfile ? init() : {}}
       onMouseOutCapture={() => setShowProfile(() => false)}
-      onClickCapture={() => onClick && onClick(user)}
+      onClickCapture={() => onClick && onClick(artist)}
     >
       <div className={`mask mask-squircle`}>
-        {!onClick && link && user ? <a href={`/user/${user.slug}`}>{content}</a> : content}
+        {!onClick && link && artist ? <a href={`/artist/${user.slug}`}>{content}</a> : content}
       </div>
       {allowProfile && userInfo && 
       <Transition
@@ -135,24 +128,16 @@ const Avatar = ({
             `}
             >
               <div className="px-3 py-2 bg-primary text-primary-content rounded-t-lg">
-                <Link href={`/user/${user.slug}`}><h3 className="font-semibold">{userInfo?.name}</h3></Link>
+                <Link href={`/artist/${user.slug}`}><h3 className="font-semibold">{userInfo?.name}</h3></Link>
               </div>
 
               <div className="px-3 py-2 flex flex-row">
                 
                 <div className="flex flex-col p-2">
                   <div className="flex odd:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Posts</div>
-                    <div>{abbrNum(numPosts)}</div>
-                  </div>
-                  <div className="flex odd:bg-base-200 justify-between space-x-2 p-2">
                     <div className="font-semibold">Books</div>
                     <div>{numBooks}</div>
                   </div>
-                  <div className="flex odd:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Galleries</div>
-                    <div>{numGalleries}</div>
-                  </div>   
                 </div>
 
                 <div className="flex flex-col p-2">
@@ -183,4 +168,4 @@ const Avatar = ({
   )
 }
 
-export default Avatar
+export default ArtistAvatar

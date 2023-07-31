@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import useDebug from "../../../hooks/useDebug"
 import { CommentThreadDetails, CyfrUser, User } from "../../../prisma/prismaContext"
-import Avatar from "../../ui/avatar"
+import Avatar from "../../ui/avatar/avatar"
 import ReactHtmlParser from "react-html-parser"
 import RemirrorEditor from "../../forms/SocialTextarea"
 import { timeDifference, uniqueKey } from "../../../utils/helpers"

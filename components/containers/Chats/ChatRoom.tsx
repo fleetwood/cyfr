@@ -4,7 +4,7 @@ import useDebug from "../../../hooks/useDebug"
 import { ChatMessage, User, UserStub } from "../../../prisma/prismaContext"
 import { now, timeDifference, uniqueKey } from "../../../utils/helpers"
 import TailwindInput from "../../forms/TailwindInput"
-import Avatar from "../../ui/avatar"
+import Avatar from "../../ui/avatar/avatar"
 import { ChatSendIcon } from "../../ui/icons"
 
 

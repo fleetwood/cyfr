@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 import { TailwindInput } from 'components/forms'
-import Avatar, { AvatarUser } from 'components/ui/avatar'
+import Avatar, { AvatarUser } from 'components/ui/avatar/avatar'
 import useDebounce from 'hooks/useDebounce'
 import { UserStub } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
