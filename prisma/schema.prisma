@@ -88,6 +88,7 @@ model Author {
 
   books   Book[]   @relation("book_authors")
   reviews Review[] @relation("author_reviews")
+  shares  Share[]  @relation("author_shares")
 }
 
 model Artist {
@@ -146,6 +147,7 @@ model Agent {
   books   Book[]   @relation("book_agents")
   likes   Like[]   @relation("agent_likes")
   reviews Review[] @relation("agent_reviews")
+  shares  Share[]  @relation("agent_shares")
 
   @@index([id])
 }
@@ -351,6 +353,7 @@ model Publisher {
   books       Book[]   @relation("book_publisher")
   address     Address? @relation("publisher_address", fields: [addressId], references: [id])
   likes       Like[]   @relation("publisher_likes")
+  shares      Share[]  @relation("publisher_shares")
 
   @@index([id])
 }
@@ -392,6 +395,7 @@ model Submission {
   creator   User     @relation("user_submission", fields: [creatorId], references: [id])
   likes     Like[]   @relation("submission_likes")
   reviews   Review[] @relation("submission_reviews")
+  shares    Share[]  @relation("submission_shares")
 }
 
 model Review {
@@ -435,7 +439,8 @@ model Review {
   readerId String?
   readers  Reader? @relation("reader_reviews", fields: [readerId], references: [id])
 
-  likes Like[] @relation("review_likes")
+  likes  Like[]  @relation("review_likes")
+  shares Share[] @relation("review_shares")
 }
 
 model Comment {
@@ -667,10 +672,10 @@ model Post {
   images Image[] @relation("post_images")
   likes  Like[]  @relation("post_likes")
 
-  // this is an attaching post
-  share Share? @relation("share_post")
+  // A share that is attached to this post
+  share Share? @relation("attaching_post")
 
-  // this is shares for the original post
+  // these are all the shares for this post
   shares Share[] @relation("post_shares")
 
   @@index([id, creatorId, visible, createdAt])
@@ -680,41 +685,40 @@ model Share {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @default(now()) @db.Timestamptz(3)
-  visible   Boolean  @default(true)
+
   creatorId String
-  creator   User     @relation("user_shares", fields: [creatorId], references: [id])
+  creator   User   @relation("user_shares", fields: [creatorId], references: [id])
 
-  // every share creates a post that the shared item is then attached to
-  sharePostId String @unique
-  sharePost   Post   @relation("share_post", fields: [sharePostId], references: [id])
+  // The post to attach the share to
+  attachingPostId String @unique
+  attachingPost   Post   @relation("attaching_post", fields: [attachingPostId], references: [id])
 
-  // this is the post that is shared, not the attaching post
-  postId String?
-  post   Post?   @relation("post_shares", fields: [postId], references: [id])
-
-  // this is s shared image
-  imageId String?
-  image   Image?  @relation("image_shares", fields: [imageId], references: [id])
-
-  // this is s shared gallery
-  galleryId String?
-  gallery   Gallery? @relation("gallery_shares", fields: [galleryId], references: [id])
-
-  // this is s shared book
-  bookId String?
-  book   Book?   @relation("book_shares", fields: [bookId], references: [id])
-
-  // this is s shared character
-  characterId String?
-  character   Character? @relation("character_shares", fields: [characterId], references: [id])
-
-  // this is s shared cover
-  coverId String?
-  cover   Cover?  @relation("cover_shares", fields: [coverId], references: [id])
-
-  // this is s shared event
-  eventId String?
-  event   Event?  @relation("event_shares", fields: [eventId], references: [id])
+  // Share IDs
+  authorId     String?
+  agentId      String?
+  publisherId  String?
+  submissionId String?
+  eventId      String?
+  reviewId     String?
+  postId       String?
+  galleryId    String?
+  imageId      String?
+  characterId  String?
+  bookId       String?
+  coverId      String?
+  // Share Objects  
+  author       Author?     @relation("author_shares", fields: [authorId], references: [id])
+  agent        Agent?      @relation("agent_shares", fields: [agentId], references: [id])
+  publisher    Publisher?  @relation("publisher_shares", fields: [publisherId], references: [id])
+  submissions  Submission? @relation("submission_shares", fields: [submissionId], references: [id])
+  event        Event?      @relation("event_shares", fields: [eventId], references: [id])
+  review       Review?     @relation("review_shares", fields: [reviewId], references: [id])
+  book         Book?       @relation("book_shares", fields: [bookId], references: [id])
+  character    Character?  @relation("character_shares", fields: [characterId], references: [id])
+  cover        Cover?      @relation("cover_shares", fields: [coverId], references: [id])
+  gallery      Gallery?    @relation("gallery_shares", fields: [galleryId], references: [id])
+  image        Image?      @relation("image_shares", fields: [imageId], references: [id])
+  post         Post?       @relation("post_shares", fields: [postId], references: [id])
 }
 
 model Like {

@@ -1,6 +1,6 @@
 
 import useFeed from "hooks/useFeed"
-import { PostDetail, PostStub, ShareStub, SharedPostStub } from "prisma/prismaContext"
+import { ImageStub, PostDetail, PostStub, ShareStub, SharedPostStub } from "prisma/prismaContext"
 
 import { useCommentContext } from "components/context/CommentContextProvider"
 import { useToast } from "components/context/ToastContextProvider"
@@ -11,6 +11,12 @@ import useDebug from "hooks/useDebug"
 import { abbrNum } from "utils/helpers"
 import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
 import useApi from "prisma/useApi"
+import { Tooltip, dividerClasses } from "@mui/material"
+import ImageFooter from "../Image/ImageFooter"
+import PostFooter from "../Post/PostFooter"
+import BookFooter from "../Books/BookFooter"
+import GalleryFooter from "../Gallery/GalleryFooter"
+import CharacterFooter from "../Characters/CharacterFooter"
 const { debug } = useDebug("PostItemFooter")
 
 type ShareFooterProps = {
@@ -58,43 +64,33 @@ const ShareFooter = ({ share, onUpdate }: ShareFooterProps) => {
     notifyNotImplemented()
   }
 
+  const title = share.book ?      "Shared Book" :
+                share.character ? "Shared Character" :
+                share.cover ?     "Shared Cover" :
+                share.event ?     "Shared Event" :
+                share.gallery ?   "Shared Gallery" :
+                share.image ?     "Shared Image" :
+                "Shared Post"
+
   return (
     <div className="flex flex-row justify-around py-4">
-      <div>{ShareIcon}</div>
-      <div className="font-semibold uppercase">
-        <ShrinkableIconButton
-          icon={HeartIcon}
-          className="bg-opacity-0 hover:shadow-none"
-          iconClassName="text-primary"
-          labelClassName="text-primary"
-          label={`Like (${abbrNum(0)})`}
-          onClick={() => handleLike()}
-        />
-        {/* @ts-ignore */}
-        {post.likes && <AvatarList users={post.likes} sz="xs" />}
-      </div>
-
-      <div className="font-semibold uppercase">
-        <ShrinkableIconButton
-          icon={ShareIcon}
-          className="bg-opacity-0 hover:shadow-none"
-          iconClassName="text-primary"
-          labelClassName="text-primary"
-          label={`Shares (${abbrNum(0)})`}
-          onClick={() => handleShare()}
-        />
-        {/* {post.shares &&
-          <AvatarList users={post.shares} sz="xs" />
-        } */}
-      </div>
-
-      <div className="font-semibold uppercase">
-        {/* <CreateCommentFooterButton postId={post.id} comments={(post.commentThread?.comments??[]).length} /> */}
-        {/* <AvatarList
-          users={(post.post_comments || []).map((a) => a.creator)}
-          sz="xs"
-        /> */}
-      </div>
+      <Tooltip title={title}>
+        {ShareIcon}
+        {/* {share.book && {BookIcon}}
+        {share.character && {CharacterIcon}}
+        {share.cover && {CoverIcon}}
+        {share.event && {EventIcon}}
+        {share.gallery && {GalleryIcon}}
+        {share.image && {ImageIcon}}
+        {share.post && {PostIcon}} */}
+      </Tooltip>
+      {share.book && <BookFooter bookStub={share.book} />}
+      {share.character && <CharacterFooter character={share.character} />}
+      {share.cover && <ImageFooter image={share.cover.image as ImageStub} />}
+      {share.event && <div>TODO: Event Footer</div> }
+      {share.gallery && <GalleryFooter gallery={share.gallery} />}
+      {share.image && <ImageFooter image={share.image} />}
+      {share.post && <PostFooter post={share.post} />}
     </div>
   )
 }

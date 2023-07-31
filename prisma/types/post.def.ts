@@ -99,13 +99,7 @@ export const PostStubInclude = {include: {
       shares: true
     }
   },
-  creator: {
-    include: {
-      membership: true,
-      blocks: true,
-      isBlocked: true
-    }
-  },
+  creator: CreatorStubSelect,
   likes: {
     include: {
       creator: CreatorStubSelect 
@@ -133,13 +127,18 @@ export const PostStubInclude = {include: {
   },
 }}
 
-export type PostDetail = Post & CreatorAndLikesAndCount & {
-  // This is a shared post, not the main post
-  post?: Post & CreatorAndLikesAndCount
-  images:  (Image & {
+export type PostDetail = Post & {
+  _count: {
+    likes:    Number
+    shares:   Number
+  }
+  creator:        CreatorStub
+  shares:         ShareStub[]
+  share?:         ShareStub
+  images:         (Image & {
     likes: (Like & CreatorAndLikesAndCount)[]
   })[]
-  book?: BookStub,
+  book?:          BookStub,
   cover?:         Cover & {
     image:          ImageStub,
     artists:        Artist[]
@@ -148,9 +147,9 @@ export type PostDetail = Post & CreatorAndLikesAndCount & {
       shares:     number,
     }
   }
-  character?: Character & CreatorAndLikesAndCount
-  image?: Image & CreatorAndLikesAndCount
-  commentThread: CommentThread & {
+  character?:     Character & CreatorAndLikesAndCount
+  image?:         Image & CreatorAndLikesAndCount
+  commentThread:  CommentThread & {
     comments: (Comment & CreatorAndLikesAndCount)[]
   }
 }
@@ -161,13 +160,7 @@ export const PostDetailInclude = {
       likes: true,
     },
   },
-  creator: {
-    include: {
-      membership: true,
-      blocks: true,
-      isBlocked: true
-    }
-  },
+  creator: CreatorStubSelect,
   likes: {
     include: {
       creator: {
@@ -181,6 +174,11 @@ export const PostDetailInclude = {
     },
     take: 10
   },
+  shares: {
+    ...ShareStubInclude,
+    take: 10
+  },
+  share: ShareStubInclude,
   images: {
     include: {
       likes: {

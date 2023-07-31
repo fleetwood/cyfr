@@ -1,6 +1,6 @@
 
 import useFeed from "hooks/useFeed"
-import { PostDetail, PostStub, SharedPostStub } from "prisma/prismaContext"
+import { PostDetail, PostStub } from "prisma/prismaContext"
 
 import { useCommentContext } from "components/context/CommentContextProvider"
 import { useToast } from "components/context/ToastContextProvider"
@@ -11,10 +11,11 @@ import useDebug from "hooks/useDebug"
 import { abbrNum } from "utils/helpers"
 import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
 import useApi from "prisma/useApi"
+import { Tooltip } from "@mui/material"
 const { debug } = useDebug("PostItemFooter")
 
 type PostFooterProps = {
-  post: PostDetail | PostStub | SharedPostStub
+  post: PostDetail | PostStub
   onUpdate?:  () => void
 }
 const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
@@ -74,7 +75,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
 
   return (
     <div className="flex flex-row justify-around py-4">
-      <div>{FeedIcon}</div>
+      <Tooltip title="Post">{FeedIcon}</Tooltip>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={HeartIcon}
@@ -94,12 +95,12 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          // label={`Shares (${abbrNum(post._count.shares)})`}
+          label={`Shares (${abbrNum(post._count.shares)})`}
           onClick={() => handleShare()}
         />
-        {/* {post.shares &&
-          <AvatarList users={post.shares} sz="xs" />
-        } */}
+        {post.shares &&
+          <AvatarList users={post.shares} count={post._count.shares} sz="xs" />
+        }
       </div>
 
       <div className="font-semibold uppercase">

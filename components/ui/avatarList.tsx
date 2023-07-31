@@ -7,11 +7,12 @@ type AvatarListProps = {
   users:  any[]
   limit?: number
   variant?: AvatarVariants[]
+  count?: Number
 }
 
-const AvatarList = ({ users, sz = "sm", limit = 4, variant = ['no-profile'] }: AvatarListProps) => {
+const AvatarList = ({ users, sz = "sm", limit = 4, count, variant = ['no-profile'] }: AvatarListProps) => {
   const total = users.length > limit ? limit : users.length
-  const extra = users.length > limit ? users.length-limit:0
+  const extra = users.length > limit ? count as number ?? users.length-limit:0
   
   return (
     <div className={`avatar-group`}>
@@ -22,7 +23,6 @@ const AvatarList = ({ users, sz = "sm", limit = 4, variant = ['no-profile'] }: A
       {extra > 0 &&
         <div className="avatar placeholder p-2 border-2 bg-base-100 text-base-content text-center align-middle text-xs">+{extra.toString()}</div>
       }
-
     </div>
   );
 };

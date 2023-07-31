@@ -4,32 +4,41 @@ import ShareHeader from "../Share/ShareHeader"
 import PostHeader from "../Post/PostHeader"
 import ShareFooter from "../Share/ShareFooter"
 import PostFooter from "../Post/PostFooter"
+import JsonBlock from "components/ui/jsonBlock"
+import SharedStubView from "../Share/ShareStubView"
 
-type FeedItemProps = {
-  item: PostStub
+type FeedPostProps = {
+  post: PostStub
 }
 
-const FeedItem = ({ item }: FeedItemProps) => {
-  const isShared = item.share
-  return (
+const FeedPost = ({ post }: FeedPostProps) => {
+  const isShared = post.share
+  return isShared ?
     <div
       className={`mt-4 p-4 rounded-2xl snap-always snap-start border-2
       ${isShared ? `border-primary` : `border-neutral`}`}
       >
-      {isShared 
-      ? <ShareHeader share={item.share!} />
-      : <PostHeader post={item} />
-      }
+      <ShareHeader share={post.share!} />
       <div className="p-4 mt-4 font-feed">
-        <PostStubView post={item} />
+        <h3>Creator: {post.creatorId}</h3>
+        <h3>Post: {post.id}</h3>
+        <SharedStubView share={post.share!} />
       </div>
-
-      {isShared 
-      ? <ShareFooter share={item.share!} />
-      : <PostFooter post={item} />
-      }
+      <ShareFooter share={post.share!} />
     </div>
-  )
+    : 
+    <div
+      className={`mt-4 p-4 rounded-2xl snap-always snap-start border-2
+      ${isShared ? `border-primary` : `border-neutral`}`}
+      >
+      <PostHeader post={post} />
+      <div className="p-4 mt-4 font-feed">
+        <h3>Creator: {post.creatorId}</h3>
+        <h3>Post: {post.id}</h3>
+        <PostStubView post={post} />
+      </div>
+      <PostFooter post={post} />
+    </div>
 }
 
-export default FeedItem
+export default FeedPost

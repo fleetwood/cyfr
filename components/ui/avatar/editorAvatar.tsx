@@ -2,8 +2,8 @@ import { Transition } from "@headlessui/react"
 import useDebug from "hooks/useDebug"
 import Link from "next/link"
 import {
-  AgentDetail,
-  AgentStub,
+  EditorDetail,
+  EditorStub,
   MembershipType,
   UserInfo
 } from "prisma/prismaContext"
@@ -16,30 +16,30 @@ import Spinner from "../spinner"
 
 const {debug, jsonBlock} = useDebug('avatar')
 
-export type AgentUser = AgentDetail | AgentStub
+export type EditorUser = EditorDetail | EditorStub
 
 type AvatarProps = {
-  agent?: AgentUser
+  editor?: EditorUser
   link?: boolean
   shadow?: boolean
   className?: string
   placeholder?: string
   variant?: AvatarVariants[]
   sz: SizeProps
-  onClick?: (agent:AgentUser) => void
+  onClick?: (editor:EditorUser) => void
 }
 
 export type AvatarVariants = 'default'|'no-profile'
 
 const EditorAvatar = ({
-  agent,
+  editor,
   className,
   sz,
   link = true,
   onClick,
   variant = ['default'],
 }: AvatarProps) => {
-  if (!agent) return <></>
+  if (!editor) return <></>
   
   const [showProfile, setShowProfile] = useState(false)
   
@@ -48,7 +48,7 @@ const EditorAvatar = ({
   const [isLoading, setIsLoading] = useState(false)
   const [userInfo, setUserInfo] = useState<UserInfo>()
 
-  const {user} = agent
+  const {user} = editor
 
   const numBooks = userInfo?._count.books
   const numFollowers = userInfo?._count.follower
@@ -58,19 +58,19 @@ const EditorAvatar = ({
 
   const allowProfile = variant.indexOf('no-profile')<0
   const content =
-    agent && 
+    editor && 
       user.image ? ( <img src={cloudinary.avatar(user.image, sz as unknown as SizeProps)} /> ) : 
-      agent ? ( user.name ) :
+      editor ? ( user.name ) :
       ("?")
 
     const online =
     // @ts-ignore
-    agent && agent._count && agent._count.sessions && agent._count.sessions > 0
+    editor && editor._count && editor._count.sessions && editor._count.sessions > 0
       ? "online"
       : ""
 
   // @ts-ignore
-  const member = agent?.membership?.type ? (agent?.membership?.type as unknown as MembershipType).name.toLowerCase() : ''
+  const member = editor?.membership?.type ? (editor?.membership?.type as unknown as MembershipType).name.toLowerCase() : ''
   
   const init = async () => {
     debug('init')
@@ -80,15 +80,15 @@ const EditorAvatar = ({
       return
     }
 
-    if (!agent) {
-      debug('aint got no agent')
+    if (!editor) {
+      debug('aint got no editor')
       return
     }
 
     setIsLoading(() => true)
-    debug('getting agent info....', agent.id)
-    // get agent infro from api
-    const result = await info(agent.id)
+    debug('getting editor info....', editor.id)
+    // get editor infro from api
+    const result = await info(editor.id)
     
     if (result) {
       debug('userInfo', result)
@@ -104,10 +104,10 @@ const EditorAvatar = ({
       className={`avatar relative ${otherClasses}`} 
       onMouseOverCapture={() => allowProfile ? init() : {}}
       onMouseOutCapture={() => setShowProfile(() => false)}
-      onClickCapture={() => onClick && onClick(agent)}
+      onClickCapture={() => onClick && onClick(editor)}
     >
       <div className={`mask mask-squircle`}>
-        {!onClick && link && agent ? <a href={`/agent/${user.slug}`}>{content}</a> : content}
+        {!onClick && link && editor ? <a href={`/editor/${user.slug}`}>{content}</a> : content}
       </div>
       {allowProfile && userInfo && 
       <Transition
@@ -128,7 +128,7 @@ const EditorAvatar = ({
             `}
             >
               <div className="px-3 py-2 bg-primary text-primary-content rounded-t-lg">
-                <Link href={`/agent/${user.slug}`}><h3 className="font-semibold">{userInfo?.name}</h3></Link>
+                <Link href={`/editor/${user.slug}`}><h3 className="font-semibold">{userInfo?.name}</h3></Link>
               </div>
 
               <div className="px-3 py-2 flex flex-row">

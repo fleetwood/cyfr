@@ -76,7 +76,7 @@ const ImageFooter = ({ image, onUpdate, selectable = false, onSelect }: ImageFoo
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={HeartIcon}
-          className="bg-opacity-0 hover:shadow-none"
+          className="hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
           label={abbrNum(image._count?.likes??0)}
@@ -88,7 +88,7 @@ const ImageFooter = ({ image, onUpdate, selectable = false, onSelect }: ImageFoo
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={ShareIcon}
-          className="bg-opacity-0 hover:shadow-none"
+          className="hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
           label={abbrNum(0)}
@@ -103,7 +103,7 @@ const ImageFooter = ({ image, onUpdate, selectable = false, onSelect }: ImageFoo
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={CheckmarkIcon}
-          className="bg-opacity-0 hover:shadow-none px-2"
+          className="hover:shadow-none px-2"
           iconClassName="text-primary"
           onClick={() => onSelect ? onSelect(image) : {}}
           />

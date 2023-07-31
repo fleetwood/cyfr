@@ -24,7 +24,7 @@ const HomePage = () => {
       <CreatePostModalButton />
       {isLoading && <Spinner size="md" center={true} />}
       {error && <ErrorPage message="Error loading feed" />}
-      {!isLoading && !error && data && data.map((item:any, idx:number) => <FeedItem item={item} key={`feed-${idx}-${uniqueKey(item)}`} />)}
+      {!isLoading && !error && data && data.map((item:any, idx:number) => <FeedItem post={item} key={`feed-${idx}-${uniqueKey(item)}`} />)}
     </MainLayout>
   )
 }
