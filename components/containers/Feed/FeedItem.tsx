@@ -20,8 +20,6 @@ const FeedPost = ({ post }: FeedPostProps) => {
       >
       <ShareHeader share={post.share!} />
       <div className="p-4 mt-4 font-feed">
-        <h3>Creator: {post.creatorId}</h3>
-        <h3>Post: {post.id}</h3>
         <SharedStubView share={post.share!} />
       </div>
       <ShareFooter share={post.share!} />
@@ -33,8 +31,6 @@ const FeedPost = ({ post }: FeedPostProps) => {
       >
       <PostHeader post={post} />
       <div className="p-4 mt-4 font-feed">
-        <h3>Creator: {post.creatorId}</h3>
-        <h3>Post: {post.id}</h3>
         <PostStubView post={post} />
       </div>
       <PostFooter post={post} />

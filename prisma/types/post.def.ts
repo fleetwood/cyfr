@@ -123,6 +123,14 @@ export const PostStubInclude = { include: {
     take: 10,
   },
   share: { include: {
+    creator: { select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true,
+      membership: true,
+    }},
+
     // INCLUDE SHARED BOOK
     book: {
       include: {
@@ -238,6 +246,45 @@ export const PostStubInclude = { include: {
           },
           take: 10,
         },
+        image: { include: {
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              slug: true,
+              membership: true,
+            },
+          },
+          likes: {
+            include: {
+              creator: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                  slug: true,
+                  membership: true,
+                },
+              },
+            },
+            take: 10,
+          },
+          shares: {
+            include: {
+              creator: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                  slug: true,
+                  membership: true,
+                },
+              },
+            },
+            take: 10,
+          },
+        }},
         _count: {
           select: {
             likes: true,

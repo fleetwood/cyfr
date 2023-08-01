@@ -1,22 +1,18 @@
 
 import useFeed from "hooks/useFeed"
-import { ImageStub, PostDetail, PostStub, ShareStub, SharedPostStub } from "prisma/prismaContext"
+import { ImageStub, PostStub, ShareStub } from "prisma/prismaContext"
 
+import { Tooltip } from "@mui/material"
 import { useCommentContext } from "components/context/CommentContextProvider"
 import { useToast } from "components/context/ToastContextProvider"
-import AvatarList from "components/ui/avatarList"
-import { FeedIcon, HeartIcon, ShareIcon } from "components/ui/icons"
-import ShrinkableIconButton from "components/ui/shrinkableIconButton"
+import { ShareIcon } from "components/ui/icons"
 import useDebug from "hooks/useDebug"
-import { abbrNum } from "utils/helpers"
-import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
 import useApi from "prisma/useApi"
-import { Tooltip, dividerClasses } from "@mui/material"
+import BookFooter from "../Books/BookFooter"
+import CharacterFooter from "../Characters/CharacterFooter"
+import GalleryFooter from "../Gallery/GalleryFooter"
 import ImageFooter from "../Image/ImageFooter"
 import PostFooter from "../Post/PostFooter"
-import BookFooter from "../Books/BookFooter"
-import GalleryFooter from "../Gallery/GalleryFooter"
-import CharacterFooter from "../Characters/CharacterFooter"
 const { debug } = useDebug("PostItemFooter")
 
 type ShareFooterProps = {
@@ -73,17 +69,7 @@ const ShareFooter = ({ share, onUpdate }: ShareFooterProps) => {
                 "Shared Post"
 
   return (
-    <div className="flex flex-row justify-around py-4">
-      <Tooltip title={title}>
-        {ShareIcon}
-        {/* {share.book && {BookIcon}}
-        {share.character && {CharacterIcon}}
-        {share.cover && {CoverIcon}}
-        {share.event && {EventIcon}}
-        {share.gallery && {GalleryIcon}}
-        {share.image && {ImageIcon}}
-        {share.post && {PostIcon}} */}
-      </Tooltip>
+    <div>
       {share.book && <BookFooter bookStub={share.book} />}
       {share.character && <CharacterFooter character={share.character} />}
       {share.cover && <ImageFooter image={share.cover.image as ImageStub} />}

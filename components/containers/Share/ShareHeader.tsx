@@ -44,23 +44,18 @@ const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
 
   return (
     <div className="pb-2">
-      {isShared &&
-        <div className="border-b border-dashed border-base-content flex space-x-2 pb-2 mb-2">
-            <Avatar shadow={true} user={item.creator as UserStub} sz="sm" />
-            <div>Shared {timeDifference(item.createdAt)} ({item.id})</div>
-        </div>
-      }
+      <div className="border-b border-dashed border-base-content flex space-x-2 pb-2 mb-2">
+        <Avatar user={item.creator as UserStub} sz="sm" />
+        <div>Shared {timeDifference(item.createdAt)}</div>
+      </div>
+      
       <div className="flex space-x-2 pb-2 mb-2">
-        {(!book) && 
-          <Avatar shadow={true} user={originalAuthor} sz="sm" />
-        }
-        {/* BOOKS can have multiple authors */}
-        {book && 
-          <AvatarList users={originalAuthors} sz="sm" />
-        }
+        
+        {originalAuthors && originalAuthors.length > 0 && <AvatarList users={originalAuthors} sz="sm" /> }
+        {originalAuthor && <Avatar user={originalAuthor} sz="sm" /> } 
 
         <Link href={link} className="text-primary underline">
-          <span>Posted {timeDifference(isShared ? sharedTime : item.updatedAt)}</span>
+          <span>Posted {timeDifference(item.updatedAt)}</span>
         </Link>
       </div>
     </div>

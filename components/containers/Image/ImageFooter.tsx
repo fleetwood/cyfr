@@ -1,4 +1,3 @@
-
 import { ImageDetail, ImageStub } from "prisma/prismaContext"
 
 import { useToast } from "components/context/ToastContextProvider"
