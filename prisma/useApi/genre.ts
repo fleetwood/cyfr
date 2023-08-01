@@ -2,7 +2,7 @@ import useDebug from "../../hooks/useDebug"
 import { getApi, sendApi } from "../../utils/api"
 import { GenreAddCoverProps, GenreStub } from "../prismaContext"
 
-const {debug} = useDebug('hooks/useGenreApi', 'DEBUG')
+const {debug} = useDebug('hooks/useGenreApi', )
 
 const useGenreApi = () => {
 

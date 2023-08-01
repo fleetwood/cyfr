@@ -1,7 +1,7 @@
 import useDebug from "hooks/useDebug"
 import { CyfrUser, PermissionStub, Role } from "prisma/prismaContext"
 
-const {debug} = useDebug('utils/helpers/permission', 'DEBUG')
+const {debug} = useDebug('utils/helpers/permission', )
 
 export const hasExactAccess = (user: CyfrUser,permission: PermissionStub,role: Role): boolean => {
     const agentAccess = user.userAgent && permission.agent.indexOf(role) >= 0

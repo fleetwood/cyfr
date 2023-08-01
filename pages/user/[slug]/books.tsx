@@ -7,7 +7,7 @@ import useDebug from "hooks/useDebug";
 import { BookStub, PrismaUser, UserDetail } from "prisma/prismaContext";
 import useApi from "prisma/useApi";
 
-const {debug, jsonBlock} = useDebug('pages/user/[id]/books', 'DEBUG')
+const {debug, jsonBlock} = useDebug('pages/user/[id]/books', )
 
 export async function getServerSideProps(context: any) {
   const {slug} = context.query

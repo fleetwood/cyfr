@@ -75,10 +75,7 @@ export type CommentThreadStub = {
 
 export const CommentThreadStubInclude = { include: {
   comments: {
-    take: 10,
-    orderBy: {
-      createdAt: 'desc'
-    }
+    take: 10
   },
   commune: true,
   blocked: true,

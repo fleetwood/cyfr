@@ -9,7 +9,7 @@ import { uniqueKey } from "utils/helpers"
 import ErrorPage from "./404"
 import { PostStub } from "prisma/prismaContext"
 
-const {debug, jsonBlock} = useDebug('pages/index', 'DEBUG')
+const {debug, jsonBlock} = useDebug('pages/index', )
 
 const HomePage = () => {
   const {data, isLoading, error} = useFeed<PostStub[]>('post')

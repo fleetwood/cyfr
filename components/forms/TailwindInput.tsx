@@ -3,7 +3,7 @@ import React from 'react'
 import { TailwindFormProps } from 'types/props'
 import { debounce } from 'debounce'
 
-const { debug } = useDebug('forms/TailwindInput', 'DEBUG')
+const { debug } = useDebug('forms/TailwindInput', )
 
 type twInputProps = TailwindFormProps & {
   type: 'text' | 'email' | 'date' | 'checkbox'

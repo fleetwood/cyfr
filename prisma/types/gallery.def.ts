@@ -1,14 +1,12 @@
 import {
   CommentThreadStub,
   Commune,
-  CreatorStub,
+  CreatorSharesLikes,
+  CreatorSharesLikesInclude,
   Gallery,
   Image,
   Like,
-  LikesCountInclude,
-  LikesInclude,
   Permission,
-  PermissionStub,
   UserStub
 } from "prisma/prismaContext";
 import { ImageStub, ImageUpsertProps } from './image.def';
@@ -36,6 +34,7 @@ export type GalleryEngageProps = {
 }
 
 export const GalleryFeedInclude = { include: {
+  ...CreatorSharesLikesInclude,
   images: {
     include: {
       creator: {
@@ -49,12 +48,10 @@ export const GalleryFeedInclude = { include: {
       gallery: true
     }
   },
-  ...LikesCountInclude,
-  ...LikesInclude
+  
 }}
 
-export type GalleryStub = Gallery & {
-  creator:        CreatorStub
+export type GalleryStub = Gallery & CreatorSharesLikes & {
   permission:     Permission
   commentThread:  CommentThreadStub
   images:         ImageStub[]
@@ -65,7 +62,7 @@ export type GalleryStub = Gallery & {
 }
 
 export const GalleryStubInclude = {include: {
-  creator: true,
+  ...CreatorSharesLikesInclude,
   images: {
     include: {
     _count: {
@@ -96,7 +93,7 @@ export const GalleryStubInclude = {include: {
       likes: true,
       shares: true
     }
-  }
+  },
 }}
 
 export const GalleriesStubInclude = {include: {

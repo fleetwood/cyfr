@@ -8,7 +8,7 @@ import ErrorPage from "pages/404"
 import useApi from "prisma/useApi"
 import { uniqueKey } from "utils/helpers"
 
-const {debug, jsonBlock} = useDebug('user/[slug]/gallery','DEBUG')
+const {debug, jsonBlock} = useDebug('user/[slug]/gallery',)
 
 export async function getServerSideProps(context: any) {
   const {slug} = context.params

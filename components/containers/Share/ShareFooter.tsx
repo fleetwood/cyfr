@@ -67,7 +67,7 @@ const ShareFooter = ({ share, onUpdate }: ShareFooterProps) => {
   const title = share.book ?      "Shared Book" :
                 share.character ? "Shared Character" :
                 share.cover ?     "Shared Cover" :
-                share.event ?     "Shared Event" :
+                // share.event ?     "Shared Event" :
                 share.gallery ?   "Shared Gallery" :
                 share.image ?     "Shared Image" :
                 "Shared Post"
@@ -87,10 +87,10 @@ const ShareFooter = ({ share, onUpdate }: ShareFooterProps) => {
       {share.book && <BookFooter bookStub={share.book} />}
       {share.character && <CharacterFooter character={share.character} />}
       {share.cover && <ImageFooter image={share.cover.image as ImageStub} />}
-      {share.event && <div>TODO: Event Footer</div> }
+      {/* {share.event && <div>TODO: Event Footer</div> } */}
       {share.gallery && <GalleryFooter gallery={share.gallery} />}
       {share.image && <ImageFooter image={share.image} />}
-      {share.post && <PostFooter post={share.post} />}
+      {share.post && <PostFooter post={share.post as PostStub} />}
     </div>
   )
 }

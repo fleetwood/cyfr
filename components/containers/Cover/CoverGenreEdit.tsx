@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { cloudinary } from 'utils/cloudinary'
 import { uniqueKey } from 'utils/helpers'
 
-const {debug} = useDebug('containers/Cover/CoverGenreEdit', 'DEBUG')
+const {debug} = useDebug('containers/Cover/CoverGenreEdit', )
 
 type CoverGenreEditType = {
     label?:             string | ''

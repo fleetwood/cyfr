@@ -10,7 +10,7 @@ import { GenreStub } from "prisma/prismaContext"
 import { uniqueKey } from "utils/helpers"
 import useApi from "prisma/useApi"
 
-const { debug, jsonBlock } = useDebug("admin page", 'DEBUG')
+const { debug, jsonBlock } = useDebug("admin page", )
 
 const AdminPage = ({}) => {
   useSession({ required: true, redirectTo: "/" })

@@ -7,7 +7,7 @@ import { ChapterDetailIcon, FeatherIcon, ReadsIcon, StarIcon } from "../../ui/ic
 import ShrinkableIconButton from "../../ui/shrinkableIconButton";
 import useDebug from "hooks/useDebug";
 
-const {debug} = useDebug('components/containers/Chapter/ChapterViewSelector', 'DEBUG')
+const {debug} = useDebug('components/containers/Chapter/ChapterViewSelector', )
 
 type ChapterViewSelectorProps = {
   view:     ChapterViews

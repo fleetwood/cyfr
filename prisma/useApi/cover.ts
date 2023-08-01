@@ -2,7 +2,7 @@ import useDebug from "../../hooks/useDebug"
 import { getApi } from "../../utils/api"
 import { Cover, CoverStub } from "../prismaContext"
 
-const {debug, info} = useDebug('hooks/useCoverApi', 'DEBUG')
+const {debug, info} = useDebug('hooks/useCoverApi', )
 
 const useCoverApi = () => {
 

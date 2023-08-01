@@ -10,7 +10,7 @@ import ErrorPage from '../../../pages/404'
 import useDebug from '../../../hooks/useDebug'
 import { useToast } from '../../context/ToastContextProvider'
 
-const {debug} = useDebug('components/containers/Chapter/ChapterEditView', 'DEBUG')
+const {debug} = useDebug('components/containers/Chapter/ChapterEditView', )
 
 type ChapterEditViewProps = {
     chapterDetail:ChapterDetail

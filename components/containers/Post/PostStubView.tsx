@@ -6,7 +6,7 @@ import PostCommentThread from '../Comment/PostCommentThread'
 import GalleryPhotoswipe from '../Gallery/GalleryImages'
 import SharedPostStubView from '../Share/ShareStubView'
 
-const { debug, jsonBlock } = useDebug('PostStubView','DEBUG')
+const { debug, jsonBlock } = useDebug('PostStubView',)
 
 type PostFeedItemProps = {
   post: PostStub
@@ -19,7 +19,7 @@ const PostStubView = ({ post }: PostFeedItemProps) => {
     <div>
       {post.content && <HtmlContent content={post.content} className="font-feed" />}
 
-      {post.images[0] && <GalleryPhotoswipe images={post.images} />}
+      {post.images && post.images[0] && <GalleryPhotoswipe images={post.images} />}
 
       {post.share && <SharedPostStubView share={post.share} />}
 

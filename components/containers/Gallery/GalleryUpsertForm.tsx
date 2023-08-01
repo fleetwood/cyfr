@@ -12,7 +12,7 @@ import { Dropzone, TailwindInput } from 'components/forms'
 import GalleryPhotoswipe from './GalleryImages'
 import useApi from 'prisma/useApi'
 
-const { debug, jsonBlock } = useDebug('Gallery/GalleryUpsertForm', 'DEBUG')
+const { debug, jsonBlock } = useDebug('Gallery/GalleryUpsertForm', )
 
 export type GalleryNestedProps = {
   gallery?: GalleryStub

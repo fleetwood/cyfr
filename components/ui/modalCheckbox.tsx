@@ -1,6 +1,6 @@
 import useDebug from 'hooks/useDebug'
 import React, { ReactNode } from 'react'
-const {debug}=useDebug('ui/modalCheckbox', 'DEBUG')
+const {debug}=useDebug('ui/modalCheckbox', )
 
 type OpenModalVariant = 'button'|'component'|'plus'
 export type OpenModalProps = {

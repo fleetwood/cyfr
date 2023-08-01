@@ -1,4 +1,6 @@
 import {
+  AgentStub,
+  AuthorStub,
   Book,
   BookStub,
   Character,
@@ -13,9 +15,15 @@ import {
   GalleryStub,
   Image,
   ImageStub,
+  LikeStub,
   Post,
+  PostImageInclude,
   PostStub,
+  Publisher,
+  Review,
   Share,
+  SharedPostStub,
+  Submission,
   UserStubSelect
 } from 'prisma/prismaContext'
 
@@ -59,156 +67,140 @@ export type ShareEventProps = {
   event: Event
 }
 
-export type ShareStub = Share & {
-  creator: CreatorStub
-  book?: BookStub
-  character?: CharacterStub
-  cover?: CoverStub
-  event?: EventStub
-  gallery?: GalleryStub
-  image?: ImageStub
-  post?: PostStub
+export type SharesLikes = {
+  likes:        LikeStub[]
+  shares:       Share & {
+    creator:    CreatorStub
+  }[]
 }
 
-export const ShareStubInclude = {
-  include: {
-    creator: CreatorStubSelect,
-    // book: {
-    //   include: {
-    //     agent: {
-    //       include: {
-    //         user: {
-    //           select: {
-    //             name: true,
-    //             id: true,
-    //             slug: true,
-    //             image: true,
-    //           },
-    //         },
-    //         publisher: true,
-    //         _count: {
-    //           select: {
-    //             authors: true,
-    //             books: true,
-    //             likes: true,
-    //             reviews: true
-    //           }
-    //         }
-    //       },
-    //     },
-    //     authors: {
-    //       include: {
-    //         user: {select: UserStubSelect},
-    //         _count: { books: true}
-    //       },
-    //     },
-    //     artists: {include: {
-    //       user: {
-    //         select: {
-    //           name: true,
-    //           id: true,
-    //           slug: true,
-    //           image: true,
-    //         },
-    //       },
-    //       books: {
-    //         take: 5
-    //       },
-    //       galleries: {
-    //         take: 5
-    //       },
-    //       reviews: true,
-    //       covers: {
-    //         take: 5
-    //       },
-    //       _count: {
-    //         books: true,
-    //         galleries: true,
-    //         reviews: true,
-    //         covers: true
-    //       }
-    //   }},
-    //     publisher: true,
-    //     genre: true,
-    //     gallery: {
-    //       include: {
-    //         creator: true,
-    //         images: {
-    //           include: {
-    //             _count: {
-    //               select: {
-    //                 likes: true,
-    //                 shares: true,
-    //               },
-    //             },
-    //           },
-    //         },
-    //         commentThread: {
-    //           include: {
-    //             comments: {
-    //               include: {
-    //                 creator: true,
-    //               },
-    //               take: 10,
-    //             },
-    //             _count: {
-    //               select: {
-    //                 comments: true,
-    //               },
-    //             },
-    //           },
-    //         },
-    //         permission: true,
-    //         _count: {
-    //           select: {
-    //             likes: true,
-    //             shares: true,
-    //           },
-    //         },
-    //       },
-    //     },
-    //     cover: {
-    //       include: {
-    //         image: true,
-    //         artists: true,
-    //       },
-    //     },
-    //     _count: {
-    //       select: {
-    //         chapters: true,
-    //         characters: true,
-    //         likes: true,
-    //         shares: true,
-    //         follows: true,
-    //         readers: true,
-    //         reviews: true,
-    //       },
-    //     },
-    //   },
-    // },
-    character: {
+export const SharesLikesInclude = {
+  likes: {
+    include: {
+      creator: CreatorStubSelect
+    },
+    take: 10
+  },
+  shares: {
+    include: {
+      creator: CreatorStubSelect
+    },
+    take: 10
+  }
+}
+
+export type CreatorSharesLikes = SharesLikes & {
+  creator:  CreatorStub
+}
+
+export const CreatorSharesLikesInclude = {
+  ...SharesLikesInclude,
+  creator: {
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true,
+      membership: true
+    }
+  },
+}
+
+export type ShareStub = Share & {
+  creator:      CreatorStub
+  // author?:      AuthorStub
+  // agent?:       AgentStub
+  // publisher?:   Publisher
+  // submissions?: Submission
+  // event?:       EventStub
+  // review?:      Review
+  book?:        BookStub
+  cover?:       CoverStub
+  character?:   CharacterStub
+  gallery?:     GalleryStub
+  image?:       ImageStub
+  post?:        SharedPostStub
+}
+
+export const ShareStubInclude = { include: {
+    // INCLUDE SHARED BOOK
+    book: {
       include: {
+        likes: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: true,
+              },
+            },
+          },
+          take: 10,
+        },
+        shares: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: true,
+              },
+            },
+          },
+          take: 10,
+        },
         authors: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-            slug: true,
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                membership: true,
+              },
+            },
           },
         },
-        books: true,
-        gallery: true,
-      },
-      _count: {
-        select: {
-          likes: true,
-          shares: true,
+        cover: {
+          include: {
+            image: true,
+            _count: {
+              select: {
+                likes: true,
+                shares: true,
+              },
+            },
+          },
+        },
+        characters: true,
+        chapters: {
+          where: {
+            visible: true,
+          },
+          select: {
+            order: true,
+            title: true,
+            reads: true,
+            words: true,
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            shares: true,
+          },
         },
       },
     },
+
+    // INCLUDE SHARED COVER
     cover: {
       include: {
-        image: true,
         creator: {
           select: {
             id: true,
@@ -218,19 +210,34 @@ export const ShareStubInclude = {
             membership: true,
           },
         },
-        artists: {
+        likes: {
           include: {
-            user: {
+            creator: {
               select: {
-                name: true,
                 id: true,
-                slug: true,
+                name: true,
                 image: true,
+                slug: true,
+                membership: true,
               },
             },
           },
+          take: 10,
         },
-        genre: true,
+        shares: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: true,
+              },
+            },
+          },
+          take: 10,
+        },
         _count: {
           select: {
             likes: true,
@@ -239,90 +246,62 @@ export const ShareStubInclude = {
         },
       },
     },
-    event: {
-      include: {
-        creator: CreatorStubSelect,
-      },
-    },
-    gallery: {
-      include: {
-        creator: true,
-        images: {
-          include: {
-            _count: {
-              select: {
-                likes: true,
-                shares: true,
-              },
-            },
-          },
-        },
-        commentThread: {
-          include: {
-            comments: {
-              include: {
-                creator: true,
-              },
-              take: 10,
-            },
-            _count: {
-              select: {
-                comments: true,
-              },
-            },
-          },
-        },
-        permission: true,
-        _count: {
-          select: {
-            likes: true,
-            shares: true,
-          },
-        },
-      },
-    },
-    image: {
-      include: {
-        creator: { select: UserStubSelect },
-        gallery: true,
-        _count: {
-          select: {
-            likes: true,
-            shares: true
-          },
-        },
-        commentThread: {
-          include: {
-            comments: {
-              include: {
-                creator: true,
-              },
-            },
-          },
-        },
-      },
-    },
+
+    // INCLUDE SHARED POST
     post: {
       include: {
-        _count: {
+        creator: {
           select: {
-            likes: true,
-            shares: true,
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: true,
           },
         },
-        creator: CreatorStubSelect,
-        shares: {
-          take: 10
+        likes: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: true,
+              },
+            },
+          },
+          take: 10,
         },
-        share: true,
-        images: true,
+        shares: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: true,
+              },
+            },
+          },
+          take: 10,
+        },
+        // images: PostImageInclude,
         commentThread: {
           include: {
-            comments: {
-              take: 10
-            },
-            commune: true,
             blocked: true,
+            comments: {
+              include: {
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                  },
+                },
+              },
+            },
             _count: {
               select: {
                 comments: true,
@@ -330,7 +309,20 @@ export const ShareStubInclude = {
             },
           },
         },
+        _count: {
+          select: {
+            likes: true,
+            shares: true,
+          },
+        },
       },
     },
-  },
+}}
+
+export type ShareList = Share & {
+  creator: CreatorStub
 }
+
+export const ShareListInclude = { include: {
+  creator: CreatorStubSelect
+}}

@@ -10,7 +10,7 @@ import { BookDetail, Chapter, ChapterListItem } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import { FormEvent, useRef, useState } from 'react'
 
-const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", 'DEBUG')
+const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", )
 
 const createChapterModal = 'createChapterModal'
 

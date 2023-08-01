@@ -70,7 +70,7 @@ const ImageFooter = ({ image, onUpdate, selectable = false, onSelect }: ImageFoo
     notify("Well that didn't work...", "warning")
   }
 
-  return (
+  return (image && 
     <div className="flex flex-row justify-around">
       <div>{PhotoIcon}</div>
       <div className="font-semibold uppercase">

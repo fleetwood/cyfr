@@ -6,7 +6,7 @@ import useDebug from "hooks/useDebug"
 import { ItemProps } from "react-photoswipe-gallery"
 import GalleryImages from "./GalleryImages"
 
-const {debug} = useDebug('containers/Gallery/GalleryCovers', 'DEBUG')
+const {debug} = useDebug('containers/Gallery/GalleryCovers', )
 
 type GalleryCoversProps = {
   covers?:      CoverStub[]

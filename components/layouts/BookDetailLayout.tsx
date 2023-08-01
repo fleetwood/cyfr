@@ -13,7 +13,7 @@ import Navbar from "components/containers/Navbar"
 import Spinner from "components/ui/spinner"
 import useDebug from "hooks/useDebug"
 import useApi from "prisma/useApi"
-const {debug} = useDebug('components/layouts/BookDetailLayout', 'DEBUG')
+const {debug} = useDebug('components/layouts/BookDetailLayout', )
 
 export type BookDetailLayoutProps = {
   // bookId?:    string

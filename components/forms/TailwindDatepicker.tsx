@@ -2,7 +2,7 @@ import { useState } from "react"
 import Datepicker from 'tailwind-datepicker-react'
 import useDebug from "../../hooks/useDebug"
 
-const {debug} = useDebug('components/forms/TailwindDatepicker', 'DEBUG')
+const {debug} = useDebug('components/forms/TailwindDatepicker', )
 
 type DatePickerProps = {
     value:Date

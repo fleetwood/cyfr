@@ -11,7 +11,7 @@ import { cloudinary } from "utils/cloudinary"
 import { uniqueKey, uuid } from "utils/helpers"
 import ImageFooter from "../Image/ImageFooter"
 
-const {debug} = useDebug('containers/Gallery/GalleryImages', 'DEBUG')
+const {debug} = useDebug('containers/Gallery/GalleryImages', )
 
 type GalleryImagesProps = {
   gallery?:     GalleryDetail | null

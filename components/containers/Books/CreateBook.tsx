@@ -22,7 +22,7 @@ import BookPermissionsDialog from './BookPermissionsDialog'
 import GalleryCovers from '../Gallery/GalleryCovers'
 import Avatar from 'components/ui/avatar/avatar'
 
-const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",'DEBUG')
+const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",)
 const createBookModal = 'createBookModal'
 
 export const CreateBookModalButton = () => (

@@ -5,7 +5,7 @@ import { getApi } from "../utils/api"
 import useDebug from "./useDebug"
 import { RocketQuery } from "types/props"
 
-const { debug, info } = useDebug("useGalleryQuery", 'DEBUG')
+const { debug, info } = useDebug("useGalleryQuery", )
 
 type GalleryRocketQuery = RocketQuery<GalleryDetail>
 

@@ -11,7 +11,7 @@ type ShareHeaderProps = {
 }
 
 const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
-  const {book, character, cover, event, gallery, image, post} = item
+  const {book, character, cover, gallery, image, post} = item
 
   const link = gallery ? `/gallery/${gallery.id}` :
                book ? `/book/${book.slug}` :
@@ -32,7 +32,7 @@ const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
     image ? image.creator :
     gallery ? gallery.creator : 
     cover ? cover.creator : 
-    event ? event.creator : 
+    // event ? event.creator : 
     item.creator
     
   

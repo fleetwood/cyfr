@@ -8,7 +8,7 @@ import { BookStub, GenreStub, PrismaBook, PrismaGenre } from '../../prisma/prism
 import { uniqueKey } from "../../utils/helpers";
 import BookStubView from "components/containers/Books/BookStubView";
 
-const {debug, jsonBlock} = useDebug('books/index', 'DEBUG')
+const {debug, jsonBlock} = useDebug('books/index', )
 
 export async function getServerSideProps(context: any) {
     const genres = await PrismaGenre.stubs()

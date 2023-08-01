@@ -1,7 +1,7 @@
 import StaticLayout from "../components/layouts/StaticLayout"
 import JsonBlock from "../components/ui/jsonBlock"
 import useDebug from "../hooks/useDebug"
-const {debug} = useDebug('404','DEBUG')
+const {debug} = useDebug('404',)
 
 type ErrorPageProps = {
     error?:     any

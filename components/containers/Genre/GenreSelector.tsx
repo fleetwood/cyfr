@@ -7,7 +7,7 @@ import useApi from 'prisma/useApi'
 import React, { Key, useEffect, useState } from 'react'
 import { KeyVal } from 'types/props'
 
-const {debug} = useDebug('containers/Genre/GenreSelector', 'DEBUG')
+const {debug} = useDebug('containers/Genre/GenreSelector', )
 
     /**
     * @param setGenre Provides a {@link KeyVal} of `genre.id` and `genre.title`. **Do not set this to a `useState<Genre>` parameter**, point it to a handler instead.

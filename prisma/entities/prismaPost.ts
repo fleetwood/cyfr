@@ -7,7 +7,7 @@ const {debug, err, info, fileMethod} = useDebug('entities/prismaPost')
 const postDetail = async (id: string): Promise<PostDetail> => {
   try {
     debug('postDetail', id)
-    return await prisma.post.findUnique({where: {id}, include: PostDetailInclude}) as unknown as PostDetail
+    return await prisma.post.findUnique({where: {id}, ...PostDetailInclude}) as unknown as PostDetail
   } catch (error) {
     err('postDetail error', {error})
     throw {code: 'prismaPost/postDetail', message: `No post was returned for ${id}`}
@@ -20,20 +20,18 @@ type PaginationProps = {
 }
 
 const feed = async ({take=10, skip=0}:PaginationProps): Promise<PostStub[]> => {
-  debug('feed')
+  debug('feed', {PostStubInclude})
   try {
     return await prisma.post.findMany({
       //TODO: blocked users
       where: {visible: true},
-      // TODO: review all stubs and details
-      // note that stubs cannot include others stubs in their includes
       ...PostStubInclude,
       orderBy: {createdAt: "desc"},
       //TODO: pagination
       take, skip
     }) as unknown as PostStub[]
   } catch (error) {
-    info('prismaPost.feed ERROR',error)
+    info('prismaPost.feed ERROR',{error})
     throw error
   }
 }

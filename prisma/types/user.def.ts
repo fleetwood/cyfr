@@ -1,4 +1,4 @@
-import { Agent, Artist, Author, Book, BookStub, Editor, Follow, FollowStub, Gallery, GalleryStub, GalleriesStubInclude, LikesAndCount, LikesAndCountsInclude, LikesCountInclude, LikesInclude, Membership, MembershipType, Post, PostStub, PostStubInclude, Reader, User } from "prisma/prismaContext"
+import { Agent, Artist, Author, BookStub, Editor, Follow, FollowStub, GalleriesStubInclude, GalleryStub, Membership, MembershipType, Post, PostStub, PostStubInclude, Reader, User } from "prisma/prismaContext"
 
 export type UserFeed = User & {
   _count:       { sessions: number }
@@ -224,12 +224,6 @@ export const CreatorStubSelect = {
     membership: true
   }
 }
-
-export type CreatorAndLikesAndCount = LikesAndCount & {
-  creator: CreatorStub
-}
-
-export const CreatorLikesCountInclude = {include: {...CreatorStubSelect,...LikesAndCountsInclude}}
 
 export type UserInfo = User & {
   _count: {

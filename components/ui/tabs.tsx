@@ -3,7 +3,7 @@ import useDebug from "hooks/useDebug"
 import { Fragment, useEffect, useState } from "react"
 import { uuid } from "utils/helpers"
 
-const {debug} = useDebug('Tabs', 'DEBUG')
+const {debug} = useDebug('Tabs', )
 
 export type TabVariants = 'bar' | 'buttons'
 

@@ -1,6 +1,6 @@
 
 import useFeed from "hooks/useFeed"
-import { PostDetail, PostStub } from "prisma/prismaContext"
+import { CreatorStub, PostDetail, PostStub, Share, ShareList } from "prisma/prismaContext"
 
 import { useCommentContext } from "components/context/CommentContextProvider"
 import { useToast } from "components/context/ToastContextProvider"
@@ -99,7 +99,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
           onClick={() => handleShare()}
         />
         {post.shares &&
-          <AvatarList users={post.shares} count={post._count.shares} sz="xs" />
+          <AvatarList users={post.shares.map((share) => share.creator)} count={post._count.shares} sz="xs" />
         }
       </div>
 

@@ -11,6 +11,6 @@ const request = async (req:NextApiRequest, res: NextApiResponse) => {
   return useApiHandler(res,
     'api/post/feed',
     PrismaPost.feed({take: 20, skip: 0}),
-    'DEBUG'
+    
 )}
 export default request

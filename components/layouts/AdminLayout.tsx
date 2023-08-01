@@ -8,7 +8,7 @@ import ErrorPage from 'pages/404'
 import Spinner from 'components/ui/spinner'
 import useDebug from 'hooks/useDebug'
 
-const {debug} = useDebug('AdminLayout', 'DEBUG')
+const {debug} = useDebug('AdminLayout', )
 
 type AdminLayoutProps = {
   sectionTitle: string | ReactNode

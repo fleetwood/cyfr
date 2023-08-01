@@ -6,7 +6,7 @@ import Semibold from 'components/ui/semibold'
 import useDebug from 'hooks/useDebug'
 import React from 'react'
 
-const {debug} = useDebug('BookPermissionsDialog','DEBUG')
+const {debug} = useDebug('BookPermissionsDialog',)
 
 const BookPermissionsDialog = () => (
     <>

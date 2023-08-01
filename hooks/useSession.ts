@@ -1,7 +1,7 @@
 import { useQuery } from "react-query"
 import { useRouter } from "next/router"
 import useDebug from "./useDebug"
-const {debug} = useDebug('useSession', 'DEBUG')
+const {debug} = useDebug('useSession', )
 
 export async function fetchSession() {
   const res = await fetch("/api/auth/session")

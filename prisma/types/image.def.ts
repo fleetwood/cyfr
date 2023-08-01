@@ -1,4 +1,4 @@
-import { CommentThread, CreatorStub, Gallery, GalleryStub, GalleriesStubInclude, Image, LikesCountInclude, LikesInclude, PostStub, PostStubInclude, User, UserStub, UserStubSelect } from "prisma/prismaContext"
+import { CommentThread, CreatorSharesLikes, CreatorSharesLikesInclude, CreatorStub, CreatorStubSelect, Gallery, GalleryStub, Image, LikeStub, PostStub, Share, ShareStub, User, UserStub, UserStubSelect } from "prisma/prismaContext"
 
 export type ImageUpsertProps = {
   id?:              string
@@ -30,33 +30,46 @@ export type ImageStubViewProps = {
 }
 
 export type ImageFeed = Image & {
-  creator: UserStub
+  creator:    CreatorStub
   galleryId?: string
-  postId?: string
+  postId?:    string
 }
 
-export const ImageFeedInclude = {
-  include: {
-    creator: {
-      select: {
-        name: true,
-        email: true,
-        slug: true,
-        image: true
-      }
-    },
-    gallery: true
+export const PostImageInclude = {include: {
+  creator: CreatorStubSelect,
+  _count: { select: {
+    likes: true,
+    shares: true
+  }},
+  likes: { include: {
+    creator: CreatorStubSelect
+  }},
+  shares: { include: {
+    creator: CreatorStubSelect
+  }}
+}}
+
+export type PostImage = Image & CreatorSharesLikes & {
+  _count: {
+    likes:  number
+    shares: number
   }
 }
+
+export const ImageFeedInclude = {include: {
+  creator: CreatorStubSelect,
+  gallery: true
+}}
 
 export type ImageStub = Image & {
-  likes: UserStub[]
-  gallery: Gallery
-  // post: PostStub
   creator: CreatorStub
+  likes: LikeStub[]
+  shares: Share & CreatorStub
   _count: {
     likes: number
+    shares: number
   }
+  gallery: Gallery
   commentThread?: CommentThread & {
     comments: (Comment & {
       creator: User
@@ -65,26 +78,23 @@ export type ImageStub = Image & {
 }
 
 export const ImageStubInclude = { include : {
-  creator: {select: UserStubSelect},
+  creator: CreatorStubSelect,
+  _count: { select: {
+    likes: true,
+    shares: true
+  }},
+  likes: { include: {
+    creator: CreatorStubSelect
+  }},
+  shares: { include: {
+    creator: CreatorStubSelect
+  }},
   gallery: true,
-  // post: {include: {
-  //     creator: true,
-  //     ...LikesCount
-  // }},
-  _count: {
-    select: {
-      likes: true
-    }
-  },
-  commentThread: {
-    include: {
-      comments: {
-        include: {
-          creator: true
-        }
-      }
-    }
-  }
+  commentThread: { include: {
+    comments: { include: {
+      creator: true
+    }}
+  }}
 }}
 
 export type ImageDetail = ImageStub & {
@@ -93,21 +103,23 @@ export type ImageDetail = ImageStub & {
 }
 
 export const ImageDetailInclude = {
-  creator: true,
-  likes: {
-    include: {
-      creator: true,
-    },
-  },
+  creator: CreatorStubSelect,
+  _count: { select: {
+    likes: true,
+    shares: true
+  }},
+  likes: { include: {
+    creator: CreatorStubSelect
+  }},
+  shares: { include: {
+    creator: CreatorStubSelect
+  }},
   post: true,
-  gallery: {
-    include: {
-      creator: true,
-      likes: {
-        include: {
-          creator: true,
-        },
-      }
-    },
-  },
+  gallery: { include: {
+    creator: CreatorStubSelect,
+    _count: { select: {
+      likes: true,
+      shares: true
+    }}
+  }},
 }

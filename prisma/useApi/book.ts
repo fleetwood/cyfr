@@ -3,7 +3,7 @@ import useRocketQuery, { RocketQuery } from "hooks/useRocketQuery"
 import { BookDetail, BookEngageProps, BookFollowProps, BookStub, BookUpsertProps, ChangeCoverProps, ChangeGenreProps, Chapter } from "prisma/prismaContext"
 import { NotImplemented, getApi, sendApi } from "utils/api"
 
-const { debug, fileMethod } = useDebug("hooks/useBookApi", 'DEBUG')
+const { debug, fileMethod } = useDebug("hooks/useBookApi", )
 const noBookDetail = (method: string) => {debug(method, "bookDetail is null");return false}
 
 

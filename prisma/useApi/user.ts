@@ -3,7 +3,7 @@ import useDebug from "hooks/useDebug"
 import { getApi, sendApi } from "utils/api"
 import { AudienceLevels, Book, UserDetail, UserDetailProps, UserFollowProps, UserInfo, UserStub } from "prisma/prismaContext"
 
-const {debug} = useDebug('prisma/api/userApi', 'DEBUG')
+const {debug} = useDebug('prisma/api/userApi', )
 
   const query = (props:UserDetailProps) => {
     debug('query', props)

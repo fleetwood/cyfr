@@ -21,7 +21,7 @@ import {
 } from "prisma/prismaContext"
 import { NotImplemented } from "utils/api"
 
-const { debug, info, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
+const { debug, info, fileMethod } = useDebug("entities/prismaBook", )
 
 type BookQueryProps = {
   id?:    string
