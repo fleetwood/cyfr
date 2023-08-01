@@ -1,17 +1,16 @@
-
 import useFeed from "hooks/useFeed"
-import { CreatorStub, PostDetail, PostStub, Share, ShareList } from "prisma/prismaContext"
+import { PostDetail, PostStub } from "prisma/prismaContext"
 
+import { Tooltip } from "@mui/material"
 import { useCommentContext } from "components/context/CommentContextProvider"
 import { useToast } from "components/context/ToastContextProvider"
 import AvatarList from "components/ui/avatarList"
 import { FeedIcon, HeartIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
+import useApi from "prisma/useApi"
 import { abbrNum } from "utils/helpers"
 import { CreateCommentFooterButton } from "../Comment/CreateCommentModal"
-import useApi from "prisma/useApi"
-import { Tooltip } from "@mui/material"
 const { debug } = useDebug("PostItemFooter")
 
 type PostFooterProps = {
@@ -86,7 +85,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
           onClick={() => handleLike()}
         />
         {/* @ts-ignore */}
-        {post.likes && <AvatarList users={post.likes} sz="xs" />}
+        {post.likes && <AvatarList users={post.likes.map((like) => like.creator)} sz="xs" />}
       </div>
 
       <div className="font-semibold uppercase">

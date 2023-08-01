@@ -50,23 +50,49 @@ export const PostBaseInclude = {
   shares: true,
 }
 
-export type SharedPostStub = Post & {
+export type SharedPostStub = Post & CreatorSharesLikes & {
   _count: {
-    likes: Number
+    likes:  number
+    shares: number
   }
-  creator: UserStub
   images: PostImage[]
   commentThread: CommentThreadStub
 }
 
 export const SharedPostFeedInclude = { include: {
+  creator: { select: {
+    id: true,
+    name: true,
+    image: true,
+    slug: true,
+    membership: true,
+  }},
+  likes: { include: {
+    creator: { select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true,
+      membership: true,
+    }}},
+    take: 10,
+  },
+  shares: { include: {
+    creator: { select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true,
+      membership: true,
+    }}},
+    take: 10,
+  },
   _count: {
     select: {
       likes: true,
       shares: true,
     },
   },
-  creator: CreatorStubSelect,
   commentThread: CommentThreadStubInclude
 }}
 
@@ -76,8 +102,8 @@ type PostComments = Post & {
 
 export type PostStub = Post & CreatorSharesLikes & {
   _count: {
-    likes: Number
-    shares: Number
+    likes: number
+    shares: number
   }
   images: PostImage[]
   commentThread: CommentThreadStub
