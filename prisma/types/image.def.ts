@@ -23,12 +23,6 @@ export type ImageEngageProps = {
   creatorId: string
 }
 
-export type ImageStubViewProps = {
-  image?:     ImageStub
-  onClick?:   (image: ImageStub) => any
-  className?: string
-}
-
 export type ImageFeed = Image & {
   creator:    CreatorStub
   galleryId?: string

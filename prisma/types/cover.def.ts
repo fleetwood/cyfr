@@ -1,4 +1,4 @@
-import { Artist, ArtistStub, Book, Cover, CreatorStub, CreatorStubSelect, Genre, Image, User, UserStub, UserStubSelect } from "prisma/prismaContext"
+import { Artist, ArtistStub, Book, CommentThreadStub, CommentThreadStubInclude, Cover, CreatorSharesLikes, CreatorStub, CreatorStubSelect, Genre, Image, User, UserStub, UserStubSelect } from "prisma/prismaContext"
 
 export type CoverUpsertProps = {
   id?:        string
@@ -28,11 +28,11 @@ export type CoverStubViewProps = {
   className?: string
 }
 
-export type CoverStub = Cover & {
+export type CoverStub = Cover & CreatorSharesLikes & {
   image:    Image
-  creator:  CreatorStub
   artists:  ArtistStub[]
   genre?:   Genre
+  commentThread: CommentThreadStub
   _count: {
     likes:  number
     shares: number
@@ -41,15 +41,15 @@ export type CoverStub = Cover & {
 
 export const CoverStubInclude = { include: {
   image: true,
-  creator: {
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      slug: true,
-      membership: true
-    }
-  },
+  creator: CreatorStubSelect,
+  likes: { include: {
+    creator: CreatorStubSelect,
+    take: 10
+  }},
+  shares: { include: {
+    creator: CreatorStubSelect,
+    take: 10
+  }},
   artists: {
     include: {
       user: {
@@ -63,6 +63,7 @@ export const CoverStubInclude = { include: {
     },
   },
   genre: true,
+  commentThread: CommentThreadStubInclude,
   _count: {
     select: {
       likes: true,

@@ -13,6 +13,7 @@ import CharacterFooter from "../Characters/CharacterFooter"
 import GalleryFooter from "../Gallery/GalleryFooter"
 import ImageFooter from "../Image/ImageFooter"
 import PostFooter from "../Post/PostFooter"
+import CoverFooter from "../Cover/CoverFooter"
 const { debug } = useDebug("PostItemFooter")
 
 type ShareFooterProps = {
@@ -72,10 +73,10 @@ const ShareFooter = ({ share, onUpdate }: ShareFooterProps) => {
     <div>
       {share.book && <BookFooter bookStub={share.book} />}
       {share.character && <CharacterFooter character={share.character} />}
-      {share.cover && <ImageFooter image={share.cover.image as ImageStub} />}
+      {share.image && <ImageFooter image={share.image} />}
+      {share.cover && <CoverFooter cover={share.cover} />}
       {/* {share.event && <div>TODO: Event Footer</div> } */}
       {share.gallery && <GalleryFooter gallery={share.gallery} />}
-      {share.image && <ImageFooter image={share.image} />}
       {share.post && <PostFooter post={share.post as PostStub} />}
     </div>
   )
