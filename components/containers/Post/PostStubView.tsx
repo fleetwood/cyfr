@@ -13,26 +13,21 @@ type PostFeedItemProps = {
   post: PostStub
 }
 
-const PostStubView = ({ post }: PostFeedItemProps) => {
-  const comments: any[] = []
+const PostStubView = ({ post }: PostFeedItemProps) => (
+  <Grid container rowGap={2}>
+    <div className='p-2 min-w-full'>
+      {post.content && <HtmlContent content={post.content} className="font-feed" />}
 
-  return (
-    <Grid container rowGap={2}>
-      <div className='p-2 min-w-full'>
-        {post.content && <HtmlContent content={post.content} className="font-feed" />}
+      {post.images && post.images[0] && <GalleryPhotoswipe images={post.images} />}
 
-        {post.images && post.images[0] && <GalleryPhotoswipe images={post.images} />}
-
-        {post.share && <SharedPostStubView share={post.share} />}
+      {post.share && <SharedPostStubView share={post.share} />}
+    </div>
+    
+    {post.commentThread && 
+      <div className='border border-neutral border-opacity-50 rounded-md p-2 m-2 min-w-fit'>
+        <PostCommentThread postStub={post} /> 
       </div>
-      
-      {post.commentThread && 
-        <div className='border border-neutral border-opacity-50 rounded-md p-2 m-2 min-w-fit'>
-          <PostCommentThread postStub={post} /> 
-        </div>
-      }
-    </Grid>
-  )
-}
-
+    }
+  </Grid>
+)
 export default PostStubView

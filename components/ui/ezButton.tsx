@@ -1,8 +1,7 @@
 import { MouseEventHandler, ReactNode } from "react"
 import { VariantProps } from "types/props"
 
-
-
+// TODO Add SizeProps, and Rounded props
 type EzButtonProps = {
     variant?: VariantProps
     label: ReactNode

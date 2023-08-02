@@ -1,5 +1,6 @@
 import useBookApi from "./book"
 import useChapterApi from "./chapter"
+import useCommentApi from "./comment"
 import useCoverApi from "./cover"
 import useCyfrUserApi from "./cyfrUser"
 import useGenreApi from "./genre"
@@ -14,6 +15,7 @@ import UserApi from "./user"
 export default {
     book: useBookApi,
     chapter: useChapterApi,
+    comment: useCommentApi,
     cover: useCoverApi,
     cyfrUser: useCyfrUserApi,
     gallery: useGalleryApi,

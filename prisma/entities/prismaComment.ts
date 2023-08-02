@@ -1,7 +1,22 @@
 import { NotImplemented } from "utils/api"
 import useDebug from "../../hooks/useDebug"
-import { CommentThreadDetails, CommentThreadDetailsInclude, UpsertInboxProps } from "../prismaContext"
+import { AddCommentProps, CommentThread, CommentThreadDetails, CommentThreadDetailsInclude, CommentThreadStub, UpsertInboxProps } from "../prismaContext"
 const {debug, fileMethod} = useDebug('entities/prismaComment')
+
+const addComment = async ({creatorId, threadId, content}:AddCommentProps):Promise<CommentThread> => {
+  const comment = await prisma.commentThread.update({
+    where: {id: threadId},
+    data: {
+      comments: {
+        create: {
+          creatorId,
+          content
+        }
+      }
+    }
+  })
+  return comment
+}
 
 const threadById = async (threadId: string, userId: string): Promise<CommentThreadDetails> => {
   try {
@@ -122,4 +137,4 @@ const upsertInbox = async ({
   }
 }
 
-export const PrismaComment = { threadById, userInbox, upsertInbox }
+export const PrismaComment = { addComment, threadById, userInbox, upsertInbox }

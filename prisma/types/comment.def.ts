@@ -1,5 +1,11 @@
 import { CommentThread, Comment, Commune, CommuneUser, User, Block, CreatorStub, CreatorStubSelect } from "./../prismaContext";
 
+export type AddCommentProps = {
+  creatorId:  string
+  threadId:   string
+  content:    string
+}
+
 /**
  * @property threadId Will create a new CommentThread if undefined
  * @property userId required
@@ -64,7 +70,7 @@ export const CommentThreadDetailsInclude = {
   }
 }
 
-export type CommentThreadStub = {
+export type CommentThreadStub = Comment & {
   creator: CreatorStub
   comments: (Comment & {
     creator: CreatorStub
