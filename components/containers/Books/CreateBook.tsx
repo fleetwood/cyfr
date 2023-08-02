@@ -20,7 +20,7 @@ import BookPermissions from './BookPermissions'
 import BookPermissionsDialog from './BookPermissionsDialog'
 
 import GalleryCovers from '../Gallery/GalleryCovers'
-import Avatar from 'components/ui/avatar/avatar'
+import UserAvatar from 'components/ui/avatar/userAvatar'
 
 const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",)
 const createBookModal = 'createBookModal'
@@ -184,7 +184,7 @@ const CreateBook = () => {
                         <p className='text-sm mt-4'>If you're co-authoring with another member of <Semibold>Cyfr</Semibold>, add them here. Note: this person will have <span className='font-semibold'>full access and privileges to the book</span>, so you have to be friends (as in: you Follow each other). Would be kinda weird otherwise.</p>
                         <Grid>
                             {authors?.map(a => 
-                                <Avatar className='opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200' 
+                                <UserAvatar className='opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200' 
                                     sz='sm' 
                                     user={a} 
                                     onClick={() => removeAuthor(a)} 

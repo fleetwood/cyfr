@@ -1,6 +1,6 @@
 import React from 'react'
 import { CyfrUser, UserStub, v_author_stub } from '../../prisma/prismaContext'
-import Avatar from './avatar/avatar'
+import UserAvatar from './avatar/userAvatar'
 import { uniqueKey, uuid } from '../../utils/helpers'
 import { SizeProps } from 'types/props'
 
@@ -16,7 +16,7 @@ const UserInfo = ({user,link,sz,variant}:UserInfoProps) => {
     const count = (prop:any[]|number):number => Array.isArray(prop) ? prop.length : prop
   return (
     <div>
-        <Avatar user={user} link={link} sz={sz} />
+        <UserAvatar user={user} link={link} sz={sz} />
         
     </div>
   )

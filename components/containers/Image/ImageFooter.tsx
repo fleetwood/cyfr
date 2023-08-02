@@ -1,7 +1,7 @@
 import { ImageDetail, ImageStub } from "prisma/prismaContext"
 
 import { useToast } from "components/context/ToastContextProvider"
-import AvatarList from "components/ui/avatarList"
+import UserAvatarList from "components/ui/avatar/userAvatarList"
 import { CheckmarkIcon, HeartIcon, PhotoIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
@@ -81,7 +81,7 @@ const ImageFooter = ({ image, onUpdate, selectable = false, onSelect }: ImageFoo
           label={abbrNum(image._count?.likes??0)}
           onClick={() => handleLike()}
         />
-        {image.likes && <AvatarList users={image.likes} sz="xs" />}
+        {image.likes && <UserAvatarList users={image.likes} sz="xs" />}
       </div>
 
       <div className="font-semibold uppercase">

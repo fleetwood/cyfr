@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import useDebug from "../../../hooks/useDebug"
 import { CommentThreadDetails, CyfrUser, User } from "../../../prisma/prismaContext"
-import Avatar from "../../ui/avatar/avatar"
+import UserAvatar from "../../ui/avatar/userAvatar"
 import ReactHtmlParser from "react-html-parser"
 import RemirrorEditor from "../../forms/SocialTextarea"
 import { timeDifference, uniqueKey } from "../../../utils/helpers"
@@ -62,8 +62,8 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
   : (
     <div className="min-h-fit border-1">
         <div className="flex justify-between border-2 p-4">
-            <span><Avatar user={user} sz="md" link={false} />{user.name}</span>
-            <span>{party.name}<Avatar user={party} sz="md" link={false} /></span>
+            <span><UserAvatar user={user} sz="md" link={false} />{user.name}</span>
+            <span>{party.name}<UserAvatar user={party} sz="md" link={false} /></span>
         </div>
         <div className="flex flex-col">
             <div>{thread.id}</div>

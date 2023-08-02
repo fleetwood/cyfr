@@ -1,7 +1,7 @@
 import GalleryPhotoswipe from "components/containers/Gallery/GalleryImages"
 import PostFooter from "components/containers/Post/PostFooter"
 import MainLayout from "components/layouts/MainLayout"
-import Avatar from "components/ui/avatar/avatar"
+import UserAvatar from "components/ui/avatar/userAvatar"
 import HtmlContent from "components/ui/htmlContent"
 import useApi from "prisma/useApi"
 import { timeDifference } from 'utils/helpers'
@@ -31,7 +31,7 @@ const PostDetailPage = ({ postId }:PostDetailPageProps) => {
     >
       <div className="flex flex-row justify-between relative">
         <div className="flex justify-end w-full -mb-4 mr-4 z-10">
-          <Avatar user={post.creator} sz="lg" />
+          <UserAvatar user={post.creator} sz="lg" />
         </div>
       </div>
       <div className="bg-base-100 rounded-lg p-4 relative">

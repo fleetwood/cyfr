@@ -1,4 +1,4 @@
-import Avatar from "components/ui/avatar/avatar"
+import UserAvatar from "components/ui/avatar/userAvatar"
 import { BookIcon, CyfrLogo, HouseIcon, UserIcon } from "components/ui/icons"
 import ShrinkableIconLink from "components/ui/shrinkableIconLink"
 import ShrinkableLink from "components/ui/shrinkableLink"
@@ -96,7 +96,7 @@ const Navbar = ({
                 <div className="dropdown dropdown-end text-secondary-content min-w-full float-right">
                   <label tabIndex={0} className="btn btn-ghost rounded-btn space-x-2" onClick={() => setShowDropDown(!showDropDown)}>
                     <p>{cyfrUser.name}</p>
-                    <Avatar user={cyfrUser} sz='sm' link={false} variant={['no-profile']} />
+                    <UserAvatar user={cyfrUser} sz='sm' link={false} variant={['no-profile']} />
                   </label>
 
                   <div className={`dropdown-content w-full top-full drop-shadow-lg bg-secondary bg-opacity-90 rounded-lg`}>

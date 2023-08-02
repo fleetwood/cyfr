@@ -18,7 +18,7 @@ const SharedStubView = ({ share }: SharedPostFeedItemProps) => {
   const {book, character, cover, gallery, image, post} = share
 
   return (
-    <div className='border-primary border-2 bg-neutral bg-opacity-10 rounded-lg p-4'>
+    <div className='rounded-lg m-4'>
       {post && <PostStubView post={post as PostStub} />}
 
       {image && <ImageStubView image={image as ImageStub} />}

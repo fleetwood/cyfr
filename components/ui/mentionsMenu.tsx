@@ -3,7 +3,7 @@ import useDebug from "../../hooks/useDebug"
 import { UserDetail, UserStub } from "../../prisma/prismaContext"
 import { uniqueKey } from "../../utils/helpers"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
-import Avatar from "./avatar/avatar"
+import UserAvatar from "./avatar/userAvatar"
 import Spinner from "./spinner"
 import UserApi from "../../prisma/useApi/user"
 
@@ -64,7 +64,7 @@ const MentionsMenu = ({onSelect, show = true, type='MENTION'}:MentionsMenuProps)
                         flex justify-items-start space-x-1 
                         cursor-pointer px-2 rounded-sm 
                         hover:bg-opacity-30 hover:bg-primary">
-                    <Avatar user={user} link={false} sz="xs" />
+                    <UserAvatar user={user} link={false} sz="xs" />
                     <span>{user.name}</span>
                 </li>
         ))}

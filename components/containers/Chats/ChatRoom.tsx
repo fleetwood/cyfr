@@ -4,7 +4,7 @@ import useDebug from "../../../hooks/useDebug"
 import { ChatMessage, User, UserStub } from "../../../prisma/prismaContext"
 import { now, timeDifference, uniqueKey } from "../../../utils/helpers"
 import TailwindInput from "../../forms/TailwindInput"
-import Avatar from "../../ui/avatar/avatar"
+import UserAvatar from "../../ui/avatar/userAvatar"
 import { ChatSendIcon } from "../../ui/icons"
 
 
@@ -89,7 +89,7 @@ const ChatRoom = ({firstPerson, secondPerson, onCloseRoom, lastUpdated=now()}:Ch
             <label className="z-10 absolute btn btn-xs btn-circle -right-1 -top-1" onClick={closeChatRoom}>X</label>
         </div>
         <div className="flex bg-base-200 space-x-2 font-semibold">
-            <Avatar user={secondPerson} link={false} sz="sm" />
+            <UserAvatar user={secondPerson} link={false} sz="sm" />
             <span className="my-auto">{secondPerson.name}</span>
         </div>
         {room && (

@@ -8,7 +8,7 @@ import { CommentThreadDetails, CyfrUser, UpsertInboxProps, User } from "prisma/p
 import { useState } from "react"
 import { uniqueKey, timeDifference } from "utils/helpers"
 import HtmlContent from "components/ui/htmlContent"
-import Avatar from "components/ui/avatar/avatar"
+import UserAvatar from "components/ui/avatar/userAvatar"
 
 const {debug} = useDebug('components/containers/SendMessageDetail')
 
@@ -58,9 +58,9 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
   return (
     <div className="min-w-fit m-0 overflow-y-scroll scrollbar-hide relative">
       <div className="grow flex justify-between place-items-end border-2 p-4">
-        <span><Avatar user={cyfrUser} sz="md" link={false} />{cyfrUser.name}</span>
+        <span><UserAvatar user={cyfrUser} sz="md" link={false} />{cyfrUser.name}</span>
         {party 
-          ? <span>{party.name}<Avatar user={party} sz="md" link={false} /></span> 
+          ? <span>{party.name}<UserAvatar user={party} sz="md" link={false} /></span> 
           : <MentionsMenu show={true} searchTerm={search} onSelect={onSelectParty} type='MESSAGABLE' />
         }
       </div>

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { PostStub, UserDetail, UserFollow } from "prisma/prismaContext"
 import userApi from "prisma/useApi/user"
-import Avatar from "components/ui/avatar/avatar"
+import UserAvatar from "components/ui/avatar/userAvatar"
 import PostStubView from "../Post/PostStubView"
 
 const UserAccountDetail = (user:UserDetail) => {
@@ -20,7 +20,7 @@ const UserAccountDetail = (user:UserDetail) => {
         <>
           <div className="grid grid-cols-9 mx-2 mb-4 md:mx-4 md:mb-8 md:p-4 rounded-lg p-2 bg-base-100 bg-opacity-20 text-neutral-content">
             <div className="col-span-2 mt-2 md:-mt-12">
-              <Avatar user={currentUser} sz="lg" />
+              <UserAvatar user={currentUser} sz="lg" />
             </div>
             <div className="col-span-9">
               <div className="flex items-start flex-col md:flex-row justify-between h-[50%]">

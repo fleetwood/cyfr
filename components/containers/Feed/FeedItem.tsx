@@ -15,24 +15,20 @@ const FeedPost = ({ post }: FeedPostProps) => {
   const isShared = post.share
   return isShared ?
     <div
-      className={`mt-4 p-4 rounded-2xl snap-always snap-start border-2 bg-base-200 bg-opacity-50
+      className={`mt-4 rounded-2xl snap-always snap-start border-2 bg-base-200 bg-opacity-50
       ${isShared ? `border-neutral` : `border-primary`}`}
       >
       <ShareHeader share={post.share!} />
-      <div className="font-feed">
-        <SharedStubView share={post.share!} />
-      </div>
+      <SharedStubView share={post.share!} />
       <ShareFooter share={post.share!} />
     </div>
     : 
     <div
-      className={`mt-4 p-4 rounded-2xl snap-always snap-start border-2 bg-base-200
+      className={`mt-4 rounded-2xl snap-always snap-start border-2 bg-base-200
       ${isShared ? `border-neutral` : `border-primary`}`}
       >
       <PostHeader post={post} />
-      <div className="p-4 font-feed">
-        <PostStubView post={post} />
-      </div>
+      <PostStubView post={post} />
       <PostFooter post={post} />
     </div>
 }

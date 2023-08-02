@@ -2,22 +2,13 @@ import {
   CommentThreadStub,
   CommentThreadStubInclude,
   CreatorSharesLikes,
-  CreatorSharesLikesInclude,
-  CreatorStub,
   CreatorStubSelect,
   Image,
-  ImageFeedInclude,
-  LikeStub,
   Post,
   PostImage,
   PostImageInclude,
-  ShareList,
-  ShareListInclude,
   ShareStub,
-  ShareStubInclude,
-  User,
-  UserStub,
-  UserStubSelect
+  User
 } from 'prisma/prismaContext'
 
 export type PostCreateProps = {
@@ -93,7 +84,21 @@ export const SharedPostFeedInclude = { include: {
       shares: true,
     },
   },
-  commentThread: CommentThreadStubInclude
+  commentThread: { include: {
+    comments: {
+      include: {
+        creator: CreatorStubSelect
+      },
+      take: 10
+    },
+    commune: true,
+    blocked: true,
+    _count: {
+      select: {
+        comments: true
+      }
+    },
+  }}
 }}
 
 type PostComments = Post & {
@@ -324,7 +329,21 @@ export const PostStubInclude = { include: {
     post: SharedPostFeedInclude,
   }},
   images: PostImageInclude,
-  commentThread: CommentThreadStubInclude,
+  commentThread: { include: {
+    comments: {
+      include: {
+        creator: CreatorStubSelect
+      },
+      take: 10
+    },
+    commune: true,
+    blocked: true,
+    _count: {
+      select: {
+        comments: true
+      }
+    },
+  }},
   _count: {
     select: {
       likes: true,

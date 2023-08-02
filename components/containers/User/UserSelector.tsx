@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 import { TailwindInput } from 'components/forms'
-import Avatar, { AvatarUser } from 'components/ui/avatar/avatar'
+import UserAvatar, { AvatarUser } from 'components/ui/avatar/userAvatar'
 import useDebounce from 'hooks/useDebounce'
 import { UserStub } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
@@ -76,7 +76,7 @@ const UserSelector = (props:UserSelectorProps) => {
       <Grid>
         {users.map((u:UserStub) => 
           <div onClick={() => toggle(false)} key={uniqueKey(u.id)} >
-            <Avatar user={u} sz='sm' onClick={onUserClick} variant={['no-profile']} className='opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200' />
+            <UserAvatar user={u} sz='sm' onClick={onUserClick} variant={['no-profile']} className='opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200' />
           </div>
         )}
       </Grid>

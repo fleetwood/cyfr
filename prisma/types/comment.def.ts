@@ -1,4 +1,4 @@
-import { CommentThread, Comment, Commune, CommuneUser, User, Block } from "./../prismaContext";
+import { CommentThread, Comment, Commune, CommuneUser, User, Block, CreatorStub, CreatorStubSelect } from "./../prismaContext";
 
 /**
  * @property threadId Will create a new CommentThread if undefined
@@ -65,7 +65,10 @@ export const CommentThreadDetailsInclude = {
 }
 
 export type CommentThreadStub = {
-  comments: Comment[]
+  creator: CreatorStub
+  comments: (Comment & {
+    creator: CreatorStub
+  })[]
   commune:  Commune
   blocked:  Block[]
   _count: {
@@ -75,6 +78,9 @@ export type CommentThreadStub = {
 
 export const CommentThreadStubInclude = { include: {
   comments: {
+    include: {
+      creator: CreatorStubSelect
+    },
     take: 10
   },
   commune: true,

@@ -3,7 +3,7 @@ import useDebug from "../../../hooks/useDebug"
 import { User, UserStub } from "../../../prisma/prismaContext"
 import { now, uniqueKey } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import Avatar from "../../ui/avatar/avatar"
+import UserAvatar from "../../ui/avatar/userAvatar"
 import ChatRoom, { ChatRoomProps } from "./ChatRoom"
 
 const {debug} = useDebug("components/containers/ChatList.tpx")

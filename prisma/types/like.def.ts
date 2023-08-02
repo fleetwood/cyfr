@@ -10,7 +10,9 @@ export type LikeProps = {
   bookId?:      string
 }
 
-export type LikeStub = Like & CreatorStub
+export type LikeStub = Like & {
+  creator: CreatorStub
+}
 
 export const LikeStubInclude = {
   likes: {

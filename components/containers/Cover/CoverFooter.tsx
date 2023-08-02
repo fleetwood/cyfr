@@ -1,7 +1,7 @@
 import { CoverDetail, CoverStub, ImageDetail, ImageStub } from "prisma/prismaContext"
 
 import { useToast } from "components/context/ToastContextProvider"
-import AvatarList from "components/ui/avatarList"
+import UserAvatarList from "components/ui/avatar/userAvatarList"
 import { CheckmarkIcon, HeartIcon, PhotoIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
@@ -79,7 +79,7 @@ const CoverFooter = ({ cover, onUpdate, selectable = false, onSelect }: CoverFoo
           label={abbrNum(cover._count?.likes??0)}
           onClick={() => handleLike()}
         />
-        {cover.likes && <AvatarList users={cover.likes} sz="xs" />}
+        {cover.likes && <UserAvatarList users={cover.likes} sz="xs" />}
       </div>
 
       <div className="font-semibold uppercase">

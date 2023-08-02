@@ -4,7 +4,7 @@ import { PostDetail, PostStub } from "prisma/prismaContext"
 import { Tooltip } from "@mui/material"
 import { useCommentContext } from "components/context/CommentContextProvider"
 import { useToast } from "components/context/ToastContextProvider"
-import AvatarList from "components/ui/avatarList"
+import UserAvatarList from "components/ui/avatar/userAvatarList"
 import { FeedIcon, HeartIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
@@ -75,7 +75,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   return (
     <div className="flex flex-row justify-around py-4">
       <Tooltip title="Post">{FeedIcon}</Tooltip>
-      <div className="font-semibold uppercase">
+      <div>
         <ShrinkableIconButton
           icon={HeartIcon}
           className="bg-opacity-0 hover:shadow-none"
@@ -85,10 +85,12 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
           onClick={() => handleLike()}
         />
         {/* @ts-ignore */}
-        {post.likes && <AvatarList users={post.likes.map((like) => like.creator)} sz="xs" />}
+        {post.likes && 
+          <UserAvatarList users={post.likes.map((like) => like.creator)} count={post.likes.length} sz="sm" />
+        }
       </div>
 
-      <div className="font-semibold uppercase">
+      <div>
         <ShrinkableIconButton
           icon={ShareIcon}
           className="bg-opacity-0 hover:shadow-none"
@@ -98,17 +100,17 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
           onClick={() => handleShare()}
         />
         {post.shares &&
-          <AvatarList users={post.shares.map((share) => share.creator)} count={post._count.shares} sz="xs" />
+          <UserAvatarList users={post.shares.map((share) => share.creator)} sz="sm" count={post.shares.length} />
         }
       </div>
 
-      <div className="font-semibold uppercase">
+      <div>
         <CreateCommentFooterButton postId={post.id} comments={(post.commentThread?.comments??[]).length} />
-        {/* <AvatarList
-          users={(post.post_comments || []).map((a) => a.creator)}
-          sz="xs"
-        /> */}
+        {post.commentThread?.comments &&
+        <UserAvatarList users={post.commentThread.comments.map(comment => comment.creator)} sz="sm" count={post.commentThread.comments.length} />
+        }
       </div>
+
     </div>
   )
 }

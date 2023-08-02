@@ -5,6 +5,7 @@ import useDebug from 'hooks/useDebug'
 import PostCommentThread from '../Comment/PostCommentThread'
 import GalleryPhotoswipe from '../Gallery/GalleryImages'
 import SharedPostStubView from '../Share/ShareStubView'
+import { Grid } from '@mui/material'
 
 const { debug, jsonBlock } = useDebug('PostStubView',)
 
@@ -16,15 +17,21 @@ const PostStubView = ({ post }: PostFeedItemProps) => {
   const comments: any[] = []
 
   return (
-    <div>
-      {post.content && <HtmlContent content={post.content} className="font-feed" />}
+    <Grid container rowGap={2}>
+      <div className='p-2 min-w-full'>
+        {post.content && <HtmlContent content={post.content} className="font-feed" />}
 
-      {post.images && post.images[0] && <GalleryPhotoswipe images={post.images} />}
+        {post.images && post.images[0] && <GalleryPhotoswipe images={post.images} />}
 
-      {post.share && <SharedPostStubView share={post.share} />}
-
-      {post.commentThread && <PostCommentThread postStub={post} /> }
-    </div>
+        {post.share && <SharedPostStubView share={post.share} />}
+      </div>
+      
+      {post.commentThread && 
+        <div className='border border-neutral border-opacity-50 rounded-md p-2 m-2 min-w-fit'>
+          <PostCommentThread postStub={post} /> 
+        </div>
+      }
+    </Grid>
   )
 }
 

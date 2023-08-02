@@ -109,12 +109,12 @@ export type UserStub = {
  *  slug: String
  * }
  */
-export const UserStubSelect = {
+export const UserStubSelect = { select: {
   id: true,
   name: true,
   image: true,
   slug: true
-}
+}}
 
 export type UserDetail = User & {
   membership?:  Membership & {
@@ -164,18 +164,14 @@ export const UserDetailInclude = { include: {
   // },
   follower: {
     include: {
-      following: {
-        select: UserStubSelect
-      },
+      following: UserStubSelect,
     },
     orderBy: {createdAt: 'desc'},
     take: 10
   },
   following: {
     include: {
-      follower: {
-        select: UserStubSelect
-      },
+      follower: UserStubSelect,
     },
     orderBy: {createdAt: 'desc'},
     take: 10

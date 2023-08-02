@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material"
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { useToast } from "components/context/ToastContextProvider"
-import Avatar from "components/ui/avatar/avatar"
+import UserAvatar from "components/ui/avatar/userAvatar"
 import { FireIcon, HeartIcon } from "components/ui/icons"
 import JsonBlock from "components/ui/jsonBlock"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
@@ -180,7 +180,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
           <h2 className="h-subtitle">Fans</h2>
           <div className="flex space-x-2 space-y-2">
             {fans.map((follow:FollowStub) => (
-              <Avatar user={follow.follower} sz='md' key={uniqueKey(currentUser, follow)} />
+              <UserAvatar user={follow.follower} sz='md' key={uniqueKey(currentUser, follow)} />
             ))}
           </div>
         </div>
@@ -188,7 +188,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
           <h2 className="h-subtitle">Followers</h2>
           <div className="flex space-x-2 space-y-2">
             {followers.map((follow:FollowStub) => (
-              <Avatar user={follow.follower} sz='md' key={uniqueKey(currentUser, follow)} />
+              <UserAvatar user={follow.follower} sz='md' key={uniqueKey(currentUser, follow)} />
             ))}
           </div>
         </div>
@@ -201,7 +201,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
           <h2 className="h-subtitle">Stans</h2>
           <div className="flex space-x-2 space-y-2">
             {stans.map((follow:FollowStub) => (
-              <Avatar user={follow.following} sz='md' key={uniqueKey(currentUser, follow)} />
+              <UserAvatar user={follow.following} sz='md' key={uniqueKey(currentUser, follow)} />
             ))}
           </div>
         </div>
@@ -209,7 +209,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
           <h2 className="h-subtitle">Following</h2>
           <div className="flex space-x-2 space-y-2">
             {following.map((follow:FollowStub) => (
-              <Avatar user={follow.following} sz='md' key={uniqueKey(currentUser, follow)} />
+              <UserAvatar user={follow.following} sz='md' key={uniqueKey(currentUser, follow)} />
             ))}
           </div>
         </div>

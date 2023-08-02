@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { CommentThreadDetails, CyfrUser } from "../../../prisma/prismaContext"
 import { uniqueKey } from "../../../utils/helpers"
-import Avatar from "../../ui/avatar/avatar"
+import UserAvatar from "../../ui/avatar/userAvatar"
 
 type InboxThreadListProps = {
   cyfrUser: CyfrUser
@@ -41,7 +41,7 @@ const InboxThreadList = ({
                   key={uniqueKey(cyfrUser, thread, u)}
                   onClick={() => onThreadClick(thread)}
                 >
-                  <Avatar user={u.user} sz="sm" link={false} />
+                  <UserAvatar user={u.user} sz="sm" link={false} />
                   <span className="my-2 mx-2">{u.user.name}</span>
                   <span className="m-auto text-xs text-primary-content text-center float-right rounded-full h-4 w-4 bg-primary">{thread.comments.length}</span>
                 </div>

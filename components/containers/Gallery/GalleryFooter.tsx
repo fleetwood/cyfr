@@ -1,6 +1,6 @@
 import { useCommentContext } from "components/context/CommentContextProvider"
 import { useToast } from "components/context/ToastContextProvider"
-import AvatarList from "components/ui/avatarList"
+import UserAvatarList from "components/ui/avatar/userAvatarList"
 import { ShareIcon, ReplyIcon, HeartIcon, GalleryIcon, EyeIcon } from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
@@ -94,7 +94,7 @@ const GalleryFooter = ({
           label={`Likes (${abbrNum(gallery._count.likes)})`}
           onClick={() => handleLike()}
         />
-        <AvatarList users={[]} sz="xs" />
+        <UserAvatarList users={[]} sz="xs" />
       </div>
 
       <div className="font-semibold uppercase">
@@ -106,7 +106,7 @@ const GalleryFooter = ({
           label={`Shares (${abbrNum(gallery._count.shares)})`}
           onClick={() => handleShare()}
         />
-        <AvatarList users={[]} sz="xs" />
+        <UserAvatarList users={[]} sz="xs" />
       </div>
 
       <div className="font-semibold uppercase">

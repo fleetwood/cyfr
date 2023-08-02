@@ -6,6 +6,12 @@ export type classNameProps = {
 
 export type SizeProps = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 
+export const wh = (sz:SizeProps) => sz === 'xs' ? 24 :
+           sz === 'sm' ? 36 :
+           sz === 'lg' ? 60 :
+           sz === 'xl' ? 72 :
+           48 // sz === md
+           
 export type KeyVal = {
   key: string
   value?: string | number | null

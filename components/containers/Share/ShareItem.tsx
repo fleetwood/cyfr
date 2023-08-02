@@ -1,6 +1,6 @@
 import HtmlContent from 'components/ui/htmlContent'
 import { PostStub } from 'prisma/types'
-import Avatar from "../../ui/avatar/avatar"
+import UserAvatar from "../../ui/avatar/userAvatar"
 
 type ShareItemProps = {
     post: PostStub
@@ -12,7 +12,7 @@ const ShareItem = ({post}:ShareItemProps) => {
         <div className="relative">
             {post.content && <HtmlContent content={post.content} className="font-feed" />}
             <div className="absolute -mt-6 right-0">
-                <Avatar shadow={true} user={post.creator} sz="sm" />
+                <UserAvatar shadow={true} user={post.creator} sz="sm" />
             </div>
         </div>
     }

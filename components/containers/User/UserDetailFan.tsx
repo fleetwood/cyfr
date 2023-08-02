@@ -1,5 +1,5 @@
 import { User } from '@prisma/client'
-import Avatar from '../../ui/avatar/avatar'
+import UserAvatar from '../../ui/avatar/userAvatar'
 import { uuid } from '../../../utils/helpers'
 
 type UserDetailFansProps = {
@@ -10,7 +10,7 @@ type UserDetailFansProps = {
 const UserDetailFan = ({fan, ...props}:UserDetailFansProps) => {
     return (
     <div key={uuid(props.key)}>
-        <Avatar user={fan} sz='md' />
+        <UserAvatar user={fan} sz='md' />
     </div>
 )}
 
