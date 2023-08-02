@@ -24,7 +24,7 @@ const PostStubView = ({ post }: PostFeedItemProps) => (
     </div>
     
     {post.commentThread && 
-      <div className='border border-neutral border-opacity-50 rounded-md p-2 m-2 min-w-fit'>
+      <div className='border border-neutral border-opacity-50 rounded-md p-2 m-2 grow'>
         <PostCommentThread postStub={post} /> 
       </div>
     }

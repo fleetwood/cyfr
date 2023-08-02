@@ -1,4 +1,4 @@
-import { Avatar, Chip, Grid } from "@mui/material"
+import { Avatar, Button, Chip, Grid } from "@mui/material"
 import { useToast } from "components/context/ToastContextProvider"
 import { SocialTextarea } from "components/forms"
 import UserAvatar from "components/ui/avatar/userAvatar"
@@ -8,8 +8,6 @@ import { ReplyIcon } from "components/ui/icons"
 import useFeed from "hooks/useFeed"
 import { CreatorStub, PostDetail, PostStub } from "prisma/types"
 import useApi from "prisma/useApi"
-import useCommentApi from "prisma/useApi/comment"
-import useCyfrUserApi from "prisma/useApi/cyfrUser"
 import { useState } from "react"
 import { timeDifference } from "utils/helpers"
 
@@ -27,6 +25,8 @@ const CommentThread = ({postStub, postDetail}:CommentThreadTypes) => {
   const {addComment} = useApi.comment()
   const {invalidate} = useFeed('post')
   const {notify, notifyError} = useToast()
+  const [SayThings, setSayThings] = useState(false)
+
   const commentThread = 
     postStub ? postStub.commentThread : 
     postDetail ? postDetail.commentThread : 
@@ -39,9 +39,11 @@ const CommentThread = ({postStub, postDetail}:CommentThreadTypes) => {
       notifyError()
       return
     }
+    setSayThings(false)
     const result = await addComment({creatorId: cyfrUser.id, threadId: commentThread!.id, content: comment})
     if (result) {
       notify('Sending all the notifs!!')
+      setComment(() => null)
       invalidate()
       return
     }
@@ -50,10 +52,14 @@ const CommentThread = ({postStub, postDetail}:CommentThreadTypes) => {
 
   return (
     <Grid container rowSpacing={2} columns={12}>
+      
       <Grid xs={12}>
-        <Avatar alt="Comments" sx={{bgcolor: 'info', height: 36, width: 36}} >{ReplyIcon}</Avatar>
+        <Button onClick={() => setSayThings((s) => !s)}>
+          <Avatar alt="Comments" sx={{bgcolor: 'info', height: 36, width: 36}}  >{ReplyIcon}</Avatar>
+        </Button>
       </Grid>
-      <Grid xs={12}>
+
+      <Grid xs={12} className={SayThings?'block':'hidden'}>
         <Grid xs={2}>
           <Chip
             color='info'
@@ -64,10 +70,11 @@ const CommentThread = ({postStub, postDetail}:CommentThreadTypes) => {
           />
         </Grid>
         <Grid xs={9}>
-          <SocialTextarea content={comment} setContent={setComment} />
+          <SocialTextarea content={comment} setContent={setComment} maxChar={512} />
           <EZButton label="Add Comment" variant="primary" onClick={createComment} />
         </Grid>
       </Grid>
+      
       {commentThread?.comments && commentThread?.comments.map((comment:any) => (
       <Grid xs={12} container className="bg-base-100 even:bg-opacity-50 p-1 mt-1 rounded-md">
         <Grid xs={2}>
@@ -84,6 +91,7 @@ const CommentThread = ({postStub, postDetail}:CommentThreadTypes) => {
         </Grid>
       </Grid>
       ))}
+
     </Grid>
   )
 }

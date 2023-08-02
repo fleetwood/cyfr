@@ -41,7 +41,7 @@ const ToastProvider = ({ children }: ToastProviderProps) => {
       toast: (
         <Toasty
           message={message}
-          type={type || "info"}
+          type={type ?? "info"}
           key={uuid()}
           toastId={toastId}
         />

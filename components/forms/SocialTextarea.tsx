@@ -123,7 +123,7 @@ const SocialTextarea = ({
   }, [search])
 
   return (
-    <div className="remirror-theme bg-base-200 text-base-content rounded-md">
+    <div className="remirror-theme bg-base-200 text-base-content rounded-md grow">
       <Remirror
         manager={manager}
         initialContent={state}
@@ -135,7 +135,7 @@ const SocialTextarea = ({
         <EditorComponent />
       </Remirror>
       {maxChar > 0 && (
-        <div className="w-full flex">
+        <div className="flex flex-grow">
             {/* @ts-ignore */}
             <progress className={`w-full -my-1 h-1 ${count >= maxChar ? 'progress-error' : perc > 90 ? 'progress-warning' : 'progress-primary'}`} value={perc} max={100} />
         </div>
