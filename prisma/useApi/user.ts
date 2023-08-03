@@ -1,7 +1,7 @@
 import useRocketQuery from "hooks/useRocketQuery"
 import useDebug from "hooks/useDebug"
 import { getApi, sendApi } from "utils/api"
-import { AudienceLevels, Book, UserDetail, UserDetailProps, UserFollowProps, UserInfo, UserStub } from "prisma/prismaContext"
+import { AudienceLevels, Book, PrismaUser, UserDetail, UserDetailProps, UserFollowProps, UserInfo, UserStub } from "prisma/prismaContext"
 
 const {debug} = useDebug('prisma/api/userApi', )
 
@@ -32,7 +32,12 @@ const {debug} = useDebug('prisma/api/userApi', )
     return []
   }
 
-  const info = async (id: string):Promise<UserInfo> => await getApi(`user/${id}/info`) as UserInfo
+  /**
+   * @see {@link PrismaUser.userInfo} info
+   * @param id 
+   * @returns Promise:{@link UserInfo} 
+   */
+  const info = async (id: string):Promise<UserInfo> => await getApi(`user/${id}/info`)
 
   const books = async (id:String):Promise<Book[]> => await (await getApi(`user/books/${id}`)).data
 

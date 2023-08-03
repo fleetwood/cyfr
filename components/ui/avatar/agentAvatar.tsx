@@ -1,168 +1,91 @@
-import { Transition } from "@headlessui/react"
+import { Avatar, Badge } from "@mui/material"
 import useDebug from "hooks/useDebug"
-import Link from "next/link"
 import {
-  AgentDetail,
-  AgentStub,
-  MembershipType,
-  UserInfo
+  CyfrUser,
+  User,
+  UserDetail,
+  UserFeed,
+  UserFollow,
+  UserStub
 } from "prisma/prismaContext"
-import useApi from "prisma/useApi"
 import { useState } from "react"
-import { SizeProps } from "types/props"
+import { SizeProps, wh } from "types/props"
 import { cloudinary } from "utils/cloudinary"
-import { abbrNum } from "utils/helpers"
-import Spinner from "../spinner"
+import Semibold from "../semibold"
+import UserInfoMenu from "./userInfoMenu"
 
 const {debug, jsonBlock} = useDebug('avatar')
 
-export type AgentUser = AgentDetail | AgentStub
+export type AvatarUser = CyfrUser | UserDetail | UserFeed | UserStub | UserFollow | User
 
 type AvatarProps = {
-  agent?: AgentUser
+  user?: AvatarUser
   link?: boolean
   shadow?: boolean
   className?: string
   placeholder?: string
   variant?: AvatarVariants[]
   sz: SizeProps
-  onClick?: (agent:AgentUser) => void
+  onClick?: (user:AvatarUser) => void
 }
 
 export type AvatarVariants = 'default'|'no-profile'
 
 const AgentAvatar = ({
-  agent,
+  user,
+  placeholder,
   className,
+  shadow,
   sz,
   link = true,
   onClick,
   variant = ['default'],
 }: AvatarProps) => {
-  if (!agent) return <></>
+  if (!user) return <></>
   
   const [showProfile, setShowProfile] = useState(false)
   
-  const {info} = useApi.user()
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [userInfo, setUserInfo] = useState<UserInfo>()
-
-  const {user} = agent
-
-  const numBooks = userInfo?._count.books
-  const numFollowers = userInfo?._count.follower
-  const numFollowing = userInfo?._count.following
-  const numStans = 'NI' //userInfo?._count.follower??0
-  const numFans = 'NI' //userInfo?._count.following??0
-
-  const allowProfile = variant.indexOf('no-profile')<0
-  const content =
-    agent && 
-      user.image ? ( <img src={cloudinary.avatar(user.image, sz as unknown as SizeProps)} /> ) : 
-      agent ? ( user.name ) :
-      ("?")
-
-    const online =
-    // @ts-ignore
-    agent && agent._count && agent._count.sessions && agent._count.sessions > 0
-      ? "online"
-      : ""
-
-  // @ts-ignore
-  const member = agent?.membership?.type ? (agent?.membership?.type as unknown as MembershipType).name.toLowerCase() : ''
-  
-  const init = async () => {
-    debug('init')
-    setShowProfile(() => true)
-    if (userInfo) {
-      debug('alreadyGotUserInfo', userInfo)
-      return
+  const stringToColour = (str: string) => {
+    let hash = 0;
+    str.split('').forEach(char => {
+      hash = char.charCodeAt(0) + ((hash << 5) - hash)
+    })
+    let colour = '#'
+    for (let i = 0; i < 3; i++) {
+      const value = (hash >> (i * 8)) & 0xff
+      colour += value.toString(16).padStart(2, '0')
     }
-
-    if (!agent) {
-      debug('aint got no agent')
-      return
-    }
-
-    setIsLoading(() => true)
-    debug('getting agent info....', agent.id)
-    // get agent infro from api
-    const result = await info(agent.id)
-    
-    if (result) {
-      debug('userInfo', result)
-      setUserInfo(() => result)
-      setIsLoading(() => false)
-    }
+    return colour
   }
 
-  const otherClasses = [online, member, className].join(' ').trim()
-  
+  const s = wh(sz)
+
+  const initials = (str:string) => str.split(/[^a-z0-9]/gmi).map(s => s.substring(0,1).toUpperCase()).join('').substring(0,2)
+
+  const allowProfile = variant.indexOf('no-profile')<0
+
+  const content = (
+    <Badge overlap="circular" variant="dot"
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
+      >
+      {user.image ?
+        <Avatar alt={user.name!} src={cloudinary.avatar(user.image, sz as unknown as SizeProps)} sx={{ width: s, height: s}} />
+        :
+        <Avatar alt={user.name!} sx={{bgcolor: stringToColour(user.name!), width: s, height: s}} >
+          <Semibold>{initials(user.name!)}</Semibold>
+        </Avatar>
+      }
+    </Badge>)
+
   return (
     <div 
-      className={`avatar relative ${otherClasses}`} 
-      onMouseOverCapture={() => allowProfile ? init() : {}}
+      onMouseOverCapture={() => setShowProfile(() => allowProfile)}
       onMouseOutCapture={() => setShowProfile(() => false)}
-      onClickCapture={() => onClick && onClick(agent)}
+      onClickCapture={() => onClick && onClick(user)}
     >
-      <div className={`mask mask-squircle`}>
-        {!onClick && link && agent ? <a href={`/agent/${user.slug}`}>{content}</a> : content}
-      </div>
-      {allowProfile && userInfo && 
-      <Transition
-        show={showProfile}
-        enter="transition-all duration-200"
-        enterFrom="opacity-0 invisible"
-        enterTo="opacity-100"
-        leave="transition-all duration-200"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0 invisible"
-      >
-        {isLoading && <Spinner />}
-        {!isLoading && userInfo !== null &&
-          <div className={`
-            absolute z-10
-            bg-base-300 text-base-content
-            text-sm rounded-lg shadow-lg shadow-black
-            `}
-            >
-              <div className="px-3 py-2 bg-primary text-primary-content rounded-t-lg">
-                <Link href={`/agent/${user.slug}`}><h3 className="font-semibold">{userInfo?.name}</h3></Link>
-              </div>
-
-              <div className="px-3 py-2 flex flex-row">
-                
-                <div className="flex flex-col p-2">
-                  <div className="flex odd:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Books</div>
-                    <div>{numBooks}</div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col p-2">
-                  <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Followers</div>
-                    <div>{abbrNum(numFollowers)}</div>
-                  </div>
-                  <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Fans</div>
-                    <div>{numFans}</div>
-                  </div>
-                  <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Follows</div>
-                    <div>{abbrNum(numFollowing)}</div>
-                  </div>
-                  <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Stans</div>
-                    <div>{numStans}</div>
-                  </div>
-                </div>
-
-              </div>
-          </div>
-        }
-      </Transition>
+      {!onClick && link && user ? <a href={`/user/${user.slug}`}>{content}</a> : content}
+      {allowProfile && 
+        <UserInfoMenu user={user} showProfile={showProfile} setShowProfile={setShowProfile} />
       }
     </div>
   )

@@ -1,174 +1,93 @@
-import { Transition } from "@headlessui/react"
-import { useState } from "react"
+import { Avatar, Badge } from "@mui/material"
+import useDebug from "hooks/useDebug"
 import {
-    Author,
-  AuthorDetail,
   AuthorStub,
   CyfrUser,
-  MembershipType,
+  User,
   UserDetail,
   UserFeed,
   UserFollow,
-  UserInfo,
-  UserStub,
+  UserStub
 } from "prisma/prismaContext"
+import { useState } from "react"
+import { SizeProps, wh } from "types/props"
 import { cloudinary } from "utils/cloudinary"
-import Spinner from "../spinner"
-import useDebug from "hooks/useDebug"
-import { SizeProps } from "types/props"
-import { abbrNum } from "utils/helpers"
-import Link from "next/link"
-import useApi from "prisma/useApi"
+import Semibold from "../semibold"
+import UserInfoMenu from "./userInfoMenu"
 
 const {debug, jsonBlock} = useDebug('avatar')
 
-export type AuthorUser = AuthorDetail | AuthorStub
+export type AvatarUser = AuthorStub
 
-type AvatarProps = {
-  author?: AuthorUser
+type AuthorAvatarProps = {
+  author?: AvatarUser
   link?: boolean
   shadow?: boolean
   className?: string
   placeholder?: string
   variant?: AvatarVariants[]
   sz: SizeProps
-  onClick?: (author:AuthorUser) => void
+  onClick?: (user:AvatarUser) => void
 }
 
 export type AvatarVariants = 'default'|'no-profile'
 
 const AuthorAvatar = ({
   author,
+  placeholder,
   className,
+  shadow,
   sz,
   link = true,
   onClick,
   variant = ['default'],
-}: AvatarProps) => {
+}: AuthorAvatarProps) => {
   if (!author) return <></>
   
+  const {user} = author
   const [showProfile, setShowProfile] = useState(false)
   
-  const {info} = useApi.user()
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [userInfo, setUserInfo] = useState<UserInfo>()
-
-  const {user} = author
-
-  const numBooks = userInfo?._count.books
-  const numFollowers = userInfo?._count.follower
-  const numFollowing = userInfo?._count.following
-  const numStans = 'NI' //userInfo?._count.follower??0
-  const numFans = 'NI' //userInfo?._count.following??0
-
-  const allowProfile = variant.indexOf('no-profile')<0
-  const content =
-    author && 
-      user.image ? ( <img src={cloudinary.avatar(user.image, sz as unknown as SizeProps)} /> ) : 
-      author ? ( user.name ) :
-      ("?")
-
-    const online =
-    // @ts-ignore
-    author && author._count && author._count.sessions && author._count.sessions > 0
-      ? "online"
-      : ""
-
-  // @ts-ignore
-  const member = author?.membership?.type ? (author?.membership?.type as unknown as MembershipType).name.toLowerCase() : ''
-  
-  const init = async () => {
-    debug('init')
-    setShowProfile(() => true)
-    if (userInfo) {
-      debug('alreadyGotUserInfo', userInfo)
-      return
+  const stringToColour = (str: string) => {
+    let hash = 0;
+    str.split('').forEach(char => {
+      hash = char.charCodeAt(0) + ((hash << 5) - hash)
+    })
+    let colour = '#'
+    for (let i = 0; i < 3; i++) {
+      const value = (hash >> (i * 8)) & 0xff
+      colour += value.toString(16).padStart(2, '0')
     }
-
-    if (!author) {
-      debug('aint got no author')
-      return
-    }
-
-    setIsLoading(() => true)
-    debug('getting author info....', author.id)
-    // get author infro from api
-    const result = await info(author.id)
-    
-    if (result) {
-      debug('userInfo', result)
-      setUserInfo(() => result)
-      setIsLoading(() => false)
-    }
+    return colour
   }
 
-  const otherClasses = [online, member, className].join(' ').trim()
-  
+  const s = wh(sz)
+
+  const initials = (str:string) => str.split(/[^a-z0-9]/gmi).map(s => s.substring(0,1).toUpperCase()).join('').substring(0,2)
+
+  const allowProfile = variant.indexOf('no-profile')<0
+
+  const content = (
+    <Badge overlap="circular" variant="dot"
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} 
+      >
+      {user.image ?
+        <Avatar alt={user.name!} src={cloudinary.avatar(user.image, sz as unknown as SizeProps)} sx={{ width: s, height: s}} />
+        :
+        <Avatar alt={user.name!} sx={{bgcolor: stringToColour(user.name!), width: s, height: s}} >
+          <Semibold>{initials(user.name!)}</Semibold>
+        </Avatar>
+      }
+    </Badge>)
+
   return (
     <div 
-      className={`avatar relative ${otherClasses}`} 
-      onMouseOverCapture={() => allowProfile ? init() : {}}
+      onMouseOverCapture={() => setShowProfile(() => allowProfile)}
       onMouseOutCapture={() => setShowProfile(() => false)}
       onClickCapture={() => onClick && onClick(author)}
-    >
-      <div className={`mask mask-squircle`}>
-        {!onClick && link && author ? <a href={`/author/${user.slug}`}>{content}</a> : content}
-      </div>
-      {allowProfile && userInfo && 
-      <Transition
-        show={showProfile}
-        enter="transition-all duration-200"
-        enterFrom="opacity-0 invisible"
-        enterTo="opacity-100"
-        leave="transition-all duration-200"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0 invisible"
       >
-        {isLoading && <Spinner />}
-        {!isLoading && userInfo !== null &&
-          <div className={`
-            absolute z-10
-            bg-base-300 text-base-content
-            text-sm rounded-lg shadow-lg shadow-black
-            `}
-            >
-              <div className="px-3 py-2 bg-primary text-primary-content rounded-t-lg">
-                <Link href={`/author/${user.slug}`}><h3 className="font-semibold">{userInfo?.name}</h3></Link>
-              </div>
-
-              <div className="px-3 py-2 flex flex-row">
-                
-                <div className="flex flex-col p-2">
-                  <div className="flex odd:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Books</div>
-                    <div>{numBooks}</div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col p-2">
-                  <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Followers</div>
-                    <div>{abbrNum(numFollowers)}</div>
-                  </div>
-                  <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Fans</div>
-                    <div>{numFans}</div>
-                  </div>
-                  <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Follows</div>
-                    <div>{abbrNum(numFollowing)}</div>
-                  </div>
-                  <div className="flex even:bg-base-200 justify-between space-x-2 p-2">
-                    <div className="font-semibold">Stans</div>
-                    <div>{numStans}</div>
-                  </div>
-                </div>
-
-              </div>
-          </div>
-        }
-      </Transition>
+      {!onClick && link && author ? <a href={`/user/${user.slug}`}>{content}</a> : content}
+      {allowProfile && 
+        <UserInfoMenu user={user} showProfile={showProfile} setShowProfile={setShowProfile} />
       }
     </div>
   )

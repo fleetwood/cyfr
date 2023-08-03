@@ -84,7 +84,6 @@ const CreatePostModal = (): JSX.Element => {
                 <SocialTextarea
                   content={content}
                   setContent={setContent}
-                  maxChar={512}
                   setValid={setIsValid}
                 />
 

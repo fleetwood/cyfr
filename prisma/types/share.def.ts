@@ -67,6 +67,16 @@ export type ShareEventProps = {
   event: Event
 }
 
+export type ShareAgentProps = {
+  creator: CyfrUser
+  event: Event
+}
+
+export type ShareUserProps = {
+  creator: CyfrUser
+  event: Event
+}
+
 export type SharesLikes = {
   likes:        LikeStub[]
   shares:       Share & {

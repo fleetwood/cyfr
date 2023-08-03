@@ -190,24 +190,30 @@
     .scrollbar-only {
         @apply scrollbar-track-transparent scrollbar-thumb-primary
     }
+    
+    .border-reader { @apply border-[#3af] }
+    .bg-reader { @apply bg-[#3af] }
+    .text-reader { @apply text-[#3af] }
 
-    .avatar.member::after, .avatar.agent::after {
-        content: '\00a0';
-        border-radius: 9999px;
-        width: 15%;
-        height: 15%;
-        bottom: 7%;
-        right: 7%;
-        box-shadow: 0 0 0 2px hsl(var(--b1));
-        @apply block z-10 absolute
-    }
-    .avatar.member::after {
-        @apply bg-primary 
-    }
-    .avatar.agent::after {
-        @apply bg-yellow-500 
-    }
+    .border-author { @apply border-[#c36] }
+    .bg-author { @apply bg-[#c36] }
+    .text-author { @apply text-[#c36] }
+    
+    .border-artist { @apply border-[#f6f] }
+    .bg-artist { @apply bg-[#f6f] }
+    .text-artist { @apply text-[#f6f] }
+    
+    .border-editor { @apply border-[#93f] }
+    .bg-editor { @apply bg-[#93f] }
+    .text-editor { @apply text-[#93f] }
 
+    .border-agent { @apply border-[#fca] }
+    .bg-agent { @apply bg-[#fca] }
+    .text-agent { @apply text-[#fca] }
+    
+    .border-publisher { @apply border-[#f93] }
+    .bg-publisher { @apply bg-[#f93] }
+    .text-publisher { @apply text-[#f93] }
 }
 
 @layer utilities {

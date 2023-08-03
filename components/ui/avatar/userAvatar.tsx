@@ -2,7 +2,6 @@ import { Avatar, Badge } from "@mui/material"
 import useDebug from "hooks/useDebug"
 import {
   CyfrUser,
-  MembershipType,
   User,
   UserDetail,
   UserFeed,
@@ -10,10 +9,10 @@ import {
   UserStub
 } from "prisma/prismaContext"
 import { useState } from "react"
-import { SizeProps, wh } from "types/props"
+import { SizeProps, stringToColour, wh } from "types/props"
 import { cloudinary } from "utils/cloudinary"
-import UserInfoMenu from "./userInfoMenu"
 import Semibold from "../semibold"
+import UserInfoMenu from "./userInfoMenu"
 
 const {debug, jsonBlock} = useDebug('avatar')
 
@@ -46,19 +45,6 @@ const UserAvatar = ({
   
   const [showProfile, setShowProfile] = useState(false)
   
-  const stringToColour = (str: string) => {
-    let hash = 0;
-    str.split('').forEach(char => {
-      hash = char.charCodeAt(0) + ((hash << 5) - hash)
-    })
-    let colour = '#'
-    for (let i = 0; i < 3; i++) {
-      const value = (hash >> (i * 8)) & 0xff
-      colour += value.toString(16).padStart(2, '0')
-    }
-    return colour
-  }
-
   const s = wh(sz)
 
   const initials = (str:string) => str.split(/[^a-z0-9]/gmi).map(s => s.substring(0,1).toUpperCase()).join('').substring(0,2)

@@ -221,34 +221,43 @@ export const CreatorStubSelect = {
   }
 }
 
-export type UserInfo = User & {
-  _count: {
-    likes:      number
-    following:  number
-    follower:   number
-    books:      number
-    posts:      number
-    galleries:  number
-  },
+export type UserInfo = {
+  id:         string
+  name:       string
+  image?:     string
+  slug?:      string
+  followers:  number
+  fans:       number
+  following:  number
+  stans:      number
+  likes:      number
+  books:      number
+  posts:      number
+  galleries:  number
   membership: Membership & {
     type: MembershipType
   }
 }
 
-export const UserInfoInclude = { include: {
-  membership: {
-    include: {
-      type: true
-    }
-  },
-  _count: {
-    select: {
-      likes:      true,
-      following:  true,
-      follower:   true,
-      books:      true,
-      posts:      true,
-      galleries:  true,
+export const UserInfoSelect = { select: {
+  id: true,
+  name: true,
+  image: true,
+  slug: true,
+  membership: { include: {
+    type: true
+  }},
+  following: { select: {
+    isFan: true
+  }},
+  follower: { select: {
+      isFan: true
+  }},
+  _count: { select: {
+    likes:      true,
+    books:      true,
+    posts:      true,
+    galleries:  true,
   }}
 }}
 

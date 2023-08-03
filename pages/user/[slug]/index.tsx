@@ -25,8 +25,8 @@ const UserDetailPage = ({layout='main', ...props}:UserDetailProps) => {
       layout === 'main' &&
       <MainLayout
         pageTitle="User Detail"
-        sectionTitle=""
-        subTitle={currentUser?.name || ""}
+        sectionTitle={currentUser?.name??''}
+        subTitle={currentUser?.membership?.type.name??''}
       >
         {currentUser && 
           <UserDetailView slug={currentUser!.slug!} />

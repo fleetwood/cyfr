@@ -15,7 +15,7 @@ import {
   prisma, User, UserDetail,
   UserFollowProps,
   UserInfo,
-  UserInfoInclude,
+  UserInfoSelect,
   UserStub
 } from "prisma/prismaContext"
 import { cadenceInterval } from "prisma/useApi/cyfrUser"
@@ -92,10 +92,28 @@ const userInfo = async (id:string): Promise<UserInfo> => {
   try {
     const result = await prisma.user.findUnique({
       where: { id },
-      ...UserInfoInclude
+      ...UserInfoSelect
     })
 
-    if (result) return result as UserInfo
+    if (result) {
+      const {
+        id, name, image, slug, membership,
+        _count: {
+          likes: likes, 
+          books: books,
+          posts: posts,
+          galleries: galleries
+        }} = result
+      
+      return {
+        id, name, image, slug, membership,
+        likes, books, posts, galleries,
+        following: (result.follower??[]).filter(f => f.isFan === false).length,
+        stans: (result.follower??[]).filter(f => f.isFan === true).length,
+        followers: (result.follower??[]).filter(f => f.isFan === false).length,
+        fans: (result.follower??[]).filter(f => f.isFan === true).length,
+      } as UserInfo
+    }
     
     throw {code: fileMethod, message: 'Could not find info for that user id'}
   } catch (error) {

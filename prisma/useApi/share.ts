@@ -1,5 +1,5 @@
 import useDebug from "hooks/useDebug"
-import { ShareBookProps, ShareCharacterProps, ShareCoverProps, ShareEngageProps, ShareEventProps, ShareGalleryProps, ShareImageProps, SharePostProps } from "prisma/prismaContext"
+import { ShareAgentProps, ShareBookProps, ShareCharacterProps, ShareCoverProps, ShareEngageProps, ShareEventProps, ShareGalleryProps, ShareImageProps, SharePostProps, ShareUserProps } from "prisma/prismaContext"
 import { NotImplemented } from "utils/api"
 
 const {debug} = useDebug('hooks/useShareApi')
@@ -19,6 +19,10 @@ const {debug} = useDebug('hooks/useShareApi')
   const shareCover = async (props: ShareCoverProps):Promise<boolean> => {throw NotImplemented('shareCover')} //await (await sendApi("cover/share", props)).data
   
   const shareEvent = async (props: ShareEventProps):Promise<boolean> => {throw NotImplemented('shareEvent')} //await (await sendApi("event/share", props)).data
+  
+  const shareAgent = async (props: ShareAgentProps):Promise<boolean> => {throw NotImplemented('shareAgent')} //await (await sendApi("event/share", props)).data
+  
+  const shareUser = async (props: ShareUserProps):Promise<boolean> => {throw NotImplemented('shareUser')} //await (await sendApi("event/share", props)).data
 
   const like = async (props: ShareEngageProps):Promise<boolean>  => {throw NotImplemented('like')}  //await (await sendApi("post/like", props)).data
 
@@ -33,6 +37,8 @@ const useShareApi = () => {
     , shareCharacter
     , shareCover
     , shareEvent
+    , shareAgent
+    , shareUser
   }
 }
 
