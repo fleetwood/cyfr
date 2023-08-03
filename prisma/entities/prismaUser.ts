@@ -110,8 +110,8 @@ const userInfo = async (id:string): Promise<UserInfo> => {
         likes, books, posts, galleries,
         following: (result.follower??[]).filter(f => f.isFan === false).length,
         stans: (result.follower??[]).filter(f => f.isFan === true).length,
-        followers: (result.follower??[]).filter(f => f.isFan === false).length,
-        fans: (result.follower??[]).filter(f => f.isFan === true).length,
+        followers: (result.following??[]).filter(f => f.isFan === false).length,
+        fans: (result.following??[]).filter(f => f.isFan === true).length,
       } as UserInfo
     }
     
