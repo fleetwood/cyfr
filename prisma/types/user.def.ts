@@ -30,22 +30,8 @@ export type CyfrUser = User & {
   userAuthor?: Author 
   userEditor?: Editor // user is an editor
   userReader?: Reader // user is a reader
-  books:        BookStub[]
-  galleries: {
-        id: string
-        createdAt: string
-        updatedAt: string
-        visible: boolean
-        title?: string
-        description?: string
-        creatorId: string,
-        shareId?: string,
-        _count: {
-          images: number,
-          likes:  number,
-          shares: number
-        }
-  }[]
+  books:       BookStub[]
+  galleries:   GalleryStub[]
   _count: {
     posts:      number
     follower:   number
@@ -66,17 +52,35 @@ export const CyfrUserInclude = {
   userAuthor: true,
   userEditor: true,
   userReader: true,
-  galleries: {
-    include: {
-      _count: {
-        select: {
-          images: true,
-          likes: true,
-          shares: true
-        }
-      }
-    }
-  },
+  galleries: { include: {
+    creator: { select: { 
+      id: true,
+      name: true,
+      image: true,
+      membership: true
+    }},
+    images: { include: {
+      _count: { select: {
+        likes: true,
+        shares: true
+      }}
+    }},
+    commentThread: { include: {
+      comments: { include: {
+          creator: true
+        },
+        take: 10
+      },
+      _count: { select: {
+          comments: true
+      }}
+    }},
+    permission: true,
+      _count: { select: {
+        likes: true,
+        shares: true
+    }},
+  }},
   books: {
     include: {
       cover: true,
@@ -90,7 +94,9 @@ export const CyfrUserInclude = {
       }
     }
   },
-  membership: true
+  membership: { include: {
+    type: true
+  }}
 }
 
 export type UserStub = {

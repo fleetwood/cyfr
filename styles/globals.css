@@ -73,6 +73,25 @@
     .accent {
         @apply text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-content
     }
+    .dot {
+        display: inline-block;
+        animation-name: bouncing;
+        animation-duration: 700ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-out;
+        &:nth-child(2) {
+          animation-delay: 125ms;
+        }
+        &:nth-child(3) {
+          animation-delay: 250ms;
+        }
+      }
+      
+    @keyframes bouncing {
+        0% { transform: none; }
+        50% { transform: translateY(-.25em); }
+    }
+
     .stroke-white {
         -webkit-text-stroke-width: 0.5px;
         -webkit-text-stroke-color: #ffffff;

@@ -19,13 +19,14 @@
     "stop:redis": "redis-cli shutdown"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.0",
+    "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.7",
     "@heroicons/react": "^2.0.13",
     "@material-tailwind/react": "^2.0.1",
     "@mui/base": "^5.0.0-alpha.128",
-    "@mui/material": "^5.12.3",
+    "@mui/icons-material": "^5.14.3",
+    "@mui/material": "^5.14.3",
     "@next-auth/prisma-adapter": "^0.5.2-next.19",
     "@prisma/client": "^4.9.0",
     "@remirror/extension-count": "^2.0.11",

@@ -12,10 +12,9 @@ const UserMembershipPage = () => {
         <UserBillingDetail />
       }
         
-        <div className="relative">
-            <h2>Memberships</h2>
-            <p>Actually it should be communes, but whateves. Do that here.</p>
-        </div>
+      <div>
+        <p>Communes, whateves. Do that here.</p>
+      </div>
     </div>
   </MainLayout>
 )};
