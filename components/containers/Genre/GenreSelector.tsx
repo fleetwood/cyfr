@@ -1,11 +1,10 @@
-import { Menu, MenuItem } from '@mui/material'
-import { TailwindSelectInput } from 'components/forms'
+import {Menu, MenuItem} from '@mui/material'
 import TailwindLabel from 'components/forms/TailwindLabel'
 import useDebug from 'hooks/useDebug'
-import { Genre, GenreStub } from 'prisma/prismaContext'
+import {Genre, GenreStub} from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
-import React, { Key, useEffect, useState } from 'react'
-import { KeyVal } from 'types/props'
+import React, {useEffect, useState} from 'react'
+import {KeyVal} from 'types/props'
 
 const {debug} = useDebug('containers/Genre/GenreSelector', )
 
@@ -107,7 +106,6 @@ const GenreSelector = ({
           anchorEl={anchorEl}
           open={open}
           onClose={handleClose}
-          PaperProps={{style: {maxHeight: ITEM_HEIGHT * 8}}}
         >
         {genreList.map((option) => (
           <MenuItem key={option.key} selected={option.value===genre?.id} onClick={() => onChange(option)} className=' hover:text-primary'>

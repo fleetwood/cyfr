@@ -1,4 +1,4 @@
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, ImageList, ImageListItem } from '@mui/material'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import Stepper from '@mui/material/Stepper'
@@ -10,7 +10,7 @@ import { ModalOpenButton } from 'components/ui/modalCheckbox'
 import Semibold from 'components/ui/semibold'
 import useDebounce from 'hooks/useDebounce'
 import useDebug from 'hooks/useDebug'
-import { CoverStub, Genre, GenreStub, Image, Permission, Role, RoleString, UserStub } from 'prisma/prismaContext'
+import { CoverStub, CreatorStub, Genre, GenreStub, Image, Permission, Role, RoleString, UserStub } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, { useEffect, useState } from 'react'
 import { dedupe, now, uniqueKey } from 'utils/helpers'
@@ -22,10 +22,10 @@ import BookPermissionsDialog from './BookPermissionsDialog'
 import UserAvatar from 'components/ui/avatar/userAvatar'
 import FullScreenDialog from 'components/ui/fullScreenDialog'
 import GalleryCovers from '../Gallery/GalleryCovers'
+import { cloudinary } from 'utils/cloudinary'
+import CoverList from '../Cover/CoverList'
 
-
-
-const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",'DEBUG')
+const {debug, info, jsonDialog, jsonBlock} = useDebug("components/containers/Books/CreateBook",'DEBUG')
 const createBookModal = 'createBookModal'
 
 export const CreateBookModalButton = () => (
@@ -37,15 +37,16 @@ export const CreateBookModalButton = () => (
 
 const CreateBook = () => {
     const {cyfrUser}= useApi.cyfrUser()
-    const {notify} = useToast()
+    const {notify, notifyError} = useToast()
     const {isTitleUnique} = useApi.book()
+    const {upsert:upsertCover} = useApi.cover()
 
     const [title, setTitle] = useState<string|null>(null)
     const [visible, setVisible] = useState(false)
     const [prospect, setProspect] = useState(false)
     const [fiction, setFiction] = useState()
     const [status, setStatus] = useState()
-    const [coverId, setCoverId] = useState<string|null>(null)
+    const [cover, setCover] = useState<CoverStub|null>(null)
     const [genreId, setGenreId] = useState()
     const [genre, setGenre] = useState<Genre>()
     // const [categories, setCategories] = useState<BookCategory[]>(book?.categories || [])
@@ -124,7 +125,7 @@ const CreateBook = () => {
         prospect,
         fiction,
         status,
-        coverId,
+        cover,
         genreId,
         genre,
         hook,
@@ -157,35 +158,42 @@ const CreateBook = () => {
   const {findCover} = useApi.cover()
   const [covers, setCovers] = useState<CoverStub[]>([])
 
+  const [showCoverSelect, setShowCoverSelect] = useState(cover===undefined)
   const onCoverSelected = async (cover: CoverStub) => {
     debug('onCoverSelected', cover)
-    setCoverId(() => cover.id)
+    setCover(() => cover)
+    setShowCoverSelect(() => false)
   }
 
   const onCoverImageAdded = async (files:Image[]) => {
     const image = files[0]
     debug('onCoverImageAdded', {files, image})
+    const uploadedCover = await upsertCover({
+        creatorId: cyfrUser.id,
+        imageId: image.id,
+        visible: true,
+        exclusive: true, // ths is the user's own cover, nobody else can use it
+        description: title ?? image.title ?? undefined
+    })
+    if (uploadedCover) {
+        debug('success', {uploadedCover})
+        // setCover(() => )
+        setShowCoverSelect(() => false)
+        notify('Your cover has been added! Bellissimo!')
+        return
+    }
+    notifyError()
   }
 
-  const onGenreSelect = (genre:Genre|GenreStub) => {
+  const onGenreSelect = async (genre:Genre|GenreStub) => {
     debug('onGenreSelect', genre)
     notify(genre ? `Genre selected ${genre}` : 'All genres selected')
     setGenre(() => genre)
-  }
-
-  const getCovers = async () => {
-    debug('getCovers', {coversByGenre: covers})
-    const found = await findCover(genre?.title ?? 'All')
-    if (found) {
-      setCovers(() => covers)
-    } else {
-      info('No covers found')
+    const genreCovers = await findCover(genre?.title ?? 'All')
+    if (genreCovers) {
+        setCovers(() => genreCovers)
     }
   }
-
-  useEffect(() => {
-    getCovers()
-  }, ['',genre])
 
   const Summary = ({label, children}:{label:string, empty?:boolean, children?: React.ReactNode}) => (
     <Grid container spacing={2}>
@@ -197,146 +205,325 @@ const CreateBook = () => {
   const StepItem = ({index, children}:{index:number, children: React.ReactNode}) => <div onClick={() => setActiveStep(index)} className={stepClassName(index)}>{children}</div>
 
   return (
-    <FullScreenDialog openLabel='Start a Book' scroll='paper'
-        menu={
-            <Grid container flexGrow={1} flexDirection='column'>
-                <div className='py-2 mt-1'>
-                    <Stepper alternativeLabel activeStep={activeStep}>{steps.map((step, index) => (
-                        <Step key={index+'-'+step.label}>
-                            <StepLabel StepIconComponent={() => <StepItem index={index}>{step.icon}</StepItem>} ><StepItem index={index}>{step.label}</StepItem></StepLabel>
-                        </Step>
-                    ))}
-                    </Stepper>
-                </div>
-                <div className='flex justify-evenly mt-1 py-2'>
-                    <EZButton className={(activeStep>0 ? 'inline' : 'hidden')+' btn-sm'} label={ArrowLeftIcon} onClick={() => setActiveStep(activeStep-1)} />
-                    <Box sx={{ flex: '1 1 auto' }} />
-                    {jsonDialog(upsertProps)}
-                    <EZButton className={(activeStep<4 ? 'inline' : 'hidden') +' btn-sm'} label={ArrowRightIcon} onClick={() => setActiveStep(activeStep+1)}  />
-                    <EZButton className={(activeStep==4 ? 'inline' : 'hidden')+' btn-sm'} label={SaveIcon} />
-                </div>
+    <FullScreenDialog
+      openLabel="Start a Book"
+      scroll="paper"
+      menu={
+        <Grid container flexGrow={1} flexDirection="column">
+          {/* STEPPER */}
+          <div className="py-2 mt-1">
+            <Stepper alternativeLabel activeStep={activeStep}>
+              {steps.map((step, index) => (
+                <Step key={index + '-' + step.label}>
+                  <StepLabel
+                    StepIconComponent={() => (
+                      <StepItem index={index}>{step.icon}</StepItem>
+                    )}
+                  >
+                    <StepItem index={index}>{step.label}</StepItem>
+                  </StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </div>
+          {/* NAVBAR */}
+          <div className="flex justify-evenly mt-1 py-2">
+            <EZButton
+              className={(activeStep > 0 ? 'inline' : 'hidden') + ' btn-sm'}
+              label={ArrowLeftIcon}
+              onClick={() => setActiveStep(activeStep - 1)}
+            />
+            <Box sx={{ flex: '1 1 auto' }} />
+            {jsonDialog(upsertProps)}
+            <EZButton
+              className={(activeStep < 4 ? 'inline' : 'hidden') + ' btn-sm'}
+              label={ArrowRightIcon}
+              onClick={() => setActiveStep(activeStep + 1)}
+            />
+            <EZButton
+              className={(activeStep == 4 ? 'inline' : 'hidden') + ' btn-sm'}
+              label={SaveIcon}
+            />
+          </div>
+        </Grid>
+      }
+    >
+      <Box>
+        {/* Name And Author */}
+        <div className={`${showStep(0)} flex flex-col space-y-2`}>
+          <h3 className="mt-2">Name and Author</h3>
+          <Box className="flex flex-col">
+            <p className="text-sm mt-4">
+              Give your book a{' '}
+              <span className="font-semibold">unique name.</span>
+            </p>
+            <TailwindInput
+              type="text"
+              value={title}
+              setValue={setTitle}
+              label="Title"
+              error={titleError}
+            />
+            <span className={titleOK ? 'text-success' : 'opacity-0'}>
+              {CheckmarkIcon}
+            </span>
+            <p className="text-sm mt-4">
+              If you're co-authoring with another member of{' '}
+              <Semibold>Cyfr</Semibold>, add them here. Note: this person will
+              have{' '}
+              <span className="font-semibold">
+                full access and privileges to the book
+              </span>
+              , so you have to be friends (as in: you Follow each other). Would
+              be kinda weird otherwise.
+            </p>
+            <Grid>
+              {authors?.map((a) => (
+                <UserAvatar
+                  className="opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200"
+                  sz="sm"
+                  user={a}
+                  onClick={() => removeAuthor(a)}
+                  variant={['no-profile']}
+                />
+              ))}
+              <UserSelector
+                label="Authors"
+                onClick={addAuthor}
+                select="UserStub"
+              />
             </Grid>
-        }
-        >
-        <Box>
-            
-            <div className={`${showStep(0)} flex flex-col space-y-2`}>
-                <h3 className='mt-2'>Name and Author</h3>
-                <Box className='flex flex-col'>
-                    <p className='text-sm mt-4'>Give your book a <span className='font-semibold'>unique name.</span></p>
-                    <TailwindInput type='text' value={title} setValue={setTitle} label='Title' error={titleError} />
-                    <span className={titleOK ? 'text-success' : 'opacity-0'}>{CheckmarkIcon}</span>
-                    <p className='text-sm mt-4'>If you're co-authoring with another member of <Semibold>Cyfr</Semibold>, add them here. Note: this person will have <span className='font-semibold'>full access and privileges to the book</span>, so you have to be friends (as in: you Follow each other). Would be kinda weird otherwise.</p>
-                    <Grid>
-                        {authors?.map(a => 
-                            <UserAvatar className='opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200' 
-                                sz='sm' 
-                                user={a} 
-                                onClick={() => removeAuthor(a)} 
-                                variant={['no-profile']} 
-                            />
-                        )}
-                        <UserSelector label='Authors' onClick={addAuthor} select='UserStub' />
-                    </Grid>
-                </Box>
-            </div>
+          </Box>
+        </div>
 
-            <div className={showStep(1)}>
-                <h3 className='mt-2'>Entice your audience!</h3>
-                <Box className='flex flex-col'>
-                    <p className='text-sm mt-4'>A short blurb to tease the book to readers.</p>
-                    <TailwindTextarea value={hook} setValue={setHook} label='Hook' required={false} />
-                    <p className='text-sm mt-4'>The summary that goes on the back cover. You may not have this yet, but if you do, great!</p>
-                    <TailwindTextarea value={back} setValue={setBack} label='Back Panel' required={false} />
-                </Box>
-            </div>
+        {/* Hook and Back Panel */}
+        <div className={showStep(1)}>
+          <h3 className="mt-2">Entice your audience!</h3>
+          <Box className="flex flex-col">
+            <p className="text-sm mt-4">
+              A short blurb to tease the book to readers.
+            </p>
+            <TailwindTextarea
+              value={hook}
+              setValue={setHook}
+              label="Hook"
+              required={false}
+            />
+            <p className="text-sm mt-4">
+              The summary that goes on the back cover. You may not have this
+              yet, but if you do, great!
+            </p>
+            <TailwindTextarea
+              value={back}
+              setValue={setBack}
+              label="Back Panel"
+              required={false}
+            />
+          </Box>
+        </div>
 
-            <div className={showStep(2)}>
-                <div className='flex mt-2'>
-                    <Grid container columns={12}>
-                        <Grid columns={6}><h3>Share it or Not</h3></Grid>
-                        <Grid columns={6}><BookPermissionsDialog /></Grid>
-                    </Grid>
+        {/* Permissions */}
+        <div className={showStep(2)}>
+          <div className="flex mt-2">
+            <Grid container columns={12}>
+              <Grid columns={6}>
+                <h3>Share it or Not</h3>
+              </Grid>
+              <Grid columns={6}>
+                <BookPermissionsDialog />
+              </Grid>
+            </Grid>
+          </div>
+          <Box className="flex flex-col">
+            <BookPermissions level="Agents" onChange={changeAgent}>
+              <p>
+                This will allow agents to interact with your book. This inlcudes{' '}
+                <Semibold>submissions</Semibold>, so if you're shopping your
+                book, give them <Semibold>Read</Semibold> access at a minimum.
+              </p>
+            </BookPermissions>
+            <BookPermissions level="Editors" onChange={changeEditor}>
+              <p>
+                Are you shopping for a good editor? Join the club! Better yet,
+                invite them to yours! :)
+              </p>
+            </BookPermissions>
+            <BookPermissions level="Author" onChange={changeAuthor}>
+              <p></p>
+            </BookPermissions>
+            <BookPermissions level="Artist" onChange={changeArtist}>
+              <p></p>
+            </BookPermissions>
+            <BookPermissions level="Members" onChange={changeMember}>
+              <p>
+                This is any logged-in member that does not fall into one of the
+                above categories, including <Semibold>Readers</Semibold>.
+              </p>
+            </BookPermissions>
+            <BookPermissions level="Public" onChange={changePublic}>
+              <p>
+                This is anybody who visits the site, including{' '}
+                <Semibold>bots and search engines</Semibold>.
+              </p>
+            </BookPermissions>
+
+            <BookPermissions level="Friend" onChange={changeFriend}>
+              <p>You follow them, and they follow you back.</p>
+            </BookPermissions>
+            <BookPermissions level="Stan" onChange={changeStan}>
+              <p>The people you Stan.</p>
+            </BookPermissions>
+            <BookPermissions level="Following" onChange={changeFollowing}>
+              <p>Those whom you follow.</p>
+            </BookPermissions>
+            <BookPermissions level="Fan" onChange={changeFan}>
+              <p>Your fans!!</p>
+            </BookPermissions>
+            <BookPermissions level="Follower" onChange={changeFollower}>
+              <p>Your followers.</p>
+            </BookPermissions>
+          </Box>
+        </div>
+
+        {/* Genre and Cover */}
+        <div className={showStep(3)}>
+          <h3>Genre and Cover</h3>
+          <GenreSelector genre={genre} setGenre={onGenreSelect} />
+          {genre && (
+            <Grid>
+              {cover && (
+                <>
+                  <div className='font-semibold text-primary'>Cover</div>
+                  <img
+                    src={cloudinary.resize({
+                      url: cover.image.url,
+                      height: 320,
+                    })}
+                    srcSet={cloudinary.resize({
+                      url: cover.image.url,
+                      height: 320,
+                    })}
+                    alt={cover.creator?.name}
+                    loading="eager"
+                  />
+                </>
+              )}
+              <EZButton label={cover ? 'Change' : 'Find or Create Your Cover!'} onClick={() => setShowCoverSelect((s) => !s)} />
+              {showCoverSelect &&
+                <div>
+                <Dropzone limit={1} onDropComplete={onCoverImageAdded} />
+                {covers && covers.length > 0 && (
+                    <span>OR choose from the following</span>
+                )}
+                {covers && covers.length > 0 && (
+                    <CoverList
+                    covers={covers}
+                    height={174}
+                    onSelect={onCoverSelected}
+                    />
+                )}
+                {!covers || (covers.length < 1 && (
+                    <div>
+                        Sorry, there are no covers available for this genre.{' '}
+                        <Semibold>TODO: allow default cover</Semibold>
+                    </div>
+                ))}
                 </div>
-                <Box className='flex flex-col'>
-                    <BookPermissions level='Agents' onChange={changeAgent}><p>This will allow agents to interact with your book. This inlcudes <Semibold>submissions</Semibold>, so if you're shopping your book, give them <Semibold>Read</Semibold> access at a minimum.</p></BookPermissions>
-                    <BookPermissions level='Editors' onChange={changeEditor}><p>Are you shopping for a good editor? Join the club! Better yet, invite them to yours! :)</p></BookPermissions>
-                    <BookPermissions level='Author' onChange={changeAuthor}><p></p></BookPermissions>
-                    <BookPermissions level='Artist' onChange={changeArtist}><p></p></BookPermissions>
-                    <BookPermissions level='Members' onChange={changeMember}><p>This is any logged-in member that does not fall into one of the above categories, including <Semibold>Readers</Semibold>.</p></BookPermissions>
-                    <BookPermissions level='Public' onChange={changePublic}><p>This is anybody who visits the site, including <Semibold>bots and search engines</Semibold>.</p></BookPermissions>
-                    
-                    <BookPermissions level='Friend' onChange={changeFriend}><p>You follow them, and they follow you back.</p></BookPermissions>
-                    <BookPermissions level='Stan' onChange={changeStan}><p>The people you Stan.</p></BookPermissions>
-                    <BookPermissions level='Following' onChange={changeFollowing}><p>Those whom you follow.</p></BookPermissions>
-                    <BookPermissions level='Fan' onChange={changeFan}><p>Your fans!!</p></BookPermissions>
-                    <BookPermissions level='Follower' onChange={changeFollower}><p>Your followers.</p></BookPermissions>
-                    
-                </Box>
+            }
+            </Grid>
+          )}
+        </div>
 
-            </div>
-
-            <div className={showStep(3)}>
-                <h3>Genre and Cover</h3>
-                <GenreSelector genre={genre} setGenre={setGenre} />
-                {genre && 
-                    <Grid>
-                        <div>
-                            Default Cover
-                        </div>
-                        <div>
-                            <Dropzone limit={1} onDropComplete={onCoverImageAdded} />
-                        </div>
-                        {covers && covers.length > 0 &&
-                        <span>OR choose from the following</span>
-                        }
-                        {covers && covers.length > 0 &&
-                        <div>
-                            <GalleryCovers covers={covers} selectable={true} onSelect={onCoverSelected} />
-                        </div>
-                        }
-                        {!covers || covers.length < 1 && 
-                        <div>Sorry, there are no covers available for this genre. <Semibold>TODO: allow default cover</Semibold></div>
-                        }
-                    </Grid>
-                }
-            </div>
-
-            <div className={`${showStep(4)} flex flex-col`}>
-                <h3>All Good?</h3>
-                <div className='flex flex-col space-y-2 pl-2 border'>
-                    <Summary label='Title'><h2>{title}</h2></Summary>
-                    <Summary label={`Author${authors.length>1?'s':''}`}>
-                        {authors.map((u:UserStub) => <div className='flex rounded-full border border-primary max-w-fit p-0 pr-2'>
-                            <UserAvatar user={u} sz='xs' variant={['no-profile','no-link']} /><span className='font-semibold text-sm text-primary pl-2'>{u.name}</span>
-                        </div>)}
-                    </Summary>
-                    <Summary label='Genre'>{genre?.title}</Summary>
-                    <Summary label='Cover'>{coverId}</Summary>
-                    <Summary label='Hook'>{hook}</Summary>
-                    <Summary label='Back Panel'>{back}</Summary>
-                    <Summary label='Permissions'>
-                        <Summary label='Agents'>{permissions.agent.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Editors'>{permissions.editor.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Authors'>{permissions.author.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Artists'>{permissions.artist.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Members'>{permissions.member.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Public'>{permissions.public.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        
-                        <Summary label='Friends'>{permissions.friend.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Stans'>{permissions.stan.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Following'>{permissions.following.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Fans'>{permissions.fan.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Followers'>{permissions.follower.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                    </Summary>
+        {/* Review and Save */}
+        <div className={`${showStep(4)} flex flex-col`}>
+          <h3>All Good?</h3>
+          <div className="flex flex-col space-y-2 pl-2 border">
+            <Summary label="Title">
+              <h2>{title}</h2>
+            </Summary>
+            <Summary label={`Author${authors.length > 1 ? 's' : ''}`}>
+              {authors.map((u: UserStub) => (
+                <div className="flex rounded-full border border-primary max-w-fit p-0 pr-2">
+                  <UserAvatar
+                    user={u}
+                    sz="xs"
+                    variant={['no-profile', 'no-link']}
+                  />
+                  <span className="font-semibold text-sm text-primary pl-2">
+                    {u.name}
+                  </span>
                 </div>
+              ))}
+            </Summary>
+            <Summary label="Genre">{genre?.title}</Summary>
+            <Summary label="Cover">{cover?.id}</Summary>
+            <Summary label="Hook">{hook}</Summary>
+            <Summary label="Back Panel">{back}</Summary>
+            <Summary label="Permissions">
+              <Summary label="Agents">
+                {permissions.agent.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
+              <Summary label="Editors">
+                {permissions.editor.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
+              <Summary label="Authors">
+                {permissions.author.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
+              <Summary label="Artists">
+                {permissions.artist.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
+              <Summary label="Members">
+                {permissions.member.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
+              <Summary label="Public">
+                {permissions.public.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
 
-                <div></div>
-            </div>
-        </Box>
-        
+              <Summary label="Friends">
+                {permissions.friend.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
+              <Summary label="Stans">
+                {permissions.stan.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
+              <Summary label="Following">
+                {permissions.following.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
+              <Summary label="Fans">
+                {permissions.fan.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
+              <Summary label="Followers">
+                {permissions.follower.map((r: Role) => (
+                  <span className="px-2">{r}</span>
+                ))}
+              </Summary>
+            </Summary>
+          </div>
+
+          <div></div>
+        </div>
+      </Box>
     </FullScreenDialog>
-)}
+  )}
 
 export default CreateBook
 

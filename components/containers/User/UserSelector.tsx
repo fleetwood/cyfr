@@ -57,22 +57,13 @@ const UserSelector = (props:UserSelectorProps) => {
     }
   }
   useEffect(() => {findUsers()}, [findUser])
-
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null)
-  const open = search && search.trim().length > 0 && users.length > 0
   const toggle = (show=false) => setAnchor(show ? document.getElementById(userSelector) : null)
 
   return (
     <>
       <TailwindInput type='text' label={props.label} value={search} setValue={setSearch} />
       <span id={userSelector}></span>
-      {/* {open &&
-        <Menu id="basic-menu" anchorEl={anchor} open={open} onClose={close} MenuListProps={{'aria-labelledby': 'basic-button'}}>
-          {users.map((u:UserStub) => 
-            <MenuItem onClick={() => toggle(false)} key={uniqueKey(u.id)} ><Avatar user={u} sz='sm' /></MenuItem>
-          )}
-        </Menu>
-      } */}
       <Grid>
         {users.map((u:UserStub) => 
           <div onClick={() => toggle(false)} key={uniqueKey(u.id)} >

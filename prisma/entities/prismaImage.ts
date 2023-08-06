@@ -1,7 +1,7 @@
 import useDebug from "hooks/useDebug"
 import { Image, ImageDeleteProps, ImageEngageProps, ImageUpsertProps, Like, Post } from "prisma/prismaContext"
 import { NotImplemented } from "utils/api"
-const {debug, info, fileMethod} = useDebug('entities/prismaImage', )
+const {debug, info, fileMethod} = useDebug('entities/prismaImage', 'DEBUG')
 
 const detail = async (id: string): Promise<Image | null> => await prisma.image.findUnique({where: {id}})
 const details = async (): Promise<Image[]> => await prisma.image.findMany()
@@ -12,12 +12,14 @@ const stubs = async (): Promise<Image[]> => await prisma.image.findMany()
 const upsert = async (props: ImageUpsertProps): Promise<Image> => {
   debug('upsert', props)
   const {url} = props
+  const upsert = {
+    where: { url },
+    create: { ...props },
+    update: { ...props },
+  }
+  debug('upsert', upsert)
   try {
-    return await prisma.image.upsert({ 
-      where: { url },
-      create: {...props},
-      update: {...props}
-    })
+    return await prisma.image.upsert(upsert)
   } catch (error) {
     info("upsert ERROR: ", error)
     throw error

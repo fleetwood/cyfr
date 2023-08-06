@@ -1,15 +1,14 @@
 import { ArtistStub, CommentThreadStub, CommentThreadStubInclude, Cover, CreatorSharesLikes, CreatorStubSelect, Genre, Image } from "prisma/prismaContext"
 
 export type CoverUpsertProps = {
-  id?:        string
-  creatorId:   string
-  imageId:    string
-  bookId?:    string
-  genreId?:   string
-  height?:    number
-  width?:     number
-  title?:     string
-  active?:    boolean
+  id?:          string
+  creatorId:    string
+  imageId:      string
+  bookId?:      string
+  genreId?:     string
+  visible?:     boolean
+  exclusive?:   boolean
+  description?: string
 }
 
 export type CoverDeleteProps = {
@@ -39,38 +38,108 @@ export type CoverStub = Cover & CreatorSharesLikes & {
   }
 }
 
-export const CoverStubInclude = { include: {
-  image: true,
-  creator: CreatorStubSelect,
-  likes: { include: {
-    creator: CreatorStubSelect,
-    take: 10
-  }},
-  shares: { include: {
-    creator: CreatorStubSelect,
-    take: 10
-  }},
-  artists: {
-    include: {
-      user: {
-        select: {
-          name: true,
-          id: true,
-          slug: true,
-          image: true,
+export const CoverStubInclude = {
+  include: {
+    image: true,
+    creator: {
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        image: true,
+        membership: {
+          include: {
+            type: true,
+          },
         },
       },
     },
+    likes: {
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            image: true,
+            membership: {
+              include: {
+                type: true,
+              },
+            },
+          },
+        },
+      },
+      take: 10,
+    },
+    shares: {
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            image: true,
+            membership: {
+              include: {
+                type: true,
+              },
+            },
+          },
+        },
+      },
+      take: 10,
+    },
+    artists: {
+      include: {
+        user: {
+          select: {
+            name: true,
+            id: true,
+            slug: true,
+            image: true,
+          },
+        },
+      },
+    },
+    genre: true,
+    commentThread: {
+      include: {
+        comments: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                image: true,
+                membership: {
+                  include: {
+                    type: true,
+                  },
+                },
+              },
+            },
+          },
+          take: 10,
+        },
+        commune: true,
+        blocked: true,
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
+      },
+    },
+    _count: {
+      select: {
+        likes: true,
+        shares: true,
+      },
+    },
   },
-  genre: true,
-  commentThread: CommentThreadStubInclude,
-  _count: {
-    select: {
-      likes: true,
-      shares: true
-    }
-  }
-}}
+}
 
 export type CoverDetail = CoverStub & {
 }

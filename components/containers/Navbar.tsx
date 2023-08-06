@@ -174,7 +174,11 @@ const Navbar = ({
               }}
             >
               {pages.map((page) => (
-                <PageButton page={page} variant="accent" />
+                <PageButton
+                  page={page}
+                  variant="accent"
+                  key={'navbar-mobile-page-' + page.label}
+                />
               ))}
               {!isLoading && cyfrUser ? (
                 <>
@@ -270,7 +274,11 @@ const Navbar = ({
             sx={{ display: { xs: 'none', md: 'flex' } }}
           >
             {pages.map((page) => (
-              <PageButton page={page} variant="info" />
+              <PageButton
+                page={page}
+                variant="info"
+                key={'navbar-page-' + page.label}
+              />
             ))}
 
             {!isLoading && cyfrUser ? (

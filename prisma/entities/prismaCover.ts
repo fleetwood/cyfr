@@ -1,7 +1,7 @@
-import { NotImplemented } from "utils/api"
 import useDebug from "hooks/useDebug"
-import { Cover, CoverDeleteProps, CoverDetail, CoverStub, CoverUpsertProps, Like } from "prisma/prismaContext"
-const {debug, info, fileMethod} = useDebug('entities/prismaCover')
+import {Cover, CoverDeleteProps, CoverDetail, CoverStub, CoverStubInclude, CoverUpsertProps, Like} from "prisma/prismaContext"
+import {NotImplemented} from "utils/api"
+const {debug, info, fileMethod} = useDebug('entities/prismaCover', 'DEBUG')
 
 const detail = async (id: string): Promise<CoverDetail | null> => await prisma.cover.findUnique({where: {id}}) as unknown as CoverDetail
 const details = async (): Promise<CoverDetail[]> => await prisma.cover.findMany() as unknown as CoverDetail[]
@@ -11,15 +11,21 @@ const stubs = async (): Promise<CoverStub[]> => await prisma.cover.findMany() as
 
 const upsert = async (props: CoverUpsertProps): Promise<Cover> => {
   debug('upsert', props)
-  const {id} = props
   try {
-    return await prisma.cover.upsert({ 
-      where: { id },
-      create: {...props},
-      update: {...props}
+    return await prisma.cover.upsert({
+      where: { id: props.id },
+      create: { ...props },
+      update: { ...props },
     })
   } catch (error) {
-    info("upsert ERROR: ", error)
+    info('upsert ERROR: ', {
+      error,
+      upsert: {
+        where: { id: props.id },
+        create: { ...props },
+        update: { ...props },
+      },
+    })
     throw error
   }
 }

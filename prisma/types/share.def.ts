@@ -79,9 +79,9 @@ export type ShareUserProps = {
 
 export type SharesLikes = {
   likes:        LikeStub[]
-  shares:       Share & {
+  shares:       (Share & {
     creator:    CreatorStub
-  }[]
+  })[]
 }
 
 export const SharesLikesInclude = {

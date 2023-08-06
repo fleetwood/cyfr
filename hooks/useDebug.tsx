@@ -39,7 +39,7 @@ ${lineBreak()}
   
   const jsonBlock = (data:any) => <JsonBlock data={data} debug={level === 'DEBUG'} />
 
-  const jsonDialog = (data:any, label = 'DEBUG') => <OpenDialog label={label} content={jsonBlock(data)} />
+  const jsonDialog = (data:any, label = 'DEBUG') => level === 'DEBUG' ? <OpenDialog label={label} content={jsonBlock(data)} /> : ''
 
   return {debug, info, err, stringify, level, jsonBlock, jsonDialog, fileMethod}
 }

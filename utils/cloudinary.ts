@@ -46,7 +46,7 @@ const cloudUrl = (url:string, mod:string) => {
  */
 type cloudImageProps = {
     url: string,
-    width: number
+    width?: number
     height?: number | null
     face?: boolean | false
 }

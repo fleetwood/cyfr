@@ -238,9 +238,6 @@ model Cover {
 
   artists Artist[] @relation("cover_artists")
 
-  commentThreadId String?        @unique
-  commentThread   CommentThread? @relation("cover_comments", fields: [commentThreadId], references: [id])
-
   genreId String?
   genre   Genre?  @relation("genre_covers", fields: [genreId], references: [id])
 
@@ -304,7 +301,6 @@ model CommentThread {
   character Character? @relation("character_comments")
   comments  Comment[]  @relation("thread_comments")
   commune   Commune?   @relation("thread_commune")
-  cover     Cover?     @relation("cover_comments")
   event     Event?     @relation("event_comments")
   image     Image?     @relation("image_comments")
   news      News?      @relation("news_comments")
