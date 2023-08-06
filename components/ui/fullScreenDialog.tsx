@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
 import Slide from '@mui/material/Slide'
 import { TransitionProps } from '@mui/material/transitions'
+import { DialogContent, DialogTitle } from '@mui/material'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -26,6 +27,7 @@ type FullScreenDialogProps = {
     openLabel:  string
     menu?:      React.ReactNode
     children:   React.ReactNode
+    scroll?:    "body" | "paper" | undefined
 }
 
 export default function FullScreenDialog(props:FullScreenDialogProps) {
@@ -43,25 +45,32 @@ export default function FullScreenDialog(props:FullScreenDialogProps) {
     <div>
       <Button variant="outlined" onClick={handleClickOpen}>{props.openLabel}</Button>
       <Dialog
+        scroll={props.scroll}
         fullScreen
         open={open}
         onClose={handleClose}
         TransitionComponent={Transition}
       >
-        <AppBar sx={{ position: 'relative' }}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleClose}
-              aria-label="close"
-            >
-              <CloseIcon />
-            </IconButton>
-            {props.menu??''}
-          </Toolbar>
-        </AppBar>
-        {props.children}
+        <DialogTitle id='scroll-dialog-title'>
+          <AppBar sx={{ position: 'absolute' }}>
+            <Toolbar>
+              <IconButton
+                edge="start"
+                color="inherit"
+                onClick={handleClose}
+                aria-label="close"
+              >
+                <CloseIcon />
+              </IconButton>
+              {props.menu??''}
+            </Toolbar>
+          </AppBar>
+        </DialogTitle>
+        <DialogContent>
+          <div className='mt-28'>
+            {props.children}
+          </div>
+        </DialogContent>
       </Dialog>
     </div>
   )

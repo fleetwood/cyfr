@@ -25,7 +25,7 @@ import GalleryCovers from '../Gallery/GalleryCovers'
 
 
 
-const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",)
+const {debug, info, jsonDialog} = useDebug("components/containers/Books/CreateBook",'DEBUG')
 const createBookModal = 'createBookModal'
 
 export const CreateBookModalButton = () => (
@@ -57,21 +57,32 @@ const CreateBook = () => {
         id: uniqueKey(),
         createdAt: now(),
         updatedAt: now(),
-        agent : ['NONE'],
-        fan : ['NONE'],
-        follower : ['NONE'],
-        friend : ['NONE'],
+        agent:  ['NONE'],
+        editor: ['NONE'],
+        author: ['NONE'],
+        artist: ['NONE'],
         member: ['NONE'],
-        public: ['NONE']
+        public: ['NONE'],
+
+        friend:     ['NONE'],
+        stan:       ['NONE'],
+        following:  ['NONE'],
+        fan:        ['NONE'],
+        follower:   ['NONE'],
     })
     
     const changeAgent = (perms:RoleString[]) => setPermissions(() => {return {...permissions, agent: perms.flatMap(a => a) as Role[]}})
-    const changeArtist = (perms:RoleString[]) => setPermissions(() => {return {...permissions, artist: perms.flatMap(a => a) as Role[]}})
-    const changeAuthor = (perms:RoleString[]) => setPermissions(() => {return {...permissions, author: perms.flatMap(a => a) as Role[]}})
     const changeEditor = (perms:RoleString[]) => setPermissions(() => {return {...permissions, editor: perms.flatMap(a => a) as Role[]}})
+    const changeAuthor = (perms:RoleString[]) => setPermissions(() => {return {...permissions, author: perms.flatMap(a => a) as Role[]}})
+    const changeArtist = (perms:RoleString[]) => setPermissions(() => {return {...permissions, artist: perms.flatMap(a => a) as Role[]}})
     const changeMember = (perms:RoleString[]) => setPermissions(() => {return {...permissions, member: perms.flatMap(a => a) as Role[]}})
     const changePublic = (perms:RoleString[]) => setPermissions(() => {return {...permissions, public: perms.flatMap(a => a) as Role[]}})
-    const changeReader = (perms:RoleString[]) => setPermissions(() => {return {...permissions, reader: perms.flatMap(a => a) as Role[]}})
+    
+    const changeFriend = (perms:RoleString[]) => setPermissions(() => {return {...permissions, friend: perms.flatMap(a => a) as Role[]}})
+    const changeStan = (perms:RoleString[]) => setPermissions(() => {return {...permissions, stan: perms.flatMap(a => a) as Role[]}})
+    const changeFollowing = (perms:RoleString[]) => setPermissions(() => {return {...permissions, following: perms.flatMap(a => a) as Role[]}})
+    const changeFan = (perms:RoleString[]) => setPermissions(() => {return {...permissions, fan: perms.flatMap(a => a) as Role[]}})
+    const changeFollower = (perms:RoleString[]) => setPermissions(() => {return {...permissions, follower: perms.flatMap(a => a) as Role[]}})
     
     const [titleError, setTitleError] = useState<string>()
     const [titleOK, setTitleOK] = useState(false)
@@ -129,16 +140,18 @@ const CreateBook = () => {
 
   const handleBack = () => setActiveStep((prevActiveStep) => prevActiveStep - 1)
 
-  const handleReset = () => setActiveStep(3)
+  const handleReset = () => setActiveStep(0)
+
+  const stepClassName = (index:number) => 'cursor-pointer hover:text-base-100 ' + (index === activeStep ? 'text-base-100' : index > activeStep ? 'text-info' : 'text-base-100 text-opacity-50')
 
   const showStep = (step:number) => step === activeStep ? 'inline' : 'hidden'
 
   const steps = [
-    {label: 'Name', icon: MuiBookIcon}, 
-    {label: 'About', icon: MuiInfoIcon}, 
-    {label: 'Access', icon: MuiManageAccountsIcon}, 
-    {label: 'Cover', icon: MuiCoverIcon},
-    {label: 'Review', icon: MuiQuestionIcon}
+    {label: 'Name', icon: <MuiBookIcon />}, 
+    {label: 'About', icon: <MuiInfoIcon />}, 
+    {label: 'Access', icon: <MuiManageAccountsIcon />}, 
+    {label: 'Cover', icon: <MuiCoverIcon />},
+    {label: 'Review', icon: <MuiQuestionIcon />}
     ]
 
   const {findCover} = useApi.cover()
@@ -174,19 +187,23 @@ const CreateBook = () => {
     getCovers()
   }, ['',genre])
 
-  const Summary = ({label, children}:{label:string, empty?:boolean, children?: React.ReactNode}) => <Grid container spacing={2}>
+  const Summary = ({label, children}:{label:string, empty?:boolean, children?: React.ReactNode}) => (
+    <Grid container spacing={2}>
         <Grid item xs={2} className='font-semibold'>{label}</Grid>
         <Grid item xs={8}>{children ?? <span className='italic text-info opacity-50'>Not Provided</span>}</Grid>
     </Grid>
+    )
+
+  const StepItem = ({index, children}:{index:number, children: React.ReactNode}) => <div onClick={() => setActiveStep(index)} className={stepClassName(index)}>{children}</div>
 
   return (
-    <FullScreenDialog openLabel='Start a Book'
+    <FullScreenDialog openLabel='Start a Book' scroll='paper'
         menu={
             <Grid container flexGrow={1} flexDirection='column'>
-                <div className='bg-base-300 py-2 mt-1'>
+                <div className='py-2 mt-1'>
                     <Stepper alternativeLabel activeStep={activeStep}>{steps.map((step, index) => (
-                        <Step key={step.label}>
-                            <StepLabel StepIconComponent={step.icon} >{step.label}</StepLabel>
+                        <Step key={index+'-'+step.label}>
+                            <StepLabel StepIconComponent={() => <StepItem index={index}>{step.icon}</StepItem>} ><StepItem index={index}>{step.label}</StepItem></StepLabel>
                         </Step>
                     ))}
                     </Stepper>
@@ -242,18 +259,19 @@ const CreateBook = () => {
                     </Grid>
                 </div>
                 <Box className='flex flex-col'>
-                    <BookPermissions level='Public' onChange={changePublic}><p>This is anybody who visits the site, including <Semibold>bots and search engines</Semibold>.</p></BookPermissions>
-                    <BookPermissions level='Members' onChange={changeMember}><p>This is anybody who is <Semibold>logged in</Semibold> to the site, which will exclude bots and search engines.</p></BookPermissions>
-                    <BookPermissions level='Reader' onChange={changeReader}><p>This is anybody who has a paid membership, but is not a content creator. A better way of saying perhaps: <Semibold>this is your audience.</Semibold></p></BookPermissions>
+                    <BookPermissions level='Agents' onChange={changeAgent}><p>This will allow agents to interact with your book. This inlcudes <Semibold>submissions</Semibold>, so if you're shopping your book, give them <Semibold>Read</Semibold> access at a minimum.</p></BookPermissions>
+                    <BookPermissions level='Editors' onChange={changeEditor}><p>Are you shopping for a good editor? Join the club! Better yet, invite them to yours! :)</p></BookPermissions>
                     <BookPermissions level='Author' onChange={changeAuthor}><p></p></BookPermissions>
                     <BookPermissions level='Artist' onChange={changeArtist}><p></p></BookPermissions>
-                    <BookPermissions level='Editors' onChange={changeEditor}><p>Are you shopping for a good editor? Join the club! Better yet, invite them to yours! :)</p></BookPermissions>
-                    <BookPermissions level='Agents' onChange={changeAgent}><p>This will allow agents to interact with your book. This inlcudes <Semibold>submissions</Semibold>, so if you're shopping your book, give them <Semibold>Read</Semibold> access at a minimum.</p></BookPermissions>
-                    {/* <BookPermissions level='Friends' onChange={changeFriend}><p>Only members who you <Semibold>mutually follow</Semibold>; meaning you follow them and they follow you back.</p></BookPermissions> */}
-                    {/* <>
-                        <div className='text-primary font-bold my-4'>Communes</div>
-                        <div className='text-sm -mt-4 mb-4'>Give specific members specific access. You can set it for the whole book, for certain chapters or certain characters; you can even create multiple communes for different situations. Set these up later once you have created the book!</div>
-                    </> */}
+                    <BookPermissions level='Members' onChange={changeMember}><p>This is any logged-in member that does not fall into one of the above categories, including <Semibold>Readers</Semibold>.</p></BookPermissions>
+                    <BookPermissions level='Public' onChange={changePublic}><p>This is anybody who visits the site, including <Semibold>bots and search engines</Semibold>.</p></BookPermissions>
+                    
+                    <BookPermissions level='Friend' onChange={changeFriend}><p>You follow them, and they follow you back.</p></BookPermissions>
+                    <BookPermissions level='Stan' onChange={changeStan}><p>The people you Stan.</p></BookPermissions>
+                    <BookPermissions level='Following' onChange={changeFollowing}><p>Those whom you follow.</p></BookPermissions>
+                    <BookPermissions level='Fan' onChange={changeFan}><p>Your fans!!</p></BookPermissions>
+                    <BookPermissions level='Follower' onChange={changeFollower}><p>Your followers.</p></BookPermissions>
+                    
                 </Box>
 
             </div>
@@ -298,12 +316,18 @@ const CreateBook = () => {
                     <Summary label='Hook'>{hook}</Summary>
                     <Summary label='Back Panel'>{back}</Summary>
                     <Summary label='Permissions'>
-                        <Summary label='Agent'>{permissions.agent.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Fans'>{permissions.fan.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Followers'>{permissions.follower.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
-                        <Summary label='Friends'>{permissions.friend.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
+                        <Summary label='Agents'>{permissions.agent.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
+                        <Summary label='Editors'>{permissions.editor.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
+                        <Summary label='Authors'>{permissions.author.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
+                        <Summary label='Artists'>{permissions.artist.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
                         <Summary label='Members'>{permissions.member.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
                         <Summary label='Public'>{permissions.public.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
+                        
+                        <Summary label='Friends'>{permissions.friend.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
+                        <Summary label='Stans'>{permissions.stan.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
+                        <Summary label='Following'>{permissions.following.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
+                        <Summary label='Fans'>{permissions.fan.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
+                        <Summary label='Followers'>{permissions.follower.map((r:Role) => <span className='px-2'>{r}</span>)}</Summary>
                     </Summary>
                 </div>
 

@@ -1,7 +1,7 @@
 
-import ShrinkableIconLink from 'components/ui/shrinkableIconLink';
-import { ClipbardIcon, PhotoIcon, FeatherIcon, GearIcon, DatabaseIcon, HouseIcon, MuiQuestionIcon } from 'components/ui/icons';
-import { __prod__ } from "utils/constants";
+import { DatabaseIcon, FeatherIcon, GearIcon, HouseIcon, MuiWrenchIcon } from 'components/ui/icons'
+import ShrinkableIconLink from 'components/ui/shrinkableIconLink'
+import { __prod__ } from "utils/constants"
 
 const LeftColumn = () => {
   return (
@@ -17,26 +17,7 @@ const LeftColumn = () => {
           />
         </li>
         }
-        {!__prod__ && 
-          <li>
-          <ShrinkableIconLink
-            href={"/dev"}
-            target="_self"
-            label="Dev"
-            icon={<MuiQuestionIcon />}
-          />
-        </li>
-        }
         {!__prod__ &&   
-          <li>
-            <ShrinkableIconLink
-              href="https://industrialscripts.com/archetypes-of-characters/"
-              target="_self"
-              label="Archetypes"
-              icon={PhotoIcon}
-            />
-          </li>
-        }{!__prod__ &&   
           <li>
             <ShrinkableIconLink
               href={"/test"}
@@ -45,7 +26,8 @@ const LeftColumn = () => {
               icon={FeatherIcon}
             />
           </li>
-        }{!__prod__ &&   
+        }
+        {!__prod__ &&   
           <li>
             <ShrinkableIconLink
               href={"/admin"}
@@ -54,46 +36,33 @@ const LeftColumn = () => {
               icon={GearIcon}
             />
           </li>
-        }{!__prod__ &&   
+        }
+        {!__prod__ &&   
           <li>
             <ShrinkableIconLink
               href={"https://cloud.prisma.io/fleetwood/cyfrprisma"}
-              target="_self"
+              target="_blank"
               label="Prisma IO"
               icon={DatabaseIcon}
             />
           </li>
         }
-        <li>
-          <ShrinkableIconLink
-            href="https://hypercolor.dev/generator"
-            target="_blank"
-            label="Gradients"
-            icon={ClipbardIcon}
-          />
-        </li>
-        <li>
-          <a
-            href="https://materialdesignicons.com/"
-            title="Material Icons"
-            className="text-secondary-content text-opacity-70 hover:text-opacity-100 transition-all ease-linear duration-200"
-          >
-            Material Designs
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://unpkg.com/browse/@heroicons/react@2.0.13/24/outline/"
-            title="Heroicon List"
-            className="text-secondary-content text-opacity-70 hover:text-opacity-100 transition-all ease-linear duration-200"
-          >
-            Heroicon List
-          </a>
-        </li>
+        {!__prod__ &&   
+          <li>
+            <ShrinkableIconLink
+              href={"https://mui.com/material-ui/getting-started/"}
+              target="_blank"
+              label="MUI Core"
+              icon={<MuiWrenchIcon />}
+            />
+          </li>
+        }
+        
         <li>
           <a
             href="https://tailwindui.com/components"
             title="Tailwind Components"
+            target='_blank'
             className="text-secondary-content text-opacity-70 hover:text-opacity-100 transition-all ease-linear duration-200"
           >
             Tailwind Components
@@ -103,18 +72,10 @@ const LeftColumn = () => {
           <a
             href="https://github.com/tailwindlabs/tailwindcss-forms/blob/master/index.html"
             title="Tailwind Forms Usage"
+            target='_blank'
             className="text-secondary-content text-opacity-70 hover:text-opacity-100 transition-all ease-linear duration-200"
           >
             Tailwind Forms
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://angrytools.com/gradient/image/"
-            title="Angry Tools Gradient Generator"
-            className="text-secondary-content text-opacity-70 hover:text-opacity-100 transition-all ease-linear duration-200"
-          >
-            Angry Tools
           </a>
         </li>
         <li>
@@ -128,7 +89,7 @@ const LeftColumn = () => {
         </li>
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default LeftColumn;
+export default LeftColumn

@@ -1,18 +1,19 @@
 import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
+import BuildIcon from '@mui/icons-material/Build';
 import InfoIcon from '@mui/icons-material/Info'
 import LightbulbIcon from '@mui/icons-material/Lightbulb'
 import LogoutIcon from '@mui/icons-material/Logout'
 import MailIcon from '@mui/icons-material/Mail'
 import PersonIcon from '@mui/icons-material/Person'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
-import MenuBookIcon from '@mui/icons-material/MenuBook';
+import MenuBookIcon from '@mui/icons-material/MenuBook'
 import PeopleIcon from '@mui/icons-material/People'
-import PhotoAlbumIcon from '@mui/icons-material/PhotoAlbum';
+import PhotoAlbumIcon from '@mui/icons-material/PhotoAlbum'
 import PortraitIcon from '@mui/icons-material/Portrait'
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
 
 export const MuiBookIcon           = (props?:SvgIconProps) => <MenuBookIcon {...props} />
-export const MuiCoverIcon          = (props?:SvgIconProps) => <MenuBookIcon {...props} />
+export const MuiCoverIcon          = (props?:SvgIconProps) => <PhotoAlbumIcon {...props} />
 export const MuiInfoIcon           = (props?:SvgIconProps) => <InfoIcon {...props} />
 export const MuiLightbulbIcon      = (props?:SvgIconProps) => <LightbulbIcon {...props} />
 export const MuiLogoutIcon         = (props?:SvgIconProps) => <LogoutIcon {...props} />
@@ -22,6 +23,7 @@ export const MuiPeopleIcon         = (props?:SvgIconProps) => <PeopleIcon {...pr
 export const MuiPersonIcon         = (props?:SvgIconProps) => <PersonIcon {...props} />
 export const MuiPortraitIcon       = (props?:SvgIconProps) => <PortraitIcon {...props} />
 export const MuiQuestionIcon       = (props?:SvgIconProps) => <QuestionMarkIcon {...props} />
+export const MuiWrenchIcon         = (props?:SvgIconProps) => <BuildIcon {...props} />
 
 export type svgProps = {
   fill?: string

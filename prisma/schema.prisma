@@ -592,12 +592,19 @@ model Permission {
   event     Event?     @relation("event_permission")
   gallery   Gallery?   @relation("gallery_permission")
   commune   Commune?   @relation("commune_permission")
-  public    Role[]
-  agent     Role[]
+
+  agent  Role[]
+  editor Role[]
+  author Role[]
+  artist Role[]
+  member Role[]
+  public Role[]
+
+  friend    Role[]
+  stan      Role[]
+  following Role[]
   fan       Role[]
   follower  Role[]
-  friend    Role[]
-  member    Role[]
 }
 
 model Character {
