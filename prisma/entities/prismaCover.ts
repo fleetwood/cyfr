@@ -9,22 +9,25 @@ const details = async (): Promise<CoverDetail[]> => await prisma.cover.findMany(
 const stub = async (id: string): Promise<CoverStub | null> => await prisma.cover.findUnique({where: {id}}) as unknown as CoverStub
 const stubs = async (): Promise<CoverStub[]> => await prisma.cover.findMany() as unknown as CoverStub[]
 
-const upsert = async (props: CoverUpsertProps): Promise<Cover> => {
+const upsert = async (props: CoverUpsertProps): Promise<CoverStub> => {
   debug('upsert', props)
   try {
-    return await prisma.cover.upsert({
-      where: { id: props.id },
-      create: { ...props },
-      update: { ...props },
-    })
+    return (props.id 
+      ? await prisma.cover.update({
+        where: { id: props.id },
+        data: { ...props },
+        include: CoverStubInclude.include
+      })
+      : await prisma.cover.create({
+        data: {...props},
+        include: CoverStubInclude.include
+      })) as unknown as CoverStub
   } catch (error) {
     info('upsert ERROR: ', {
       error,
-      upsert: {
-        where: { id: props.id },
-        create: { ...props },
-        update: { ...props },
-      },
+      id: (props.id!==undefined),
+      props,
+      include: CoverStubInclude.include
     })
     throw error
   }

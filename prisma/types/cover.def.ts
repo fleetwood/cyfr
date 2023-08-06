@@ -38,8 +38,7 @@ export type CoverStub = Cover & CreatorSharesLikes & {
   }
 }
 
-export const CoverStubInclude = {
-  include: {
+export const CoverStubInclude = {include: {
     image: true,
     creator: {
       select: {
@@ -103,35 +102,6 @@ export const CoverStubInclude = {
       },
     },
     genre: true,
-    commentThread: {
-      include: {
-        comments: {
-          include: {
-            creator: {
-              select: {
-                id: true,
-                name: true,
-                slug: true,
-                image: true,
-                membership: {
-                  include: {
-                    type: true,
-                  },
-                },
-              },
-            },
-          },
-          take: 10,
-        },
-        commune: true,
-        blocked: true,
-        _count: {
-          select: {
-            comments: true,
-          },
-        },
-      },
-    },
     _count: {
       select: {
         likes: true,

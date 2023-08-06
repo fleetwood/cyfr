@@ -177,7 +177,7 @@ const CreateBook = () => {
     })
     if (uploadedCover) {
         debug('success', {uploadedCover})
-        // setCover(() => )
+        setCover(() => uploadedCover)
         setShowCoverSelect(() => false)
         notify('Your cover has been added! Bellissimo!')
         return

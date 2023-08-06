@@ -14,10 +14,10 @@ const useCoverApi = () => {
 
   const detail = async (id:string):Promise<CoverDetail> => await (await getApi(`cover/${id}/detail`)).result as CoverDetail
 
-  const upsert = async (props:CoverUpsertProps):Promise<Cover> => {
+  const upsert = async (props:CoverUpsertProps):Promise<CoverStub> => {
     debug('upsert', {props})
     try {
-      return await(await sendApi('cover/upsert', props)).data as Cover
+      return await(await sendApi('cover/upsert', props)).data as CoverStub
     } catch (error) {
       console.error(error)
       throw(error)
