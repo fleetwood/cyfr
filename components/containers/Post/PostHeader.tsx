@@ -11,7 +11,7 @@ const PostHeader = ({ post }: PostHeaderProps) => {
   const link = `/post/${post.id}`
 
   return (
-    <div className="p-2 bg-base-300 rounded-t-2xl">
+    <div className="p-2 bg-base-300">
       <div className="flex space-x-2 py-2">
         <UserAvatar user={post.creator} sz="md" />
         <Link href={link} className="text-primary underline">

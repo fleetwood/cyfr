@@ -5,7 +5,7 @@ import { BookCategory, BookEngageProps, BookStatus, Genre, GenreStub, UserFollow
 import { KeyVal } from "types/props"
 import { abbrNum, now, uuid } from "utils/helpers"
 import ShrinkableIconLabel from "components/ui/shrinkableIconLabel"
-import { FireIcon, FollowIcon, HeartIcon, QuestionMarkIcon, ShareIcon } from "components/ui/icons"
+import { FireIcon, FollowIcon, HeartIcon, MuiQuestionIcon, ShareIcon } from "components/ui/icons"
 import { ToastNotifyType, useToast } from "components/context/ToastContextProvider"
 import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { BookDetailProps } from "components/layouts/BookDetailLayout"
@@ -40,7 +40,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
       iconClassName={iconClassName ?? labelClassName ?? `text-${variantClass}-content`}
       labelClassName={labelClassName ?? `text-${variantClass}-content font-semibold`}
       label={label}
-      icon={icon ?? QuestionMarkIcon}
+      icon={icon ?? <MuiQuestionIcon />}
       onClick={click}
     />
     <span className={labelClassName ?? `text-${variantClass}-content`}>

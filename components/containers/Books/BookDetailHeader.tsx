@@ -2,7 +2,7 @@ import { useCyfrUserContext } from "components/context/CyfrUserProvider"
 import { ToastNotifyType, useToast } from "components/context/ToastContextProvider"
 import { BookDetailProps } from "components/layouts/BookDetailLayout"
 import HtmlContent from "components/ui/htmlContent"
-import { FireIcon, FollowIcon, HeartIcon, QuestionMarkIcon, ShareIcon } from "components/ui/icons"
+import { FireIcon, FollowIcon, HeartIcon, MuiQuestionIcon, ShareIcon } from "components/ui/icons"
 import ShrinkableIconLabel from "components/ui/shrinkableIconLabel"
 import useDebug from "hooks/useDebug"
 import { BookCategory, BookEngageProps, UserFollow } from "prisma/prismaContext"
@@ -34,7 +34,7 @@ const BookInfo = ({className, label, labelClassName, icon, iconClassName, info, 
       iconClassName={iconClassName ?? labelClassName ?? `text-${variantClass}-content`}
       labelClassName={labelClassName ?? `text-${variantClass}-content font-semibold`}
       label={label}
-      icon={icon ?? QuestionMarkIcon}
+      icon={icon ?? <MuiQuestionIcon />}
       onClick={click}
     />
     <span className={labelClassName ?? `text-${variantClass}-content`}>

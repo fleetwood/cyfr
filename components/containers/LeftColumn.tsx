@@ -1,6 +1,6 @@
 
 import ShrinkableIconLink from 'components/ui/shrinkableIconLink';
-import { ClipbardIcon, PhotoIcon, QuestionMarkIcon, FeatherIcon, GearIcon, DatabaseIcon, HouseIcon } from 'components/ui/icons';
+import { ClipbardIcon, PhotoIcon, FeatherIcon, GearIcon, DatabaseIcon, HouseIcon, MuiQuestionIcon } from 'components/ui/icons';
 import { __prod__ } from "utils/constants";
 
 const LeftColumn = () => {
@@ -23,7 +23,7 @@ const LeftColumn = () => {
             href={"/dev"}
             target="_self"
             label="Dev"
-            icon={QuestionMarkIcon}
+            icon={<MuiQuestionIcon />}
           />
         </li>
         }

@@ -26,7 +26,7 @@ const UserSelector = (props:UserSelectorProps) => {
 
   const onUserClick = (u:AvatarUser) => {
     if (!props.onClick) return
-    let selected:unknown = null
+    setSearch(null)
     switch (props.select) {
       case 'id':
         return props.onClick(u.id)

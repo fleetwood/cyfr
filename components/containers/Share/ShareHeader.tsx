@@ -52,7 +52,7 @@ const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
 
   return (
     <div className="pb-2">
-      <div className="rounded-t-2xl flex space-x-2 p-2">
+      <div className="flex space-x-2 p-2">
         <UserAvatar user={item.creator as UserStub} sz="sm" />
         <div>Shared {timeDifference(item.updatedAt)}</div>
           <span className="text-xs ml-4">{item.id}</span>

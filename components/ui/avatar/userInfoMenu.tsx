@@ -13,7 +13,7 @@ import { stringToColour } from 'types/props'
 import { Avatar, Box, Button, Chip, Container, Grid, IconButton, Tooltip, Typography } from '@mui/material'
 import ShrinkableIconButton from '../shrinkableIconButton'
 import ShrinkableIconLabel from '../shrinkableIconLabel'
-import { FireIcon, HeartIcon, MailIcon, ShareIcon } from '../icons'
+import { FireIcon, HeartIcon, MuiMailIcon, ShareIcon } from '../icons'
 import useShareApi from 'prisma/useApi/share'
 import useCyfrUserApi from 'prisma/useApi/cyfrUser'
 import { useToast } from 'components/context/ToastContextProvider'
@@ -156,7 +156,7 @@ const UserInfoMenu = ({
               <Tooltip placement='top' title="Follow"><IconButton color='primary' onClick={() => onFollow()}>{HeartIcon}</IconButton></Tooltip>
               <Tooltip placement='top' title="Fan"><IconButton color='primary' onClick={() => onFan()}>{FireIcon}</IconButton></Tooltip>
               <Tooltip placement='top' title="Share"><IconButton color='primary' onClick={() => onShare()}>{ShareIcon}</IconButton></Tooltip>
-              <Tooltip placement='top' title="Message"><IconButton color='primary' onClick={() => onMessage()}>{MailIcon}</IconButton></Tooltip>
+              <Tooltip placement='top' title="Message"><IconButton color='primary' onClick={() => onMessage()}><MuiMailIcon /></IconButton></Tooltip>
             </div>
           </Container>
         

@@ -1,3 +1,27 @@
+import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
+import InfoIcon from '@mui/icons-material/Info'
+import LightbulbIcon from '@mui/icons-material/Lightbulb'
+import LogoutIcon from '@mui/icons-material/Logout'
+import MailIcon from '@mui/icons-material/Mail'
+import PersonIcon from '@mui/icons-material/Person'
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import PeopleIcon from '@mui/icons-material/People'
+import PhotoAlbumIcon from '@mui/icons-material/PhotoAlbum';
+import PortraitIcon from '@mui/icons-material/Portrait'
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+
+export const MuiBookIcon           = (props?:SvgIconProps) => <MenuBookIcon {...props} />
+export const MuiCoverIcon          = (props?:SvgIconProps) => <MenuBookIcon {...props} />
+export const MuiInfoIcon           = (props?:SvgIconProps) => <InfoIcon {...props} />
+export const MuiLightbulbIcon      = (props?:SvgIconProps) => <LightbulbIcon {...props} />
+export const MuiLogoutIcon         = (props?:SvgIconProps) => <LogoutIcon {...props} />
+export const MuiMailIcon           = (props?:SvgIconProps) => <MailIcon {...props} />
+export const MuiManageAccountsIcon = (props?:SvgIconProps) => <ManageAccountsIcon {...props} />
+export const MuiPeopleIcon         = (props?:SvgIconProps) => <PeopleIcon {...props} />
+export const MuiPersonIcon         = (props?:SvgIconProps) => <PersonIcon {...props} />
+export const MuiPortraitIcon       = (props?:SvgIconProps) => <PortraitIcon {...props} />
+export const MuiQuestionIcon       = (props?:SvgIconProps) => <QuestionMarkIcon {...props} />
 
 export type svgProps = {
   fill?: string
@@ -67,23 +91,6 @@ export const HouseIcon = (
       strokeLinecap="round"
       strokeLinejoin="round"
       d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-    />
-  </svg>
-)
-
-export const QuestionMarkIcon = (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={1.5}
-    stroke="currentColor"
-    className="w-6 h-6"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"
     />
   </svg>
 )
@@ -552,19 +559,6 @@ export const LinesIcon = (
     <path d="M25.695,9.43c0,0.771-0.631,1.401-1.402,1.401H8.875c-0.771,0-1.402-0.63-1.402-1.401V7.152   c0-0.771,0.631-1.402,1.402-1.402h15.418c0.771,0,1.402,0.631,1.402,1.402V9.43z" />
     <path d="M25.695,24.848c0,0.771-0.631,1.402-1.402,1.402H8.875c-0.771,0-1.402-0.631-1.402-1.402V22.57   c0-0.771,0.631-1.401,1.402-1.401h15.418c0.771,0,1.402,0.63,1.402,1.401V24.848z" />
     <path d="M25.695,17.139c0,0.771-0.631,1.402-1.402,1.402H8.875c-0.771,0-1.402-0.631-1.402-1.402v-2.277   c0-0.771,0.631-1.402,1.402-1.402h15.418c0.771,0,1.402,0.631,1.402,1.402V17.139z" />
-  </svg>
-)
-
-export const MailIcon = (
-  <svg xmlns="http://www.w3.org/2000/svg" 
-    xmlSpace="preserve"
-    viewBox="0 0 32 32"
-    stroke="none"
-    fill={currentColor}
-    className="w-6 h-6"
-   >
-    <path d="M4.274,8.663l10.034,7.948c0.455,0.36,1.082,0.52,1.691,0.49c0.609,0.029,1.236-0.13,1.691-0.49   l10.034-7.948c0.802-0.634,0.62-1.152-0.4-1.152H16H4.675C3.654,7.511,3.473,8.029,4.274,8.663z" />
-    <path d="M28.448,10.76l-10.965,8.324c-0.41,0.309-0.947,0.459-1.483,0.453c-0.536,0.006-1.073-0.145-1.483-0.453   L3.552,10.76c-0.814-0.617-1.48-0.286-1.48,0.735v13.659c0,1.021,0.836,1.856,1.857,1.856H16h12.071   c1.021,0,1.857-0.836,1.857-1.856V11.495C29.929,10.474,29.263,10.143,28.448,10.76z" />
   </svg>
 )
 

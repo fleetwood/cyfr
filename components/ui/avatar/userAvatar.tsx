@@ -29,7 +29,7 @@ type AvatarProps = {
   onClick?: (user:AvatarUser) => void
 }
 
-export type AvatarVariants = 'default'|'no-profile'
+export type AvatarVariants = 'default'|'no-profile'|'no-link'
 
 const UserAvatar = ({
   user,
@@ -37,7 +37,6 @@ const UserAvatar = ({
   className,
   shadow,
   sz,
-  link = true,
   onClick,
   variant = ['default'],
 }: AvatarProps) => {
@@ -70,7 +69,7 @@ const UserAvatar = ({
       onMouseOutCapture={() => setShowProfile(() => false)}
       onClickCapture={() => onClick && onClick(user)}
     >
-      {!onClick && link && user ? <a href={`/user/${user.slug}`}>{content}</a> : content}
+      {!onClick && variant.indexOf('no-link')<0 && user ? <a href={`/user/${user.slug}`}>{content}</a> : content}
       {allowProfile && 
         <UserInfoMenu user={user} showProfile={showProfile} setShowProfile={setShowProfile} />
       }
