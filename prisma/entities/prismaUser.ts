@@ -23,7 +23,7 @@ import {
   GenericResponseError,
   ResponseError
 } from "types/response"
-import { dedupe } from "utils/helpers"
+import { dbDateFormat, dedupe, toSlug } from "utils/helpers"
 const { fileMethod, debug, info, err } = useDebug("entities/prismaUser")
 
 type AllPostQueryParams = {
@@ -408,7 +408,7 @@ const setMembership = async (
 ): Promise<MembershipStub> => {
   try {
     debug("setMembership", { user, typeId, cadence })
-    const expiresAt = new Date(dayjs().add(1, cadence).format('YYYY-MM-DD HH:mm:ss.sssZ'))
+    const expiresAt = new Date(dayjs().add(1, cadence).format(dbDateFormat))
 
     let membership = user.membership ?? await prisma.membership.create({
       data: {
@@ -502,7 +502,7 @@ const updatePreferences = async ({
       where: { id },
       data: { 
         name, 
-        slug: name.replaceAll(/[\W_]+/g,"-").toLowerCase(),
+        slug: toSlug(name),
         image },
     })
     if (user) {

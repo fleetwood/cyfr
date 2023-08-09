@@ -13,6 +13,19 @@ module.exports = {
       'ibarra': ['Ibarra', 'serif'],
       'ibarra-italic': ['IbarraItalic', 'serif'],
     },
+    animation: {
+      'flip-right': 'flip-right 0.2s ease-in-out',
+      'flip-left': 'flip-left 0.2s ease-in-out',
+    },
+    keyframes: {
+      'flip-right': { 
+        '0%': { transform: 'rotate(0deg)' }, 
+        '100%': { transform: 'rotate(180deg)' } 
+      },
+      'flip-left': { 
+        '0%': { transform: 'rotate(180deg)' }, 
+        '100%': { transform: 'rotate(0deg)' } }
+    }
   },
 },
   daisyui: {

@@ -65,6 +65,8 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
     const bookProps:BookUpsertProps = {
       ...book,
       ownerId: cyfrUser.id,
+      // TODO
+      completeAt: undefined,
       title: title!,
       visible,
       prospect,
@@ -78,6 +80,7 @@ const UpsertBook = ({ book, onUpsert, link = false }: UpsertBookProps) => {
       words:0,
       // cover,
       authors: authors!,
+      //   permission
       //   chapters,
       //   characters,
       //   gallery,

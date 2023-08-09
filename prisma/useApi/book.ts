@@ -1,6 +1,6 @@
 import useDebug from "hooks/useDebug"
 import useRocketQuery, { RocketQuery } from "hooks/useRocketQuery"
-import { BookDetail, BookEngageProps, BookFollowProps, BookStub, BookUpsertProps, ChangeCoverProps, ChangeGenreProps, Chapter } from "prisma/prismaContext"
+import { BookCreateProps, BookDetail, BookEngageProps, BookFollowProps, BookStub, BookUpsertProps, ChangeCoverProps, ChangeGenreProps, Chapter } from "prisma/prismaContext"
 import { NotImplemented, getApi, sendApi } from "utils/api"
 
 const { debug, fileMethod } = useDebug("hooks/useBookApi", )
@@ -111,10 +111,13 @@ const changeCover = async (props:ChangeCoverProps): Promise<BookStub> => await (
 
 const upsert = async (props:BookUpsertProps):Promise<Boolean> => await (await sendApi('book/upsert', {props})).data
 
+const create = async (props: BookCreateProps): Promise<BookStub> => await ( await sendApi('book/create', { props })).data
+
 type BookApi = {
     query: ({ bookId, bookSlug }: UseBookQueryProps) => RocketQuery<BookDetail>
     addChapter: (bookId: string, title: string, order: number) => Promise<any>
     addGallery: (bookId: string, galleryId?: string) => Promise<any>
+    create: (props:BookCreateProps) => Promise<BookStub>
     detailById: (bookId: string) => RocketQuery<BookDetail>
     detailBySlug: (bookSlug: string) => RocketQuery<BookDetail>
     follow: (props: BookFollowProps) => Promise<boolean>
@@ -134,6 +137,7 @@ type BookApi = {
         query
         , addChapter
         , addGallery
+        , create
         , detailById
         , detailBySlug
         , follow

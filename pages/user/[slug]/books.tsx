@@ -1,5 +1,5 @@
 import BookStubView from "components/containers/Books/BookStubView";
-import CreateBook, { CreateBookModalButton } from "components/containers/Books/CreateBook";
+import CreateBook from "components/containers/Books/CreateBook";
 import UpsertBook from "components/containers/Books/UpsertBook";
 import { useCyfrUserContext } from "components/context/CyfrUserProvider";
 import MainLayout from "components/layouts/MainLayout";
@@ -39,7 +39,7 @@ const UserBooksPage = ({ user, books }:UserBooksPageProps) => {
       <div className="flex flex-col space-y-4">
         {books && books.map((book:BookStub) => <BookStubView book={book} key={book.id} authorAvatars={false} />)}
       </div>
-      {isOwner && <><CreateBookModalButton /><CreateBook /></>}
+      {isOwner && <><CreateBook /></>}
     </MainLayout>
   ) : (
     <MainLayout sectionTitle="Books">

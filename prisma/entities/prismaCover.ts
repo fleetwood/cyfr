@@ -6,8 +6,8 @@ const {debug, info, fileMethod} = useDebug('entities/prismaCover', 'DEBUG')
 const detail = async (id: string): Promise<CoverDetail | null> => await prisma.cover.findUnique({where: {id}}) as unknown as CoverDetail
 const details = async (): Promise<CoverDetail[]> => await prisma.cover.findMany() as unknown as CoverDetail[]
 
-const stub = async (id: string): Promise<CoverStub | null> => await prisma.cover.findUnique({where: {id}}) as unknown as CoverStub
-const stubs = async (): Promise<CoverStub[]> => await prisma.cover.findMany() as unknown as CoverStub[]
+const stub = async (id: string): Promise<CoverStub | null> => await prisma.cover.findUnique({where: {id}, include: CoverStubInclude.include}) as unknown as CoverStub
+const stubs = async (): Promise<CoverStub[]> => await prisma.cover.findMany({include: CoverStubInclude.include}) as unknown as CoverStub[]
 
 const upsert = async (props: CoverUpsertProps): Promise<CoverStub> => {
   debug('upsert', props)

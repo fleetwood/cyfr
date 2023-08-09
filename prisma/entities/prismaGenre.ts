@@ -1,3 +1,4 @@
+import {toSlug} from "utils/helpers"
 import useDebug from "../../hooks/useDebug"
 import {
   Cover,
@@ -47,7 +48,7 @@ const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
   const method = "upsertGenre"
   try {
     const { title, description } = props
-    const slug = title.replace(" ", "-").toLowerCase().trim()
+    const slug = toSlug(title)
     debug(method, { title, description })
 
     return (await prisma.genre.upsert({

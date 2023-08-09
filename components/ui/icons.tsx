@@ -1,4 +1,5 @@
 import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import BuildIcon from '@mui/icons-material/Build';
 import InfoIcon from '@mui/icons-material/Info'
 import LightbulbIcon from '@mui/icons-material/Lightbulb'
@@ -12,6 +13,7 @@ import PhotoAlbumIcon from '@mui/icons-material/PhotoAlbum'
 import PortraitIcon from '@mui/icons-material/Portrait'
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
 
+export const MuiArrowLeftIcon      = (props?: SvgIconProps) => <KeyboardArrowLeftIcon {...props} />
 export const MuiBookIcon           = (props?:SvgIconProps) => <MenuBookIcon {...props} />
 export const MuiCoverIcon          = (props?:SvgIconProps) => <PhotoAlbumIcon {...props} />
 export const MuiInfoIcon           = (props?:SvgIconProps) => <InfoIcon {...props} />

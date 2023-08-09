@@ -35,6 +35,8 @@ export const ymd = (date: Date = now()): string => {
   return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec
 }
 
+export const dbDateFormat = 'YYYY-MM-DD HH:mm:ss.sssZ'
+
 export const timeDifference = (from:Date|string) => dayjs(from.toString()).fromNow()
 
 export const dedupe = (arr:any[],key:string) => {
@@ -69,9 +71,9 @@ export const uniqueKey = (...items:any) => {
 }
 //TODO document this
 export const uniqueArray = (a:string[]) => {
-  var seen = {};
+  var seen = {}
   // @ts-ignore
-  return a.filter((item) => seen.hasOwnProperty(item) ? false : (seen[item] = true));
+  return a.filter((item) => seen.hasOwnProperty(item) ? false : (seen[item] = true))
 }
 
 export const abbrNum = (n: number |Number | null | undefined) => n ? new Intl.NumberFormat('en-US', { notation: "compact", compactDisplay: "short" }).format(Number(n)) : "0"
@@ -82,4 +84,7 @@ export function hasOwnProperty<X extends {}, Y extends PropertyKey>
   return obj.hasOwnProperty(prop)
 }
 
-export  const sleep = (ms:number) => new Promise(resolve => setTimeout(resolve, ms));
+export  const sleep = (ms:number) => new Promise(resolve => setTimeout(resolve, ms))
+
+export const toSlug = (s: string) =>
+  encodeURIComponent(s.replaceAll(/[\W_]+/g, '-').toLowerCase())

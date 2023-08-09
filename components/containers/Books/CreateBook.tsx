@@ -1,60 +1,53 @@
-import { Box, Grid, ImageList, ImageListItem } from '@mui/material'
+import {Box, Grid} from '@mui/material'
 import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import Stepper from '@mui/material/Stepper'
-import { useToast } from 'components/context/ToastContextProvider'
-import { Dropzone, TailwindInput, TailwindTextarea } from 'components/forms'
+import {useToast} from 'components/context/ToastContextProvider'
+import {Dropzone, TailwindInput, TailwindTextarea} from 'components/forms'
 import EZButton from 'components/ui/ezButton'
-import { ArrowLeftIcon, ArrowRightIcon, BookIcon, CheckmarkIcon, CyfrLogo, MuiBookIcon, MuiCoverIcon, MuiInfoIcon, MuiManageAccountsIcon, MuiQuestionIcon, SaveIcon } from 'components/ui/icons'
-import { ModalOpenButton } from 'components/ui/modalCheckbox'
+import {ArrowLeftIcon, ArrowRightIcon, CheckmarkIcon, MuiBookIcon, MuiCoverIcon, MuiInfoIcon, MuiManageAccountsIcon, MuiQuestionIcon, SaveIcon} from 'components/ui/icons'
 import Semibold from 'components/ui/semibold'
 import useDebounce from 'hooks/useDebounce'
 import useDebug from 'hooks/useDebug'
-import { CoverStub, CreatorStub, Genre, GenreStub, Image, Permission, Role, RoleString, UserStub } from 'prisma/prismaContext'
+import {BookCreateProps, BookStatus, CoverStub, Genre, GenreStub, Image, Permission, Role, RoleString, UserStub} from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
-import React, { useEffect, useState } from 'react'
-import { dedupe, now, uniqueKey } from 'utils/helpers'
+import React, {useEffect, useState} from 'react'
+import {dedupe, now, uniqueKey} from 'utils/helpers'
 import GenreSelector from '../Genre/GenreSelector'
 import UserSelector from '../User/UserSelector'
 import BookPermissions from './BookPermissions'
 import BookPermissionsDialog from './BookPermissionsDialog'
 
 import UserAvatar from 'components/ui/avatar/userAvatar'
+import BinarySelector from 'components/ui/binarySelect'
 import FullScreenDialog from 'components/ui/fullScreenDialog'
-import GalleryCovers from '../Gallery/GalleryCovers'
-import { cloudinary } from 'utils/cloudinary'
+import {cloudinary} from 'utils/cloudinary'
 import CoverList from '../Cover/CoverList'
+import CoverStubView from '../Cover/CoverStubView'
 
 const {debug, info, jsonDialog, jsonBlock} = useDebug("components/containers/Books/CreateBook",'DEBUG')
-const createBookModal = 'createBookModal'
-
-export const CreateBookModalButton = () => (
-    <ModalOpenButton id={createBookModal} className='btn btn-info space-x-2' variant='component'>
-        <CyfrLogo className="animate-pulse text-info-content w-[1.25rem]" />
-        <span className="text-info-content">New Book!</span>
-    </ModalOpenButton>
-)
 
 const CreateBook = () => {
     const {cyfrUser}= useApi.cyfrUser()
     const {notify, notifyError} = useToast()
-    const {isTitleUnique} = useApi.book()
+    const {isTitleUnique, create:createBook} = useApi.book()
     const {upsert:upsertCover} = useApi.cover()
 
+    // PROPS
     const [title, setTitle] = useState<string|null>(null)
     const [visible, setVisible] = useState(false)
     const [prospect, setProspect] = useState(false)
-    const [fiction, setFiction] = useState()
-    const [status, setStatus] = useState()
+    const [fiction, setFiction] = useState(true)
+    const [status, setStatus] = useState<BookStatus>('DRAFT')
     const [cover, setCover] = useState<CoverStub|null>(null)
-    const [genreId, setGenreId] = useState()
     const [genre, setGenre] = useState<Genre>()
     // const [categories, setCategories] = useState<BookCategory[]>(book?.categories || [])
     const [hook, setHook] = useState<string|null>(null)
     const [synopsis, setSynopsis] = useState<string|null>(null)
     const [back, setBack] = useState<string|null>(null)
     const [authors, setAuthors] = useState<UserStub[]>([cyfrUser as UserStub])
-    const [permissions, setPermissions] = useState<Permission>({
+    const [completeAt, setCompleteAt] = useState<Date>()
+    const [permission, setPermission] = useState<Permission>({
         id: uniqueKey(),
         createdAt: now(),
         updatedAt: now(),
@@ -72,18 +65,18 @@ const CreateBook = () => {
         follower:   ['NONE'],
     })
     
-    const changeAgent = (perms:RoleString[]) => setPermissions(() => {return {...permissions, agent: perms.flatMap(a => a) as Role[]}})
-    const changeEditor = (perms:RoleString[]) => setPermissions(() => {return {...permissions, editor: perms.flatMap(a => a) as Role[]}})
-    const changeAuthor = (perms:RoleString[]) => setPermissions(() => {return {...permissions, author: perms.flatMap(a => a) as Role[]}})
-    const changeArtist = (perms:RoleString[]) => setPermissions(() => {return {...permissions, artist: perms.flatMap(a => a) as Role[]}})
-    const changeMember = (perms:RoleString[]) => setPermissions(() => {return {...permissions, member: perms.flatMap(a => a) as Role[]}})
-    const changePublic = (perms:RoleString[]) => setPermissions(() => {return {...permissions, public: perms.flatMap(a => a) as Role[]}})
+    const changeAgent = (perms:RoleString[]) => setPermission(() => {return {...permission, agent: perms.flatMap(a => a) as Role[]}})
+    const changeEditor = (perms:RoleString[]) => setPermission(() => {return {...permission, editor: perms.flatMap(a => a) as Role[]}})
+    const changeAuthor = (perms:RoleString[]) => setPermission(() => {return {...permission, author: perms.flatMap(a => a) as Role[]}})
+    const changeArtist = (perms:RoleString[]) => setPermission(() => {return {...permission, artist: perms.flatMap(a => a) as Role[]}})
+    const changeMember = (perms:RoleString[]) => setPermission(() => {return {...permission, member: perms.flatMap(a => a) as Role[]}})
+    const changePublic = (perms:RoleString[]) => setPermission(() => {return {...permission, public: perms.flatMap(a => a) as Role[]}})
     
-    const changeFriend = (perms:RoleString[]) => setPermissions(() => {return {...permissions, friend: perms.flatMap(a => a) as Role[]}})
-    const changeStan = (perms:RoleString[]) => setPermissions(() => {return {...permissions, stan: perms.flatMap(a => a) as Role[]}})
-    const changeFollowing = (perms:RoleString[]) => setPermissions(() => {return {...permissions, following: perms.flatMap(a => a) as Role[]}})
-    const changeFan = (perms:RoleString[]) => setPermissions(() => {return {...permissions, fan: perms.flatMap(a => a) as Role[]}})
-    const changeFollower = (perms:RoleString[]) => setPermissions(() => {return {...permissions, follower: perms.flatMap(a => a) as Role[]}})
+    const changeFriend = (perms:RoleString[]) => setPermission(() => {return {...permission, friend: perms.flatMap(a => a) as Role[]}})
+    const changeStan = (perms:RoleString[]) => setPermission(() => {return {...permission, stan: perms.flatMap(a => a) as Role[]}})
+    const changeFollowing = (perms:RoleString[]) => setPermission(() => {return {...permission, following: perms.flatMap(a => a) as Role[]}})
+    const changeFan = (perms:RoleString[]) => setPermission(() => {return {...permission, fan: perms.flatMap(a => a) as Role[]}})
+    const changeFollower = (perms:RoleString[]) => setPermission(() => {return {...permission, follower: perms.flatMap(a => a) as Role[]}})
     
     const [titleError, setTitleError] = useState<string>()
     const [titleOK, setTitleOK] = useState(false)
@@ -119,34 +112,32 @@ const CreateBook = () => {
     // const [gallery, setGallery] = useState<GalleryStub | null>(book?.gallery || null)
     const [images, setImages] = useState()
 
-    const upsertProps = {
-        title,
-        visible,
-        prospect,
-        fiction,
-        status,
-        cover,
-        genreId,
-        genre,
-        hook,
-        synopsis,
-        back,
-        authors,
-        permissions
+    const upsertProps: BookCreateProps = {
+      title: title!,
+      back: back??undefined,
+      hook: hook??undefined,
+      synopsis: synopsis??undefined,
+      visible,
+      prospect,
+      fiction,
+      status,
+      completeAt,
+      coverId: cover!.id,
+      genreId: genre!.id,
+      ownerId: cyfrUser?.id,
+      // TODO: this needs to be Author 
+      authors: [],
+      // authors.map((a) => {
+      //   return {
+      //     userId: a.id
+      //   }
+      //  }),
+      permission
     }
 
   const [activeStep, setActiveStep] = React.useState(3)
-
-  const handleNext = () => setActiveStep((prevActiveStep) => prevActiveStep + 1)
-
-  const handleBack = () => setActiveStep((prevActiveStep) => prevActiveStep - 1)
-
-  const handleReset = () => setActiveStep(0)
-
   const stepClassName = (index:number) => 'cursor-pointer hover:text-base-100 ' + (index === activeStep ? 'text-base-100' : index > activeStep ? 'text-info' : 'text-base-100 text-opacity-50')
-
   const showStep = (step:number) => step === activeStep ? 'inline' : 'hidden'
-
   const steps = [
     {label: 'Name', icon: <MuiBookIcon />}, 
     {label: 'About', icon: <MuiInfoIcon />}, 
@@ -195,12 +186,25 @@ const CreateBook = () => {
     }
   }
 
+  const onSaveBook = async () => {
+  }
+
+  const saveBook = async () => {
+    const result = await createBook(upsertProps)
+    if (result) {
+      notify(`Created ${title}! Happy writing!!`)
+    } else {
+      debug('Did not get right result?', upsertProps)
+      notify(`Ya that dint work`, 'warning')
+    }
+  }
+
   const Summary = ({label, children}:{label:string, empty?:boolean, children?: React.ReactNode}) => (
     <Grid container spacing={2}>
         <Grid item xs={2} className='font-semibold'>{label}</Grid>
         <Grid item xs={8}>{children ?? <span className='italic text-info opacity-50'>Not Provided</span>}</Grid>
     </Grid>
-    )
+)
 
   const StepItem = ({index, children}:{index:number, children: React.ReactNode}) => <div onClick={() => setActiveStep(index)} className={stepClassName(index)}>{children}</div>
 
@@ -243,6 +247,7 @@ const CreateBook = () => {
             <EZButton
               className={(activeStep == 4 ? 'inline' : 'hidden') + ' btn-sm'}
               label={SaveIcon}
+              onClick={saveBook}
             />
           </div>
         </Grid>
@@ -335,6 +340,7 @@ const CreateBook = () => {
             </Grid>
           </div>
           <Box className="flex flex-col">
+            <BinarySelector left={{label: 'One Alligator'}} right={{label: 'Two Alligator'}} />
             <BookPermissions level="Agents" onChange={changeAgent}>
               <p>
                 This will allow agents to interact with your book. This inlcudes{' '}
@@ -389,13 +395,14 @@ const CreateBook = () => {
         <div className={showStep(3)}>
           <h3>Genre and Cover</h3>
           <GenreSelector genre={genre} setGenre={onGenreSelect} />
+          <label className='pt-2 font-semibold text-primary'>Fiction/Non-fiction</label>
+          <BinarySelector spacing={2} value={fiction} setValue={setFiction} left={{label: 'Fiction', variant: 'secondary'}} right={{label: 'Non-Fiction', variant: 'secondary'}} />
           {genre && (
-            <Grid>
+              <Grid>
+                <label className='pt-2 font-semibold text-primary'>Cover</label>
               {cover && (
-                <>
-                  <div className='font-semibold text-primary'>Cover</div>
-                  <img
-                    src={cloudinary.resize({
+                <div>
+                <img src={cloudinary.resize({
                       url: cover.image.url,
                       height: 320,
                     })}
@@ -406,9 +413,11 @@ const CreateBook = () => {
                     alt={cover.creator?.name}
                     loading="eager"
                   />
-                </>
+                </div>
               )}
-              <EZButton label={cover ? 'Change' : 'Find or Create Your Cover!'} onClick={() => setShowCoverSelect((s) => !s)} />
+              <div>
+                <EZButton label={cover ? 'Change' : 'Find or Create Your Cover!'} onClick={() => setShowCoverSelect((s) => !s)} />
+              </div>
               {showCoverSelect &&
                 <div>
                 <Dropzone limit={1} onDropComplete={onCoverImageAdded} />
@@ -456,63 +465,63 @@ const CreateBook = () => {
               ))}
             </Summary>
             <Summary label="Genre">{genre?.title}</Summary>
-            <Summary label="Cover">{cover?.id}</Summary>
+            <Summary label="Cover">{cover ? <CoverStubView cover={cover} height={160} /> : "None selected"}</Summary>
             <Summary label="Hook">{hook}</Summary>
             <Summary label="Back Panel">{back}</Summary>
             <Summary label="Permissions">
               <Summary label="Agents">
-                {permissions.agent.map((r: Role) => (
+                {permission.agent.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
               <Summary label="Editors">
-                {permissions.editor.map((r: Role) => (
+                {permission.editor.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
               <Summary label="Authors">
-                {permissions.author.map((r: Role) => (
+                {permission.author.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
               <Summary label="Artists">
-                {permissions.artist.map((r: Role) => (
+                {permission.artist.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
               <Summary label="Members">
-                {permissions.member.map((r: Role) => (
+                {permission.member.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
               <Summary label="Public">
-                {permissions.public.map((r: Role) => (
+                {permission.public.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
 
               <Summary label="Friends">
-                {permissions.friend.map((r: Role) => (
+                {permission.friend.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
               <Summary label="Stans">
-                {permissions.stan.map((r: Role) => (
+                {permission.stan.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
               <Summary label="Following">
-                {permissions.following.map((r: Role) => (
+                {permission.following.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
               <Summary label="Fans">
-                {permissions.fan.map((r: Role) => (
+                {permission.fan.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
               <Summary label="Followers">
-                {permissions.follower.map((r: Role) => (
+                {permission.follower.map((r: Role) => (
                   <span className="px-2">{r}</span>
                 ))}
               </Summary>
@@ -526,4 +535,3 @@ const CreateBook = () => {
   )}
 
 export default CreateBook
-

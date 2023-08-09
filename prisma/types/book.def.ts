@@ -1,5 +1,5 @@
 import { UseQueryResult } from "react-query"
-import { Agent, AgentStub, AgentStubInclude, Artist, ArtistStub, ArtistStubInclude, Author, AuthorStub, AuthorStubInclude, Book, BookCategory, BookStatus, ChapterListItem, ChapterStub, CharacterStub, CommentThread, Cover, CoverStub, CoverStubInclude, CyfrUser, Follow, Gallery, GalleryStub, GalleryStubInclude, Genre, Image, Publisher, User, UserFollow, UserStub, UserStubSelect } from "../prismaContext"
+import { Agent, AgentStub, AgentStubInclude, Artist, ArtistStub, ArtistStubInclude, Author, AuthorStub, AuthorStubInclude, Book, BookCategory, BookStatus, ChapterListItem, ChapterStub, CharacterStub, CommentThread, Cover, CoverStub, CoverStubInclude, CyfrUser, Follow, Gallery, GalleryStub, GalleryStubInclude, Genre, Image, Permission, Publisher, User, UserFollow, UserStub, UserStubSelect } from "../prismaContext"
 
 export type BookRelations = {
   genre:        Genre
@@ -16,25 +16,39 @@ export type BookRelations = {
 
 export type BookUpsertProps = {
   ownerId:      string
-  id?:          string|null
+  id?:          string
   title:        string
   slug?:        string
-  completeAt?:  Date|null
+  completeAt?:  Date
   visible:      boolean
   fiction:      boolean
   prospect:     boolean
   genreId:      string
-  status?:      BookStatus|null
+  status?:      BookStatus
   back?:        string
   hook?:        string
   synopsis?:    string
   words?:       number
-  categories?:  BookCategory[] | null
+  categories?:  BookCategory[]
   authors:      AuthorStub[]
+  // permission:   Permission
 }
 
 export type BookCreateProps = {
-
+  ownerId:      string
+  genreId:      string
+  coverId:      string
+  authors:      Author[]
+  title:        string
+  visible:      boolean
+  fiction:      boolean
+  prospect:     boolean
+  status:       BookStatus
+  completeAt?:  Date
+  back?:        string
+  hook?:        string
+  synopsis?:    string
+  permission:   Permission
 }
 
 export type BookEngageProps = {

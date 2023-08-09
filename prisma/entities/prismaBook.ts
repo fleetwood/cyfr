@@ -1,8 +1,10 @@
 import useDebug from "hooks/useDebug"
 import { GenericResponseError, ResponseError } from "types/response"
-import { dedupe, now } from 'utils/helpers'
+import { dedupe, now, toSlug } from 'utils/helpers'
 import {
+  AuthorStub,
   Book,
+  BookCreateProps,
   BookDetail,
   BookDetailInclude,
   BookEngageProps,
@@ -17,11 +19,12 @@ import {
   LikeProps,
   Post,
   PrismaChapter,
+  UserStub,
   prisma
 } from "prisma/prismaContext"
 import { NotImplemented } from "utils/api"
 
-const { debug, info, fileMethod } = useDebug("entities/prismaBook", )
+const { debug, info, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
 
 type BookQueryProps = {
   id?:    string
@@ -37,15 +40,94 @@ const stub = async (props:BookQueryProps):Promise<BookStub> => await prisma.book
 
 const stubs = async ():Promise<BookStub[]> => await prisma.book.findMany({...BookStubInclude}) as unknown as BookStub[]
 
-const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
+const create = async (props:BookCreateProps) => {
+  try {
+    throw NotImplemented('prismaBook/create')
+    const results = await prisma.book.create({
+      /*
+data: {
+    title: "Testing book",
+    slug: "testing-book",
+    genre: {
+      connect: {id:"clgbb9l5j0004nn0gsd78ilvj"}
+    },
+    owner: {
+      connect: {id:"clkj5n6zv0000bu8potlrns5z"}
+    },
+    cover: {
+      connect: { id: 'clkkp3ax4000gmp0h0tp7j9hv'}
+    },
+    back: "There is nothing on the back",
+    authors: {
+      connectOrCreate:[
+        {
+          where: {id: 'cll33207f0004qv0hpys0lvoo'},
+          create: {userId: 'clkj5n6zv0000bu8potlrns5z'},
+        },
+        {
+          where: {id: 'cll33207f0006qv0h1u6givyh'},
+          create: {userId: 'clkk4hf7m0008buwta5k9iynu'},
+        },
+      ]
+    },
+    permission: {
+      create: {
+        agent: ['READ', 'COMMENT', 'SHARE'],
+        artist: ['READ', 'COMMENT', 'SHARE'],
+        author: ['READ', 'COMMENT', 'SHARE', 'FEEDBACK'],
+        editor: ['READ', 'COMMENT', 'SHARE', 'FEEDBACK'],
+        fan: ['READ', 'COMMENT', 'SHARE', 'FEEDBACK'],
+        stan: ['READ', 'COMMENT', 'SHARE', 'FEEDBACK'],
+        follower: ['READ', 'COMMENT', 'SHARE'],
+        following: ['READ', 'COMMENT', 'SHARE'],
+        friend: ['READ', 'COMMENT', 'SHARE'],
+        public: ['NONE'],
+        member: ['READ', 'COMMENT', 'SHARE'],
+      }
+    },
+    status: 'DRAFT'
+  }
+      */
+      data: {
+        owner: { connect: {id: props.ownerId}},
+        title: props.title,
+        slug: toSlug(props.title),
+        words: 0,
+        fiction: props.fiction,
+        visible: props.visible,
+        prospect: props.prospect,
+        back: props.back,
+        hook: props.hook,
+        synopsis: props.synopsis,
+        permission: { create: props.permission },
+        genre: { connect: { id: props.genreId } },
+        cover: { connect: { id: props.coverId } },
+        authors: { connect: props.authors },
+      },
+    })
+  } catch (error) {
+    throw error
+  }
+}
+
+const upsert = async (props:BookUpsertProps): Promise<Book> => {
     try {
-        const {ownerId, id, title, slug, hook, synopsis, back, status, visible, fiction, prospect, words, completeAt} = props
+        const {ownerId, id, title, slug, genreId, hook, synopsis, back, status, visible, fiction, prospect, words, completeAt, authors} = props
+        const authorConnect = dedupe(
+          (authors ?? [])
+            .filter((a) => a !== null)
+            .map((a) => {
+              return { id: a.id }
+            }),
+          'id'
+        )
+
         const data =  {
           title,
-          slug: encodeURIComponent((slug || title).replaceAll(' ','-')).toLowerCase(),
+          slug: toSlug(slug ?? title),
+          back,
           hook,
           synopsis,
-          back,
           status,
           visible,
           prospect,
@@ -54,16 +136,16 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
           completeAt,
           updatedAt: now(),
           authors: {
-            connect: dedupe((props.authors??[]).filter(a => a !== null).map(a => { return {id: a.id}}),'id')
+            connect: dedupe((authors??[]).filter(a => a !== null).map(a => { return {id: a.id}}),'id')
           },
           genre: {
             connect: {
-              id: props.genreId
+              id: genreId
             }
           },
           owner: {
             connect: {
-              id: props.ownerId
+              id: ownerId
             }
           }
         }
@@ -77,21 +159,14 @@ const upsert = async (props:BookUpsertProps): Promise<BookDetail|null> => {
           })
           : await prisma.book.create({data})
         if (result) {
-          const book  = result as unknown as BookDetail
+          const book  = result as unknown as Book
           debug('upsert SUCCESS', {
             result,
-            id: book.id, 
-            title: book.title, 
-            slug: book.slug, 
-            status: book.status, 
-            visible: book.visible, 
-            words: book.words, 
-            completeAt: book.completeAt,
-            updatedAt: book.updatedAt
+            props
           })
           return book
         }
-        throw({code: fileMethod('createBook'), message: 'Not yet implemented'})
+        throw({code: fileMethod('createBook'), message: 'Unsuccessful'})
     } catch (error) {
         info('upsert ERROR', {error})
         throw(error)

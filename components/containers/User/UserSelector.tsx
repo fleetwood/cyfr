@@ -2,10 +2,13 @@ import { Grid } from '@mui/material'
 import { TailwindInput } from 'components/forms'
 import UserAvatar, { AvatarUser } from 'components/ui/avatar/userAvatar'
 import useDebounce from 'hooks/useDebounce'
-import { UserStub } from 'prisma/prismaContext'
+import useDebug from 'hooks/useDebug'
+import { Agent, Artist, Author, Editor, Follow, Reader, UserStub } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, { useEffect, useState } from 'react'
 import { uniqueKey } from 'utils/helpers'
+
+const {debug} = useDebug('containers/User/UserSelector', 'DEBUG')
 
 type UserSelectorProps = {
     label:              string
@@ -14,19 +17,28 @@ type UserSelectorProps = {
     labelClassName?:    string
     inputClassName?:    string
     required?:          boolean
+    ofType?:            ('Friends'|'Fans'|'Followers'|'Following'|'Stans'|'Members')[]
+    forType?:           (Author|Artist|Editor|Agent|Reader|Follow)[]
     onClick?:           <T>(selected:T) => void
     select?:            'id' | 'slug' | 'User' | 'CyfrUser' | 'UserDetail' | 'UserFeed' | 'UserStub' | 'UserFollow'
 }
 
+// TODO: create variants for:
+/* 
+Author, Artist, Editor, Agent, Reader, 
+Follower, Stan, Following, Fan
+*/
 const UserSelector = (props:UserSelectorProps) => {
   const userSelector = 'userSelector'
   const {friends } = useApi.user()
   const {cyfrUser} = useApi.cyfrUser()
-  const [users, setUsers] = useState<UserStub[]>([])
+  // TODO: can we set this to <T> somehow?
+  const [users, setUsers] = useState<any[]>([])
 
   const onUserClick = (u:AvatarUser) => {
     if (!props.onClick) return
     setSearch(null)
+    debug('TODO: return the appropriate forType here...')
     switch (props.select) {
       case 'id':
         return props.onClick(u.id)
@@ -50,6 +62,7 @@ const UserSelector = (props:UserSelectorProps) => {
     }
     // TODO: we may not always want just friends from the selector.
     //        so add a variant and change the api call here
+    debug('TODO: Switch for types...')
     const f = await friends(cyfrUser.id, search)
     if (f && f.length>0) {
       setUsers(() => f)

@@ -2,6 +2,8 @@ import ImageList from '@mui/material/ImageList'
 import { CoverStub } from 'prisma/prismaContext'
 import React from 'react'
 import { cloudinary } from 'utils/cloudinary'
+import CoverStubView from './CoverStubView'
+import CoverDefault from './CoverDefault'
 
 type CoverListProps = {
   covers: CoverStub[]
@@ -25,16 +27,8 @@ const CoverList = ({height=160, ...props}: CoverListProps) => {
 
   return (
     <ImageList sx={{ height: listHeight ?? 400, width: listWidth ?? 600 }} cols={cols ?? 6} rowHeight={height}>
-      {covers.map((cover) => (
-        <img
-					className={`${onSelect ? 'cursor-pointer hover:scale-110' : ''}`}
-          src={cloudinary.resize({ url: cover.image.url, height })}
-          srcSet={cloudinary.resize({ url: cover.image.url, height })}
-          alt={cover.creator?.name}
-          loading="eager"
-					onClick={onSelect ? () => onSelect(cover) : () =>{}}
-        />
-      ))}
+      <CoverDefault height={height} onSelect={onSelect} />
+      {covers.map((cover) => <CoverStubView cover={cover} height={height} onSelect={onSelect} key={cover.id} /> )}
     </ImageList>
   )
 }

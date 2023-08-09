@@ -8,11 +8,11 @@ const useCoverApi = () => {
 
   const findCover = async(genreTitle?:string):Promise<CoverStub[]> => await getApi(`cover/findCover${genreTitle ? `?genre=${genreTitle}` : ''}`) as CoverStub[]
   
-  const stubs = async ():Promise<CoverStub[]> => await (await getApi('cover/stubs')).result as CoverStub[]
+  const stubs = async ():Promise<CoverStub[]> => await getApi('cover/stubs') as CoverStub[]
 
-  const stub = async (id:string):Promise<CoverStub> => await (await getApi(`cover/${id}/stub`)).result as CoverStub
+  const stub = async (id:string):Promise<CoverStub> => await getApi(`cover/${id}/stub`) as CoverStub
 
-  const detail = async (id:string):Promise<CoverDetail> => await (await getApi(`cover/${id}/detail`)).result as CoverDetail
+  const detail = async (id:string):Promise<CoverDetail> => await getApi(`cover/${id}/detail`) as CoverDetail
 
   const upsert = async (props:CoverUpsertProps):Promise<CoverStub> => {
     debug('upsert', {props})
@@ -26,7 +26,10 @@ const useCoverApi = () => {
 
   return {
     findCover
+    , stub
     , stubs
+    , detail
+    // , details
     , upsert
   }
 }
