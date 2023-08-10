@@ -112,7 +112,7 @@ const CreateBook = () => {
     // const [gallery, setGallery] = useState<GalleryStub | null>(book?.gallery || null)
     const [images, setImages] = useState()
 
-    const upsertProps: BookCreateProps = {
+    const upsertProps = {
       title: title!,
       back: back??undefined,
       hook: hook??undefined,
@@ -122,8 +122,8 @@ const CreateBook = () => {
       fiction,
       status,
       completeAt,
-      coverId: cover!.id,
-      genreId: genre!.id,
+      coverId: cover?.id,
+      genreId: genre?.id,
       ownerId: cyfrUser?.id,
       // TODO: this needs to be Author 
       authors: [],
@@ -190,7 +190,7 @@ const CreateBook = () => {
   }
 
   const saveBook = async () => {
-    const result = await createBook(upsertProps)
+    const result = await createBook(upsertProps as BookCreateProps)
     if (result) {
       notify(`Created ${title}! Happy writing!!`)
     } else {

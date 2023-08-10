@@ -1,5 +1,26 @@
 import { Agent, Artist, Author, BookStub, Editor, Follow, FollowStub, GalleriesStubInclude, GalleryStub, Membership, MembershipType, Post, PostStub, PostStubInclude, Reader, User } from "prisma/prismaContext"
 
+export type FollowerTypes = 'Friends'|'Fans'|'Followers'|'Following'|'Stans'
+export type UserTypes = 'Author' | 'Artist' | 'Editor' | 'Agent' | 'Reader' | 'Public'
+
+export type UserSearchProps = {
+  id:             string
+  search?:        string
+  followerTypes?: FollowerTypes[]
+  userTypes?:     UserTypes[]
+}
+
+export type UserSearchStub = UserStub & {
+  author?:    Author
+  artist?:    Artist
+  editor?:    Editor
+  agent?:     Agent
+  reader?:    Reader
+  follower?:  FollowStub
+  following?: Follow
+  isFan:      boolean
+}
+
 export type UserFeed = User & {
   _count:       { sessions: number }
   membership?:  Membership
@@ -25,11 +46,11 @@ export type CyfrUser = User & {
   membership?:  Membership & {
     type:   MembershipType
   }
-  userAgent?:  Agent  // user is an agent
-  userArtist?: Artist // user is an artist
-  userAuthor?: Author 
-  userEditor?: Editor // user is an editor
-  userReader?: Reader // user is a reader
+  agent?:  Agent  // user is an agent
+  artist?: Artist // user is an artist
+  author?: Author 
+  editor?: Editor // user is an editor
+  reader?: Reader // user is a reader
   books:       BookStub[]
   galleries:   GalleryStub[]
   _count: {
@@ -47,11 +68,11 @@ export const CyfrUserInclude = {
       following: true
     }
   },
-  userAgent: true,
-  userArtist: true,
-  userAuthor: true,
-  userEditor: true,
-  userReader: true,
+  agent: true,
+  artist: true,
+  author: true,
+  editor: true,
+  reader: true,
   galleries: { include: {
     creator: { select: { 
       id: true,
@@ -104,6 +125,9 @@ export type UserStub = {
   name:   string
   image:  string
   slug?:  string
+  membership: Membership & {
+    type: MembershipType
+  }
 }
 
 /**
@@ -119,7 +143,10 @@ export const UserStubSelect = { select: {
   id: true,
   name: true,
   image: true,
-  slug: true
+  slug: true,
+  membership: { include: {
+    type: true
+  }}
 }}
 
 export type UserDetail = User & {

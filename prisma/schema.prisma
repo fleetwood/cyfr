@@ -61,11 +61,11 @@ model User {
   posts         Post[]        @relation("user_posts")
   sessions      Session[]
 
-  userAgent  Agent?  @relation("user_agent") // user is an agent
-  userArtist Artist? @relation("user_artist") // user is an artist
-  userAuthor Author? @relation("user_author")
-  userEditor Editor? @relation("user_editor") // user is an editor
-  userReader Reader? @relation("user_reader") // user is a reader
+  agent       Agent?  @relation("user_agent") // user is an agent
+  artist      Artist? @relation("user_artist") // user is an artist
+  author      Author? @relation("user_author")
+  editor      Editor? @relation("user_editor") // user is an editor
+  reader      Reader? @relation("user_reader") // user is a reader
 
   agents      Agent[]      @relation("agent_authors")
   attending   Event[]      @relation("event_attendees")

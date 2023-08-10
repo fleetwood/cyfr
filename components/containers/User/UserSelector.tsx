@@ -3,7 +3,7 @@ import { TailwindInput } from 'components/forms'
 import UserAvatar, { AvatarUser } from 'components/ui/avatar/userAvatar'
 import useDebounce from 'hooks/useDebounce'
 import useDebug from 'hooks/useDebug'
-import { Agent, Artist, Author, Editor, Follow, Reader, UserStub } from 'prisma/prismaContext'
+import { Agent, Artist, Author, Editor, Follow, FollowerTypes, Reader, UserStub, UserTypes } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, { useEffect, useState } from 'react'
 import { uniqueKey } from 'utils/helpers'
@@ -17,8 +17,8 @@ type UserSelectorProps = {
     labelClassName?:    string
     inputClassName?:    string
     required?:          boolean
-    ofType?:            ('Friends'|'Fans'|'Followers'|'Following'|'Stans'|'Members')[]
-    forType?:           (Author|Artist|Editor|Agent|Reader|Follow)[]
+    followerTypes?:     FollowerTypes[]
+    userTypes?:         UserTypes[]
     onClick?:           <T>(selected:T) => void
     select?:            'id' | 'slug' | 'User' | 'CyfrUser' | 'UserDetail' | 'UserFeed' | 'UserStub' | 'UserFollow'
 }
@@ -30,7 +30,7 @@ Follower, Stan, Following, Fan
 */
 const UserSelector = (props:UserSelectorProps) => {
   const userSelector = 'userSelector'
-  const {friends } = useApi.user()
+  const {search:userSearch } = useApi.user()
   const {cyfrUser} = useApi.cyfrUser()
   // TODO: can we set this to <T> somehow?
   const [users, setUsers] = useState<any[]>([])
@@ -63,8 +63,11 @@ const UserSelector = (props:UserSelectorProps) => {
     // TODO: we may not always want just friends from the selector.
     //        so add a variant and change the api call here
     debug('TODO: Switch for types...')
-    const f = await friends(cyfrUser.id, search)
+    const {userTypes, followerTypes} = props
+    const f = await userSearch({id: cyfrUser.id, search, userTypes, followerTypes})
     if (f && f.length>0) {
+
+      //TODO switch to a user search stub
       setUsers(() => f)
       toggle(true)
     }

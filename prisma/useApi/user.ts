@@ -1,7 +1,7 @@
 import useRocketQuery from "hooks/useRocketQuery"
 import useDebug from "hooks/useDebug"
 import { getApi, sendApi } from "utils/api"
-import { AudienceLevels, Book, PrismaUser, UserDetail, UserDetailProps, UserFollowProps, UserInfo, UserStub } from "prisma/prismaContext"
+import { AudienceLevels, Book, PrismaUser, UserDetail, UserDetailProps, UserFollowProps, UserInfo, UserSearchProps, UserStub } from "prisma/prismaContext"
 
 const {debug} = useDebug('prisma/api/userApi', )
 
@@ -19,6 +19,8 @@ const {debug} = useDebug('prisma/api/userApi', )
   const followUser = async (props: UserFollowProps):Promise<boolean>  => await (await sendApi("user/follow", props)).data
 
   const friends = async (id:string, search?:string):Promise<UserStub[]> => await getApi(`user/${id}/friends${search?`?s=${search}`:''}`)
+
+  const search = async (props: UserSearchProps): Promise<UserStub[]> => await getApi(`user/search?s=${props.search ?? ''}&f=${(props.followerTypes ?? []).join(',')}&u=${(props.userTypes ?? []).join(',')}}`)
 
   const detail = async (props: UserDetailProps):Promise<UserDetail> => await (await sendApi('user/detail', props)).data as UserDetail
 
@@ -50,7 +52,8 @@ const UserApi = () => {
     books,
     friends,
     info,
-    detail
+    detail,
+    search
   }
 }
 

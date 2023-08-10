@@ -16,6 +16,8 @@ import {
   UserFollowProps,
   UserInfo,
   UserInfoSelect,
+  UserSearchProps,
+  UserSearchStub,
   UserStub
 } from "prisma/prismaContext"
 import { cadenceInterval } from "prisma/useApi/cyfrUser"
@@ -368,6 +370,61 @@ const friends = async(id:string, search?: string): Promise<UserStub[]> => {
   return dedupe(users, 'id') as UserStub[]
 }
 
+
+const search = async ({id, search, followerTypes, userTypes}:UserSearchProps): Promise<UserSearchStub[]> => {
+  // if followerTypes: FIND ONLY USERS WHO MATCH FOLLOWER TYPE
+  // if userTypes: FIND ONLY USERS WHO MATCH USER TYPE
+  // if both:  FIND ONLY USERS WITH BOTH
+  const f = (await prisma.user.findMany({
+    where: {
+      OR: [
+        {name: { contains: search??'', mode: "insensitive"}},
+        {id: search}
+    ]},
+    select: {
+      follower: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          slug: true,
+          membership: true,
+        },
+      },
+      following: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          slug: true,
+          membership: true,
+        },
+      },
+      author: true,
+      agent: true,
+      artist: true,
+      editor: true,
+      reader: true
+    },
+  }))
+
+  const users = f
+    .filter((u: FriendStub) =>
+      f.find(
+        (x: FriendStub) =>
+          x.following.id === u.follower.id && x.follower.id === u.following.id
+      )
+    )
+    .map((fr: FriendStub) => {
+      return fr.follower.id !== id ? { ...fr.follower } : { ...fr.following }
+    })
+
+  return dedupe(users, 'id') as UserStub[]
+}
+
+
 type MentionSearchProps = {
   search?:  string
   all?:     boolean
@@ -524,6 +581,7 @@ export const PrismaUser = {
   cyfrUser,
   detail,
   friends,
+  search,
   galleries,
   userInfo,
   userInSessionContext,
