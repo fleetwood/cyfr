@@ -18,6 +18,7 @@ import {
   MapInfo,
   Membership,
   MembershipStub,
+  MembershipStubSelect,
   prisma, ReaderInfoSelect, User, UserDetail,
   UserFollowProps,
   UserInfo,
@@ -99,7 +100,7 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
 }
 
 const userInfo = async <T = UserInfoType>(id:string, userType?:UserTypes): Promise<T> => {
-  debug('userInfo', id)
+  debug('userInfo', {id, userType})
   try {
     let select = GetInfoSelector(userType)
     debug('select', select)
@@ -110,7 +111,7 @@ const userInfo = async <T = UserInfoType>(id:string, userType?:UserTypes): Promi
 
     if (result) {
       debug('result', result)
-      return MapInfo<T>(result)
+      return MapInfo<T>(result, userType)
     }
     
     throw {code: fileMethod, message: 'Could not find info for that user id'}
@@ -213,11 +214,7 @@ const detail = async (props:UserDetailProps): Promise<UserDetail> => {
         orderBy: {createdAt: 'desc'},
         take: 10
       },
-      membership: {
-        include: {
-          type: true
-        }
-      },
+      membership: MembershipStubSelect,
       _count: {
         select: {
           likes: true,
@@ -409,7 +406,6 @@ const search = async ({id, search, followerTypes, userTypes, agg}:UserSearchProp
   return dedupe(filterResults, 'id')
 }
 
-
 type MentionSearchProps = {
   search?:  string
   all?:     boolean
@@ -452,16 +448,16 @@ const setMembership = async (
     debug("setMembership", { user, typeId, cadence })
     const expiresAt = new Date(dayjs().add(1, cadence).format(dbDateFormat))
 
-    let membership = user.membership ?? await prisma.membership.create({
-      data: {
-        visible: true,
-        typeId,
-        expiresAt
-      },
-      include: {
-        type: true
-      }
-    })
+    let membership:MembershipStub =
+      user.membership ??
+      (await prisma.membership.create({
+        data: {
+          visible: true,
+          typeId,
+          expiresAt,
+        },
+        ...MembershipStubSelect
+      }))
 
     if (membership.type?.id !== typeId || !(dayjs(membership.expiresAt).isSame(expiresAt))) {
       debug('updating that membership tho...')
@@ -473,9 +469,7 @@ const setMembership = async (
           typeId,
           expiresAt
         },
-        include: {
-          type: true
-        }
+        ...MembershipStubSelect
       })
     }
 
@@ -487,11 +481,7 @@ const setMembership = async (
         membershipId: membership.id
       },
       include: {
-        membership: {
-          include: {
-            type: true
-          }
-        }
+        membership: MembershipStubSelect
       }
     })
     debug('Updated the user then', result)

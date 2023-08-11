@@ -1,4 +1,4 @@
-import { Agent, AgentStub, Artist, ArtistStub, Author, AuthorStub, BookStub, Editor, EditorStub, Follow, FollowStub, GalleriesStubInclude, GalleryStub, Membership, MembershipType, Post, PostStub, PostStubInclude, Reader, ReaderStub, User } from "prisma/prismaContext"
+import { Agent, AgentStub, Artist, ArtistStub, Author, AuthorStub, BookStub, Editor, EditorStub, Follow, FollowStub, GalleriesStubInclude, GalleryStub, Membership, MembershipStub, MembershipStubSelect, MembershipType, Post, PostStub, PostStubInclude, Reader, ReaderStub, User } from "prisma/prismaContext"
 
 export type FollowerTypes = 'Friends'|'Fans'|'Followers'|'Following'|'Stans'
 export type UserTypes = 'Author' | 'Artist' | 'Editor' | 'Agent' | 'Reader' | 'Public'
@@ -112,9 +112,7 @@ export type UserStub = {
   name:   string
   image:  string
   slug?:  string
-  membership: Membership & {
-    type: MembershipType
-  }
+  membership: MembershipStub
 }
 
 /**
@@ -131,15 +129,11 @@ export const UserStubSelect = { select: {
   name: true,
   image: true,
   slug: true,
-  membership: { include: {
-    type: true
-  }}
+  membership: MembershipStubSelect
 }}
 
 export type UserDetail = User & {
-  membership?:  Membership & {
-    type:   MembershipType
-  },
+  membership?:  MembershipStub
   posts:        PostStub[]
   books:        BookStub[]
   follower:     FollowStub[]
@@ -158,11 +152,7 @@ export type UserDetail = User & {
 }
 
 export const UserDetailInclude = { include: {
-  membership: {
-    include: {
-      type: true
-    }
-  },
+  membership: MembershipStubSelect,
   galleries: GalleriesStubInclude,
   posts: {...PostStubInclude, take: 10, orderBy: {updatedAt: 'desc'}},
   // books: {
@@ -227,11 +217,7 @@ export type UserEngageProps = {
   active?:      Boolean
 }
 
-export type CreatorStub = UserStub & {
-  membership?: Membership & {
-    type: MembershipType
-  }
-}
+export type CreatorStub = UserStub
 
 export const CreatorStubSelect = {
   select: {
@@ -239,10 +225,8 @@ export const CreatorStubSelect = {
     name: true,
     image: true,
     slug: true,
-    membership: { include: {
-      type: true
-    }}
-  }
+    membership: MembershipStubSelect
+  },
 }
 
 

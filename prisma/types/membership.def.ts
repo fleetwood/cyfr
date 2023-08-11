@@ -1,9 +1,22 @@
-import { Membership, MembershipType } from "@prisma/client"
 
-export type MembershipStub = Membership & {
-  type: MembershipType
+export type MembershipStub = {
+  id:         string
+  expiresAt:  Date|null
+  type:     MembershipTypeStub
 }
 
-export const MembershipStubInclude = {include: {
-  type: true
+export type MembershipTypeStub = {
+  id:     string
+  name:   string
+  level:  number
+}
+
+export const MembershipStubSelect = {select: {
+  id:         true,
+  expiresAt:  true,
+  type:       { select: {
+    id:     true,
+    name:   true,
+    level:  true
+  }}
 }}

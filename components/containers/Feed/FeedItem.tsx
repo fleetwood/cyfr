@@ -1,10 +1,9 @@
-import { PostStub } from "prisma/types"
-import PostStubView from "../Post/PostStubView"
-import ShareHeader from "../Share/ShareHeader"
-import PostHeader from "../Post/PostHeader"
-import ShareFooter from "../Share/ShareFooter"
+import {PostStub} from "prisma/types"
 import PostFooter from "../Post/PostFooter"
-import JsonBlock from "components/ui/jsonBlock"
+import PostHeader from "../Post/PostHeader"
+import PostStubView from "../Post/PostStubView"
+import ShareFooter from "../Share/ShareFooter"
+import ShareHeader from "../Share/ShareHeader"
 import SharedStubView from "../Share/ShareStubView"
 
 type FeedPostProps = {

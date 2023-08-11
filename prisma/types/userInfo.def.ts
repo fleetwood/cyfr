@@ -1,7 +1,9 @@
+import useDebug from "hooks/useDebug"
 import {AgentStub, AuthorStub, BookStub, GalleryStub, Membership, MembershipType, Publisher, UserStub, UserStubSelect, UserTypes} from "prisma/prismaContext"
 import {KeyVal} from "types/props"
 import {capFirstLetter} from "utils/helpers"
 
+const {debug} = useDebug('userInfo.def', 'DEBUG')
 export type UserInfoType = AgentInfo|ArtistInfo|AuthorInfo|EditorInfo|ReaderInfo|UserInfo
 
 export type UserInfo = UserStub & {
@@ -37,8 +39,8 @@ export const UserInfoSelect = { select: {
 
 export type AgentInfo = UserInfo & {
   books:      number
-  publisher:  number
-  authors:    number
+  // publisher:  number
+  // authors:    number
 }
 
 export const AgentInfoSelect = { select: {
@@ -46,8 +48,8 @@ export const AgentInfoSelect = { select: {
   _count: { select: {
     likes:      true,
     books:      true,
-    publisher:  true,
-    authors:    true,
+    // publisher:  true,
+    // authors:    true,
   }}
 }}
 
@@ -141,7 +143,7 @@ export const GetInfoSelector = (userType?:UserTypes)=> {
 }
 
 export const MapInfo = <T = UserInfoType>(result:any, userType?: UserTypes):T => {
-
+  debug(`MapInfo<${userType??'T'}>`)
   const {
     id,
     name,
@@ -176,6 +178,7 @@ export const MapInfo = <T = UserInfoType>(result:any, userType?: UserTypes):T =>
 
   switch (userType) {
     case 'Agent':
+      debug('Mapping userInfo as Agent')
       userInfo = {
         ...userInfo,
         books: result._count.books ?? 0,
@@ -185,6 +188,7 @@ export const MapInfo = <T = UserInfoType>(result:any, userType?: UserTypes):T =>
       break
 
     case 'Artist':
+      debug('Mapping userInfo as Artist')
       userInfo = {
         ...userInfo,
         covers: result._count.covers ?? 0,
@@ -194,6 +198,7 @@ export const MapInfo = <T = UserInfoType>(result:any, userType?: UserTypes):T =>
       break
 
     case 'Author':
+      debug('Mapping userInfo as Author')
       userInfo = {
         ...userInfo,
         reviews: result._count.reviews ?? 0,
@@ -203,6 +208,7 @@ export const MapInfo = <T = UserInfoType>(result:any, userType?: UserTypes):T =>
       break
 
     case 'Editor':
+      debug('Mapping userInfo as Editor')
       userInfo = {
         ...userInfo,
         reviews: result._count.reviews ?? 0,
@@ -211,6 +217,7 @@ export const MapInfo = <T = UserInfoType>(result:any, userType?: UserTypes):T =>
       break
 
     case 'Reader':
+      debug('Mapping userInfo as Reader')
       userInfo = {
         ...userInfo,
         reviews: result._count.reviews ?? 0,
@@ -219,6 +226,7 @@ export const MapInfo = <T = UserInfoType>(result:any, userType?: UserTypes):T =>
       break
 
     default:
+      debug('Did not map userInfo', userType)
       break
   }
 

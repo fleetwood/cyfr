@@ -1,12 +1,11 @@
-import { MembershipType } from '@prisma/client'
-import { useToast } from 'components/context/ToastContextProvider'
-import { CheckBadge } from 'components/ui/icons'
+import {MembershipType} from '@prisma/client'
+import {useToast} from 'components/context/ToastContextProvider'
+import {CheckBadge} from 'components/ui/icons'
 import useDebug from 'hooks/useDebug'
-import { PrismaMembership } from 'prisma/entities'
 import useApi from 'prisma/useApi'
-import { cadenceInterval } from 'prisma/useApi/cyfrUser'
-import { useEffect, useState } from 'react'
-import { uniqueKey } from 'utils/helpers'
+import {cadenceInterval} from 'prisma/useApi/cyfrUser'
+import {useEffect, useState} from 'react'
+import {uniqueKey} from 'utils/helpers'
 
 const { debug } = useDebug('UserBillingDetail')
 
@@ -14,10 +13,10 @@ const UserBillingDetail = () => {
   const { cyfrUser, isLoading, error, invalidate, updateUser, setMembership } = useApi.cyfrUser()
   const { notify } = useToast()
   const [ types, setTypes] = useState<MembershipType[]>()
-  const [membershipType, setMembershipType] = useState<MembershipType|null>(cyfrUser?.membership?.type ?? (types ? types[0] : null))
+  const [membershipType, setMembershipType] = useState<MembershipType|null>(types?.find(t => t.id === cyfrUser?.membership?.type.id) ?? (types ? types[0] : null))
 
   const isPlan = (p: MembershipType) => p.id === membershipType?.id ?? false
-  const currentPlan = (p:MembershipType) => cyfrUser?.membership?.typeId === p.id
+  const currentPlan = (p:MembershipType) => cyfrUser?.membership?.type.id === p.id
 
   const chooseMembership = async (typeId: string, cadence: cadenceInterval) => {
     debug('chooseMembership', { id: typeId, cadence })
@@ -33,7 +32,7 @@ const UserBillingDetail = () => {
       const t = await useApi.membership().types()
       if (t) {
         setTypes(() => t)
-        setMembershipType(() => t.find((p) => p.id === cyfrUser?.membership?.typeId) ?? t[0])
+        setMembershipType(() => t.find((p) => p.id === cyfrUser?.membership?.type.id) ?? t[0])
       }
     }
     getTypes()

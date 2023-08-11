@@ -1,6 +1,4 @@
 import {
-  AgentStub,
-  AuthorStub,
   Book,
   BookStub,
   Character,
@@ -10,21 +8,15 @@ import {
   CreatorStub,
   CreatorStubSelect,
   CyfrUser,
-  EventStub,
   Gallery,
   GalleryStub,
   Image,
   ImageStub,
   LikeStub,
   Post,
-  PostImageInclude,
   PostStub,
-  Publisher,
-  Review,
   Share,
-  SharedPostStub,
-  Submission,
-  UserStubSelect
+  SharedPostStub
 } from 'prisma/prismaContext'
 
 export type ShareEngageProps = {
@@ -105,15 +97,7 @@ export type CreatorSharesLikes = SharesLikes & {
 
 export const CreatorSharesLikesInclude = {
   ...SharesLikesInclude,
-  creator: {
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      slug: true,
-      membership: true
-    }
-  },
+  creator: CreatorStubSelect
 }
 
 export type ShareStub = Share & {
