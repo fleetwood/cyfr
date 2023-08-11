@@ -3,6 +3,8 @@ import {
   Commune,
   CreatorSharesLikes,
   CreatorSharesLikesInclude,
+  CreatorStub,
+  CreatorStubSelect,
   Gallery,
   Image,
   Like,
@@ -107,13 +109,13 @@ export const GalleriesStubInclude = {include: {
 
 export type GalleryDetail = Gallery & {
   commune?: Commune
-  creator:  UserStub
+  creator:  CreatorStub
   likes:    (Like & {
-    creator: UserStub
+    creator: CreatorStub
   })[]
   images: (Image & {
     likes:  (Like & {
-      creator: UserStub
+      creator: CreatorStub
     })[]
     _count: {
       shares: number
@@ -127,47 +129,41 @@ export type GalleryDetail = Gallery & {
   }
 }
 
-export const GalleryDetailInclude = {include: {
-  commune: true,
-  creator: {
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      image: true,
-      membership: true
-    }
-  },
-  likes: {
-    include: {
-      creator: true
-    },
-    take: 10,
-    // orderBy: {
-    //   createdAt: 'desc'
-    // }
-  },
-  images: {
-    include: {
-      likes: {
-        include: {
-          creator: true
-        },
-        take: 10,
+export const GalleryDetailInclude = {
+  include: {
+    commune: true,
+    creator: CreatorStubSelect,
+    likes: {
+      include: {
+        creator: CreatorStubSelect,
       },
-      _count: {
-        select: {
-          shares: true,
-          likes: true
-        }
-      }
-    }
+      take: 10,
+      // orderBy: {
+      //   createdAt: 'desc'
+      // }
+    },
+    images: {
+      include: {
+        likes: {
+          include: {
+            creator: CreatorStubSelect,
+          },
+          take: 10,
+        },
+        _count: {
+          select: {
+            shares: true,
+            likes: true,
+          },
+        },
+      },
+    },
+    permission: true,
+    _count: {
+      select: {
+        shares: true,
+        likes: true,
+      },
+    },
   },
-  permission: true,
-  _count: {
-    select: {
-      shares: true,
-      likes: true
-    }
-  }
-}}
+}

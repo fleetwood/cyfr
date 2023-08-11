@@ -8,6 +8,7 @@ export type UserSearchProps = {
   search?:        string
   followerTypes?: FollowerTypes[]
   userTypes?:     UserTypes[]
+  agg?:           boolean
 }
 
 export type UserSearchStub = UserStub & {
@@ -16,9 +17,19 @@ export type UserSearchStub = UserStub & {
   editor?:    Editor
   agent?:     Agent
   reader?:    Reader
-  follower?:  FollowStub
-  following?: Follow
-  isFan:      boolean
+  
+  follower:  ({
+    isFan: boolean,
+    followingId: string,
+    follower: UserStub
+  })[]
+
+  following:  ({
+    isFan: boolean,
+    followerId: string,
+    following: UserStub
+  })[]
+
 }
 
 export type UserFeed = User & {
@@ -241,7 +252,9 @@ export type UserEngageProps = {
 }
 
 export type CreatorStub = UserStub & {
-  membership?: Membership
+  membership?: Membership & {
+    type: MembershipType
+  }
 }
 
 export const CreatorStubSelect = {
@@ -250,7 +263,9 @@ export const CreatorStubSelect = {
     name: true,
     image: true,
     slug: true,
-    membership: true
+    membership: { include: {
+      type: true
+    }}
   }
 }
 

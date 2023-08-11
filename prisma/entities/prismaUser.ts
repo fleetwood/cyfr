@@ -18,7 +18,8 @@ import {
   UserInfoSelect,
   UserSearchProps,
   UserSearchStub,
-  UserStub
+  UserStub,
+  UserStubSelect
 } from "prisma/prismaContext"
 import { cadenceInterval } from "prisma/useApi/cyfrUser"
 import {
@@ -26,7 +27,7 @@ import {
   ResponseError
 } from "types/response"
 import { dbDateFormat, dedupe, toSlug } from "utils/helpers"
-const { fileMethod, debug, info, err } = useDebug("entities/prismaUser")
+const { fileMethod, debug, info, err } = useDebug("entities/prismaUser", 'DEBUG')
 
 type AllPostQueryParams = {
   limit?: Number
@@ -371,57 +372,85 @@ const friends = async(id:string, search?: string): Promise<UserStub[]> => {
 }
 
 
-const search = async ({id, search, followerTypes, userTypes}:UserSearchProps): Promise<UserSearchStub[]> => {
+const search = async ({id, search, followerTypes, userTypes, agg}:UserSearchProps): Promise<UserSearchStub[]> => {
   // if followerTypes: FIND ONLY USERS WHO MATCH FOLLOWER TYPE
   // if userTypes: FIND ONLY USERS WHO MATCH USER TYPE
   // if both:  FIND ONLY USERS WITH BOTH
-  const f = (await prisma.user.findMany({
+  debug('search', {id, search, followerTypes, userTypes, agg})
+
+  const filter = (followerTypes && followerTypes.length>= 1) || (userTypes && userTypes.length>=1)
+
+  // @ts-ignore
+  let queryResults: UserSearchStub[] = await prisma.user.findMany({
     where: {
       OR: [
-        {name: { contains: search??'', mode: "insensitive"}},
-        {id: search}
-    ]},
+        { name: { contains: search ?? '', mode: 'insensitive' } },
+        { id: search },
+      ],
+    },
     select: {
+      ...UserStubSelect.select,
+
+      author: { include: {
+        user: UserStubSelect,
+        books: { where: {
+          visible: true
+        }},
+        _count: { select: {
+          shares: true,
+          reviews: true
+        }}
+      }},
+      artist: true,
+      editor: true,
+      agent: true,
+      reader: true,
+
       follower: {
+        where: {
+          followingId: id
+        },
         select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-          slug: true,
-          membership: true,
+          isFan: true,
+          followingId: true,
+          follower: UserStubSelect,
         },
       },
       following: {
+        where: {
+          followerId: id
+        },
         select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-          slug: true,
-          membership: true,
+          isFan: true,
+          followerId: true,
+          following: UserStubSelect,
         },
       },
-      author: true,
-      agent: true,
-      artist: true,
-      editor: true,
-      reader: true
     },
-  }))
+  })
 
-  const users = f
-    .filter((u: FriendStub) =>
-      f.find(
-        (x: FriendStub) =>
-          x.following.id === u.follower.id && x.follower.id === u.following.id
-      )
-    )
-    .map((fr: FriendStub) => {
-      return fr.follower.id !== id ? { ...fr.follower } : { ...fr.following }
-    })
+  // don't include the user
+  queryResults = queryResults.filter(u => u.id !== id)
+  if (!filter) return queryResults
+  
+  let filterResults:UserSearchStub[] = agg ? [] : [...queryResults]
+  const filterUsers = (filteredSet:UserSearchStub[]) => {
+    // if agg, append the filteredSet to filterResults, otherwise replace filterResults with the filteredSet
+    filterResults = agg ? [...filterResults,...filteredSet] : [...filteredSet]
+  }
 
-  return dedupe(users, 'id') as UserStub[]
+  // if agg, using the filter clone methodology to either filter against the entire queryResults, or the diminishing filterResults
+  if (followerTypes?.includes('Followers')) filterUsers((agg ? queryResults : filterResults).filter((u: UserSearchStub) => u.follower.length > 0))
+  if (followerTypes?.includes('Fans')) filterUsers((agg ? queryResults : filterResults).filter((u: UserSearchStub) => u.follower.some(f => f.isFan)))
+  if (followerTypes?.includes('Following')) filterUsers((agg ? queryResults : filterResults).filter((u: UserSearchStub) => u.following.length>0))
+  if (followerTypes?.includes('Stans')) filterUsers((agg ? queryResults : filterResults).filter((u: UserSearchStub) => u.following.some(f => f.isFan)))
+  if (userTypes?.includes('Agent')) filterUsers((agg ? queryResults : filterResults).filter((u:UserSearchStub)=> u.agent))
+  if (userTypes?.includes('Author')) filterUsers((agg ? queryResults : filterResults).filter((u:UserSearchStub)=> u.author))
+  if (userTypes?.includes('Artist')) filterUsers((agg ? queryResults : filterResults).filter((u:UserSearchStub)=> u.artist))
+  if (userTypes?.includes('Editor')) filterUsers((agg ? queryResults : filterResults).filter((u:UserSearchStub)=> u.editor))
+  if (userTypes?.includes('Reader')) filterUsers((agg ? queryResults : filterResults).filter((u:UserSearchStub)=> u.reader))
+
+  return dedupe(filterResults, 'id')
 }
 
 
@@ -552,7 +581,7 @@ const updatePreferences = async ({
   id,
   name,
   image,
-}: UserStub): Promise<User> => {
+}: {id: string, name: string, image: string}): Promise<User> => {
   try {
     debug('updatePreferences', {id, name, image})
     const user = await prisma.user.update({

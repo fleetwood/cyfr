@@ -47,7 +47,7 @@ const userGalleries = async (creatorId: string): Promise<GalleryStub[]> => await
   }
 }) as unknown as GalleryStub[]
 
-const details = async () : Promise<GalleryDetail[]> => await prisma.gallery.findMany({...GalleryDetailInclude}) as GalleryDetail[]
+const details = async () : Promise<GalleryDetail[]> => await prisma.gallery.findMany(GalleryDetailInclude) as GalleryDetail[]
 const detail = async (id: string): Promise<GalleryDetail> => await prisma.gallery.findUnique({where: {id}, ...GalleryDetailInclude})as GalleryDetail
 
 const stubs = async () : Promise<Gallery[]> => await prisma.gallery.findMany()

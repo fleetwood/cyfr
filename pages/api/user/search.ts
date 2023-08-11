@@ -7,12 +7,13 @@ const request = async (req:NextApiRequest, res: NextApiResponse) => {
   // user/search?s=${props.search ?? ''}&f=${(props.followerTypes ?? []).join(',')}&u=${(props.userTypes ?? []).join(',')}}
   const cyfrUser = await PrismaUser.userInSessionReq(req)
 
-  const {s, f, u} = req.query
+  const {s, f, u, agg} = req.query
   const props:UserSearchProps = {
     id: cyfrUser!.id,
     search: s?.toString()??'',
-    followerTypes: (f?.toString()??'').split(',') as unknown as FollowerTypes[],
-    userTypes: (u?.toString()??'').split(',') as unknown as UserTypes[],
+    followerTypes: ((f && f.toString().split(',')) as unknown as FollowerTypes[]),
+    userTypes: ((u && u.toString().split(',')) as unknown as UserTypes[]),
+    agg: (agg !== undefined)
   }
   return useApiHandler(
     res,
