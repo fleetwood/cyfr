@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react"
-import useDebug from "../../../hooks/useDebug"
-import { CommentThreadDetails, CyfrUser, User } from "../../../prisma/prismaContext"
+import { CommentThreadDetails, CyfrUser, UserStub } from "prisma/prismaContext"
 import UserAvatar from "../../ui/avatar/userAvatar"
 import ReactHtmlParser from "react-html-parser"
 import RemirrorEditor from "../../forms/SocialTextarea"
-import { timeDifference, uniqueKey } from "../../../utils/helpers"
-import useFeed from "../../../hooks/useFeed"
+import { timeDifference, uniqueKey } from "utils/helpers"
+import useFeed from "hooks/useFeed"
 import { ChatSendIcon } from "../../ui/icons"
-import { useToast } from "../../context/ToastContextProvider"
+import useDebug from "hooks/useDebug"
+import {useToast} from "components/context/ToastContextProvider"
 const {debug} = useDebug('components/containers/CommentThreadDetail')
 
 type CommentThreadDetailProps = {
-    user: CyfrUser | User
+    user: CyfrUser | UserStub
     thread: CommentThreadDetails
 }
 

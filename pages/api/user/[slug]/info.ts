@@ -1,9 +1,12 @@
 import useApiHandler from "hooks/useApiHandler"
-import { PrismaUser } from "prisma/prismaContext"
+import { PrismaUser, UserTypes } from "prisma/prismaContext"
 import { NextApiRequest, NextApiResponse } from 'next'
 
-const request = async (req:NextApiRequest, res: NextApiResponse) => useApiHandler(res,
+const request = async (req:NextApiRequest, res: NextApiResponse) => {
+  const {slug, t} = req.query
+  const userType = t?.toString() as UserTypes ??undefined
+  return useApiHandler(res,
   'api/user/[slug]/info',
-  PrismaUser.userInfo(req.query.slug!.toString())
-)
+  PrismaUser.userInfo(slug!.toString(), userType)
+)}
 export default request

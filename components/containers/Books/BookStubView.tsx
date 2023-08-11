@@ -7,6 +7,7 @@ import { uniqueKey } from "utils/helpers"
 import BookCover, { BookCoverVariant } from "./BookCover"
 import BookFooter from "./BookFooter"
 import AuthorAvatar from "components/ui/avatar/authorAvatar"
+import UserAvatar from "components/ui/avatar/userAvatar"
 
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent')
 

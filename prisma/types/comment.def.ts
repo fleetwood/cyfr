@@ -1,4 +1,4 @@
-import { CommentThread, Comment, Commune, CommuneUser, User, Block, CreatorStub, CreatorStubSelect } from "./../prismaContext";
+import { CommentThread, Comment, Commune, CommuneUser, User, Block, CreatorStub, CreatorStubSelect, UserStubSelect, UserStub } from "prisma/prismaContext";
 
 export type AddCommentProps = {
   creatorId:  string
@@ -31,7 +31,7 @@ export type StartInboxThreadProps = {
 export type CommentThreadDetails = CommentThread & {
   commune: Commune & {
     users: (CommuneUser & {
-      user: User
+      user: UserStub
     })[];
   };
   comments: (Comment & {
@@ -47,7 +47,7 @@ export const CommentThreadDetailsInclude = {
     include: {
       users: {
         include: {
-          user: true
+          user: UserStubSelect
         }
       }
     }

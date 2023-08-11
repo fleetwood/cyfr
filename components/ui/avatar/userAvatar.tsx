@@ -1,25 +1,27 @@
-import { Avatar, Badge } from "@mui/material"
+import {Avatar, Badge} from "@mui/material"
 import useDebug from "hooks/useDebug"
 import {
   CyfrUser,
-  User,
   UserDetail,
   UserFeed,
   UserFollow,
-  UserStub
+  UserSearchStub,
+  UserStub,
+  UserTypes
 } from "prisma/prismaContext"
-import { useState } from "react"
-import { SizeProps, stringToColour, wh } from "types/props"
-import { cloudinary } from "utils/cloudinary"
+import {useState} from "react"
+import {SizeProps, stringToColour, wh} from "types/props"
+import {cloudinary} from "utils/cloudinary"
 import Semibold from "../semibold"
 import UserInfoMenu from "./userInfoMenu"
 
 const {debug, jsonBlock} = useDebug('avatar')
 
-export type AvatarUser = CyfrUser | UserDetail | UserFeed | UserStub | UserFollow | User
+export type AvatarUser = CyfrUser | UserDetail | UserFeed | UserStub | UserFollow | UserSearchStub
 
-type AvatarProps = {
+export type AvatarProps = {
   user?: AvatarUser
+  userType?: UserTypes
   link?: boolean
   shadow?: boolean
   className?: string
@@ -33,6 +35,7 @@ export type AvatarVariants = 'default'|'no-profile'|'no-link'
 
 const UserAvatar = ({
   user,
+  userType,
   placeholder,
   className,
   shadow,
@@ -71,7 +74,7 @@ const UserAvatar = ({
     >
       {!onClick && variant.indexOf('no-link')<0 && user ? <a href={`/user/${user.slug}`}>{content}</a> : content}
       {allowProfile && 
-        <UserInfoMenu user={user} showProfile={showProfile} setShowProfile={setShowProfile} />
+        <UserInfoMenu user={user} showProfile={showProfile} setShowProfile={setShowProfile} userType={userType} />
       }
     </div>
   )

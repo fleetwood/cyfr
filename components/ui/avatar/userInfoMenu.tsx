@@ -1,35 +1,37 @@
-import { Transition } from '@headlessui/react'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import {Transition} from '@headlessui/react'
+import {Dispatch, SetStateAction, useEffect, useState} from 'react'
 
+import {Box, Container, Grid, IconButton, Tooltip, Typography} from '@mui/material'
+import {useToast} from 'components/context/ToastContextProvider'
 import useDebug from 'hooks/useDebug'
-import Link from 'next/link'
-import { UserInfo } from 'prisma/prismaContext'
-import UserApi from 'prisma/useApi/user'
-import { abbrNum } from 'utils/helpers'
-import Semibold from '../semibold'
-import Spinner from '../spinner'
-import UserAvatar, { AvatarUser } from './userAvatar'
-import { stringToColour } from 'types/props'
-import { Avatar, Box, Button, Chip, Container, Grid, IconButton, Tooltip, Typography } from '@mui/material'
-import ShrinkableIconButton from '../shrinkableIconButton'
-import ShrinkableIconLabel from '../shrinkableIconLabel'
-import { FireIcon, HeartIcon, MuiMailIcon, ShareIcon } from '../icons'
-import useShareApi from 'prisma/useApi/share'
-import useCyfrUserApi from 'prisma/useApi/cyfrUser'
-import { useToast } from 'components/context/ToastContextProvider'
 import useFeed from 'hooks/useFeed'
+import Link from 'next/link'
+import {UserInfo, UserInfoType, UserTypes} from 'prisma/prismaContext'
+import useCyfrUserApi from 'prisma/useApi/cyfrUser'
+import useShareApi from 'prisma/useApi/share'
+import UserApi from 'prisma/useApi/user'
+import {KeyVal, stringToColour} from 'types/props'
+import {abbrNum} from 'utils/helpers'
+import {FireIcon, HeartIcon, MuiMailIcon, ShareIcon} from '../icons'
+import Spinner from '../spinner'
+import UserAvatar, {AvatarUser} from './userAvatar'
+import {UserInfoValues} from 'utils/helpers/user'
 
 const { debug } = useDebug('userInfoMenu')
 
+type UserInfoMenuProps = {
+  user:           AvatarUser
+  userType?:      UserTypes
+  showProfile:    boolean
+  setShowProfile: Dispatch<SetStateAction<boolean>>
+}
+
 const UserInfoMenu = ({
   user,
+  userType,
   showProfile,
   setShowProfile,
-}: {
-  user: AvatarUser
-  showProfile: boolean
-  setShowProfile: Dispatch<SetStateAction<boolean>>
-}) => {
+}:UserInfoMenuProps) => {
   const {cyfrUser, invalidate: invalidateCyfrUser} = useCyfrUserApi()
   const { info, followUser } = UserApi()
   const { like } = useShareApi()
@@ -38,6 +40,7 @@ const UserInfoMenu = ({
 
   const [isLoading, setIsLoading] = useState(false)
   const [userInfo, setUserInfo] = useState<UserInfo>()
+  const [userData, setUserData] = useState<KeyVal[]>([])
 
   const membershipName = userInfo?.membership.type.name.toLowerCase() ?? 'member'
   const memberColor = stringToColour(membershipName)
@@ -59,11 +62,12 @@ const UserInfoMenu = ({
     setIsLoading(() => true)
     debug('getting user info....', user.id)
     // get user infro from api
-    const result: UserInfo = await info(user.id)
+    const result: UserInfoType = await info(user.id, userType)
 
     if (result) {
       debug('userInfo', result)
       setUserInfo(() => result)
+      setUserData(() => UserInfoValues(result))
       setIsLoading(() => false)
     }
   }
@@ -132,24 +136,16 @@ const UserInfoMenu = ({
                 <h3 className="font-semibold">{user.name}</h3>
               </Link>
               {userInfo && 
-                <Typography className='font-semibold' sx={{ color: stringToColour(membershipName)}} >{userInfo.membership.type.name}</Typography>
+                <Typography className='font-semibold' sx={{ color: stringToColour(membershipName)}} >{userType ?? userInfo.membership.type.name}</Typography>
               }
             </Grid>
           </Grid>
           
           <Container className="flex flex-row text-xs">
-            {[
-              {label: 'Posts', value: userInfo.posts},
-              {label: 'Books', value: userInfo.books},
-              {label: 'Galleries', value: userInfo.galleries},
-              {label: 'Followers', value: userInfo.followers},
-              {label: 'Fans', value: userInfo.fans},
-              {label: 'Following', value: userInfo.following},
-              {label: 'Stans', value: userInfo.stans},
-            ].map(item => (
+            {userData.map(item => (
               <div className="flex border-b border-neutral border-opacity-50 justify-between space-x-2 p-2">
-                <div className="font-semibold">{item.label}</div>
-                <div>{abbrNum(item.value)}</div>
+                <div className="font-semibold">{item.key}</div>
+                <div>{abbrNum(Number(item.value??0))}</div>
               </div>
             ))}
             <div className="flex border-b border-neutral border-opacity-50 justify-between space-x-2 p-2">      

@@ -9,7 +9,7 @@ import {ArrowLeftIcon, ArrowRightIcon, CheckmarkIcon, MuiBookIcon, MuiCoverIcon,
 import Semibold from 'components/ui/semibold'
 import useDebounce from 'hooks/useDebounce'
 import useDebug from 'hooks/useDebug'
-import {BookCreateProps, BookStatus, CoverStub, Genre, GenreStub, Image, Permission, Role, RoleString, UserStub} from 'prisma/prismaContext'
+import {AuthorStub, BookCreateProps, BookStatus, CoverStub, Genre, GenreStub, Image, Permission, Role, RoleString, UserStub} from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, {useEffect, useState} from 'react'
 import {dedupe, now, uniqueKey} from 'utils/helpers'
@@ -45,7 +45,7 @@ const CreateBook = () => {
     const [hook, setHook] = useState<string|null>(null)
     const [synopsis, setSynopsis] = useState<string|null>(null)
     const [back, setBack] = useState<string|null>(null)
-    const [authors, setAuthors] = useState<UserStub[]>([cyfrUser as UserStub])
+    // const [authors, setAuthors] = useState<AuthorStub[]>([cyfrUser as AuthorStub])
     const [completeAt, setCompleteAt] = useState<Date>()
     const [permission, setPermission] = useState<Permission>({
         id: uniqueKey(),
@@ -102,10 +102,10 @@ const CreateBook = () => {
         checkUnique()
     }, [checkTitle])
     
-    const addAuthor = (user:any) => setAuthors((a) => dedupe([...a, user], 'id'))
+    // const addAuthor = (user:any) => setAuthors((a) => dedupe([...a, user], 'id'))
     const removeAuthor = (user:UserStub) => {
         if (user.id === cyfrUser.id) return  // can't remove yourself
-        setAuthors((a) => a?.filter(a => a.id !== user.id))
+        // setAuthors((a) => a?.filter(a => a.id !== user.id))
     }
     
     // const [characters, setCharacters] = useState<Character[]>(book?.characters || [])
@@ -283,7 +283,7 @@ const CreateBook = () => {
               be kinda weird otherwise.
             </p>
             <Grid>
-              {authors?.map((a) => (
+              {/* {authors?.map((a) => (
                 <UserAvatar
                   className="opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200"
                   sz="sm"
@@ -296,7 +296,7 @@ const CreateBook = () => {
                 label="Authors"
                 onClick={addAuthor}
                 select="UserStub"
-              />
+              /> */}
             </Grid>
           </Box>
         </div>
@@ -450,7 +450,7 @@ const CreateBook = () => {
             <Summary label="Title">
               <h2>{title}</h2>
             </Summary>
-            <Summary label={`Author${authors.length > 1 ? 's' : ''}`}>
+            {/* <Summary label={`Author${authors.length > 1 ? 's' : ''}`}>
               {authors.map((u: UserStub) => (
                 <div className="flex rounded-full border border-primary max-w-fit p-0 pr-2">
                   <UserAvatar
@@ -463,7 +463,7 @@ const CreateBook = () => {
                   </span>
                 </div>
               ))}
-            </Summary>
+            </Summary> */}
             <Summary label="Genre">{genre?.title}</Summary>
             <Summary label="Cover">{cover ? <CoverStubView cover={cover} height={160} /> : "None selected"}</Summary>
             <Summary label="Hook">{hook}</Summary>

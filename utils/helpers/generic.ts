@@ -88,3 +88,5 @@ export  const sleep = (ms:number) => new Promise(resolve => setTimeout(resolve, 
 
 export const toSlug = (s: string) =>
   encodeURIComponent(s.replaceAll(/[\W_]+/g, '-').toLowerCase())
+
+export const capFirstLetter = (s:string) => s.charAt(0).toUpperCase()+s.slice(1)

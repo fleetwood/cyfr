@@ -1,26 +1,25 @@
 import { Grid } from '@mui/material'
 import { TailwindInput } from 'components/forms'
+import AgentAvatar from 'components/ui/avatar/agentAvatar'
 import UserAvatar, { AvatarUser } from 'components/ui/avatar/userAvatar'
 import useDebounce from 'hooks/useDebounce'
 import useDebug from 'hooks/useDebug'
-import { Agent, Artist, Author, Editor, Follow, FollowerTypes, Reader, UserStub, UserTypes } from 'prisma/prismaContext'
+import { Agent, Artist, Author, Editor, Follow, FollowerTypes, Reader, UserSearchProps, UserSearchStub, UserStub, UserTypes } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, { useEffect, useState } from 'react'
 import { uniqueKey } from 'utils/helpers'
 
 const {debug} = useDebug('containers/User/UserSelector', 'DEBUG')
 
-type UserSelectorProps = {
+type UserSelectorProps = UserSearchProps & {
     label:              string
     placeholder?:       string
     cardClassName?:     string
     labelClassName?:    string
     inputClassName?:    string
     required?:          boolean
-    followerTypes?:     FollowerTypes[]
-    userTypes?:         UserTypes[]
+    giveMe?:            'UserStub' | UserTypes | FollowerTypes
     onClick?:           <T>(selected:T) => void
-    select?:            'id' | 'slug' | 'User' | 'CyfrUser' | 'UserDetail' | 'UserFeed' | 'UserStub' | 'UserFollow'
 }
 
 // TODO: create variants for:
@@ -33,19 +32,47 @@ const UserSelector = (props:UserSelectorProps) => {
   const {search:userSearch } = useApi.user()
   const {cyfrUser} = useApi.cyfrUser()
   // TODO: can we set this to <T> somehow?
-  const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<UserSearchStub[]>([])
 
-  const onUserClick = (u:AvatarUser) => {
+  const onUserClick = (user:any) => {
     if (!props.onClick) return
     setSearch(null)
-    debug('TODO: return the appropriate forType here...')
-    switch (props.select) {
-      case 'id':
-        return props.onClick(u.id)
-      case 'slug':
-        return props.onClick(u.slug)
-      default: return props.onClick(u)
+    
+    const u = users.find(u => u.id === user.id)
+    if (!u) {
+      debug(`Didn't find a match for`, {user})
+      return
     }
+
+    switch (props.giveMe) {
+      // UserTypes
+      case 'Agent':
+        return props.onClick(u.agent)
+      case 'Artist':
+        return props.onClick(u.artist)
+      case 'Author':
+        return props.onClick(u.author)
+      case 'Editor':
+        return props.onClick(u.editor)
+      case 'Reader':
+        return props.onClick(u.reader)
+      // FollowerTypes
+      case 'Followers':
+      case 'Fans':
+        return props.onClick(u.follower)
+      case 'Following':
+      case 'Stans':
+        return props.onClick(u.following)
+      // UserStub
+      case 'UserStub':
+      default:
+        return props.onClick(u as UserStub)
+    }
+  }
+
+  const onAvatarClick = (av:AvatarUser) => {
+    const user = users.find(u => u.id === av.id)
+    if (user) onUserClick(user)
   }
 
   const close = () => {
@@ -60,11 +87,8 @@ const UserSelector = (props:UserSelectorProps) => {
       setUsers(() => [])
       return
     }
-    // TODO: we may not always want just friends from the selector.
-    //        so add a variant and change the api call here
-    debug('TODO: Switch for types...')
-    const {userTypes, followerTypes} = props
-    const f = await userSearch({id: cyfrUser.id, search, userTypes, followerTypes})
+    const {userTypes, followerTypes, agg} = props
+    const f = await userSearch({id: cyfrUser.id, search, userTypes, followerTypes, agg})
     if (f && f.length>0) {
 
       //TODO switch to a user search stub
@@ -81,9 +105,9 @@ const UserSelector = (props:UserSelectorProps) => {
       <TailwindInput type='text' label={props.label} value={search} setValue={setSearch} />
       <span id={userSelector}></span>
       <Grid>
-        {users.map((u:UserStub) => 
+        {users.map((u:UserSearchStub) => 
           <div onClick={() => toggle(false)} key={uniqueKey(u.id)} >
-            <UserAvatar user={u} sz='sm' onClick={onUserClick} variant={['no-profile']} className='opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200' />
+            <UserAvatar user={u as UserStub} sz='sm' onClick={onUserClick} variant={['no-profile']} className='opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200' />
           </div>
         )}
       </Grid>

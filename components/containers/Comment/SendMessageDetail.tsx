@@ -4,7 +4,7 @@ import MentionsMenu from "components/ui/mentionsMenu"
 import useDebug from "hooks/useDebug"
 import useFeed from "hooks/useFeed"
 import { SocialTextarea } from "components/forms"
-import { CommentThreadDetails, CyfrUser, UpsertInboxProps, User } from "prisma/prismaContext"
+import { CommentThreadDetails, CyfrUser, UpsertInboxProps, User, UserStub } from "prisma/prismaContext"
 import { useState } from "react"
 import { uniqueKey, timeDifference } from "utils/helpers"
 import HtmlContent from "components/ui/htmlContent"
@@ -21,7 +21,7 @@ type SendMessageDetailProps = {
 const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetailProps) => {
     const {notify} = useToast()
     const {invalidate} = useFeed('inbox')
-   const [party, setParty] = useState<User|null>(null)
+   const [party, setParty] = useState<UserStub|null>(null)
    const [search, setSearch] = useState<string>('')
    const [message, setMessage] = useState<string|null>(null)
    const [thread, setThread] = useState<CommentThreadDetails|undefined>()
@@ -50,7 +50,7 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
     // }
    }
 
-   const onSelectParty = (user:User) => {
+   const onSelectParty = (user:UserStub) => {
     setParty(() => user)
     setShowMentions(() => false)
    }

@@ -1,32 +1,40 @@
 import dayjs from "dayjs"
 import useDebug from "hooks/useDebug"
-import { NextApiRequest } from "next"
-import { getSession, GetSessionParams } from "next-auth/react"
+import {NextApiRequest} from "next"
+import {getSession, GetSessionParams} from "next-auth/react"
 import {
+  AgentInfoSelect,
+  ArtistInfoSelect,
   AudienceLevels,
   audienceToLevel,
+  AuthorInfoSelect,
   BookStubInclude,
   CyfrUser,
   CyfrUserInclude,
+  EditorInfoSelect,
   Follow,
   GalleryStub,
+  GetInfoSelector,
+  MapInfo,
   Membership,
   MembershipStub,
-  prisma, User, UserDetail,
+  prisma, ReaderInfoSelect, User, UserDetail,
   UserFollowProps,
   UserInfo,
   UserInfoSelect,
+  UserInfoType,
   UserSearchProps,
   UserSearchStub,
+  UserSearchStubSelect,
   UserStub,
-  UserStubSelect
+  UserTypes
 } from "prisma/prismaContext"
-import { cadenceInterval } from "prisma/useApi/cyfrUser"
+import {cadenceInterval} from "prisma/useApi/cyfrUser"
 import {
   GenericResponseError,
   ResponseError
 } from "types/response"
-import { dbDateFormat, dedupe, toSlug } from "utils/helpers"
+import {dbDateFormat, dedupe, toSlug} from "utils/helpers"
 const { fileMethod, debug, info, err } = useDebug("entities/prismaUser", 'DEBUG')
 
 type AllPostQueryParams = {
@@ -90,32 +98,19 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
   }
 }
 
-const userInfo = async (id:string): Promise<UserInfo> => {
+const userInfo = async <T = UserInfoType>(id:string, userType?:UserTypes): Promise<T> => {
   debug('userInfo', id)
   try {
+    let select = GetInfoSelector(userType)
+    debug('select', select)
     const result = await prisma.user.findUnique({
       where: { id },
-      ...UserInfoSelect
+      ...select
     })
 
     if (result) {
-      const {
-        id, name, image, slug, membership,
-        _count: {
-          likes: likes, 
-          books: books,
-          posts: posts,
-          galleries: galleries
-        }} = result
-      
-      return {
-        id, name, image, slug, membership,
-        likes, books, posts, galleries,
-        following: (result.follower??[]).filter(f => f.isFan === false).length,
-        stans: (result.follower??[]).filter(f => f.isFan === true).length,
-        followers: (result.following??[]).filter(f => f.isFan === false).length,
-        fans: (result.following??[]).filter(f => f.isFan === true).length,
-      } as UserInfo
+      debug('result', result)
+      return MapInfo<T>(result)
     }
     
     throw {code: fileMethod, message: 'Could not find info for that user id'}
@@ -371,7 +366,6 @@ const friends = async(id:string, search?: string): Promise<UserStub[]> => {
   return dedupe(users, 'id') as UserStub[]
 }
 
-
 const search = async ({id, search, followerTypes, userTypes, agg}:UserSearchProps): Promise<UserSearchStub[]> => {
   // if followerTypes: FIND ONLY USERS WHO MATCH FOLLOWER TYPE
   // if userTypes: FIND ONLY USERS WHO MATCH USER TYPE
@@ -388,45 +382,7 @@ const search = async ({id, search, followerTypes, userTypes, agg}:UserSearchProp
         { id: search },
       ],
     },
-    select: {
-      ...UserStubSelect.select,
-
-      author: { include: {
-        user: UserStubSelect,
-        books: { where: {
-          visible: true
-        }},
-        _count: { select: {
-          shares: true,
-          reviews: true
-        }}
-      }},
-      artist: true,
-      editor: true,
-      agent: true,
-      reader: true,
-
-      follower: {
-        where: {
-          followingId: id
-        },
-        select: {
-          isFan: true,
-          followingId: true,
-          follower: UserStubSelect,
-        },
-      },
-      following: {
-        where: {
-          followerId: id
-        },
-        select: {
-          isFan: true,
-          followerId: true,
-          following: UserStubSelect,
-        },
-      },
-    },
+    select: UserSearchStubSelect(id)
   })
 
   // don't include the user

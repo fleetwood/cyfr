@@ -1,4 +1,4 @@
-import { Agent, Artist, Author, BookStub, Editor, Follow, FollowStub, GalleriesStubInclude, GalleryStub, Membership, MembershipType, Post, PostStub, PostStubInclude, Reader, User } from "prisma/prismaContext"
+import { Agent, AgentStub, Artist, ArtistStub, Author, AuthorStub, BookStub, Editor, EditorStub, Follow, FollowStub, GalleriesStubInclude, GalleryStub, Membership, MembershipType, Post, PostStub, PostStubInclude, Reader, ReaderStub, User } from "prisma/prismaContext"
 
 export type FollowerTypes = 'Friends'|'Fans'|'Followers'|'Following'|'Stans'
 export type UserTypes = 'Author' | 'Artist' | 'Editor' | 'Agent' | 'Reader' | 'Public'
@@ -9,27 +9,6 @@ export type UserSearchProps = {
   followerTypes?: FollowerTypes[]
   userTypes?:     UserTypes[]
   agg?:           boolean
-}
-
-export type UserSearchStub = UserStub & {
-  author?:    Author
-  artist?:    Artist
-  editor?:    Editor
-  agent?:     Agent
-  reader?:    Reader
-  
-  follower:  ({
-    isFan: boolean,
-    followingId: string,
-    follower: UserStub
-  })[]
-
-  following:  ({
-    isFan: boolean,
-    followerId: string,
-    following: UserStub
-  })[]
-
 }
 
 export type UserFeed = User & {
@@ -53,10 +32,7 @@ export const UserFeedInclude = {
   }
 }
 
-export type CyfrUser = User & {
-  membership?:  Membership & {
-    type:   MembershipType
-  }
+export type CyfrUser = UserStub & {
   agent?:  Agent  // user is an agent
   artist?: Artist // user is an artist
   author?: Author 
@@ -269,44 +245,67 @@ export const CreatorStubSelect = {
   }
 }
 
-export type UserInfo = {
-  id:         string
-  name:       string
-  image?:     string
-  slug?:      string
-  followers:  number
-  fans:       number
-  following:  number
-  stans:      number
-  likes:      number
-  books:      number
-  posts:      number
-  galleries:  number
-  membership: Membership & {
-    type: MembershipType
-  }
+
+export type UserSearchStub = UserStub & {
+  author?:    AuthorStub
+  artist?:    ArtistStub
+  editor?:    EditorStub
+  agent?:     AgentStub
+  reader?:    ReaderStub
+  
+  follower:  ({
+    isFan: boolean,
+    followingId: string,
+    follower: UserStub
+  })[]
+
+  following:  ({
+    isFan: boolean,
+    followerId: string,
+    following: UserStub
+  })[]
+
 }
 
-export const UserInfoSelect = { select: {
-  id: true,
-  name: true,
-  image: true,
-  slug: true,
-  membership: { include: {
-    type: true
-  }},
-  following: { select: {
-    isFan: true
-  }},
-  follower: { select: {
-      isFan: true
-  }},
-  _count: { select: {
-    likes:      true,
-    books:      true,
-    posts:      true,
-    galleries:  true,
-  }}
+export const UserSearchStubSelect = (id:string) => {
+  return {
+    ...UserStubSelect.select,
+
+    author: { include: {
+      user: UserStubSelect,
+      books: { where: {
+        visible: true
+      }},
+      _count: { select: {
+        shares: true,
+        reviews: true
+      }}
+    }},
+    artist: true,
+    editor: true,
+    agent: true,
+    reader: true,
+
+    follower: {
+      where: {
+        followingId: id
+      },
+      select: {
+        isFan: true,
+        followingId: true,
+        follower: UserStubSelect,
+      },
+    },
+    following: {
+      where: {
+        followerId: id
+      },
+      select: {
+        isFan: true,
+        followerId: true,
+        following: UserStubSelect,
+      },
+    },
 }}
 
 export type AudienceLevels = 'PUBLIC' | 'USER' | 'READER' | 'MEMBER' | 'MEMBER_EXP' | 'AGENT' | 'AGENT_EXP' | 'ADMIN' | 'OWNER'
