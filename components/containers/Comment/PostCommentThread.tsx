@@ -1,4 +1,4 @@
-import { Avatar, Button, Chip, Grid } from "@mui/material"
+import { Avatar, Box, Button, Chip, Grid } from "@mui/material"
 import { useToast } from "components/context/ToastContextProvider"
 import { SocialTextarea } from "components/forms"
 import UserAvatar from "components/ui/avatar/userAvatar"
@@ -9,7 +9,7 @@ import useFeed from "hooks/useFeed"
 import { CreatorStub, PostDetail, PostStub } from "prisma/types"
 import useApi from "prisma/useApi"
 import { useState } from "react"
-import { timeDifference } from "utils/helpers"
+import { timeDifference, uniqueKey } from "utils/helpers"
 
 type CommentThreadTypes = {
   postStub?:    PostStub
@@ -51,33 +51,32 @@ const CommentThread = ({postStub, postDetail}:CommentThreadTypes) => {
   }
 
   return (
-    <Grid container rowSpacing={2} columns={12}>
-      
-      <Grid xs={12}>
-        <Button onClick={() => setSayThings((s) => !s)}>
-          <Avatar alt="Comments" sx={{bgcolor: 'info', height: 36, width: 36}}  >{ReplyIcon}</Avatar>
-        </Button>
-      </Grid>
+    <Box>
+      <Button onClick={() => setSayThings((s) => !s)}>
+        <Avatar alt="Comments" sx={{bgcolor: 'info', height: 36, width: 36}}  >{ReplyIcon}</Avatar>
+      </Button>
 
-      <Grid xs={12} className={SayThings?'block':'hidden'}>
-        <Grid xs={2}>
+      {SayThings &&
+      <Grid container columns={12}>
+        <Grid item xs={2}>
           <Chip
             color='info'
             sx={{paddingLeft: 0.5}}
-            avatar={<UserAvatar user={cyfrUser} sz="xs" variant={['no-profile']}/>}
+            avatar={<UserAvatar user={cyfrUser} sz="xs" variant={['no-profile', 'no-link']}/>}
             label='Say a thing...'
             variant="filled"
           />
         </Grid>
-        <Grid xs={9}>
+        <Grid item xs={9}>
           <SocialTextarea content={comment} setContent={setComment} maxChar={512} />
           <EZButton label="Add Comment" variant="primary" onClick={createComment} />
         </Grid>
       </Grid>
+      }
       
       {commentThread?.comments && commentThread?.comments.map((comment:any) => (
-      <Grid xs={12} container className="bg-base-100 even:bg-opacity-50 p-1 mt-1 rounded-md">
-        <Grid xs={2}>
+      <Grid columns={12} container className="bg-base-100 even:bg-opacity-50 p-1 mt-1 rounded-md" key={uniqueKey(postStub??postDetail,comment)}>
+        <Grid item xs={2}>
           <Chip
             color='info'
             sx={{paddingLeft: 0.5}}
@@ -86,13 +85,13 @@ const CommentThread = ({postStub, postDetail}:CommentThreadTypes) => {
             variant="outlined"
             />
         </Grid>
-        <Grid xs={10}>
+        <Grid item xs={10}>
           <HtmlContent content={comment.content} className="text-sm" />
         </Grid>
       </Grid>
       ))}
 
-    </Grid>
+    </Box>
   )
 }
 export default CommentThread

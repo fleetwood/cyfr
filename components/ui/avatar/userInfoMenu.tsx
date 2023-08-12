@@ -11,7 +11,7 @@ import useCyfrUserApi from 'prisma/useApi/cyfrUser'
 import useShareApi from 'prisma/useApi/share'
 import UserApi from 'prisma/useApi/user'
 import {KeyVal, stringToColour} from 'types/props'
-import {abbrNum} from 'utils/helpers'
+import {abbrNum, uuid} from 'utils/helpers'
 import {FireIcon, HeartIcon, MuiMailIcon, ShareIcon} from '../icons'
 import Spinner from '../spinner'
 import UserAvatar, {AvatarUser} from './userAvatar'
@@ -128,10 +128,10 @@ const UserInfoMenu = ({
           className='absolute z-[1000] bg-base-100 shadow-xl shadow-black -mt-12'
           >
           <Grid container className='flex justify-items-start space-x-2'>
-            <Grid xs={3}>
+            <Grid item xs={3}>
               <UserAvatar sz='md' user={user} variant={['no-profile']} />
             </Grid>
-            <Grid xs={6}>
+            <Grid item xs={6}>
               <Link href={`/user/${user.slug}`}>
                 <h3 className="font-semibold">{user.name}</h3>
               </Link>
@@ -143,7 +143,7 @@ const UserInfoMenu = ({
           
           <Container className="flex flex-row text-xs">
             {userData.map(item => (
-              <div className="flex border-b border-neutral border-opacity-50 justify-between space-x-2 p-2">
+              <div className="flex border-b border-neutral border-opacity-50 justify-between space-x-2 p-2" key={`${user.id}-${item.key}-${uuid()}`}>
                 <div className="font-semibold">{item.key}</div>
                 <div>{abbrNum(Number(item.value??0))}</div>
               </div>
