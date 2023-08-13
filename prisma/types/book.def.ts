@@ -1,5 +1,5 @@
 import { UseQueryResult } from "react-query"
-import { Agent, AgentStub, AgentStubInclude, Artist, ArtistStub, ArtistStubInclude, Author, AuthorStub, AuthorStubInclude, Book, BookCategory, BookStatus, ChapterListItem, ChapterStub, CharacterStub, CommentThread, Cover, CoverStub, CoverStubInclude, CyfrUser, Follow, Gallery, GalleryStub, GalleryStubInclude, Genre, Image, Permission, Publisher, User, UserFollow, UserStub, UserStubSelect } from "../prismaContext"
+import { Agent, AgentStub, AgentStubInclude, Artist, ArtistStub, ArtistStubInclude, Author, AuthorStub, AuthorStubInclude, Book, BookCategory, BookStatus, ChapterListItem, ChapterStub, CharacterStub, CommentThread, Cover, CoverStub, CoverStubInclude, CyfrUser, Follow, Gallery, GalleryStub, GalleryStubInclude, Genre, Image, Permission, PermissionCreateProps, Publisher, Role, User, UserFollow, UserStub, UserStubSelect } from "../prismaContext"
 
 export type BookRelations = {
   genre:        Genre
@@ -38,17 +38,18 @@ export type BookCreateProps = {
   ownerId:      string
   genreId:      string
   coverId:      string
-  authors:      Author[]
   title:        string
   visible:      boolean
   fiction:      boolean
   prospect:     boolean
   status:       BookStatus
+  permission:   PermissionCreateProps
+  authors:      Author[]
+  // OPTIONAL
   completeAt?:  Date
   back?:        string
   hook?:        string
   synopsis?:    string
-  permission:   Permission
 }
 
 export type BookEngageProps = {

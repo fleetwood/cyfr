@@ -73,6 +73,20 @@ export const Roles = {
 export type PermissionStub = Permission & {
 }
 
+export type PermissionCreateProps = {
+    agent:      Role[]
+    artist:     Role[]
+    author:     Role[]
+    editor:     Role[]
+    fan:        Role[]
+    follower:   Role[]
+    stan:       Role[]
+    following:  Role[]
+    friend:     Role[]
+    member:     Role[]
+    public:     Role[]
+}
+
 export const PermissionStubInclude = {
     include: {
         

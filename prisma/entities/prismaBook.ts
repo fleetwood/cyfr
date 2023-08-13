@@ -42,59 +42,14 @@ const stubs = async ():Promise<BookStub[]> => await prisma.book.findMany({...Boo
 
 const create = async (props:BookCreateProps) => {
   try {
-    throw NotImplemented('prismaBook/create')
-    const results = await prisma.book.create({
-      /*
-data: {
-    title: "Testing book",
-    slug: "testing-book",
-    genre: {
-      connect: {id:"clgbb9l5j0004nn0gsd78ilvj"}
-    },
-    owner: {
-      connect: {id:"clkj5n6zv0000bu8potlrns5z"}
-    },
-    cover: {
-      connect: { id: 'clkkp3ax4000gmp0h0tp7j9hv'}
-    },
-    back: "There is nothing on the back",
-    authors: {
-      connectOrCreate:[
-        {
-          where: {id: 'cll33207f0004qv0hpys0lvoo'},
-          create: {userId: 'clkj5n6zv0000bu8potlrns5z'},
-        },
-        {
-          where: {id: 'cll33207f0006qv0h1u6givyh'},
-          create: {userId: 'clkk4hf7m0008buwta5k9iynu'},
-        },
-      ]
-    },
-    permission: {
-      create: {
-        agent: ['READ', 'COMMENT', 'SHARE'],
-        artist: ['READ', 'COMMENT', 'SHARE'],
-        author: ['READ', 'COMMENT', 'SHARE', 'FEEDBACK'],
-        editor: ['READ', 'COMMENT', 'SHARE', 'FEEDBACK'],
-        fan: ['READ', 'COMMENT', 'SHARE', 'FEEDBACK'],
-        stan: ['READ', 'COMMENT', 'SHARE', 'FEEDBACK'],
-        follower: ['READ', 'COMMENT', 'SHARE'],
-        following: ['READ', 'COMMENT', 'SHARE'],
-        friend: ['READ', 'COMMENT', 'SHARE'],
-        public: ['NONE'],
-        member: ['READ', 'COMMENT', 'SHARE'],
-      }
-    },
-    status: 'DRAFT'
-  }
-      */
-      data: {
+    const data = {
         owner: { connect: {id: props.ownerId}},
         title: props.title,
+        visible: props.visible,
         slug: toSlug(props.title),
         words: 0,
+        status: props.status??'DRAFT',
         fiction: props.fiction,
-        visible: props.visible,
         prospect: props.prospect,
         back: props.back,
         hook: props.hook,
@@ -102,9 +57,14 @@ data: {
         permission: { create: props.permission },
         genre: { connect: { id: props.genreId } },
         cover: { connect: { id: props.coverId } },
-        authors: { connect: props.authors },
-      },
-    })
+        authors: { connect: props.authors.map(a => {return { id: a.id}}) },
+      }
+    debug('create', data)
+    const results = await prisma.book.create({data})
+    if (results) {
+      return results
+    }
+    throw ({code: 'prismaBook.create', message: 'No results on create'})
   } catch (error) {
     throw error
   }
@@ -473,7 +433,8 @@ const updateWordCount = async (bookId:string):Promise<Boolean> => {
 }
 
 export const PrismaBook = { 
-    detail
+  create
+  ,  detail
   , details
   , stub
   , stubs

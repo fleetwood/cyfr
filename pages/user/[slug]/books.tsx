@@ -36,10 +36,10 @@ const UserBooksPage = ({ user, books }:UserBooksPageProps) => {
 
   return user ? (
     <MainLayout pageTitle={title} sectionTitle={title}>
+      {isOwner && <div className="py-2"><CreateBook /></div>}
       <div className="flex flex-col space-y-4">
         {books && books.map((book:BookStub) => <BookStubView book={book} key={book.id} authorAvatars={false} />)}
       </div>
-      {isOwner && <><CreateBook /></>}
     </MainLayout>
   ) : (
     <MainLayout sectionTitle="Books">

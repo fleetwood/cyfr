@@ -9,7 +9,7 @@ import {ArrowLeftIcon, ArrowRightIcon, CheckmarkIcon, MuiBookIcon, MuiCoverIcon,
 import Semibold from 'components/ui/semibold'
 import useDebounce from 'hooks/useDebounce'
 import useDebug from 'hooks/useDebug'
-import {AuthorStub, BookCreateProps, BookStatus, CoverStub, Genre, GenreStub, Image, Permission, Role, RoleString, UserStub} from 'prisma/prismaContext'
+import {Author, AuthorStub, BookCreateProps, BookStatus, BookUpsertProps, CoverStub, Genre, GenreStub, Image, Permission, PermissionCreateProps, Role, RoleString, UserStub} from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, {useEffect, useState} from 'react'
 import {dedupe, now, uniqueKey} from 'utils/helpers'
@@ -25,6 +25,7 @@ import {cloudinary} from 'utils/cloudinary'
 import CoverList from '../Cover/CoverList'
 import CoverStubView from '../Cover/CoverStubView'
 import AuthorAvatar from 'components/ui/avatar/authorAvatar'
+import {map} from 'prisma/maps'
 
 const {debug, info, jsonDialog, jsonBlock} = useDebug("components/containers/Books/CreateBook",'DEBUG')
 
@@ -115,26 +116,20 @@ const CreateBook = () => {
     const [images, setImages] = useState()
 
     const upsertProps = {
-      title: title!,
+      ownerId: cyfrUser?.id,
+      genreId: genre?.id,
+      coverId: cover?.id,
+      title: title,
+      visible,
+      fiction,
+      prospect,
+      status,
+      permission,
+      authors: authors,
+      completeAt,
       back: back??undefined,
       hook: hook??undefined,
       synopsis: synopsis??undefined,
-      visible,
-      prospect,
-      fiction,
-      status,
-      completeAt,
-      coverId: cover?.id,
-      genreId: genre?.id,
-      ownerId: cyfrUser?.id,
-      // TODO: this needs to be Author 
-      authors: [],
-      // authors.map((a) => {
-      //   return {
-      //     userId: a.id
-      //   }
-      //  }),
-      permission
     }
 
   const [activeStep, setActiveStep] = React.useState(0)
@@ -192,12 +187,18 @@ const CreateBook = () => {
   }
 
   const saveBook = async () => {
-    const result = await createBook(upsertProps as BookCreateProps)
+    const props = {
+      ...upsertProps,
+      authors: map.toAuthor(upsertProps.authors),
+      permission: map.toPermissionCreateProps(upsertProps.permission),
+    } as BookCreateProps
+    debug('saveBook', props)
+    const result = await createBook(props)
     if (result) {
       notify(`Created ${title}! Happy writing!!`)
     } else {
-      debug('Did not get right result?', upsertProps)
-      notify(`Ya that dint work`, 'warning')
+      debug('Did not get right result?', {upsertProps, result})
+      notifyError()
     }
   }
 
