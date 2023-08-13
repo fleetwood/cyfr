@@ -391,8 +391,9 @@ const search = async ({id, search, followerTypes, userTypes, agg}:UserSearchProp
     // if agg, append the filteredSet to filterResults, otherwise replace filterResults with the filteredSet
     filterResults = agg ? [...filterResults,...filteredSet] : [...filteredSet]
   }
-
+  
   // if agg, using the filter clone methodology to either filter against the entire queryResults, or the diminishing filterResults
+  if (followerTypes?.includes('Friends')) filterUsers((agg ? queryResults : filterResults).filter((u:UserSearchStub)=> u.follower.length > 0 && u.following.length > 0))
   if (followerTypes?.includes('Followers')) filterUsers((agg ? queryResults : filterResults).filter((u: UserSearchStub) => u.follower.length > 0))
   if (followerTypes?.includes('Fans')) filterUsers((agg ? queryResults : filterResults).filter((u: UserSearchStub) => u.follower.some(f => f.isFan)))
   if (followerTypes?.includes('Following')) filterUsers((agg ? queryResults : filterResults).filter((u: UserSearchStub) => u.following.length>0))

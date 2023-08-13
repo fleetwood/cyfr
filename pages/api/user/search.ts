@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import {getSession} from "next-auth/react"
 
 const request = async (req:NextApiRequest, res: NextApiResponse) => {
-  const {id, search, followerTypes, userTypes, agg} = req.body
+  const {id, search, followerTypes, userTypes, agg} = req.body ?? req.query
   return useApiHandler(
     res,
     'user/search',
