@@ -43,7 +43,7 @@ export type AgentStub = Agent & {
   }
 }
 
-export const AgentStubInclude = {include: {
+export const AgentStubInclude = { include: {
     user: {
       select: {
         name: true,

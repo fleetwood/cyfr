@@ -4,7 +4,7 @@ import { ChapterLayoutProps } from "../../../pages/book/[bookSlug]/chapter/[chap
 import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
 import Footer from "../../containers/Footer"
 import LeftColumn from "../../containers/LeftColumn"
-import Navbar from "../../containers/Navbar"
+import Navbar from "../../containers/Navbar/Navbar"
 import RightColumn from "../../containers/RightColumn"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"

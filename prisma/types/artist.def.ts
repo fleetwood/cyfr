@@ -55,29 +55,46 @@ export type ArtistStub = Artist & {
   }
 }
 
-export const ArtistStubInclude = {include: {
+export const ArtistStubInclude = {
+  include: {
     user: {
       select: {
         name: true,
         id: true,
         slug: true,
         image: true,
+        membership: {
+          select: {
+            id: true,
+            expiresAt: true,
+            type: {
+              select: {
+                id: true,
+                name: true,
+                level: true,
+              },
+            },
+          },
+        },
       },
     },
     books: {
-      take: 5
+      take: 5,
     },
     galleries: {
-      take: 5
+      take: 5,
     },
     reviews: true,
     covers: {
-      take: 5
+      take: 5,
     },
     _count: {
-      books: true,
-      galleries: true,
-      reviews: true,
-      covers: true
-    }
-}}
+      select: {
+        books: true,
+        galleries: true,
+        covers: true,
+        reviews: true,
+      },
+    },
+  },
+}

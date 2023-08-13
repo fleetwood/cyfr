@@ -20,7 +20,7 @@ const {debug} = useDebug('prisma/api/userApi', )
 
   const friends = async (id:string, search?:string):Promise<UserStub[]> => await getApi(`user/${id}/friends${search?`?s=${search}`:''}`)
 
-  const search = async (props: UserSearchProps): Promise<UserSearchStub[]> => await getApi(`user/search?s=${props.search ?? ''}&f=${(props.followerTypes ?? []).join(',')}&u=${(props.userTypes ?? []).join(',')}}`)
+  const search = async (props: UserSearchProps): Promise<UserSearchStub[]> => await (await sendApi(`user/search`, props)).data as UserSearchStub[]
 
   const detail = async (props: UserDetailProps):Promise<UserDetail> => await (await sendApi('user/detail', props)).data as UserDetail
 

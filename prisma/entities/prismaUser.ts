@@ -19,6 +19,7 @@ import {
   Membership,
   MembershipStub,
   MembershipStubSelect,
+  membershipToType,
   prisma, ReaderInfoSelect, User, UserDetail,
   UserFollowProps,
   UserInfo,
@@ -103,14 +104,13 @@ const userInfo = async <T = UserInfoType>(id:string, userType?:UserTypes): Promi
   debug('userInfo', {id, userType})
   try {
     let select = GetInfoSelector(userType)
-    debug('select', select)
     const result = await prisma.user.findUnique({
       where: { id },
       ...select
     })
 
     if (result) {
-      debug('result', result)
+      // debug('userInfo result', result)
       return MapInfo<T>(result, userType)
     }
     
@@ -249,7 +249,7 @@ const books = async (props:UserDetailProps): Promise<any> => {
     },
     ...BookStubInclude
   })
-  debug('result', books)
+  debug('books result', books)
   return books
 }
 
@@ -296,7 +296,7 @@ const galleries = async (props:UserDetailProps): Promise<GalleryStub[]> => {
   return result
 }
 
-const cyfrUser = async (email:string): Promise<CyfrUser> => await prisma.user.findUnique({where: { email },include: CyfrUserInclude}) as unknown as CyfrUser
+const cyfrUser = async (email:string): Promise<CyfrUser> => await prisma.user.findUnique({where: { email }, ...CyfrUserInclude}) as unknown as CyfrUser
 
 type FriendStub = {
   follower: {
@@ -422,7 +422,7 @@ const canMention = async ({search, all = false}:MentionSearchProps):Promise<any>
         limit 50
       `
     }
-    debug('no search term')
+    debug('canMention: no search term')
     return await prisma.$queryRaw`
       SELECT v.* 
       from v_user_info v 
@@ -460,7 +460,7 @@ const setMembership = async (
       }))
 
     if (membership.type?.id !== typeId || !(dayjs(membership.expiresAt).isSame(expiresAt))) {
-      debug('updating that membership tho...')
+      debug('setMembership updating')
       membership = await prisma.membership.update({
         where: {
           id: membership.id
@@ -473,18 +473,50 @@ const setMembership = async (
       })
     }
 
+    let type: UserTypes = membershipToType(membership)
+    let userType = undefined
+    switch (type) {
+      case 'Agent':
+        userType = {
+          agent: {create: {}}
+        }
+        break
+      case 'Artist':
+        userType = {
+          artist: {create: {}}
+        }
+        break
+      case 'Author':
+        userType = {
+          author: {create: {}}
+        }
+        break
+      case 'Editor':
+        userType = {
+          editor: {create: {}}
+        }
+        break
+      case 'Reader':
+      default:
+        userType = {
+          reader: { create: {}}
+        }
+      break
+    }
+
     const result = await prisma.user.update({
       where: {
         id: user.id,
       },
       data: {
-        membershipId: membership.id
+        membershipId: membership.id,
+        ...userType
       },
       include: {
         membership: MembershipStubSelect
       }
     })
-    debug('Updated the user then', result)
+    debug('setMembership update', result)
 
     if (result) {
       return result.membership as MembershipStub

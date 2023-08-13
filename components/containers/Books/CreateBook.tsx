@@ -24,6 +24,7 @@ import FullScreenDialog from 'components/ui/fullScreenDialog'
 import {cloudinary} from 'utils/cloudinary'
 import CoverList from '../Cover/CoverList'
 import CoverStubView from '../Cover/CoverStubView'
+import AuthorAvatar from 'components/ui/avatar/authorAvatar'
 
 const {debug, info, jsonDialog, jsonBlock} = useDebug("components/containers/Books/CreateBook",'DEBUG')
 
@@ -45,7 +46,7 @@ const CreateBook = () => {
     const [hook, setHook] = useState<string|null>(null)
     const [synopsis, setSynopsis] = useState<string|null>(null)
     const [back, setBack] = useState<string|null>(null)
-    // const [authors, setAuthors] = useState<AuthorStub[]>([cyfrUser as AuthorStub])
+    const [authors, setAuthors] = useState<AuthorStub[]>([cyfrUser.author as AuthorStub])
     const [completeAt, setCompleteAt] = useState<Date>()
     const [permission, setPermission] = useState<Permission>({
         id: uniqueKey(),
@@ -102,10 +103,11 @@ const CreateBook = () => {
         checkUnique()
     }, [checkTitle])
     
-    // const addAuthor = (user:any) => setAuthors((a) => dedupe([...a, user], 'id'))
-    const removeAuthor = (user:UserStub) => {
-        if (user.id === cyfrUser.id) return  // can't remove yourself
-        // setAuthors((a) => a?.filter(a => a.id !== user.id))
+    const addAuthor = (user:AuthorStub) => setAuthors((a) => dedupe([...a, user], 'id'))
+    const removeAuthor = (user:AuthorStub) => {
+        if (user.user.id === cyfrUser.id) return  // can't remove yourself
+        // dedupe so can't add more than once
+        setAuthors((a) => dedupe(a?.filter(a => a.id !== user.id),'id'))
     }
     
     // const [characters, setCharacters] = useState<Character[]>(book?.characters || [])
@@ -135,7 +137,7 @@ const CreateBook = () => {
       permission
     }
 
-  const [activeStep, setActiveStep] = React.useState(3)
+  const [activeStep, setActiveStep] = React.useState(0)
   const stepClassName = (index:number) => 'cursor-pointer hover:text-base-100 ' + (index === activeStep ? 'text-base-100' : index > activeStep ? 'text-info' : 'text-base-100 text-opacity-50')
   const showStep = (step:number) => step === activeStep ? 'inline' : 'hidden'
   const steps = [
@@ -283,20 +285,23 @@ const CreateBook = () => {
               be kinda weird otherwise.
             </p>
             <Grid>
-              {/* {authors?.map((a) => (
-                <UserAvatar
+              {authors?.map((a) => (
+                <AuthorAvatar
                   className="opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200"
                   sz="sm"
-                  user={a}
+                  author={a}
                   onClick={() => removeAuthor(a)}
                   variant={['no-profile']}
                 />
               ))}
               <UserSelector
+                id={cyfrUser.id}
                 label="Authors"
                 onClick={addAuthor}
-                select="UserStub"
-              /> */}
+                userTypes={['Author']}
+                followerTypes={['Friends']}
+                returnType={'Author'}
+              />
             </Grid>
           </Box>
         </div>

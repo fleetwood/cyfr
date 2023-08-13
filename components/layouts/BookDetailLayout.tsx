@@ -9,10 +9,10 @@ import Section from "components/ui/section"
 import Toasts from "components/ui/toasts"
 import ErrorPage from "pages/404"
 
-import Navbar from "components/containers/Navbar"
 import Spinner from "components/ui/spinner"
 import useDebug from "hooks/useDebug"
 import useApi from "prisma/useApi"
+import Navbar from "components/containers/Navbar/Navbar"
 const {debug} = useDebug('components/layouts/BookDetailLayout', )
 
 export type BookDetailLayoutProps = {

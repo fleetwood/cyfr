@@ -1,4 +1,4 @@
-import { Agent, AgentStub, Artist, ArtistStub, Author, AuthorStub, BookStub, Editor, EditorStub, Follow, FollowStub, GalleriesStubInclude, GalleryStub, Membership, MembershipStub, MembershipStubSelect, MembershipType, Post, PostStub, PostStubInclude, Reader, ReaderStub, User } from "prisma/prismaContext"
+import { Agent, AgentStub, AgentStubInclude, Artist, ArtistStub, ArtistStubInclude, Author, AuthorStub, AuthorStubInclude, BookStub, Editor, EditorStub, EditorStubInclude, Follow, FollowStub, GalleriesStubInclude, GalleryStub, Membership, MembershipStub, MembershipStubSelect, MembershipType, Post, PostStub, PostStubInclude, Reader, ReaderStub, ReaderStubInclude, User } from "prisma/prismaContext"
 
 export type FollowerTypes = 'Friends'|'Fans'|'Followers'|'Following'|'Stans'
 export type UserTypes = 'Author' | 'Artist' | 'Editor' | 'Agent' | 'Reader' | 'Public'
@@ -31,82 +31,6 @@ export const UserFeedInclude = {
     }
   }
 }
-
-export type CyfrUser = UserStub & {
-  agent?:  Agent  // user is an agent
-  artist?: Artist // user is an artist
-  author?: Author 
-  editor?: Editor // user is an editor
-  reader?: Reader // user is a reader
-  books:       BookStub[]
-  galleries:   GalleryStub[]
-  _count: {
-    posts:      number
-    follower:   number
-    following:  number
-  }
-}
-
-export const CyfrUserInclude = {
-  _count: {
-    select: {
-      posts: true,
-      follower: true,
-      following: true
-    }
-  },
-  agent: true,
-  artist: true,
-  author: true,
-  editor: true,
-  reader: true,
-  galleries: { include: {
-    creator: { select: { 
-      id: true,
-      name: true,
-      image: true,
-      membership: true
-    }},
-    images: { include: {
-      _count: { select: {
-        likes: true,
-        shares: true
-      }}
-    }},
-    commentThread: { include: {
-      comments: { include: {
-          creator: true
-        },
-        take: 10
-      },
-      _count: { select: {
-          comments: true
-      }}
-    }},
-    permission: true,
-      _count: { select: {
-        likes: true,
-        shares: true
-    }},
-  }},
-  books: {
-    include: {
-      cover: true,
-      authors: true,
-      _count: {
-        select: {
-          chapters: true,
-          likes: true,
-          shares: true
-        }
-      }
-    }
-  },
-  membership: { include: {
-    type: true
-  }}
-}
-
 export type UserStub = {
   id:     string
   name:   string
@@ -292,5 +216,13 @@ export const UserSearchStubSelect = (id:string) => {
     },
 }}
 
+export const membershipToType = (membership:MembershipStub):UserTypes=> {
+  try {
+    return membership.type.name as UserTypes
+  }
+  catch (e) {
+    return 'Reader'
+  }
+}
 export type AudienceLevels = 'PUBLIC' | 'USER' | 'READER' | 'MEMBER' | 'MEMBER_EXP' | 'AGENT' | 'AGENT_EXP' | 'ADMIN' | 'OWNER'
 export const audienceToLevel = (level:string) => ['PUBLIC' , 'USER' , 'READER' , 'MEMBER' , 'MEMBER_EXP' , 'AGENT' , 'AGENT_EXP' , 'ADMIN' , 'OWNER'].indexOf(level)

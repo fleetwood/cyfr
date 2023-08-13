@@ -1,4 +1,4 @@
-import {Box, Grid, IconButton, Menu, MenuItem, Typography} from '@mui/material'
+import {Box, Grid, IconButton, Menu, MenuList, Typography, withStyles} from '@mui/material'
 import LinkWithIcon from 'components/ui/avatar/linkWithIcon'
 import UserAvatar from 'components/ui/avatar/userAvatar'
 import {BookIcon, GalleryIcon, MuiLogoutIcon, MuiMailIcon, MuiManageAccountsIcon, MuiPeopleIcon, MuiPersonIcon, MuiPortraitIcon} from 'components/ui/icons'
@@ -28,11 +28,11 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
   const { cyfrUser, isLoading } = useApi.cyfrUser()
 
   const [keystone, setKeystone] = useState<null | HTMLElement>(null)
-  const handleOpen = (event: React.MouseEvent<HTMLElement>) => setKeystone(event.currentTarget)
-  const handleClose = () => setKeystone(null)
+  const toggleMenu = (event?: React.MouseEvent<HTMLElement>) => setKeystone(event?.currentTarget??null)
 
   const userUrl = cyfrUser ? cyfrUser.slug : ''
-  const linkClass = 'font-semibold text-primary'
+  const linkClass = 'font-semibold px-2 text-primary hover:bg-primary hover:bg-opacity-20'
+  const navLinkClass = '-ml-2 px-2 hover:bg-primary hover:bg-opacity-20 transition-color duration-200'
 
   return (
     <Box sx={{ flexGrow: 0 }}>
@@ -46,19 +46,26 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
               <br />
               <Typography
                 className="font-semibold"
-                sx={{ color: stringToColour(
-                  cyfrUser.membership?.type.name ?? 'public'
-                )}}>
+                sx={{
+                  color: stringToColour(
+                    cyfrUser.membership?.type.name ?? 'public'
+                  ),
+                }}
+              >
                 {cyfrUser.membership?.type.name}
               </Typography>
             </div>
-            <IconButton onClick={handleOpen} sx={{ p: 0 }}>
-              <UserAvatar user={cyfrUser} variant={['no-profile','no-link']} sz="md" />
+            <IconButton onClick={toggleMenu} sx={{ p: 0 }}>
+              <UserAvatar
+                user={cyfrUser}
+                variant={['no-profile', 'no-link']}
+                sz="md"
+              />
             </IconButton>
           </div>
           <Menu
             sx={{ mt: 6 }}
-            id="menu-appbar"
+            id="cyfruserMenu"
             anchorEl={keystone}
             anchorOrigin={{
               vertical: 'top',
@@ -70,14 +77,19 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
               horizontal: 'right',
             }}
             open={Boolean(keystone)}
-            onClose={handleClose}
+            onClose={() => toggleMenu(undefined)}
           >
-              <MenuItem className="float-left p-2">
+            <MenuList>
+              <div className="float-left flex flex-col p-2">
                 <Link href={`/user/${userUrl}/books`} className={linkClass}>
-                  <h3 className="text-primary">Books</h3>
+                  <h3>Books</h3>
                 </Link>
-                {cyfrUser.books.map((book: BookStub) => (
-                  <Link href={`/book/${book.slug}`} key={book.id}>
+                {cyfrUser.author?.books.map((book: BookStub) => (
+                  <Link
+                    className={navLinkClass}
+                    href={`/book/${book.slug}`}
+                    key={book.id}
+                  >
                     {book.title}
                   </Link>
                 ))}
@@ -88,14 +100,18 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
                 >
                   {BookIcon} +
                 </Link>
-              </MenuItem>
+              </div>
 
-              <MenuItem className="float-left p-2">
+              <div className="float-left flex flex-col p-2">
                 <Link href={`/user/${userUrl}/gallery`} className={linkClass}>
-                  <h3 className="text-primary">Galleries</h3>
+                  <h3>Galleries</h3>
                 </Link>
                 {cyfrUser.galleries.map((gallery: GalleryStub) => (
-                  <Link href={`/gallery/${gallery.id}`} key={gallery.id}>
+                  <Link
+                    className={navLinkClass}
+                    href={`/gallery/${gallery.id}`}
+                    key={gallery.id}
+                  >
                     {gallery.title}
                   </Link>
                 ))}
@@ -106,38 +122,43 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
                 >
                   {GalleryIcon}+
                 </Link>
-              </MenuItem>
+              </div>
 
-              <MenuItem className="float-left flex flex-col p-2">
+              <div className="float-left flex flex-col p-2">
                 <h3 className="text-primary">Profile</h3>
                 <LinkWithIcon
+                  className={navLinkClass}
                   href="/user/inbox"
                   icon={<MuiMailIcon />}
                   label="Inbox"
                 />
                 <LinkWithIcon
+                  className={navLinkClass}
                   href={`/user/${userUrl}/memberships`}
                   icon={<MuiPeopleIcon />}
                   label="Membership"
                 />
                 <LinkWithIcon
+                  className={navLinkClass}
                   href={`/user/${userUrl}`}
                   icon={<MuiPortraitIcon />}
                   label="Profile"
                 />
                 <LinkWithIcon
+                  className={navLinkClass}
                   href={`/account`}
                   icon={<MuiManageAccountsIcon />}
                   label="Account"
                 />
                 <LinkWithIcon
+                  className={navLinkClass}
                   onClick={() => signOut()}
                   icon={<MuiLogoutIcon />}
                   label="Logout"
                 />
-              </MenuItem>
+              </div>
 
-              <MenuItem className="float-left flex flex-col p-2">
+              <div className="float-left flex flex-col p-2 opacity-100 cursor-default">
                 <h3 className="text-primary">Info</h3>
                 <div className="flex flex-row justify-between">
                   <span className="font-semibold">Posts</span>
@@ -163,16 +184,13 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
                   <span className="font-semibold">Reviews</span>
                   <span>[NI]</span>
                 </div>
-              </MenuItem>
-
+              </div>
+            </MenuList>
           </Menu>
         </Box>
       ) : !isLoading ? (
         <Box sx={{ flexGrow: 0 }}>
-          <IconButton
-            onClick={(e) => setKeystone(e.currentTarget)}
-            sx={{ p: 0, color: 'white' }}
-          >
+          <IconButton onClick={toggleMenu} sx={{ p: 0, color: 'white' }}>
             <MuiPersonIcon
               fontSize="large"
               className="opacity-50 border rounded-full hover:text-base-100 hover:border-base-100 hover:opacity-100 transition-all duration-200"
@@ -180,7 +198,7 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
           </IconButton>
           <Menu
             sx={{ mt: 6 }}
-            id="menu-appbar"
+            id="loginMenu"
             anchorEl={keystone}
             anchorOrigin={{
               vertical: 'top',
@@ -192,11 +210,13 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
               horizontal: 'right',
             }}
             open={Boolean(keystone)}
-            onClose={() => setKeystone(null)}
+            onClose={() => toggleMenu(undefined)}
           >
-            <MenuItem>
-              <MenuLogin />
-            </MenuItem>
+            <MenuList>
+              <div>
+                <MenuLogin />
+              </div>
+            </MenuList>
           </Menu>
         </Box>
       ) : (

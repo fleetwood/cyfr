@@ -16,6 +16,7 @@ export type RocketQuery<T> = {
     isLoading:  boolean
     error:      any
     invalidate: () => void
+    refetch:    () => void
 }
 
 export const useRocketQuery = <T>({name, url, body, timeout=30000}:RocketQueryProps):RocketQuery<T> => {
@@ -40,11 +41,16 @@ export const useRocketQuery = <T>({name, url, body, timeout=30000}:RocketQueryPr
   )
 
   const invalidate = () => {
-    debug(`invalidate`,{queryKey}, true)
+    debug(`invalidate`,{queryKey})
     qc.invalidateQueries(queryKey)
   }
+
+  const refetch = () => {
+    debug('refetch', {queryKey})
+    qc.refetchQueries(queryKey)
+  }
   
-  return { ...query, invalidate } as RocketQuery<T>
+  return { ...query, invalidate, refetch } as RocketQuery<T>
 }
 
 export default useRocketQuery

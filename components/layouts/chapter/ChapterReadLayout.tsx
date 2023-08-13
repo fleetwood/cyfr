@@ -4,7 +4,7 @@ import { ChapterLayoutProps } from "../../../pages/book/[bookSlug]/chapter/[chap
 import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
 import ChapterViewSelector, { currentView } from "../../containers/Chapter/ChapterViewSelector"
 import LeftColumn from "../../containers/LeftColumn"
-import Navbar from "../../containers/Navbar"
+import Navbar from "../../containers/Navbar/Navbar"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { HamburgerIcon } from "../../ui/icons"
 import Toasts from "../../ui/toasts"

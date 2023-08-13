@@ -1,7 +1,7 @@
 import { ReactNode, useRef, useState } from "react"
 import Footer from "../containers/Footer"
 import LeftColumn from "../containers/LeftColumn"
-import Navbar from "../containers/Navbar"
+import Navbar from "../containers/Navbar/Navbar"
 import CreatePostModal from "../containers/Post/CreatePostModal"
 import RightColumn from "../containers/RightColumn"
 import { useToast } from "../context/ToastContextProvider"

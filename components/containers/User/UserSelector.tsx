@@ -1,16 +1,19 @@
-import { Grid } from '@mui/material'
-import { TailwindInput } from 'components/forms'
-import AgentAvatar from 'components/ui/avatar/agentAvatar'
-import UserAvatar, { AvatarUser } from 'components/ui/avatar/userAvatar'
+import {Grid, Typography} from '@mui/material'
+import {TailwindInput} from 'components/forms'
+import UserAvatar, {AvatarUser} from 'components/ui/avatar/userAvatar'
+import {SpinnerEllipse} from 'components/ui/spinnerEllipse'
 import useDebounce from 'hooks/useDebounce'
 import useDebug from 'hooks/useDebug'
-import { Agent, Artist, Author, Editor, Follow, FollowerTypes, Reader, UserSearchProps, UserSearchStub, UserStub, UserTypes } from 'prisma/prismaContext'
+import {FollowerTypes, UserSearchProps, UserSearchStub, UserStub, UserTypes} from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
-import React, { useEffect, useState } from 'react'
-import { uniqueKey } from 'utils/helpers'
+import React, {useEffect, useState} from 'react'
+import {uniqueKey} from 'utils/helpers'
 
 const {debug} = useDebug('containers/User/UserSelector', 'DEBUG')
 
+/**
+ * @prop userTypes  {@link UserTypes}|{@link FollowerTypes}
+ */
 type UserSelectorProps = UserSearchProps & {
     label:              string
     placeholder?:       string
@@ -18,8 +21,8 @@ type UserSelectorProps = UserSearchProps & {
     labelClassName?:    string
     inputClassName?:    string
     required?:          boolean
-    giveMe?:            'UserStub' | UserTypes | FollowerTypes
-    onClick?:           <T>(selected:T) => void
+    returnType?:        UserTypes|FollowerTypes
+    onClick?:           (selected:any) => void
 }
 
 // TODO: create variants for:
@@ -30,8 +33,7 @@ Follower, Stan, Following, Fan
 const UserSelector = (props:UserSelectorProps) => {
   const userSelector = 'userSelector'
   const {search:userSearch } = useApi.user()
-  const {cyfrUser} = useApi.cyfrUser()
-  // TODO: can we set this to <T> somehow?
+  const [isLoading, setIsLoading] = useState(false)
   const [users, setUsers] = useState<UserSearchStub[]>([])
 
   const onUserClick = (user:any) => {
@@ -44,7 +46,7 @@ const UserSelector = (props:UserSelectorProps) => {
       return
     }
 
-    switch (props.giveMe) {
+    switch (props.returnType) {
       // UserTypes
       case 'Agent':
         return props.onClick(u.agent)
@@ -64,14 +66,13 @@ const UserSelector = (props:UserSelectorProps) => {
       case 'Stans':
         return props.onClick(u.following)
       // UserStub
-      case 'UserStub':
       default:
         return props.onClick(u as UserStub)
     }
   }
 
   const onAvatarClick = (av:AvatarUser) => {
-    const user = users.find(u => u.id === av.id)
+    const user = users.find(u => props.id === av.id)
     if (user) onUserClick(user)
   }
 
@@ -85,16 +86,17 @@ const UserSelector = (props:UserSelectorProps) => {
   const findUsers = async () => {
     if (!search || search.trim().length < 1) {
       setUsers(() => [])
+      setIsLoading(() => false)
       return
     }
-    const {userTypes, followerTypes, agg} = props
-    const f = await userSearch({id: cyfrUser.id, search, userTypes, followerTypes, agg})
-    if (f && f.length>0) {
+    setIsLoading(() => true)
 
-      //TODO switch to a user search stub
-      setUsers(() => f)
-      toggle(true)
-    }
+    const {id, userTypes, followerTypes, agg} = props
+    debug('searchProps', { id, userTypes, followerTypes, agg })
+    const f = await userSearch({id, search, userTypes, followerTypes, agg})
+    setUsers(() => f)
+    setIsLoading(() => false)
+    toggle(true)
   }
   useEffect(() => {findUsers()}, [findUser])
   const [anchor, setAnchor] = React.useState<null | HTMLElement>(null)
@@ -102,13 +104,40 @@ const UserSelector = (props:UserSelectorProps) => {
 
   return (
     <>
-      <TailwindInput type='text' label={props.label} value={search} setValue={setSearch} />
+      <TailwindInput
+        type="text"
+        label={props.label}
+        value={search}
+        setValue={setSearch}
+      />
       <span id={userSelector}></span>
       <Grid>
-        {users.map((u:UserSearchStub) => 
-          <div onClick={() => toggle(false)} key={uniqueKey(u.id)} >
-            <UserAvatar user={u as UserStub} sz='sm' onClick={onUserClick} variant={['no-profile']} className='opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200' />
+        {isLoading && <SpinnerEllipse />}
+        {users.map((u: UserSearchStub) => (
+          <div onClick={() => toggle(false)} key={uniqueKey(u.id)}>
+            <UserAvatar
+              user={u as UserStub}
+              sz="sm"
+              onClick={onUserClick}
+              variant={['no-profile']}
+              className="opacity-80 hover:opacity-100 cursor-pointer transition-opacity duration-200"
+            />
           </div>
+        ))}
+        {!isLoading && users && users.length < 1 && (
+          <>
+            <Typography className='flex'>
+              No matches for:
+              <span className='pl-2 flex space-x-2'>
+                {props.userTypes && <>{props.userTypes.flatMap((a) => a)},</>}
+              </span>
+              <span className='pl-2 flex space-x-2'>
+              {props.followerTypes && (
+                <>{props.followerTypes.flatMap((a) => a)}</>
+              )}
+              </span>
+            </Typography>
+          </>
         )}
       </Grid>
     </>

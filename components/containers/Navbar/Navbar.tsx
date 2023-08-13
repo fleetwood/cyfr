@@ -1,41 +1,22 @@
 import {
   AppBar,
-  Box,
   Container,
   Grid,
-  IconButton,
-  Menu,
   Toolbar,
-  Typography,
+  Typography
 } from '@mui/material'
-import LinkWithIcon from 'components/ui/avatar/linkWithIcon'
-import UserAvatar from 'components/ui/avatar/userAvatar'
 import {
   BookIcon,
   CyfrLogo,
   EventIcon,
-  GalleryIcon,
-  HamburgerIcon,
-  MuiLogoutIcon,
-  MuiMailIcon,
-  MuiManageAccountsIcon,
-  MuiPeopleIcon,
-  MuiPersonIcon,
-  MuiPortraitIcon,
+  GalleryIcon
 } from 'components/ui/icons'
-import MenuLogin from 'components/ui/menuLogin'
-import { SpinnerEllipse } from 'components/ui/spinnerEllipse'
 import useDebug from 'hooks/useDebug'
-import { signOut } from 'next-auth/react'
 import Link from 'next/link'
-import { BookStub, GalleryStub, UserInfo } from 'prisma/prismaContext'
-import useApi from 'prisma/useApi'
-import UserApi from 'prisma/useApi/user'
-import { ReactNode, useEffect, useState } from 'react'
-import { VariantProps, stringToColour } from 'types/props'
-import CyfrUserNav from './Navbar/CyfrUserNav'
-import NavPageButton from './Navbar/NavPageButton'
-import CyfrUserNavSm from './Navbar/CyfrUserNavSm'
+import {ReactNode, useEffect, useState} from 'react'
+import CyfrUserNav from './CyfrUserNav'
+import CyfrUserNavSm from './CyfrUserNavSm'
+import NavPageButton from './NavPageButton'
 
 const { debug } = useDebug('Navbar')
 
