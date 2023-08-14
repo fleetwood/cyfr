@@ -48,3 +48,18 @@ export const toPermissionCreateProps = (
     follower: stub.follower ?? ['NONE'],
   }
 }
+
+export const DefaultPermissionProps: PermissionCreateProps = {
+  agent: ['NONE'],
+  editor: ['NONE'],
+  author: ['NONE'],
+  artist: ['NONE'],
+  member: ['NONE'],
+  public: ['NONE'],
+
+  friend: ['NONE'],
+  stan: ['NONE'],
+  following: ['NONE'],
+  fan: ['NONE'],
+  follower: ['NONE'],
+}

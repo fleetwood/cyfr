@@ -27,7 +27,6 @@ export type BookDetailProps = {
 }
 
 const BookDetailLayout = (props:BookDetailLayoutProps) => {
-  const {cyfrUser} = useApi.cyfrUser()
   const {detailBySlug} = useApi.book()
   const {data: book, error, isLoading, invalidate} = detailBySlug(props.bookSlug)
   

@@ -3,7 +3,7 @@ import {AgentStub, AuthorStub, BookStub, GalleryStub, Membership, MembershipType
 import {KeyVal} from "types/props"
 import {capFirstLetter} from "utils/helpers"
 
-const {debug} = useDebug('userInfo.def', 'DEBUG')
+const {debug} = useDebug('userInfo.def')
 export type UserInfoType = AgentInfo|ArtistInfo|AuthorInfo|EditorInfo|ReaderInfo|UserInfo
 
 export type UserInfo = UserStub & {

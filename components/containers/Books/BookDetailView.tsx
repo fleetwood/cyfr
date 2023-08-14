@@ -10,10 +10,11 @@ import { PhotoIcon } from "components/ui/icons"
 import useDebug from "hooks/useDebug"
 import router from "next/router"
 import ErrorPage from "pages/404"
-import { BookDetail, ChapterListItem } from "prisma/prismaContext"
+import { AuthorStub, BookDetail, ChapterListItem } from "prisma/prismaContext"
 import { useState } from "react"
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
 import useApi from "prisma/useApi"
+import AuthorAvatar from "components/ui/avatar/authorAvatar"
 
 const { jsonBlock, debug } = useDebug("components/Books/BookDetailComponent","DEBUG")
 
@@ -30,7 +31,7 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
 
   const [back, setBack] = useState<string|null|undefined>(bookDetail.back)
   const [synopsis, setSynopsis] = useState<string|null|undefined>(bookDetail.synopsis)
-  const isAuthor = cyfrUser ? (bookDetail.authors??[]).filter(a => a.id === cyfrUser?.id).length > 0 : false
+  const isAuthor = cyfrUser ? (bookDetail.authors??[]).filter(a => a.user.id === cyfrUser?.id).length > 0 : false
 
   const update = async () => {
     debug('update')
@@ -72,7 +73,25 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
   }
 
   // TODO this should be handled by commune
-  if (bookDetail && bookDetail.visible === false && isAuthor === false) return <ErrorPage message="You do not have permissions to perform that action" />
+  if (bookDetail && bookDetail.visible === false && isAuthor === false) return (
+    <div>
+      <h3>You do not have permissions to perform that action.</h3>
+      <div>
+        <label>Authors</label>
+        {bookDetail.authors.map((a: AuthorStub) => (
+          <AuthorAvatar author={a} sz="md" key={a.id} />
+        ))}
+      </div>
+      <div>
+        <label>Visibility</label>
+        <div>{bookDetail.visible}</div>
+      </div>
+      <div>
+        <label>Permission</label>
+        <div>TBD</div>
+      </div>
+    </div>
+  )
 
   return (
     <div>
@@ -113,12 +132,12 @@ const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
             <div className="my-4">
               <h3>Chapters </h3>
               <div className="flex space-x-4">
-              {isAuthor && 
-                <>
-                  <OpenChapterModalButton variant="plus" />
-                  <CreateChapterModal bookDetail={bookDetail} onSave={onSave} />
-                </>
-              }
+                {isAuthor && 
+                  <>
+                    <OpenChapterModalButton variant="plus" />
+                    <CreateChapterModal bookDetail={bookDetail} onSave={onSave} />
+                  </>
+                }
                 <ChapterList chapters={bookDetail.chapters??[]} onSelect={editChapter} />
               </div>
             </div>

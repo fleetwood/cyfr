@@ -1,15 +1,14 @@
 import { Grid } from '@mui/material'
-import { RoleString } from 'prisma/prismaContext'
+import { FollowerTypes, RoleString, UserTypes } from 'prisma/prismaContext'
 import React, { ReactNode, useEffect, useState } from 'react'
 
-
 type GridItemProps = {
-    level: string
-    children?:ReactNode
-    onChange?: (permList:RoleString[]) => void
+    role:       UserTypes|FollowerTypes
+    children?:  ReactNode
+    onChange?:  (permList:RoleString[]) => void
 }
 
-const BookPermissions = ({level, onChange, children}:GridItemProps) => {
+const EditRole = ({role, onChange, children}:GridItemProps) => {
     const [read, setRead] = useState(false)
     const [comment, setComment] = useState(false)
     const [feedback, setFeedback] = useState(false)
@@ -40,7 +39,7 @@ const BookPermissions = ({level, onChange, children}:GridItemProps) => {
     const checkedBG = (active:boolean) => active ? `checkbox checkbox-primary` : `checkbox checkbox-content`
 
     const GridItem = ({label, val, setVal}:{label:string, val:boolean, setVal: React.Dispatch<React.SetStateAction<boolean>>}) => (
-        <Grid className={`cursor-pointer ${itemBG(val)}`} onClick={() => setItem(val, setVal)}>
+        <Grid item xs={2} className={`cursor-pointer ${itemBG(val)}`} onClick={() => setItem(val, setVal)}>
             <div className={`text-center items-center text-sm`}>{label}</div>
             <div className={`text-center items-center text-sm`}><input type='checkbox' checked={val} className={checkedBG(val)} onChange={() => {}} /></div>
         </Grid>
@@ -68,11 +67,11 @@ const BookPermissions = ({level, onChange, children}:GridItemProps) => {
     }, [read, share, comment, feedback])
 
   return <>
-    <div className='text-primary font-bold my-4'>{level}</div>
+    <div className='text-primary font-bold my-4'>{role}</div>
     {children && <div className='text-sm -mt-4 mb-4'>{children}</div>}
     <div className='px-4'>
         <Grid container spacing={2}>
-            <Grid columns={1} display="flex" justifyContent="center" alignItems="center" className={`cursor-pointer ${itemBG(all)}`} onClick={toggleAll} >
+            <Grid item xs={2} display="flex" justifyContent="center" alignItems="center" className={`cursor-pointer ${itemBG(all)}`} onClick={toggleAll} >
                 <span>Toggle All</span>
             </Grid>
             
@@ -86,4 +85,4 @@ const BookPermissions = ({level, onChange, children}:GridItemProps) => {
   </>
 }
 
-export default BookPermissions
+export default EditRole

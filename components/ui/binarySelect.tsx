@@ -21,17 +21,17 @@ type BinarySelectorProps = {
 }
 
 const BinarySelector = ({label, left, right, value, setValue, className, spacing= 1, rounded=false}:BinarySelectorProps) => {
-  const [bg, setBg] = useState('bg-red-500')
+  const [bg, setBg] = useState(`bg-${left.variant??'primary'}`)
   const p = `p-${spacing}`
   const [style, setStyle] = useState({ left: 0, width: 0 })
-  const [pointLeft, setPointLeft] = useState(false)
+  const [pointLeft, setPointLeft] = useState(left.value === value ??false)
   const containerRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
   const middleRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
   const leftRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
   const rightRef: MutableRefObject<HTMLDivElement | null> = useRef(null)
 
-  const toggle = () => {
-    const l = !pointLeft
+  const toggle = (point?:boolean) => {
+    const l = point ?? !pointLeft
     // @ts-ignore
     const rect = l === true ? leftRef.current.getBoundingClientRect() : middleRef.current.getBoundingClientRect()
     // @ts-ignore
@@ -40,14 +40,14 @@ const BinarySelector = ({label, left, right, value, setValue, className, spacing
     const w = rect.width + (l === true ? middleRef.current?.getBoundingClientRect().width : rightRef.current?.getBoundingClientRect().width)
     setValue && setValue(() => (l === true ? left.value ?? true : right.value ?? false))
     setPointLeft(() => l)
-    setBg(() => (`bg-`+ (l === true ? left.variant ?? `red-500` : right.variant ?? `blue-500`)))
+    setBg(() => (`bg-`+ (l === true ? left.variant ?? `primary` : right.variant ?? `primary`)))
     setStyle(() => {
       return { left: x, width: w }
     })
   }
 
   useEffect(() => {
-    toggle()
+    toggle(left.value === value)
   }, [])
 
   return (
@@ -56,7 +56,7 @@ const BinarySelector = ({label, left, right, value, setValue, className, spacing
       className={`cursor-pointer relative max-w-fit flex 
       border border-neutral border-opacity-50 
       mt-${spacing} ${p} ${rounded ? 'rounded-full' : ''}`}
-      onClickCapture={toggle}
+      onClickCapture={() => toggle()}
     >
       <Grid>
         <div

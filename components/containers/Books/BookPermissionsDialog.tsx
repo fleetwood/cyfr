@@ -10,11 +10,11 @@ const {debug} = useDebug('BookPermissionsDialog',)
 
 const BookPermissionsDialog = () => (
     <>
-      <Grid container columns={12}>
-        <Grid columns={4}>
+      <Grid container columnSpacing={2}>
+        <Grid item>
           <span className="text-sm">What do each of the permissions mean?</span>
         </Grid>
-        <Grid columns={2}>
+        <Grid item>
           <OpenDialog
             label="READ"
             title="READ"
@@ -37,7 +37,7 @@ const BookPermissionsDialog = () => (
             }
           />
         </Grid>
-        <Grid columns={2}>
+        <Grid item>
           <OpenDialog
             direction='left'
             label="SHARE"
@@ -67,7 +67,7 @@ const BookPermissionsDialog = () => (
             }
           />
         </Grid>
-        <Grid columns={2}>
+        <Grid item>
           <OpenDialog
             direction='right'
             label="COMMENT"
@@ -96,7 +96,7 @@ const BookPermissionsDialog = () => (
             }
           />
         </Grid>
-        <Grid columns={2}>
+        <Grid item>
           <OpenDialog
             direction='down'
             label="FEEDBACK"

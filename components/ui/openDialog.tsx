@@ -14,6 +14,7 @@ import { VariantProps } from 'types/props'
 import MuiTransition from './muiTransition'
 
 type OpenDialogProps = {
+  btnClassname?:    string
   label?:           ReactNode
   labelClassname?:  string
   title?:           ReactNode
@@ -56,7 +57,7 @@ const OpenDialog = (props:OpenDialogProps) => {
     <>
       <EZButton
         label={props.label ?? 'Open'}
-        className="btn-sm"
+        className={props.btnClassname ?? 'btn-sm'}
         onClick={() => openDialog(true)}
         variant={variant}
       />

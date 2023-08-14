@@ -33,7 +33,7 @@ type CreateChapterModalType = {
 }
 
 const CreateChapterModal = ({bookDetail, onSave}:CreateChapterModalType) => {
-  const [cyfrUser, isLoading, error] = useCyfrUserContext()
+  const {cyfrUser, isLoading, error} = useApi.cyfrUser()
   const { notify } = useToast()
   const {addChapter} = useApi.book()
 

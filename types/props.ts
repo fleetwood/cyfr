@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, ReactNode, SetStateAction } from "react"
 
 export type classNameProps = {
   className?: string
@@ -31,8 +31,9 @@ export const wh = (sz:SizeProps) => sz === 'xs' ? 24 :
            48 // sz === md
            
 export type KeyVal = {
-  key: string
-  value?: string | number | null
+  key:          string
+  value?:       string | number | null
+  description?: ReactNode
 }
 
 export type RocketQuery<T> = {
