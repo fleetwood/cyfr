@@ -67,56 +67,56 @@ const EditPermission = ({
   return (
     <Box className={`flex flex-col ${className}`}>
       {label && <Label>{label}</Label>}
-      <EditRole role="Author" onChange={changeAuthor}>
+      <EditRole role="Author" value={permission.author} setValue={changeAuthor}>
         <p></p>
       </EditRole>
 
-      <EditRole role="Artist" onChange={changeArtist}>
+      <EditRole role="Artist" value={permission.artist} setValue={changeArtist}>
         <p></p>
       </EditRole>
 
-      <EditRole role="Editor" onChange={changeEditor}>
+      <EditRole role="Editor" value={permission.editor} setValue={changeEditor}>
         <p>
           Are you shopping for a good editor? Join the club! Better yet, invite
           them to yours! :)
         </p>
       </EditRole>
 
-      <EditRole role="Agent" onChange={changeAgent}>
+      <EditRole role="Agent" value={permission.agent} setValue={changeAgent}>
         <p></p>
       </EditRole>
 
-      <EditRole role="Reader" onChange={changeMember}>
+      <EditRole role="Reader" value={permission.member} setValue={changeMember}>
         <p>
           Any logged-in Cyfr member that does not fall into one of the above
           categories is classified as a <Semibold>Reader</Semibold>.
         </p>
       </EditRole>
 
-      <EditRole role="Public" onChange={changePublic}>
+      <EditRole role="Public" value={permission.public} setValue={changePublic}>
         <p>
           This is anybody who visits the site but is not logged in, including{' '}
           <Semibold>bots and search engines</Semibold>.
         </p>
       </EditRole>
 
-      <EditRole role="Friends" onChange={changeFriend}>
+      <EditRole role="Friends" value={permission.friend} setValue={changeFriend}>
         <p>You follow them, and they follow you back.</p>
       </EditRole>
 
-      <EditRole role="Stans" onChange={changeStan}>
+      <EditRole role="Stans" value={permission.stan} setValue={changeStan}>
         <p>The people you Stan.</p>
       </EditRole>
 
-      <EditRole role="Following" onChange={changeFollowing}>
+      <EditRole role="Following" value={permission.following} setValue={changeFollowing}>
         <p>Those whom you follow.</p>
       </EditRole>
 
-      <EditRole role="Fans" onChange={changeFan}>
+      <EditRole role="Fans" value={permission.fan} setValue={changeFan}>
         <p>Your fans!!</p>
       </EditRole>
 
-      <EditRole role="Followers" onChange={changeFollower}>
+      <EditRole role="Followers" value={permission.follower} setValue={changeFollower}>
         <p>Your followers.</p>
       </EditRole>
     </Box>

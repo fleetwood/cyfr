@@ -87,6 +87,7 @@ export default function DropdownMenu({label, className, itemClassName, labelClas
           placement="bottom-start"
           transition
           disablePortal
+          className='z-50'
         >
           {({ TransitionProps, placement }) => (
             <Grow

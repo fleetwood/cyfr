@@ -1,15 +1,17 @@
 import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
+import BuildIcon from '@mui/icons-material/Build'
+import CheckIcon from '@mui/icons-material/Check'
+import CloseIcon from '@mui/icons-material/Close'
+import InfoIcon from '@mui/icons-material/Info'
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import BuildIcon from '@mui/icons-material/Build';
-import InfoIcon from '@mui/icons-material/Info'
 import LightbulbIcon from '@mui/icons-material/Lightbulb'
 import LogoutIcon from '@mui/icons-material/Logout'
 import MailIcon from '@mui/icons-material/Mail'
-import PersonIcon from '@mui/icons-material/Person'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import PeopleIcon from '@mui/icons-material/People'
+import PersonIcon from '@mui/icons-material/Person'
 import PhotoAlbumIcon from '@mui/icons-material/PhotoAlbum'
 import PortraitIcon from '@mui/icons-material/Portrait'
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
@@ -17,6 +19,8 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
 export const MuiArrowLeftIcon      = (props?: SvgIconProps) => <KeyboardArrowLeftIcon {...props} />
 export const MuiArrowDownIcon      = (props?: SvgIconProps) => <KeyboardArrowDownIcon {...props} />
 export const MuiBookIcon           = (props?:SvgIconProps) => <MenuBookIcon {...props} />
+export const MuiCheckIcon          = (props?:SvgIconProps) => <CheckIcon {...props} />
+export const MuiCloseIcon          = (props?:SvgIconProps) => <CloseIcon {...props} />
 export const MuiCoverIcon          = (props?:SvgIconProps) => <PhotoAlbumIcon {...props} />
 export const MuiInfoIcon           = (props?:SvgIconProps) => <InfoIcon {...props} />
 export const MuiLightbulbIcon      = (props?:SvgIconProps) => <LightbulbIcon {...props} />
