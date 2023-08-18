@@ -1,6 +1,6 @@
 import {Grid} from '@mui/material'
 import {Article, ArticleType} from '@prisma/client'
-import ArticleFeedItem from 'components/containers/Articles/feedItem'
+import ArticleFeedItem from 'components/containers/Articles/ArticleFeedItem'
 import ArticleLayout from 'components/layouts/ArticleLayout'
 import useDebug from 'hooks/useDebug'
 import useUrlHash from 'hooks/useUrlHash'
