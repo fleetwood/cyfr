@@ -254,38 +254,104 @@ export type BookDetail = Book & {
   }
 }
 
-export const BookDetailInclude = { include: {
-  agent:      {include: { user: { select: {id: true,name: true,image: true,slug: true}}}},
-  authors:      {include: { user: { select: {id: true,name: true,image: true,slug: true}}}},
-  artists:      {include: { user: { select: {id: true,name: true,image: true,slug: true}}}},
-  publisher:  true,
-  genre:      true,
-  gallery:    true,
-  chapters: {
-    select: {
-      id: true,
-      order: true,
-      title: true,
-      words: true
-    }
-  },
-  characters: {
-    select: {
-      id: true,
-      name: true,
-      thumbnail: true
-    }
-  },
-  cover: { include: {
-    image: true,
-    creator: {
-      select: {
-        id: true,
-        name: true,
-        image: true,
-        slug: true,
-        membership: true
-      }
+export const BookDetailInclude = {
+  include: {
+    agent: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        publisher: true,
+        _count: {
+          select: {
+            authors: true,
+            books: true,
+            likes: true,
+            reviews: true,
+          },
+        },
+      },
+    },
+    authors: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        books: {
+          include: {
+            agent: true, // AgentStubInclude, // No stubs in stubs!
+            authors: true, // AuthorStubInclude,
+            artists: true, // ArtistStubInclude,
+            publisher: true,
+            genre: true,
+            gallery: true, // GalleryStubInclude,
+            cover: true, //
+            // {
+            //   include: {
+            //     image: true,
+            //     artists: true
+            //   }
+            // },
+            _count: {
+              select: {
+                chapters: true,
+                characters: true,
+                likes: true,
+                shares: true,
+                follows: true,
+                readers: true,
+                reviews: true,
+              },
+            },
+          },
+          take: 5,
+        },
+        reviews: {
+          take: 5,
+        },
+        _count: {
+          select: {
+            books: true,
+            reviews: true,
+          },
+        },
+      },
     },
     artists: {
       include: {
@@ -295,47 +361,230 @@ export const BookDetailInclude = { include: {
             id: true,
             slug: true,
             image: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        books: {
+          take: 5,
+        },
+        galleries: {
+          take: 5,
+        },
+        reviews: true,
+        covers: {
+          take: 5,
+        },
+        _count: {
+          select: {
+            books: true,
+            galleries: true,
+            covers: true,
+            reviews: true,
           },
         },
       },
     },
+    publisher: true,
     genre: true,
-    _count: {
-      select: {
-        likes: true,
-        shares: true
-      }
-    }
-  }},
-  follows: {
-    include: {
-      follower: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          slug: true,
-        }
+    gallery: {
+      include: {
+        likes: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          take: 10,
+        },
+        shares: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          take: 10,
+        },
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        images: {
+          include: {
+            _count: {
+              select: {
+                likes: true,
+                shares: true,
+              },
+            },
+          },
+        },
+        commentThread: {
+          include: {
+            comments: {
+              include: {
+                creator: true,
+              },
+              take: 10,
+            },
+            _count: {
+              select: {
+                comments: true,
+              },
+            },
+          },
+        },
+        permission: true,
+        _count: {
+          select: {
+            likes: true,
+            shares: true,
+          },
+        },
       },
     },
-    take: 10
+    chapters: {
+      select: {
+        id: true,
+        order: true,
+        title: true,
+        words: true,
+      },
+    },
+    characters: {
+      select: {
+        id: true,
+        name: true,
+        thumbnail: true,
+      },
+    },
+    cover: {
+      include: {
+        image: true,
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: true,
+          },
+        },
+        artists: {
+          include: {
+            user: {
+              select: {
+                name: true,
+                id: true,
+                slug: true,
+                image: true,
+              },
+            },
+          },
+        },
+        genre: true,
+        _count: {
+          select: {
+            likes: true,
+            shares: true,
+          },
+        },
+      },
+    },
+    follows: {
+      include: {
+        follower: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+          },
+        },
+      },
+      take: 10,
+    },
+    commentThread: {
+      include: {
+        comments: {
+          take: 10,
+        },
+      },
+    },
+    _count: {
+      select: {
+        chapters: true,
+        characters: true,
+        likes: true,
+        shares: true,
+        follows: true,
+        readers: true,
+        reviews: true,
+      },
+    },
   },
-  commentThread: {
-    include: {
-      comments: {
-        take: 10
-      }
-    }
-  },
-  _count: {
-    select: {
-      chapters: true,
-      characters: true,
-      likes: true,
-      shares: true,
-      follows: true,
-      readers: true,
-      reviews: true
-    }
-  }
-}}
+}

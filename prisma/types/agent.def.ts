@@ -44,14 +44,21 @@ export type AgentStub = Agent & {
 }
 
 export const AgentStubInclude = { include: {
-    user: {
-      select: {
-        name: true,
-        id: true,
-        slug: true,
-        image: true,
-      },
-    },
+    user: { select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true,
+      membership: {select: {
+        id:         true,
+        expiresAt:  true,
+        type:       { select: {
+          id:     true,
+          name:   true,
+          level:  true
+        }}
+      }}
+    }},
     publisher: true,
     _count: {
       select: {

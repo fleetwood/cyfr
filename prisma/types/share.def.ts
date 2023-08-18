@@ -96,8 +96,79 @@ export type CreatorSharesLikes = SharesLikes & {
 }
 
 export const CreatorSharesLikesInclude = {
-  ...SharesLikesInclude,
-  creator: CreatorStubSelect
+  likes: {
+    include: {
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: {
+            select: {
+              id: true,
+              expiresAt: true,
+              type: {
+                select: {
+                  id: true,
+                  name: true,
+                  level: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    take: 10,
+  },
+  shares: {
+    include: {
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: {
+            select: {
+              id: true,
+              expiresAt: true,
+              type: {
+                select: {
+                  id: true,
+                  name: true,
+                  level: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    take: 10,
+  },
+  creator: {
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true,
+      membership: {
+        select: {
+          id: true,
+          expiresAt: true,
+          type: {
+            select: {
+              id: true,
+              name: true,
+              level: true,
+            },
+          },
+        },
+      },
+    },
+  },
 }
 
 export type ShareStub = Share & {
