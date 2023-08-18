@@ -37,19 +37,17 @@ const ArticleLayout = ({
       <div className="w-fixed w-full flex-shrink flex-grow-0 bg-gradient-to-b from-secondary to-neutral">
         <LeftColumn variant='secondary' />
       </div>
-      <article
-        role="article"
-        className="w-full min-h-screen flex-grow m-0 overflow-auto scrollbar-hide relative"
-        ref={articleRef}
-      >
+      <div className="w-full min-h-screen flex-grow m-0 overflow-auto scrollbar-hide relative">
         <Navbar variant='secondary' className="min-w-full transition-all duration-200 ease-out" />
         <Toasts />
         <div className="min-h-full">
           <SecondaryNavBar pages={pages} selected={selected} variant='primary' />
-          {children}
+          <div className='p-4'>
+            {children}
+          </div>
         </div>
         <Footer />
-      </article>
+      </div>
       <div className="w-fixed w-full flex-shrink flex-grow-0 px-2">
         <RightColumn />
       </div>

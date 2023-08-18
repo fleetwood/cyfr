@@ -1,3 +1,4 @@
+import useArticleApi from "./article"
 import useBookApi from "./book"
 import useChapterApi from "./chapter"
 import useCommentApi from "./comment"
@@ -13,6 +14,7 @@ import useShareApi from "./share"
 import UserApi from "./user"
 
 export default {
+    article: useArticleApi,
     book: useBookApi,
     chapter: useChapterApi,
     comment: useCommentApi,

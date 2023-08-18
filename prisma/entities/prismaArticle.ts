@@ -1,18 +1,22 @@
 
 import useDebug from "hooks/useDebug"
-import {prisma} from "prisma/prismaContext"
+import {ArticleType, prisma} from "prisma/prismaContext"
 import {PaginationProps} from "types/props"
+import {capFirstLetter} from "utils/helpers"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaArticle')
 
 type ArticleFeedProps = PaginationProps & {
-  t?: string
+  type?: ArticleType
 }
-const feed = async ({t, take=10, skip=0}:ArticleFeedProps): Promise<any[]> => {
+const feed = async ({type, take=10, skip=0}:ArticleFeedProps): Promise<any[]> => {
   debug('feed', {})
   try {
     return await prisma.article.findMany({
       //TODO: blocked users
-      where: {visible: true},
+      where: {
+        visible: true,
+        type
+      },
       orderBy: {createdAt: "desc"},
       //TODO: pagination
       take, skip

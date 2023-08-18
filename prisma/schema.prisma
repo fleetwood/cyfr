@@ -160,12 +160,14 @@ model Article {
   type            ArticleType?    
   slug            String         @unique
   title           String         @unique
-  content         String         @unique
+  content         String         
   banner          String?
   startDate       DateTime?
   endDate         DateTime?
   views           Int            @default(0)
   priority        Int            @default(0)
+  reviewId        String?        @unique
+  review          Review?        @relation("review_article", fields: [reviewId], references: [id])
   commentThreadId String?        @unique
   commentThread   CommentThread? @relation("news_comments", fields: [commentThreadId], references: [id])
 	@@map("News")
@@ -405,6 +407,8 @@ model Review {
 
   commentThreadId String?        @unique
   commentThread   CommentThread? @relation("review_comments", fields: [commentThreadId], references: [id])
+
+  article  Article? @relation("review_article")
 
   authorId String?
   author   Author? @relation("author_reviews", fields: [authorId], references: [id])
