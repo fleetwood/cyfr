@@ -26,17 +26,15 @@ import { NotImplemented } from "utils/api"
 
 const { debug, info, fileMethod } = useDebug("entities/prismaBook", 'DEBUG')
 
-type BookQueryProps = {
-  id?:    string
-  name?:  string
-  email?: string
-  slug?:  string
-}
-const detail = async (props:BookQueryProps):Promise<BookDetail> => await prisma.book.findUnique({ where: { ...props }, ...BookDetailInclude}) as unknown as BookDetail
+const detail = async (slug:string):Promise<BookDetail> => await prisma.book.findUnique({ where: { slug }}) as unknown as BookDetail
 
 const details = async ():Promise<BookDetail[]> => await prisma.book.findMany({...BookDetailInclude}) as unknown as BookDetail[]
 
-const stub = async (props:BookQueryProps):Promise<BookStub> => await prisma.book.findUnique({ where: { ...props }, ...BookStubInclude}) as unknown as BookStub
+const stub = async (slug: string): Promise<BookStub> =>
+  (await prisma.book.findUnique({
+    where: { slug },
+    ...BookStubInclude,
+  })) as unknown as BookStub
 
 const stubs = async ():Promise<BookStub[]> => await prisma.book.findMany({...BookStubInclude}) as unknown as BookStub[]
 

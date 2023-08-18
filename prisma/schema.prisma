@@ -61,11 +61,11 @@ model User {
   posts         Post[]        @relation("user_posts")
   sessions      Session[]
 
-  agent       Agent?  @relation("user_agent") // user is an agent
-  artist      Artist? @relation("user_artist") // user is an artist
-  author      Author? @relation("user_author")
-  editor      Editor? @relation("user_editor") // user is an editor
-  reader      Reader? @relation("user_reader") // user is a reader
+  agent  Agent?  @relation("user_agent") // user is an agent
+  artist Artist? @relation("user_artist") // user is an artist
+  author Author? @relation("user_author")
+  editor Editor? @relation("user_editor") // user is an editor
+  reader Reader? @relation("user_reader") // user is a reader
 
   agents      Agent[]      @relation("agent_authors")
   attending   Event[]      @relation("event_attendees")
@@ -152,11 +152,12 @@ model Agent {
   @@index([id])
 }
 
-model News {
+model Article {
   id              String         @id @default(cuid())
   createdAt       DateTime       @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
   visible         Boolean        @default(true)
+  type            ArticleType?
   slug            String         @unique
   title           String         @unique
   content         String         @unique
@@ -168,6 +169,8 @@ model News {
   priority        Int            @default(0)
   commentThreadId String?        @unique
   commentThread   CommentThread? @relation("news_comments", fields: [commentThreadId], references: [id])
+
+  @@map("News")
 }
 
 model Gallery {
@@ -303,7 +306,7 @@ model CommentThread {
   commune   Commune?   @relation("thread_commune")
   event     Event?     @relation("event_comments")
   image     Image?     @relation("image_comments")
-  news      News?      @relation("news_comments")
+  news      Article?   @relation("news_comments")
   post      Post?      @relation("post_comments")
   review    Review?    @relation("review_comments")
   gallery   Gallery?   @relation("gallery_comments")
@@ -845,4 +848,11 @@ enum NotifType {
   CHAT
   EVENT
   BLOCK
+}
+
+enum ArticleType {
+  News
+  Article
+  Review
+  Knowledge
 }

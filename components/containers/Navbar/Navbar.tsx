@@ -9,7 +9,8 @@ import {
   BookIcon,
   CyfrLogo,
   EventIcon,
-  GalleryIcon
+  GalleryIcon,
+  MuiNewspaperIcon
 } from 'components/ui/icons'
 import useDebug from 'hooks/useDebug'
 import Link from 'next/link'
@@ -17,6 +18,7 @@ import {ReactNode, useEffect, useState} from 'react'
 import CyfrUserNav from './CyfrUserNav'
 import CyfrUserNavSm from './CyfrUserNavSm'
 import NavPageButton from './NavPageButton'
+import {VariantProps} from 'types/props'
 
 const { debug } = useDebug('Navbar')
 
@@ -26,6 +28,7 @@ type NavbarProps = {
   pageScrolled?: boolean
   leftChildren?: ReactNode
   rightChildren?: ReactNode
+  variant?: VariantProps
 }
 
 const Navbar = ({
@@ -34,23 +37,18 @@ const Navbar = ({
   leftChildren,
   rightChildren,
   pageScrolled: active,
+  variant='primary'
 }: NavbarProps) => {
-  const [isPageScrolled, setIsPageScrolled] = useState(false)
-  const [showDropDown, setShowDropDown] = useState(false)
-
   const pages = [
     { label: 'Books', url: '/books', icon: BookIcon },
     { label: 'Galleries', url: '/galleries', icon: GalleryIcon },
     { label: 'Events', url: '/events', icon: EventIcon },
+    { label: 'Articles', url: '/articles', icon: <MuiNewspaperIcon /> },
   ]
-  useEffect(() => {
-    setIsPageScrolled(active || false)
-  }, [active])
-
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl" className="bg-secondary">
+    <AppBar position="sticky">
+      <Container maxWidth="xl" className={`bg-${variant}`}>
         <Toolbar disableGutters>
           <Typography
             variant="h4"
@@ -95,7 +93,7 @@ const Navbar = ({
             {pages.map((page) => (
               <NavPageButton
                 page={page}
-                variant="info"
+                variant={variant}
                 key={'navbar-page-' + page.label}
               />
             ))}

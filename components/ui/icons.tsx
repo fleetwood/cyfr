@@ -10,6 +10,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import MailIcon from '@mui/icons-material/Mail'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
+import NewspaperIcon from '@mui/icons-material/Newspaper'
 import PeopleIcon from '@mui/icons-material/People'
 import PersonIcon from '@mui/icons-material/Person'
 import PhotoAlbumIcon from '@mui/icons-material/PhotoAlbum'
@@ -27,6 +28,7 @@ export const MuiLightbulbIcon      = (props?:SvgIconProps) => <LightbulbIcon {..
 export const MuiLogoutIcon         = (props?:SvgIconProps) => <LogoutIcon {...props} />
 export const MuiMailIcon           = (props?:SvgIconProps) => <MailIcon {...props} />
 export const MuiManageAccountsIcon = (props?:SvgIconProps) => <ManageAccountsIcon {...props} />
+export const MuiNewspaperIcon      = (props?:SvgIconProps) => <NewspaperIcon {...props} />
 export const MuiPeopleIcon         = (props?:SvgIconProps) => <PeopleIcon {...props} />
 export const MuiPersonIcon         = (props?:SvgIconProps) => <PersonIcon {...props} />
 export const MuiPortraitIcon       = (props?:SvgIconProps) => <PortraitIcon {...props} />

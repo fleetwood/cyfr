@@ -6,10 +6,10 @@ import { BookDetailInclude, PrismaBook } from "prisma/prismaContext"
 const {debug} = useDebug('/api/book/[slug]', )
 
 const request = async (req:NextApiRequest, res: NextApiResponse) => {
-  debug('handle', {BookDetailInclude})
+  const slug = req.query
   return useApiHandler(res,
   `/api/book/[slug]`,
-  PrismaBook.detail({slug: req.query.slug!.toString()})
+  PrismaBook.detail(slug.toString())
 )}
 
 export default request
