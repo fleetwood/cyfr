@@ -78,4 +78,10 @@ export type InlineTextAreaUpdate = {
   words:  number
 }
 
+export type NavPage = {
+  label: string
+  url: string
+  icon?: ReactNode
+}
+
 export type VariantProps = "base" | "primary" | "secondary" | "accent" | "success" | "info" | "warning" | undefined

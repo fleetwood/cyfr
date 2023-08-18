@@ -1,7 +1,7 @@
 import Link from "next/link"
 import {VariantProps} from "types/props"
 
-const NavPageButton = ({
+const NavLink = ({
   page,
   variant = 'primary',
 }: {
@@ -11,8 +11,7 @@ const NavPageButton = ({
   <Link
     href={page.url}
     className={`
-    text-${variant}-content text-opacity-80 font-semibold
-    hover:text-${variant}-accent hover:text-opacity-100 hover:bg-${variant}-focus
+    text-${variant}-content bg-${variant} font-semibold
     flex space-x-2 py-2 px-4
     transition-all duration-200
   `}
@@ -22,4 +21,4 @@ const NavPageButton = ({
   </Link>
 )
 
-export default NavPageButton
+export default NavLink

@@ -17,8 +17,8 @@ import Link from 'next/link'
 import {ReactNode, useEffect, useState} from 'react'
 import CyfrUserNav from './CyfrUserNav'
 import CyfrUserNavSm from './CyfrUserNavSm'
-import NavPageButton from './NavPageButton'
-import {VariantProps} from 'types/props'
+import NavPageLink from './NavButton'
+import {NavPage, VariantProps} from 'types/props'
 
 const { debug } = useDebug('Navbar')
 
@@ -39,7 +39,7 @@ const Navbar = ({
   pageScrolled: active,
   variant='primary'
 }: NavbarProps) => {
-  const pages = [
+  const pages:NavPage[] = [
     { label: 'Books', url: '/books', icon: BookIcon },
     { label: 'Galleries', url: '/galleries', icon: GalleryIcon },
     { label: 'Events', url: '/events', icon: EventIcon },
@@ -91,7 +91,7 @@ const Navbar = ({
             sx={{ display: { xs: 'none', md: 'flex' } }}
           >
             {pages.map((page) => (
-              <NavPageButton
+              <NavPageLink
                 page={page}
                 variant={variant}
                 key={'navbar-page-' + page.label}

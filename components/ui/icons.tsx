@@ -1,4 +1,5 @@
 import { SvgIconProps } from '@mui/material/SvgIcon/SvgIcon'
+import ArticleIcon from '@mui/icons-material/Article'
 import BuildIcon from '@mui/icons-material/Build'
 import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
@@ -16,9 +17,12 @@ import PersonIcon from '@mui/icons-material/Person'
 import PhotoAlbumIcon from '@mui/icons-material/PhotoAlbum'
 import PortraitIcon from '@mui/icons-material/Portrait'
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
+import ReviewsIcon from '@mui/icons-material/Reviews'
+import SchoolIcon from '@mui/icons-material/School'
 
 export const MuiArrowLeftIcon      = (props?: SvgIconProps) => <KeyboardArrowLeftIcon {...props} />
 export const MuiArrowDownIcon      = (props?: SvgIconProps) => <KeyboardArrowDownIcon {...props} />
+export const MuiArticleIcon      = (props?: SvgIconProps) => <ArticleIcon {...props} />
 export const MuiBookIcon           = (props?:SvgIconProps) => <MenuBookIcon {...props} />
 export const MuiCheckIcon          = (props?:SvgIconProps) => <CheckIcon {...props} />
 export const MuiCloseIcon          = (props?:SvgIconProps) => <CloseIcon {...props} />
@@ -33,6 +37,8 @@ export const MuiPeopleIcon         = (props?:SvgIconProps) => <PeopleIcon {...pr
 export const MuiPersonIcon         = (props?:SvgIconProps) => <PersonIcon {...props} />
 export const MuiPortraitIcon       = (props?:SvgIconProps) => <PortraitIcon {...props} />
 export const MuiQuestionIcon       = (props?:SvgIconProps) => <QuestionMarkIcon {...props} />
+export const MuiReviewsIcon       = (props?:SvgIconProps) => <ReviewsIcon {...props} />
+export const MuiSchoolIcon       = (props?:SvgIconProps) => <SchoolIcon {...props} />
 export const MuiWrenchIcon         = (props?:SvgIconProps) => <BuildIcon {...props} />
 
 export type svgProps = {

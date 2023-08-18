@@ -9,7 +9,7 @@ import useApi from 'prisma/useApi'
 import React, {useState} from 'react'
 import {VariantProps, stringToColour} from 'types/props'
 import {CyfrUserNavProps, NavbarPage} from './CyfrUserNav'
-import NavPageButton from './NavPageButton'
+import NavPageLink from './NavButton'
 import {uuid} from 'utils/helpers'
 import MenuLogin from 'components/ui/menuLogin'
 
@@ -27,7 +27,7 @@ const CyfrUserNavSm = ({ pages }: CyfrUserNavProps) => {
 
   const MenuItemLinkWithIcon = ({variant, page}:{variant?: VariantProps, page:NavbarPage}) => (
     <MenuItem onClick={page.onClick}>
-      <NavPageButton variant={variant??'primary'} page={page} />
+      <NavPageLink variant={variant??'primary'} page={page} />
     </MenuItem>)
 
   const cyfrPages = 
