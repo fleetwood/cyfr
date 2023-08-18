@@ -1,3 +1,4 @@
+export * from "./prismaArticle"
 export * from "./prismaBook"
 export * from "./prismaChapter"
 export * from "./prismaCharacter"

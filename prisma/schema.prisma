@@ -164,7 +164,6 @@ model Article {
   banner          String?
   startDate       DateTime?
   endDate         DateTime?
-  postId          String         @unique
   views           Int            @default(0)
   priority        Int            @default(0)
   commentThreadId String?        @unique

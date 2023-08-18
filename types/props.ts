@@ -84,4 +84,9 @@ export type NavPage = {
   icon?: ReactNode
 }
 
+export type PaginationProps = {
+  take?: number
+  skip?: number
+}
+
 export type VariantProps = "base" | "primary" | "secondary" | "accent" | "success" | "info" | "warning" | undefined

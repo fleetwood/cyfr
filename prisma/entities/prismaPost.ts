@@ -1,6 +1,7 @@
 
 import useDebug from "hooks/useDebug"
 import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, prisma, PostStubInclude, PostDetailInclude } from "prisma/prismaContext"
+import {PaginationProps} from "types/props"
 import { NotImplemented } from "utils/api"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPost')
 
@@ -12,11 +13,6 @@ const postDetail = async (id: string): Promise<PostDetail> => {
     err('postDetail error', {error})
     throw {code: 'prismaPost/postDetail', message: `No post was returned for ${id}`}
   }
-}
-
-type PaginationProps = {
-  take?: number
-  skip?: number
 }
 
 const feed = async ({take=10, skip=0}:PaginationProps): Promise<PostStub[]> => {
