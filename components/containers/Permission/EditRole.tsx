@@ -6,19 +6,19 @@ import React,{ReactNode,useEffect,useState} from 'react'
 const {debug, level}= useDebug('EditRole', 'DEBUG')
 
 type GridItemProps = {
-    role:       UserTypes|FollowerTypes|string
-    children?:  ReactNode
-    allowedRoles?: Role[]
-    value:      RoleString[]
-    setValue:   React.Dispatch<React.SetStateAction<RoleString[]>>
+    role:           UserTypes|FollowerTypes|string
+    children?:      ReactNode
+    allowedRoles?:  Role[]
+    value:          RoleString[]
+    setValue:       React.Dispatch<React.SetStateAction<RoleString[]>>
 }
 
-const defaultAllowedRoles:Role[] = ['NONE', 'COMMENT', 'READ', 'SHARE', 'FEEDBACK']
+const defaultAllowedRoles:Role[] = ['COMMENT', 'READ', 'SHARE', 'FEEDBACK']
 
 const EditRole = ({role, value, setValue, allowedRoles = defaultAllowedRoles, children}:GridItemProps) => {
     // TODO: set none to override default,
     // should differentiate between a blank array, and 'NONE'
-    const [none, setNone] = useState(value.includes('NONE'))
+    const [none, setNone] = useState(allowedRoles.length > 0)
     const [read, setRead] = useState(value.includes('READ'))
     const [comment, setComment] = useState(value.includes('COMMENT'))
     const [feedback, setFeedback] = useState(value.includes('FEEDBACK'))
@@ -32,20 +32,22 @@ const EditRole = ({role, value, setValue, allowedRoles = defaultAllowedRoles, ch
     }).filter(a => a !== null && a !== undefined)
     const all = allPermissions.length > 0 && allPermissions.every(a => a === true)
 
-    const isAllowed = (role:Role) => allowedRoles.includes(role)
+    const canRead = allowedRoles.includes('READ')
+    const canComment = allowedRoles.includes('COMMENT')
+    const canShare = allowedRoles.includes('SHARE')
+    const canFeedback = allowedRoles.includes('FEEDBACK')
 
     const toggleAll = (set:boolean) => {
       debug('toggleAll', {allowedRoles, allPermissions})
-        if (isAllowed('READ')) setRead(() => set)
-        if(isAllowed('COMMENT')) setComment(() => set)
-        if(isAllowed('FEEDBACK')) setFeedback(() => set)
-        if(isAllowed('SHARE')) setShare(() => set)
-        if (set && isAllowed('NONE')) setNone(() => false)
+        if (canRead) setRead(() => set)
+        if(canComment) setComment(() => set)
+        if(canFeedback) setFeedback(() => set)
+        if(canShare) setShare(() => set)
+        if (set) setNone(() => false)
         update()
     }
 
     const update = () => {
-      debug('update')
       let params: RoleString[] = []
       //  this can return an emty array if none is off
       if (none) {
@@ -56,12 +58,13 @@ const EditRole = ({role, value, setValue, allowedRoles = defaultAllowedRoles, ch
         if (comment) params.push('COMMENT')
         if (feedback) params.push('FEEDBACK')
       }
-      setValue(() => [...params])
+      debug('update', { none, read, share, comment, feedback, params, value })
+      setValue(() => params)
     }
 
     useEffect(() => {
       update()
-    }, [read, share, comment, feedback])
+    }, [none, read, share, comment, feedback])
 
     const itemBG = (allowed: boolean, active: boolean) =>
       allowed
@@ -73,7 +76,7 @@ const EditRole = ({role, value, setValue, allowedRoles = defaultAllowedRoles, ch
     const checkedBG = (active:boolean, c?:string) => active ? c ?? `checkbox checkbox-primary` : `checkbox checkbox-content`
 
     const GridItem = ({label, val, setVal}:{label:string, val:boolean, setVal: React.Dispatch<React.SetStateAction<boolean>>}) => {
-      const allowed = isAllowed(label.toUpperCase() as Role)
+      const allowed = allowedRoles.includes(label.toUpperCase() as Role)
       return (
       <Grid item xs={2} className={`
         ${itemBG(allowed, val)}`} 
@@ -114,7 +117,16 @@ const EditRole = ({role, value, setValue, allowedRoles = defaultAllowedRoles, ch
             item
             xs={2}
             className={itemBG(allowedRoles.length > 0, none)}
-            onClick={allowedRoles.length > 0 ? () => setNone(!none) : () => {}}
+            onClick={allowedRoles.length > 0 ? () => {
+              const set = !none
+              setNone(() => set)
+              if (set) {
+                setRead(() => false)
+                setComment(() => false)
+                setShare(() => false)
+                setFeedback(() => false)
+              }
+            } : () => {}}
           >
             <div className={`text-center items-center text-sm`}>NONE</div>
             <div className={`text-center items-center text-sm`}>
@@ -128,10 +140,50 @@ const EditRole = ({role, value, setValue, allowedRoles = defaultAllowedRoles, ch
             </div>
           </Grid>
 
-          <GridItem label="Read" val={read} setVal={setRead} />
-          <GridItem label="Share" val={share} setVal={setShare} />
-          <GridItem label="Comment" val={comment} setVal={setComment} />
-          <GridItem label="Feedback" val={feedback} setVal={setFeedback} />
+          <GridItem
+            label="Read"
+            val={read}
+            setVal={() => {
+              const set = !read
+              setRead(() => set)
+              if (!set) {
+                setComment(() => false)
+                setShare(() => false)
+                setFeedback(() => false)
+              }
+              if (set && none) setNone(() => false)
+            }}
+          />
+          <GridItem
+            label="Share"
+            val={share}
+            setVal={() => {
+              const set = !share
+              if (set && canRead) setRead(() => true)
+              setShare(() => set)
+              if (set && none) setNone(() => false)
+            }}
+          />
+          <GridItem
+            label="Comment"
+            val={comment}
+            setVal={() => {
+              const set = !comment
+              if (set && canRead) setRead(() => true)
+              setComment(() => set)
+              if (set && none) setNone(() => false)
+            }}
+          />
+          <GridItem
+            label="Feedback"
+            val={feedback}
+            setVal={() => {
+              const set = !feedback
+              if (set && canRead) setRead(() => true)
+              setFeedback(() => set)
+              if (set && none) setNone(() => false)
+            }}
+          />
         </Grid>
       </div>
     </>

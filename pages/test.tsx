@@ -1,8 +1,10 @@
-import { Grid } from '@mui/material'
+import {Grid} from '@mui/material'
 import EditPermission from 'components/containers/Permission/EditPermission'
+import EditRole from 'components/containers/Permission/EditRole'
+import PermissionsExplanation from 'components/containers/Permission/PermissionsExplanation'
 import BinarySelector from 'components/ui/binarySelect'
 import DropdownMenu from 'components/ui/dropdownMenu'
-import { MuiCheckIcon, MuiCloseIcon } from 'components/ui/icons'
+import {MuiCheckIcon,MuiCloseIcon} from 'components/ui/icons'
 import Label from 'components/ui/label'
 import Semibold from 'components/ui/semibold'
 import {
@@ -12,18 +14,12 @@ import {
 import {
   BookStatus,
   PermissionCreateProps,
-  Role,
-  RoleString,
+  Role
 } from 'prisma/prismaContext'
-import { useEffect, useState } from 'react'
-import { KeyVal } from 'types/props'
+import {useEffect,useState} from 'react'
+import {KeyVal} from 'types/props'
 import AdminLayout from '../components/layouts/AdminLayout'
 import useDebug from '../hooks/useDebug'
-import { uuid } from 'utils/helpers'
-import EditRole from 'components/containers/Permission/EditRole'
-import MaterialAccordion from 'components/ui/accordion'
-import PermissionsExplanation from 'components/containers/Permission/PermissionsExplanation'
-import { map } from 'prisma/maps'
 
 const { debug, info, fileMethod } = useDebug('test', 'DEBUG')
 
@@ -85,7 +81,7 @@ const Test = ({}) => {
       switch (status) {
         case 'DRAFT':
           p = {
-            agent: ['NONE'],
+            agent: [],
             artist: ['READ', 'SHARE', 'COMMENT'],
             author: ['READ', 'SHARE', 'COMMENT'],
             editor: ['READ', 'SHARE', 'COMMENT', 'FEEDBACK'],
@@ -95,7 +91,7 @@ const Test = ({}) => {
             following: ['READ', 'SHARE', 'COMMENT'],
             friend: ['READ', 'SHARE', 'COMMENT'],
             member: ['READ', 'SHARE', 'COMMENT'],
-            public: ['NONE'],
+            public: [],
           }
           break
         case 'MANUSCRIPT':
@@ -110,7 +106,7 @@ const Test = ({}) => {
             following: ['READ', 'SHARE', 'COMMENT'],
             friend: ['READ', 'SHARE', 'COMMENT'],
             member: ['READ', 'SHARE', 'COMMENT'],
-            public: ['NONE'],
+            public: [],
           }
           break
         case 'PUBLISHED':
