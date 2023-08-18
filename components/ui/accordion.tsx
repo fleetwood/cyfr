@@ -1,11 +1,12 @@
 import {
-    Accordion,
-    AccordionBody,
-    AccordionHeader,
-} from "@material-tailwind/react";
-import { useState } from "react";
-import {MuiArrowDownIcon, MuiArrowLeftIcon} from "./icons";
-import {Grid} from "@mui/material";
+  Accordion,
+  AccordionBody,
+  AccordionHeader,
+} from "@material-tailwind/react"
+import {Grid} from "@mui/material"
+import {useState} from "react"
+import {uuid} from "utils/helpers"
+import {MuiArrowDownIcon} from "./icons"
 
 const MaterialAccordion = (props: { children: any }) => {
   const [open, setOpen] = useState(0)
@@ -21,6 +22,7 @@ const MaterialAccordion = (props: { children: any }) => {
           nonce={undefined}
           onResize={undefined}
           onResizeCapture={undefined}
+          key={'accordion-'+uuid()}
         >
           <AccordionHeader
             className={c.props.children[0].props.className ?? ''}

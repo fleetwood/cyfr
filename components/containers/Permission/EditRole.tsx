@@ -1,15 +1,21 @@
-import { Grid } from '@mui/material'
-import { FollowerTypes, RoleString, UserTypes } from 'prisma/prismaContext'
-import React, { ReactNode, useEffect, useState } from 'react'
+import {Grid} from '@mui/material'
+import useDebug from 'hooks/useDebug'
+import {FollowerTypes,Role,RoleString,UserTypes} from 'prisma/prismaContext'
+import React,{ReactNode,useEffect,useState} from 'react'
+
+const {debug, level}= useDebug('EditRole', 'DEBUG')
 
 type GridItemProps = {
     role:       UserTypes|FollowerTypes|string
     children?:  ReactNode
+    allowedRoles?: Role[]
     value:      RoleString[]
-    setValue:   (roles:RoleString[]) => void
+    setValue:   React.Dispatch<React.SetStateAction<RoleString[]>>
 }
 
-const EditRole = ({role, value, setValue, children}:GridItemProps) => {
+const defaultAllowedRoles:Role[] = ['NONE', 'COMMENT', 'READ', 'SHARE', 'FEEDBACK']
+
+const EditRole = ({role, value, setValue, allowedRoles = defaultAllowedRoles, children}:GridItemProps) => {
     // TODO: set none to override default,
     // should differentiate between a blank array, and 'NONE'
     const [none, setNone] = useState(value.includes('NONE'))
@@ -18,99 +24,103 @@ const EditRole = ({role, value, setValue, children}:GridItemProps) => {
     const [feedback, setFeedback] = useState(value.includes('FEEDBACK'))
     const [share, setShare] = useState(value.includes('SHARE'))
     
-    const allPermissions = [read, comment, feedback, share]
+    const allPermissions = allowedRoles.map(r => {
+      if (r === 'READ') return read
+      else if (r === 'COMMENT') return comment
+      else if (r === 'FEEDBACK') return feedback
+      else if (r === 'SHARE') return share
+    }).filter(a => a !== null && a !== undefined)
+    const all = allPermissions.length > 0 && allPermissions.every(a => a === true)
 
-    const all = allPermissions.filter(c => c===true).length===allPermissions.length
+    const isAllowed = (role:Role) => allowedRoles.includes(role)
 
-    const toggleAll = () => {
-        const set = !all
-        setRead(() => set)
-        setComment(() => set)
-        setFeedback(() => set)
-        setShare(() => set)
+    const toggleAll = (set:boolean) => {
+      debug('toggleAll', {allowedRoles, allPermissions})
+        if (isAllowed('READ')) setRead(() => set)
+        if(isAllowed('COMMENT')) setComment(() => set)
+        if(isAllowed('FEEDBACK')) setFeedback(() => set)
+        if(isAllowed('SHARE')) setShare(() => set)
+        if (set && isAllowed('NONE')) setNone(() => false)
+        update()
     }
 
-    const setItem = (val:boolean, setVal:React.Dispatch<React.SetStateAction<boolean>>) => {
-        const n = !val
-        if (n === true) {
-            setRead(() => true)
-        }
-        setVal(n)
+    const update = () => {
+      debug('update')
+      let params: RoleString[] = []
+      //  this can return an emty array if none is off
+      if (none) {
+        params.push('NONE')
+      } else {
+        if (read) params.push('READ')
+        if (share) params.push('SHARE')
+        if (comment) params.push('COMMENT')
+        if (feedback) params.push('FEEDBACK')
+      }
+      setValue(() => [...params])
     }
 
-    const itemBG = (active:boolean) => active ? 'font-semibold bg-primary text-neutral-content hover:bg-gray-300 hover:text-neutral-content' 
-                                              : 'bg-gray-300 bg-opacity-50 text-primary-content text-opacity-50 hover:bg-opacity-50 hover:bg-primary hover:text-primary-content'
+    useEffect(() => {
+      update()
+    }, [read, share, comment, feedback])
+
+    const itemBG = (allowed: boolean, active: boolean) =>
+      allowed
+        ? active
+          ? 'cursor-pointer font-semibold bg-primary text-neutral-content hover:bg-gray-300 hover:text-neutral-content'
+          : 'cursor-pointer bg-gray-300 bg-opacity-50 text-primary-content text-opacity-50 hover:bg-opacity-50 hover:bg-primary hover:text-primary-content'
+        : 'cursor-not-allowed bg-gray-300 bg-opacity-50 text-primary-content text-opacity-50'
+
     const checkedBG = (active:boolean, c?:string) => active ? c ?? `checkbox checkbox-primary` : `checkbox checkbox-content`
 
-    const GridItem = ({label, val, setVal}:{label:string, val:boolean, setVal: React.Dispatch<React.SetStateAction<boolean>>}) => (
-        <Grid item xs={2} className={`cursor-pointer ${itemBG(val)}`} onClick={() => setItem(val, setVal)}>
-            <div className={`text-center items-center text-sm`}>{label}</div>
-            <div className={`text-center items-center text-sm`}><input type='checkbox' checked={val} className={checkedBG(val)} onChange={() => {}} /></div>
-        </Grid>
-    )
+    const GridItem = ({label, val, setVal}:{label:string, val:boolean, setVal: React.Dispatch<React.SetStateAction<boolean>>}) => {
+      const allowed = isAllowed(label.toUpperCase() as Role)
+      return (
+      <Grid item xs={2} className={`
+        ${itemBG(allowed, val)}`} 
+        onClick={allowed ? () => setVal((current) => !current) : () => {}}>
+        <div className={`text-center items-center text-sm`}>{label}</div>
+        <div className={`text-center items-center text-sm`}><input disabled={!allowed} type='checkbox' checked={val} className={checkedBG(val)} onChange={() => {}} /></div>
+      </Grid>
+    )}
 
     useEffect(() => {
-        if (!read) {
-            setShare(false)
-            setComment(false)
-            setFeedback(false)
-        } else if (read) {
-            setNone(false)
-        }
-    }, [read])
-
-    const toggleNone = (n:boolean) => {
-        setNone(n)
-        if (n) {
-            setRead(false)
-            setShare(false)
-            setComment(false)
-            setFeedback(false)
-        }
-    }
-
-    useEffect(() => {
-        let params:RoleString[] = []
-        // this can return an emty array if none is off
-        if (none) {
-            params.push('NONE')
-        } else if (read) {
-            params.push('READ')
-            if (share) params.push('SHARE')
-            if (comment) params.push('COMMENT')
-            if (feedback) params.push('FEEDBACK')
-        }
-        setValue(params)
-    }, [read, share, comment, feedback])
+      toggleAll(false)
+    }, [allowedRoles])
 
   return (
     <>
-      <div className="text-primary font-bold my-4">{role}</div>
+      <div className="text-primary font-bold my-4">
+        {role}
+        {level === 'DEBUG' && <span>: [{value.join(',')}]</span>}
+      </div>
       {children && <div className="text-sm -mt-4 mb-4">{children}</div>}
       <div className="px-4">
         <Grid container spacing={2}>
+          {/* LABEL */}
           <Grid
             item
             xs={2}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            className={`cursor-pointer ${itemBG(all)}`}
-            onClick={toggleAll}
+            className={itemBG(allPermissions.length > 0, all)}
+            onClick={() => toggleAll(!all)}
           >
-            <span>Toggle All</span>
+            <div className={`text-center items-center text-sm`}>Toggle All</div>
+            <div className={`text-center items-center text-sm`}>
+              {none || read ? 'Custom' : 'Use Default'}
+            </div>
           </Grid>
 
+          {/* NONE */}
           <Grid
             item
             xs={2}
-            className={`cursor-pointer ${itemBG(none)}`}
-            onClick={() => setItem(none, () => toggleNone(!none))}
+            className={itemBG(allowedRoles.length > 0, none)}
+            onClick={allowedRoles.length > 0 ? () => setNone(!none) : () => {}}
           >
             <div className={`text-center items-center text-sm`}>NONE</div>
             <div className={`text-center items-center text-sm`}>
               <input
                 type="checkbox"
+                disabled={allowedRoles.length < 1}
                 checked={none}
                 className={checkedBG(none)}
                 onChange={() => {}}

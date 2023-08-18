@@ -49,17 +49,49 @@ export const toPermissionCreateProps = (
   }
 }
 
-export const DefaultPermissionProps: PermissionCreateProps = {
-  agent: ['NONE'],
-  editor: ['NONE'],
-  author: ['NONE'],
-  artist: ['NONE'],
-  member: ['NONE'],
-  public: ['NONE'],
+export const toUI = (p:PermissionStub|PermissionCreateProps)=> {
+  return [
+    {label: 'Agent', role: p.agent},
+    {label: 'Artist', role: p.artist},
+    {label: 'Author', role: p.author},
+    {label: 'Editor', role: p.editor},
+    {label: 'Friend', role: p.friend},
+    {label: 'Fan', role: p.fan},
+    {label: 'Follower', role: p.follower},
+    {label: 'Stan', role: p.stan},
+    {label: 'Following', role: p.following},
+    {label: 'Public', role: p.public},
+    {label: 'Member', role: p.member},
+  ]
+}
 
-  friend: ['NONE'],
-  stan: ['NONE'],
-  following: ['NONE'],
-  fan: ['NONE'],
-  follower: ['NONE'],
+export const DefaultPermissionProps: PermissionCreateProps = {
+  agent:      ['NONE'],
+  editor:     ['NONE'],
+  author:     ['NONE'],
+  artist:     ['NONE'],
+
+  friend:     ['NONE'],
+  stan:       ['NONE'],
+  following:  ['NONE'],
+  fan:        ['NONE'],
+  follower:   ['NONE'],
+
+  member:     ['NONE'],
+  public:     ['NONE'],
+}
+export const DefaultEffectivePermissionProps: PermissionCreateProps = {
+  agent:      [],
+  editor:     [],
+  author:     [],
+  artist:     [],
+
+  friend:     [],
+  stan:       [],
+  following:  [],
+  fan:        [],
+  follower:   [],
+
+  member:     [],
+  public:     [],
 }

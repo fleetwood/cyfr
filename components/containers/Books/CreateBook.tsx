@@ -464,8 +464,8 @@ const CreateBook = () => {
               <EditPermission
                 label={<h3 className="text-neutral">Permissions</h3>}
                 className="pb-12"
-                permission={permission}
-                setPermission={setPermission}
+                value={permission}
+                setValue={setPermission}
               />
             </Grid>
           </Grid>
