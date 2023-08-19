@@ -28,29 +28,30 @@ const ArticleFeedItem = ({article}:{article: Article}) => {
     }
   ]
   return (
-    <Card sx={{ minWidth: 300, maxWidth: 345, maxHeight: 700, minHeight: 300 }}>
+    <Card sx={{ maxWidth: 345, maxHeight: 650 }}>
       <CardMedia
-        sx={{ minHeight: 200 }}
+        sx={{ height: 245}}
         image={cloudinary.scale({
           url: article.banner ?? bg.find((b) => b.type === article.type)!.image,
           height: 245,
         })}
       />
-      <CardContent aria-rowcount={12}>
+      <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {article.title}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          <div className="max-h-min h-56 overflow-clip text-ellipsis border-b border-b-neutral border-opacity-50">
-            <HtmlContent content={article.content} />
+        <Typography>
+          <div className="overflow-clip text-ellipsis border-b border-b-neutral border-opacity-50">
+            <HtmlContent content={article.hook!} />
           </div>
         </Typography>
       </CardContent>
       <CardActions>
         <Button size="small">Share</Button>
-        <Button size="small">Learn More</Button>
+        <Button size="small">Read</Button>
       </CardActions>
     </Card>
+    
   )
 }
 

@@ -176,6 +176,10 @@ model Article {
   review          Review?        @relation("review_article", fields: [reviewId], references: [id])
   commentThreadId String?        @unique
   commentThread   CommentThread? @relation("news_comments", fields: [commentThreadId], references: [id])
+
+  shares          Share[]        @relation("article_shares")
+  likes           Like[]         @relation("article_likes")
+
 	@@map("News")
 }
 
@@ -709,6 +713,7 @@ model Share {
 
   // Share IDs
   authorId     String?
+  articleId    String?
   agentId      String?
   publisherId  String?
   submissionId String?
@@ -721,6 +726,7 @@ model Share {
   bookId       String?
   coverId      String?
   // Share Objects  
+  article      Article?    @relation("article_shares", fields: [articleId], references: [id])
   author       Author?     @relation("author_shares", fields: [authorId], references: [id])
   agent        Agent?      @relation("agent_shares", fields: [agentId], references: [id])
   publisher    Publisher?  @relation("publisher_shares", fields: [publisherId], references: [id])
@@ -740,6 +746,8 @@ model Like {
   createdAt    DateTime    @default(now()) @db.Timestamptz(3)
   updatedAt    DateTime    @default(now()) @db.Timestamptz(3)
   creatorId    String
+
+  articleId    String?
   authorId     String?
   agentId      String?
   publisherId  String?
@@ -754,6 +762,7 @@ model Like {
   bookId       String?
   coverId      String?
   creator      User        @relation("user_likes", fields: [creatorId], references: [id])
+  article      Article?    @relation("article_likes", fields: [articleId], references: [id])
   author       User?       @relation("author_likes", fields: [authorId], references: [id])
   agent        Agent?      @relation("agent_likes", fields: [agentId], references: [id])
   publisher    Publisher?  @relation("publisher_likes", fields: [publisherId], references: [id])
