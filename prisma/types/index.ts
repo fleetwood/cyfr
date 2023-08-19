@@ -1,5 +1,6 @@
 export * from "@prisma/client"
 export * from "prisma/types/agent.def"
+export * from "prisma/types/article.def"
 export * from "prisma/types/artist.def"
 export * from "prisma/types/author.def"
 export * from "prisma/types/book.def"

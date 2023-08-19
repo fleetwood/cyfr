@@ -1,14 +1,17 @@
+import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CardActions from '@mui/material/CardActions'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
-import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import {Article, ArticleType} from 'prisma/prismaContext'
+import AvatarPill from 'components/ui/avatar/avatarPill'
+import UserAvatar from 'components/ui/avatar/userAvatar'
 import HtmlContent from 'components/ui/htmlContent'
+import {ArticleStub,ArticleType} from 'prisma/prismaContext'
 import {cloudinary} from 'utils/cloudinary'
+import {timeDifference} from 'utils/helpers'
 
-const ArticleFeedItem = ({article}:{article: Article}) => {
+const ArticleFeedItem = ({article}:{article: ArticleStub}) => {
   const bg:{type: ArticleType, image: string}[] = [
     {
       type: 'Article',
@@ -30,18 +33,22 @@ const ArticleFeedItem = ({article}:{article: Article}) => {
   return (
     <Card sx={{ maxWidth: 345, maxHeight: 650 }}>
       <CardMedia
-        sx={{ height: 245}}
+        sx={{ height: 245 }}
         image={cloudinary.scale({
           url: article.banner ?? bg.find((b) => b.type === article.type)!.image,
           height: 245,
         })}
       />
       <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          {article.title}
+        <Typography gutterBottom component="div" className="relative flex">
+          <AvatarPill user={article.creator} direction='left' variant={[]} />
+        </Typography>
+        <Typography gutterBottom component="div" className='border-b border-neutral border-opacity-20 py-2'>
+          <div className='text-sm'>Posted {timeDifference(article.updatedAt)}</div>
+          <h3>{article.title}</h3>
         </Typography>
         <Typography>
-          <div className="overflow-clip text-ellipsis border-b border-b-neutral border-opacity-50">
+          <div className="overflow-clip text-ellipsis pt-2">
             <HtmlContent content={article.hook!} />
           </div>
         </Typography>
@@ -51,7 +58,6 @@ const ArticleFeedItem = ({article}:{article: Article}) => {
         <Button size="small">Read</Button>
       </CardActions>
     </Card>
-    
   )
 }
 

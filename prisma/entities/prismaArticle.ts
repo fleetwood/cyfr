@@ -1,6 +1,6 @@
 
 import useDebug from "hooks/useDebug"
-import {ArticleType, prisma} from "prisma/prismaContext"
+import {ArticleInclude, ArticleType, prisma} from "prisma/prismaContext"
 import {PaginationProps} from "types/props"
 import {capFirstLetter} from "utils/helpers"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaArticle')
@@ -15,11 +15,10 @@ const feed = async ({type, take=10, skip=0}:ArticleFeedProps): Promise<any[]> =>
       //TODO: blocked users
       where: {
         visible: true,
-        type
+        type,
       },
-      orderBy: {createdAt: "desc"},
-      //TODO: pagination
-      take, skip
+      orderBy: { createdAt: 'desc' },
+      include: ArticleInclude
     })
   } catch (error) {
     info('prismaArticle.feed ERROR',{error})

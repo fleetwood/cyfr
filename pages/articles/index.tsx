@@ -4,6 +4,7 @@ import ArticleFeedItem from 'components/containers/Articles/ArticleFeedItem'
 import ArticleLayout from 'components/layouts/ArticleLayout'
 import useDebug from 'hooks/useDebug'
 import useUrlHash from 'hooks/useUrlHash'
+import {ArticleStub} from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import {useEffect, useState} from 'react'
 
@@ -18,7 +19,7 @@ const ArticlePage = (_props: any) => {
   const isReviews = tag === 'reviews'
   const isLearn = tag === 'learn'
 
-  const [articles, setArticles] = useState<Article[]>([])
+  const [articles, setArticles] = useState<ArticleStub[]>([])
 
   const updateArticles = async () => {
     const type:ArticleType|undefined = isNews ? 'News' : isLearn ? 'Knowledge' : isReviews ? 'Review' : undefined
@@ -38,7 +39,7 @@ const ArticlePage = (_props: any) => {
   return (
     <ArticleLayout hash={tag}>
       <Grid container columns={{ xs: 2, md: 4}} columnGap={2} rowGap={2}>
-      {articles.map((a:Article) => (
+      {articles.map((a:ArticleStub) => (
         <ArticleFeedItem article={a} />
       ))}
       </Grid>
