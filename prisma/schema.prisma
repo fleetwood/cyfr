@@ -59,6 +59,7 @@ model User {
   images        Image[]       @relation("user_images")
   notifs        Notif[]       @relation("user_notifs")
   posts         Post[]        @relation("user_posts")
+  articles      Article[]     @relation("user_articles")
   sessions      Session[]
 
   agent       Agent?  @relation("user_agent") // user is an agent
@@ -157,10 +158,15 @@ model Article {
   createdAt       DateTime       @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
   visible         Boolean        @default(true)
+  
+  creatorId       String?
+  creator         User?           @relation("user_articles", fields: [creatorId], references: [id])
+
   type            ArticleType?    
   slug            String         @unique
   title           String         @unique
-  content         String         
+  content         String
+  hook            String?
   banner          String?
   startDate       DateTime?
   endDate         DateTime?
