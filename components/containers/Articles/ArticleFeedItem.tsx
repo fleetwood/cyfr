@@ -4,23 +4,46 @@ import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import {Article} from 'prisma/prismaContext'
+import {Article, ArticleType} from 'prisma/prismaContext'
 import HtmlContent from 'components/ui/htmlContent'
+import {cloudinary} from 'utils/cloudinary'
 
 const ArticleFeedItem = ({article}:{article: Article}) => {
+  const bg:{type: ArticleType, image: string}[] = [
+    {
+      type: 'Article',
+      image: 'https://res.cloudinary.com/drckf8gfc/image/upload/v1692405154/CyfrArticles_frzr17.png'
+    },
+    { 
+      type: 'Review',
+      image: 'https://res.cloudinary.com/drckf8gfc/image/upload/v1692405154/CyfrReviews_mmqdjo.png'
+    },
+    { 
+      type: 'News', 
+      image: 'https://res.cloudinary.com/drckf8gfc/image/upload/v1692400755/cyfr/CyfrNews_vx7n37.png'
+    },
+    { 
+      type: 'Knowledge',
+      image: 'https://res.cloudinary.com/drckf8gfc/image/upload/v1692400755/cyfr/CyfrLearn_sue08m.png'
+    }
+  ]
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ minWidth: 300, maxWidth: 345, maxHeight: 700, minHeight: 300 }}>
       <CardMedia
-        sx={{ height: 140 }}
-        image="/static/images/cards/contemplative-reptile.jpg"
-        title="green iguana"
+        sx={{ minHeight: 200 }}
+        image={cloudinary.scale({
+          url: article.banner ?? bg.find((b) => b.type === article.type)!.image,
+          height: 245,
+        })}
       />
-      <CardContent>
+      <CardContent aria-rowcount={12}>
         <Typography gutterBottom variant="h5" component="div">
           {article.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          <HtmlContent content={article.content} />
+          <div className="max-h-min h-56 overflow-clip text-ellipsis border-b border-b-neutral border-opacity-50">
+            <HtmlContent content={article.content} />
+          </div>
         </Typography>
       </CardContent>
       <CardActions>

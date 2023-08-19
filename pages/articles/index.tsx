@@ -37,11 +37,10 @@ const ArticlePage = (_props: any) => {
 
   return (
     <ArticleLayout hash={tag}>
-      <Grid container columnGap={2} rowGap={2}>
-
+      <Grid container columns={{ xs: 2, md: 4}} columnGap={2} rowGap={2}>
       {articles.map((a:Article) => (
         <ArticleFeedItem article={a} />
-        ))}
+      ))}
       </Grid>
     </ArticleLayout>
   )

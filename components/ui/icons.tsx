@@ -94,7 +94,8 @@ export const CyfrLogo = ({...props}:svgProps) => (
         />
       </g>
     </g>
-  </svg>)
+  </svg>
+)
 
 export const HouseIcon = (
   <svg
