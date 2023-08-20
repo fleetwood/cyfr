@@ -1,8 +1,9 @@
 
 import useDebug from "hooks/useDebug"
-import {Article,ArticleCommentProps,ArticleDetail,ArticleDetailInclude,ArticleEngageProps,ArticleStub,ArticleStubInclude,ArticleType,Like,Share,prisma} from "prisma/prismaContext"
+import {Article,ArticleCommentProps,ArticleDetail,ArticleDetailInclude,ArticleEngageProps,ArticleStub,ArticleStubInclude,ArticleType,Like,PrismaShare,Share,prisma} from "prisma/prismaContext"
 import {PaginationProps} from "types/props"
 import {NotImplemented} from "utils/api"
+import {PrismaLike} from "./prismaLike"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaArticle')
 
 type ArticleFeedProps = PaginationProps & {
@@ -42,33 +43,15 @@ const detailById = async (articleId:string):Promise<ArticleDetail> => {
   }
 }
 
-const likeArticle = async ({articleId,creatorId,}: ArticleEngageProps): Promise<Like> => {
-  try {
-    debug('likeArticle', { articleId, creatorId })
-    return await prisma.like.create({
-      data: { articleId, creatorId },
-    })
-  } catch (error) {
-    info('likeArticle ERROR: ', { error, articleId, creatorId })
-    throw { code: fileMethod('likeArticle'), ...{ error } }
-  }
-}
+const likeArticle = async (props: ArticleEngageProps): Promise<Like> => PrismaLike.likeArticle(props)
 
 /**
- * Params {@link ArticleEngageProps}
+ * Params {@link ArticleEngageProps} method references {@link PrismaShare.shareArticle}
  * @param articleId: String
  * @param creatorId: String
  * @returns: {@link Article}
  */
-const shareArticle = async ({articleId,creatorId,}: ArticleEngageProps): Promise<Share> => {
-  debug(`share`, { articleId, creatorId })
-  try {
-    throw NotImplemented('shareArticle')
-  } catch (error) {
-    info('shareArticle ERROR: ', { error, articleId, creatorId })
-    throw { code: fileMethod('shareArticle'), ...{ error } }
-  }
-}
+const share = async (props: ArticleEngageProps): Promise<Share> => PrismaShare.shareArticle(props)
 
 const commentOnArticle = async (props: ArticleCommentProps): Promise<ArticleDetail> => {
   const { articleId, creatorId, content } = props
@@ -122,4 +105,4 @@ const commentOnArticle = async (props: ArticleCommentProps): Promise<ArticleDeta
   }
 }
 
-export const PrismaArticle = { feed, commentOnArticle, likeArticle, shareArticle }
+export const PrismaArticle = { feed, commentOnArticle, likeArticle, shareArticle: share }

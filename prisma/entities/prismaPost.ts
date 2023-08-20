@@ -1,8 +1,9 @@
 
 import useDebug from "hooks/useDebug"
-import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, prisma, PostStubInclude, PostDetailInclude } from "prisma/prismaContext"
+import { Like, Post, PostCreateProps, PostCommentProps, PostDeleteProps, PostDetail, PostEngageProps, PostStub, prisma, PostStubInclude, PostDetailInclude, PrismaShare, Share } from "prisma/prismaContext"
 import {PaginationProps} from "types/props"
 import { NotImplemented } from "utils/api"
+import {PrismaLike} from "./prismaLike"
 const {debug, err, info, fileMethod} = useDebug('entities/prismaPost')
 
 const postDetail = async (id: string): Promise<PostDetail> => {
@@ -75,33 +76,23 @@ const deletePost = async ({postId, creatorId}: PostDeleteProps): Promise<Post> =
   }
 }
 
-const likePost = async ({postId, creatorId}: PostEngageProps): Promise<Like> => {
-  try {
-    debug("likePost", {postId, creatorId})
-    return await prisma.like.create({
-      data: {postId, creatorId}
-    })
-  } catch (error) {
-    info("likePost ERROR: ", {error, postId, creatorId})
-    throw { code: fileMethod('likePost'), ...{error} }
-  }
-}
+/**
+ * Method references {@link PrismaLike.likePost}
+ * Params {@link PostEngageProps}
+ * @param creatorId String
+ * @param postId String
+ * @returns: {@link Like}
+ */
+const likePost = async (props: PostEngageProps): Promise<Like> => PrismaLike.likePost(props)
 
 /**
+ * Method references {@link PrismaShare.sharePost}
  * Params {@link PostEngageProps}
  * @param postId: String
  * @param creatorId: String
- * @returns: {@link Post}
+ * @returns: {@link Share}
  */
-const sharePost = async ({postId,creatorId,}: PostEngageProps): Promise<Post> => {
-  debug(`share`, { postId, creatorId })
-  try {
-    throw NotImplemented('sharePost')
-  } catch (error) { 
-    info("sharePost ERROR: ", {error, postId, creatorId})
-    throw { code: fileMethod('sharePost'), ...{error} }
-  }
-}
+const sharePost = async (props: PostEngageProps): Promise<Share> => PrismaShare.sharePost(props)
 
 const commentOnPost = async (props: PostCommentProps): Promise<PostDetail> => {
   const {postId, creatorId, content} = props

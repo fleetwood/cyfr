@@ -5,10 +5,11 @@ import {
   GalleryDetailInclude, GalleryEngageProps,
   GalleryStub,
   GalleriesStubInclude,
-  GalleryUpsertProps, ImageUpsertProps, Like, Post
+  GalleryUpsertProps, ImageUpsertProps, Like, Post, PrismaShare, Share
 } from "prisma/prismaContext"
 import { NotImplemented } from "utils/api"
 import { now } from "utils/helpers"
+import {PrismaLike} from "./prismaLike"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGallery')
 
@@ -54,47 +55,22 @@ const stubs = async () : Promise<Gallery[]> => await prisma.gallery.findMany()
 const stub = async (id: string): Promise<Gallery|null> => await prisma.gallery.findUnique({where: {id}})
 
 /**
+ * Method references {@link PrismaLike.likeGallery}
  * Params {@link GalleryEngageProps}
  * @param galleryId: String
  * @param creatorId: String
  * @returns: {@link Like}
  */
-const like = async ({
-  galleryId,
-  creatorId,
-}: GalleryEngageProps): Promise<Like> => {
-  try {
-    return await prisma.like.create({
-      data: {
-        galleryId,
-        creatorId
-      }
-    })
-  } catch (error) {
-    throw error
-  }
-}
+const like = async (props:GalleryEngageProps):Promise<Like> => PrismaLike.likeGallery(props)
 
 /**
- * Using `prisma.share.create`
+ * Method references {@link PrismaShare.shareGallery}
  * Params {@link GalleryEngageProps}
  * @param galleryId: String
  * @param creatorId: String
  * @returns: {@link Share}
  */
-const share = async ({galleryId,creatorId,}: GalleryEngageProps): Promise<Post> => {
-  debug(`share`, { galleryId, creatorId })
-  try {
-    throw NotImplemented('prismaGallery/share')
-    // return await prisma.post.create({
-    //   data: {
-    //     creatorId,
-    //     galleryId
-    // }})    
-  } catch (error) { 
-    throw { code: fileMethod, message: "Feature not implemented" }
-  }
-}
+const share = async (props: GalleryEngageProps):Promise<Share> => PrismaShare.shareGallery(props)
 
 /**
  * 

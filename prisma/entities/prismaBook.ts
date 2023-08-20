@@ -19,10 +19,13 @@ import {
   LikeProps,
   Post,
   PrismaChapter,
+  PrismaShare,
+  Share,
   UserStub,
   prisma,
 } from 'prisma/prismaContext'
 import { NotImplemented } from 'utils/api'
+import {PrismaLike} from './prismaLike'
 
 const { debug, info, fileMethod } = useDebug('entities/prismaBook', 'DEBUG')
 
@@ -224,113 +227,21 @@ const follow = async (props: BookFollowProps): Promise<Follow> => {
   }
 }
 
-const like = async (props: LikeProps): Promise<Like> => {
-  // TODO cannot like your own stuff
-  const { creatorId, bookId } = props
-  if (!bookId || !creatorId)
-    throw { code: 'prismaBook/like', message: 'Missing params' }
-  try {
-    // we have to do this crazy little dance because composites in Follow model
-    const exists = await prisma.like.findFirst({
-      where: {
-        creatorId: creatorId.toString(),
-        bookId: bookId.toString(),
-      },
-    })
-    const data = {
-      creatorId: creatorId.toString(),
-      bookId: bookId.toString(),
-    }
-    debug('like', { creatorId, bookId, data })
+/**
+ * Method references {@link PrismaLike.likeBook}
+ * @param bookId: String
+ * @param creatorId: String
+ * @returns: {@link Like}
+ */
+const like = async (props: {bookId:string, creatorId:string}): Promise<Like> => PrismaLike.likeBook(props)
 
-    const like = exists
-      ? await prisma.like.update({
-          where: { id: exists.id },
-          data,
-        })
-      : await prisma.like.create({
-          data: {
-            creator: {
-              connect: {
-                id: creatorId.toString(),
-              },
-            },
-            book: {
-              connect: {
-                id: bookId!.toString(),
-              },
-            },
-          },
-        })
-    if (!like) {
-      throw { code: fileMethod('like'), message: 'Unable to like book' }
-    }
-    return like
-  } catch (error) {
-    debug(`like ERROR`, {
-      ...{ props },
-      ...{ error },
-    })
-    throw GenericResponseError(error as unknown as ResponseError)
-  }
-}
-
-const share = async (props: {
-  creatorId: String
-  bookId: String
-}): Promise<Post> => {
-  // TODO cannot share more than once
-  const { creatorId, bookId } = props
-  if (!bookId || !creatorId)
-    throw { code: 'prismaBook/share', message: 'Missing params' }
-
-  try {
-    // we have to do this crazy little dance because composites in Follow model
-    // const exists = await prisma.share.findFirst({
-    //   where: {
-    //     creatorId: creatorId.toString(),
-    //     bookId: bookId.toString()
-    //   }
-    // })
-    // const data = {
-    //   creatorId: creatorId.toString(),
-    //   bookId: bookId.toString(),
-    //   visible: exists ? !exists.visible : true
-    // }
-
-    debug('Share', { creatorId, bookId })
-    throw NotImplemented('prismaBook/share')
-    // const share = exists
-    //   ? await prisma.post.update({
-    //     where: {id: exists.id},
-    //     data
-    //   })
-    //   : await prisma.share.create({
-    //     data: {
-    //       creator: {
-    //         connect: {
-    //           id: creatorId.toString()
-    //         }
-    //       },
-    //       book: {
-    //         connect: {
-    //           id: bookId!.toString()
-    //         }
-    //       }
-    //     }
-    //   })
-    // if (!share) {
-    //   throw({code: fileMethod('Share'), message: 'Unable to share book'})
-    // }
-    // return share;
-  } catch (error) {
-    debug(`share ERROR`, {
-      ...{ props },
-      ...{ error },
-    })
-    throw GenericResponseError(error as unknown as ResponseError)
-  }
-}
+/**
+ * Method references {@link PrismaShare.shareBook}
+ * @param bookId: String
+ * @param creatorId: String
+ * @returns: {@link Like}
+ */
+const share = async (props:{bookId:string, creatorId:string}):Promise<Share> => PrismaShare.shareBook(props)
 
 const addChapter = async (props: {
   bookId: string

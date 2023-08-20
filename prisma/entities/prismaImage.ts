@@ -1,5 +1,5 @@
 import useDebug from "hooks/useDebug"
-import { Image, ImageDeleteProps, ImageEngageProps, ImageUpsertProps, Like, Post } from "prisma/prismaContext"
+import { Image, ImageDeleteProps, ImageEngageProps, ImageUpsertProps, Like, Post, PrismaLike, PrismaShare, Share } from "prisma/prismaContext"
 import { NotImplemented } from "utils/api"
 const {debug, info, fileMethod} = useDebug('entities/prismaImage', 'DEBUG')
 
@@ -45,35 +45,22 @@ const deleteImage = async ({imageId, creatorId}: ImageDeleteProps): Promise<Imag
 }
 
 /**
+ * Method references {@link PrismaLike.likeImage}
  * Params {@link ImageEngageProps}
  * @param imageId: String
  * @param creatorId: String
  * @returns: {@link Like}
  */
-const like = async ({imageId, creatorId}: ImageEngageProps): Promise<Like> => {
-  debug('like', {imageId, creatorId})
-  try {
-    return await prisma.like.create({data: {imageId, creatorId}})
-  } catch (error) {
-    throw error
-  }
-}
+const like = async (props: ImageEngageProps): Promise<Like> => PrismaLike.likeImage(props)
 
 /**
+ * Method references {@link PrismaShare.shareImage}
  * Params {@link ImageEngageProps}
  * @param imageId: String
  * @param creatorId: String
  * @returns: {@link Post}
  */
-const share = async ({imageId, creatorId}: ImageEngageProps): Promise<Post> => {
-  debug('share', {imageId, creatorId})
-  try {
-    throw NotImplemented('prismaImage/share')
-    // return await prisma.post.create({data: {imageId, creatorId}})
-  } catch (error) {
-    throw error
-  }
-}
+const share = async (props: ImageEngageProps): Promise<Share> => PrismaShare.shareImage(props)
 
 const commentOnImage = async (props: any): Promise<Image> => {
   const {commentId, creatorId, content} = props

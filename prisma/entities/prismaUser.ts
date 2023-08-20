@@ -15,12 +15,13 @@ import {
   Follow,
   GalleryStub,
   GetInfoSelector,
+  Like,
   MapInfo,
   Membership,
   MembershipStub,
   MembershipStubSelect,
   membershipToType,
-  prisma, ReaderInfoSelect, User, UserDetail,
+  prisma, PrismaLike, PrismaShare, ReaderInfoSelect, Share, User, UserDetail,
   UserFollowProps,
   UserInfo,
   UserInfoSelect,
@@ -99,6 +100,23 @@ const follow = async (props:UserFollowProps): Promise<Follow> => {
     throw GenericResponseError(error as unknown as ResponseError)
   }
 }
+
+/**
+ * Method references {@link PrismaLike.likeUser}
+ * @param userId: String
+ * @param creatorId: String
+ * @returns: {@link Like}
+ */
+const like = async (props: {userId:string, creatorId:string}): Promise<Like> => PrismaLike.likeUser(props)
+
+/**
+ * Method references {@link PrismaShare.shareUser}
+ * @param userId: String
+ * @param creatorId: String
+ * @returns: {@link Like}
+ */
+const share = async (props:{userId:string, creatorId:string}):Promise<Share> => PrismaShare.shareUser(props)
+
 
 const userInfo = async <T = UserInfoType>(id:string, userType?:UserTypes): Promise<T> => {
   debug('userInfo', {id, userType})
