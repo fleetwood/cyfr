@@ -175,7 +175,7 @@ model Article {
   reviewId        String?        @unique
   review          Review?        @relation("review_article", fields: [reviewId], references: [id])
   commentThreadId String?        @unique
-  commentThread   CommentThread? @relation("news_comments", fields: [commentThreadId], references: [id])
+  commentThread   CommentThread? @relation("article_comments", fields: [commentThreadId], references: [id])
 
   shares          Share[]        @relation("article_shares")
   likes           Like[]         @relation("article_likes")
@@ -316,7 +316,7 @@ model CommentThread {
   commune   Commune?   @relation("thread_commune")
   event     Event?     @relation("event_comments")
   image     Image?     @relation("image_comments")
-  news      Article?      @relation("news_comments")
+  article   Article?   @relation("article_comments")
   post      Post?      @relation("post_comments")
   review    Review?    @relation("review_comments")
   gallery   Gallery?   @relation("gallery_comments")

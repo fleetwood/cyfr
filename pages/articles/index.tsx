@@ -8,7 +8,7 @@ import {ArticleStub} from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import {useEffect, useState} from 'react'
 
-const {debug} = useDebug('page/articles', 'DEBUG')
+const {debug} = useDebug('page/articles')
 
 const ArticlePage = (_props: any) => {
   const {feed} = useApi.article()
@@ -40,7 +40,7 @@ const ArticlePage = (_props: any) => {
     <ArticleLayout hash={tag}>
       <Grid container columns={{ xs: 2, md: 4}} columnGap={2} rowGap={2}>
       {articles.map((a:ArticleStub) => (
-        <ArticleFeedItem article={a} />
+        <ArticleFeedItem article={a} invalidate={updateArticles} />
       ))}
       </Grid>
     </ArticleLayout>
