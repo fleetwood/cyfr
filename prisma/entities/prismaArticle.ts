@@ -1,6 +1,6 @@
 
 import useDebug from "hooks/useDebug"
-import {Article,ArticleCommentProps,ArticleDetail,ArticleDetailInclude,ArticleEngageProps,ArticleStub,ArticleStubInclude,ArticleType,Like,PrismaShare,Share,prisma} from "prisma/prismaContext"
+import {Article,ArticleCommentProps,ArticleDetail,ArticleDetailInclude,ArticleEngageProps,ArticleStub,ArticleStubSelect,ArticleType,Like,PrismaShare,Share,prisma} from "prisma/prismaContext"
 import {PaginationProps} from "types/props"
 import {NotImplemented} from "utils/api"
 import {PrismaLike} from "./prismaLike"
@@ -19,7 +19,7 @@ const feed = async ({type, take=10, skip=0}:ArticleFeedProps): Promise<ArticleSt
         type,
       },
       orderBy: { createdAt: 'desc' },
-      include: ArticleStubInclude
+      select: ArticleStubSelect
     }) as unknown as ArticleStub[]
   } catch (error) {
     info('prismaArticle.feed ERROR',{error})

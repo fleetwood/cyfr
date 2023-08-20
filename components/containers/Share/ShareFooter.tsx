@@ -14,6 +14,7 @@ import GalleryFooter from "../Gallery/GalleryFooter"
 import ImageFooter from "../Image/ImageFooter"
 import PostFooter from "../Post/PostFooter"
 import CoverFooter from "../Cover/CoverFooter"
+import ArticleFooter from "../Articles/ArticleFooter"
 const { debug } = useDebug("PostItemFooter")
 
 type ShareFooterProps = {
@@ -61,7 +62,8 @@ const ShareFooter = ({ share, onUpdate }: ShareFooterProps) => {
     notifyNotImplemented()
   }
 
-  const title = share.book ?      "Shared Book" :
+  const title = share.article ?   "Shared Article" :
+                share.book ?      "Shared Book" :
                 share.character ? "Shared Character" :
                 share.cover ?     "Shared Cover" :
                 // share.event ?     "Shared Event" :
@@ -71,6 +73,7 @@ const ShareFooter = ({ share, onUpdate }: ShareFooterProps) => {
 
   return (
     <div>
+      {share.article && <ArticleFooter article={share.article} invalidate={invalidate} />}
       {share.book && <BookFooter bookStub={share.book} />}
       {share.character && <CharacterFooter character={share.character} />}
       {share.image && <ImageFooter image={share.image} />}

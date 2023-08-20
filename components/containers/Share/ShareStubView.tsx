@@ -1,6 +1,7 @@
-import { BookStub, CharacterStub, GalleryStub, ImageStub, PostStub, ShareStub } from 'prisma/prismaContext'
+import { ArticleStub, BookStub, CharacterStub, GalleryStub, ImageStub, PostStub, ShareStub } from 'prisma/prismaContext'
 
 import useDebug from 'hooks/useDebug'
+import ArticleStubView from '../Articles/ArticleStubView'
 import BookStubView from '../Books/BookStubView'
 import CharacterStubView from '../Characters/CharacterStubView'
 import GalleryStubView from '../Gallery/GalleryStubView'
@@ -15,10 +16,12 @@ type SharedPostFeedItemProps = {
 
 const SharedStubView = ({ share }: SharedPostFeedItemProps) => {
   const comments: any[] = []
-  const {book, character, cover, gallery, image, post} = share
+  const {book, character, cover, gallery, image, post, article} = share
 
   return (
     <div className='rounded-lg m-4'>
+      {article  && <ArticleStubView article={article as ArticleStub} variations={['full-width', 'no-footer']} />}
+
       {post && <PostStubView post={post as PostStub} />}
 
       {image && <ImageStubView image={image as ImageStub} />}

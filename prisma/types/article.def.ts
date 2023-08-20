@@ -34,7 +34,19 @@ export type ArticleStub = Article & {
     shares: number
   }
 }
-export const ArticleStubInclude = {
+export const ArticleStubSelect = {
+  id: true,
+  banner: true,
+  createdAt: true,
+  updatedAt: true,
+  startDate: true,
+  endDate: true,
+  hook: true,
+  priority: true,
+  title: true,
+  slug: true,
+  type: true,
+  views: true,
   creator: {
     select: {
       id: true,

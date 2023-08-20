@@ -11,14 +11,16 @@ type ShareHeaderProps = {
 }
 
 const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
-  const {book, character, cover, gallery, image, post} = item
+  const {book, character, cover, gallery, image, post, article} = item
 
   const link = gallery ? `/gallery/${gallery.id}` :
                book ? `/book/${book.slug}` :
                character ? `/character/${character.id}` :
+               article ? `/article/${article.slug!}` :
                `/post/${(post ?? item).id}`
 
-  const sharedTime = book?.createdAt ?? 
+  const sharedTime = article?.createdAt ?? 
+                     book?.createdAt ?? 
                      character?.createdAt ?? 
                      cover?.createdAt ??
                      image?.createdAt ??
@@ -26,7 +28,8 @@ const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
                      post?.createdAt ??
                      item.createdAt
 
-  const sharedId = book?.id ?? 
+  const sharedId = article?.id ?? 
+                   book?.id ?? 
                    character?.id ?? 
                    cover?.id ??
                    image?.id ??
@@ -36,6 +39,7 @@ const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
 
   // TODO: get creator for shared items
   const originalAuthor:CreatorStub = 
+    article ? article.creator :
     post ? post.creator :
     image ? image.creator :
     gallery ? gallery.creator : 

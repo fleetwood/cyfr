@@ -1,4 +1,5 @@
 import {
+  ArticleStub,
   Book,
   BookStub,
   Character,
@@ -185,9 +186,11 @@ export type ShareStub = Share & {
   gallery?:     GalleryStub
   image?:       ImageStub
   post?:        SharedPostStub
+  article?:     ArticleStub
 }
 
-export const ShareStubInclude = { include: {
+export const ShareStubInclude = {
+  include: {
     // INCLUDE SHARED BOOK
     book: {
       include: {
@@ -382,7 +385,185 @@ export const ShareStubInclude = { include: {
         },
       },
     },
-}}
+    article: {
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        shares: {
+          select: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          take: 10,
+          skip: 0,
+        },
+        likes: {
+          select: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          take: 10,
+          skip: 0,
+        },
+        review: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            shares: {
+              select: {
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              take: 10,
+              skip: 0,
+            },
+            likes: {
+              select: {
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              take: 10,
+              skip: 0,
+            },
+          },
+        },
+        commentThread: {
+          include: {
+            comments: {
+              take: 10,
+              skip: 0,
+            },
+            _count: {
+              select: {
+                comments: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            shares: true,
+            likes: true,
+          },
+        },
+      },
+    },
+  },
+}
 
 export type ShareList = Share & {
   creator: CreatorStub
