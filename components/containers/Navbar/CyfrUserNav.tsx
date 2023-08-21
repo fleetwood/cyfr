@@ -1,4 +1,4 @@
-import {Box, Grid, IconButton, Menu, MenuList, Typography, withStyles} from '@mui/material'
+import {Badge, Box, Grid, IconButton, Menu, MenuList, Typography, withStyles} from '@mui/material'
 import LinkWithIcon from 'components/ui/avatar/linkWithIcon'
 import UserAvatar from 'components/ui/avatar/userAvatar'
 import {BookIcon, GalleryIcon, MuiLogoutIcon, MuiMailIcon, MuiManageAccountsIcon, MuiPeopleIcon, MuiPersonIcon, MuiPortraitIcon} from 'components/ui/icons'
@@ -56,11 +56,13 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
               </Typography>
             </div>
             <IconButton onClick={toggleMenu} sx={{ p: 0 }}>
-              <UserAvatar
-                user={cyfrUser}
-                variant={['no-profile', 'no-link']}
-                sz="md"
-              />
+              <Badge badgeContent={cyfrUser.notifs.length} color="primary" overlap='circular' anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}>
+                <UserAvatar
+                  user={cyfrUser}
+                  variant={['no-profile', 'no-link']}
+                  sz="md"
+                  />
+              </Badge>
             </IconButton>
           </div>
           <Menu
@@ -80,13 +82,12 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
             onClose={() => toggleMenu(undefined)}
           >
             <MenuList>
-              {cyfrUser.author && 
-              <div className="float-left flex flex-col p-2">
-                <Link href={`/user/${userUrl}/books`} className={linkClass}>
-                  <h3>Books</h3>
-                </Link>
-                {cyfrUser.author.books.map(
-                  (book: BookStub) => (
+              {cyfrUser.author && (
+                <div className="float-left flex flex-col p-2">
+                  <Link href={`/user/${userUrl}/books`} className={linkClass}>
+                    <h3>Books</h3>
+                  </Link>
+                  {cyfrUser.author.books.map((book: BookStub) => (
                     <Link
                       className={navLinkClass}
                       href={`/book/${book.slug}`}
@@ -94,40 +95,39 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
                     >
                       {book.title}
                     </Link>
-                  )
-                )}
-                <Link
-                  href={`/user/${userUrl}/books`}
-                  className="btn btn-primary btn-sm text-sm"
-                  title="Start a New Book!"
-                >
-                  {BookIcon} +
-                </Link>
-              </div>
-              }
-              {cyfrUser.artist &&
-              <div className="float-left flex flex-col p-2">
-                <Link href={`/user/${userUrl}/gallery`} className={linkClass}>
-                  <h3>Galleries</h3>
-                </Link>
-                {cyfrUser.artist.galleries.map((gallery) => (
+                  ))}
                   <Link
-                    className={navLinkClass}
-                    href={`/gallery/${gallery.id}`}
-                    key={gallery.id}
+                    href={`/user/${userUrl}/books`}
+                    className="btn btn-primary btn-sm text-sm"
+                    title="Start a New Book!"
                   >
-                    {gallery.title}
+                    {BookIcon} +
                   </Link>
-                ))}
-                <Link
-                  href={`/user/${userUrl}/gallery`}
-                  className="btn btn-primary btn-sm text-sm"
-                  title="Start a New Gallery!"
-                >
-                  {GalleryIcon}+
-                </Link>
-              </div>
-              }
+                </div>
+              )}
+              {cyfrUser.artist && (
+                <div className="float-left flex flex-col p-2">
+                  <Link href={`/user/${userUrl}/gallery`} className={linkClass}>
+                    <h3>Galleries</h3>
+                  </Link>
+                  {cyfrUser.artist.galleries.map((gallery) => (
+                    <Link
+                      className={navLinkClass}
+                      href={`/gallery/${gallery.id}`}
+                      key={gallery.id}
+                    >
+                      {gallery.title}
+                    </Link>
+                  ))}
+                  <Link
+                    href={`/user/${userUrl}/gallery`}
+                    className="btn btn-primary btn-sm text-sm"
+                    title="Start a New Gallery!"
+                  >
+                    {GalleryIcon}+
+                  </Link>
+                </div>
+              )}
 
               <div className="float-left flex flex-col p-2">
                 <h3 className="text-primary">Profile</h3>

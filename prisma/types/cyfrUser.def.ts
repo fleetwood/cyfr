@@ -54,9 +54,10 @@ export const CyfrUserInclude = {
         visible: true,
         seen: false,
         expiresAt: {
-          lte: now().toISOString()
+          gte: now().toISOString()
         }
-      }
+      },
+      take: 10
     },
 
     agent: {
