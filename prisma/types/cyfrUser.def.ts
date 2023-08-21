@@ -57,7 +57,7 @@ export const CyfrUserInclude = {
           gte: now().toISOString()
         }
       },
-      take: 10
+      take: 100
     },
 
     agent: {

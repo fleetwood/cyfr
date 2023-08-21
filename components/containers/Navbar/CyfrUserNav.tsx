@@ -1,13 +1,15 @@
 import {Badge, Box, Grid, IconButton, Menu, MenuList, Typography, withStyles} from '@mui/material'
 import LinkWithIcon from 'components/ui/avatar/linkWithIcon'
 import UserAvatar from 'components/ui/avatar/userAvatar'
+import HtmlContent from 'components/ui/htmlContent'
 import {BookIcon, GalleryIcon, MuiLogoutIcon, MuiMailIcon, MuiManageAccountsIcon, MuiPeopleIcon, MuiPersonIcon, MuiPortraitIcon} from 'components/ui/icons'
 import MenuLogin from 'components/ui/menuLogin'
+import OpenDialog from 'components/ui/openDialog'
 import {SpinnerEllipse} from 'components/ui/spinnerEllipse'
 import useDebug from 'hooks/useDebug'
 import {signOut} from 'next-auth/react'
 import Link from 'next/link'
-import {BookStub, GalleryStub} from 'prisma/prismaContext'
+import {BookStub, GalleryStub, Notif} from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, {ReactNode, useState} from 'react'
 import {stringToColour} from 'types/props'
@@ -34,6 +36,15 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
   const linkClass = 'font-semibold px-2 text-primary hover:bg-primary hover:bg-opacity-20'
   const navLinkClass = '-ml-2 px-2 hover:bg-primary hover:bg-opacity-20 transition-color duration-200'
 
+  const NotifContent = () => {
+    return (
+      <div>
+      {cyfrUser.notifs.map((notif:Notif) => (
+        <div key={notif.id}><HtmlContent content={notif.message??'<>No Message...</>'} /></div>
+      ))}
+    </div>
+  )}
+
   return (
     <Box sx={{ flexGrow: 0 }}>
       {!isLoading && cyfrUser ? (
@@ -56,7 +67,7 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
               </Typography>
             </div>
             <IconButton onClick={toggleMenu} sx={{ p: 0 }}>
-              <Badge badgeContent={cyfrUser.notifs.length} color="primary" overlap='circular' anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}>
+              <Badge badgeContent={cyfrUser.notifs.length} max={100} color="primary" overlap='circular' anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}>
                 <UserAvatar
                   user={cyfrUser}
                   variant={['no-profile', 'no-link']}
