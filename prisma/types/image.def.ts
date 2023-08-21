@@ -30,16 +30,58 @@ export type ImageFeed = Image & {
 }
 
 export const PostImageInclude = {include: {
-  creator: CreatorStubSelect,
+  creator: { select: {
+    id: true,
+    name: true,
+    image: true,
+    slug: true,
+    membership: { select: {
+        id: true,
+        expiresAt: true,
+        type: {select: {
+            id: true,
+            name: true,
+            level: true,
+        }},
+    }},
+  }},
   _count: { select: {
     likes: true,
     shares: true
   }},
   likes: { include: {
-    creator: CreatorStubSelect
+    creator: { select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true,
+      membership: { select: {
+          id: true,
+          expiresAt: true,
+          type: {select: {
+              id: true,
+              name: true,
+              level: true,
+          }},
+      }},
+    }}
   }},
   shares: { include: {
-    creator: CreatorStubSelect
+    creator: { select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true,
+      membership: { select: {
+          id: true,
+          expiresAt: true,
+          type: {select: {
+              id: true,
+              name: true,
+              level: true,
+          }},
+      }},
+    }}
   }}
 }}
 
@@ -58,7 +100,7 @@ export const ImageFeedInclude = {include: {
 export type ImageStub = Image & {
   creator: CreatorStub
   likes: LikeStub[]
-  shares: Share & CreatorStub
+  shares: ShareStub[]
   _count: {
     likes: number
     shares: number

@@ -143,15 +143,21 @@ export type UserEngageProps = {
 
 export type CreatorStub = UserStub
 
-export const CreatorStubSelect = {
-  select: {
-    id: true,
-    name: true,
-    image: true,
-    slug: true,
-    membership: MembershipStubSelect
-  },
-}
+export const CreatorStubSelect = { select: {
+  id: true,
+  name: true,
+  image: true,
+  slug: true,
+  membership: { select: {
+      id: true,
+      expiresAt: true,
+      type: {select: {
+          id: true,
+          name: true,
+          level: true,
+      }},
+  }},
+}}
 
 
 export type UserSearchStub = UserStub & {

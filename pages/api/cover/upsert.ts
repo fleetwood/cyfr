@@ -3,7 +3,7 @@ import useDebug from 'hooks/useDebug'
 import {NextApiRequest, NextApiResponse} from 'next'
 import {PrismaCover} from 'prisma/prismaContext'
 
-const { debug } = useDebug('api/cover/upsert', 'DEBUG')
+const { debug } = useDebug('api/cover/upsert')
 
 const request = (req: NextApiRequest, res: NextApiResponse) => {
   const {id,creatorId,imageId,bookId,genreId,visible,exclusive,description} = req.body

@@ -9,7 +9,7 @@ type EditorAvatarProps = AvatarProps & {
 }
 
 const EditorAvatar = (props: EditorAvatarProps) => (
-  <UserAvatar {...props} user={props.user.user} />
+  <UserAvatar {...props} user={props.user.user} userType='Editor' />
 )
 
 export default EditorAvatar

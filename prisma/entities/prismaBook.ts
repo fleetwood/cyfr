@@ -1,8 +1,5 @@
 import useDebug from 'hooks/useDebug'
-import { GenericResponseError, ResponseError } from 'types/response'
-import { dedupe, now, toSlug } from 'utils/helpers'
 import {
-  AuthorStub,
   Book,
   BookCreateProps,
   BookDetail,
@@ -16,18 +13,16 @@ import {
   Chapter,
   Follow,
   Like,
-  LikeProps,
-  Post,
   PrismaChapter,
   PrismaShare,
   Share,
-  UserStub,
-  prisma,
+  prisma
 } from 'prisma/prismaContext'
-import { NotImplemented } from 'utils/api'
+import {GenericResponseError,ResponseError} from 'types/response'
+import {dedupe,now,toSlug} from 'utils/helpers'
 import {PrismaLike} from './prismaLike'
 
-const { debug, info, fileMethod } = useDebug('entities/prismaBook', 'DEBUG')
+const { debug, info, fileMethod } = useDebug('entities/prismaBook')
 
 const detail = async (slug: string): Promise<any> => {
   debug('detail', {slug})

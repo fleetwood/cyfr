@@ -10,6 +10,7 @@ import { Item, Gallery as PhotoGallery } from "react-photoswipe-gallery"
 import { cloudinary } from "utils/cloudinary"
 import { uniqueKey, uuid } from "utils/helpers"
 import ImageFooter from "../Image/ImageFooter"
+import {Card, CardActionArea, CardContent} from "@mui/material"
 
 const {debug} = useDebug('containers/Gallery/GalleryImages', )
 
@@ -138,20 +139,14 @@ const GalleryImages = ({
           {imageList.map(item => (
             <Item {...item} key={uniqueKey(key,item)}>
               {({ ref, open }) => (
-                <div className="cursor-pointer relative transition-all duration-200 ease-out" ref={ref}>
-                  {/* <ImageStubView image={item} onClick={(e) => open(e)}  /> */}
-                  <div className={`relative rounded-lg overflow-hidden image-preview`}>
-                    <img className="rounded-lg drop-shadow-md" src={item.url} onClick={(e) => open(e)} />
-                    {item.title &&
-                      <div className="image-header">
-                        {item.title}
-                      </div>
-                    }
-                    <div className="image-footer w-full">
-                      <ImageFooter image={item} selectable={selectable} onSelect={onSelect} />
-                    </div>
-                  </div>
-                </div>
+                <Card>
+                  <CardActionArea ref={ref}>
+                    <CardContent>
+                      <img className="rounded-lg drop-shadow-md" src={item.url} onClick={(e) => open(e)} />
+                      <ImageFooter image={item} selectable={selectable} onSelect={onSelect} avatars={false} className="pt-2" />
+                    </CardContent>
+                  </CardActionArea>
+                </Card>
               )}
             </Item>
           ))}

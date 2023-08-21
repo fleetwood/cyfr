@@ -1,7 +1,5 @@
 import useDebug from "hooks/useDebug"
-import {AgentStub, AuthorStub, BookStub, GalleryStub, Membership, MembershipType, Publisher, UserStub, UserStubSelect, UserTypes} from "prisma/prismaContext"
-import {KeyVal} from "types/props"
-import {capFirstLetter} from "utils/helpers"
+import {UserStub,UserTypes} from "prisma/prismaContext"
 
 const {debug} = useDebug('userInfo.def')
 export type UserInfoType = AgentInfo|ArtistInfo|AuthorInfo|EditorInfo|ReaderInfo|UserInfo
@@ -19,8 +17,14 @@ export const UserInfoSelect = { select: {
   name: true,
   image: true,
   slug: true,
-  membership: { include: {
-    type: true
+  membership: {select: {
+    id:         true,
+    expiresAt:  true,
+    type:       { select: {
+      id:     true,
+      name:   true,
+      level:  true
+    }}
   }},
   following: {
     select: {
@@ -57,19 +61,49 @@ export type ArtistInfo = UserInfo & {
   covers:     number
   galleries:  number
   books:      number
+  reviews:    number
 }
 
-export const ArtistInfoSelect =  { select: {
-  ...UserInfoSelect.select,
-  _count: {
-    select: {
-      likes:      true,
-      covers:     true,
-      galleries:  true,
-      books:      true,
+export const ArtistInfoSelect = {
+  select: {
+    id: true,
+    name: true,
+    image: true,
+    slug: true,
+    membership: {
+      select: {
+        id: true,
+        expiresAt: true,
+        type: {
+          select: {
+            id: true,
+            name: true,
+            level: true,
+          },
+        },
+      },
+    },
+    following: {
+      select: {
+        isFan: true,
+      },
+    },
+    follower: {
+      select: {
+        isFan: true,
+      },
+    },
+    _count: {
+      select: {
+        likes: true,
+        covers: true,
+        books: true,
+        galleries: true,
+        reviews: true,
+      },
     },
   },
-}}
+}
 
 export type AuthorInfo = UserInfo & {
   reviews:    number
@@ -194,6 +228,7 @@ export const MapInfo = <T = UserInfoType>(result:any, userType?: UserTypes):T =>
         covers: result._count.covers ?? 0,
         galleries: result._count.galleries ?? 0,
         books: result._count.books ?? 0,
+        reviews: result._count.books ?? 0,
       } as ArtistInfo
       break
 

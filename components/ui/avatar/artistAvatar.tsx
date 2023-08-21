@@ -9,7 +9,7 @@ type ArtistAvatarProps = AvatarProps & {
 }
 
 const ArtistAvatar = (props: ArtistAvatarProps) => (
-  <UserAvatar {...props} user={props.user.user} />
+  <UserAvatar {...props} user={props.user.user} userType='Artist' />
 )
 
 export default ArtistAvatar

@@ -1,8 +1,7 @@
-import React from 'react'
-import { CyfrUser, UserStub, v_author_stub } from '../../prisma/prismaContext'
+import {SizeProps} from 'types/props'
+import {UserStub} from 'prisma/prismaContext'
+import {uniqueKey,uuid} from 'utils/helpers'
 import UserAvatar from './avatar/userAvatar'
-import { uniqueKey, uuid } from '../../utils/helpers'
-import { SizeProps } from 'types/props'
 
 export type UserInfoProps = {
     user: UserStub

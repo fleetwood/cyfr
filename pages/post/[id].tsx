@@ -3,6 +3,7 @@ import PostFooter from "components/containers/Post/PostFooter"
 import MainLayout from "components/layouts/MainLayout"
 import UserAvatar from "components/ui/avatar/userAvatar"
 import HtmlContent from "components/ui/htmlContent"
+import {UserTypes} from "prisma/types"
 import useApi from "prisma/useApi"
 import { timeDifference } from 'utils/helpers'
 
@@ -31,7 +32,7 @@ const PostDetailPage = ({ postId }:PostDetailPageProps) => {
     >
       <div className="flex flex-row justify-between relative">
         <div className="flex justify-end w-full -mb-4 mr-4 z-10">
-          <UserAvatar user={post.creator} sz="lg" />
+          <UserAvatar user={post.creator} sz="lg" userType={post.creator.membership.type.name as UserTypes} />
         </div>
       </div>
       <div className="bg-base-100 rounded-lg p-4 relative">

@@ -9,7 +9,7 @@ import useApi from 'prisma/useApi'
 import React, {useEffect, useState} from 'react'
 import {uniqueKey} from 'utils/helpers'
 
-const {debug} = useDebug('containers/User/UserSelector', 'DEBUG')
+const {debug} = useDebug('containers/User/UserSelector')
 
 /**
  * @prop userTypes  {@link UserTypes}|{@link FollowerTypes}

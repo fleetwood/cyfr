@@ -1,4 +1,4 @@
-import { Artist, Book, Cover, Gallery, Review, UserStub } from 'prisma/prismaContext'
+import { Artist, Book, Cover, Gallery, GalleryStub, Review, UserStub } from 'prisma/prismaContext'
 
 export type ArtistDetail = Artist & {
   user: UserStub
@@ -44,7 +44,7 @@ export const ArtistDetailInclude = {include: {
 export type ArtistStub = Artist & {
   user: UserStub
   books: Book[]
-  galleries: Gallery[]
+  galleries: GalleryStub[]
   reviews: Review[]
   covers: Cover[]
   _count: {

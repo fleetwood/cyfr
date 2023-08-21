@@ -80,19 +80,22 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
             onClose={() => toggleMenu(undefined)}
           >
             <MenuList>
+              {cyfrUser.author && 
               <div className="float-left flex flex-col p-2">
                 <Link href={`/user/${userUrl}/books`} className={linkClass}>
                   <h3>Books</h3>
                 </Link>
-                {cyfrUser.author?.books.map((book: BookStub) => (
-                  <Link
-                    className={navLinkClass}
-                    href={`/book/${book.slug}`}
-                    key={book.id}
-                  >
-                    {book.title}
-                  </Link>
-                ))}
+                {cyfrUser.author.books.map(
+                  (book: BookStub) => (
+                    <Link
+                      className={navLinkClass}
+                      href={`/book/${book.slug}`}
+                      key={book.id}
+                    >
+                      {book.title}
+                    </Link>
+                  )
+                )}
                 <Link
                   href={`/user/${userUrl}/books`}
                   className="btn btn-primary btn-sm text-sm"
@@ -101,12 +104,13 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
                   {BookIcon} +
                 </Link>
               </div>
-
+              }
+              {cyfrUser.artist &&
               <div className="float-left flex flex-col p-2">
                 <Link href={`/user/${userUrl}/gallery`} className={linkClass}>
                   <h3>Galleries</h3>
                 </Link>
-                {cyfrUser.galleries.map((gallery: GalleryStub) => (
+                {cyfrUser.artist.galleries.map((gallery) => (
                   <Link
                     className={navLinkClass}
                     href={`/gallery/${gallery.id}`}
@@ -123,6 +127,7 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
                   {GalleryIcon}+
                 </Link>
               </div>
+              }
 
               <div className="float-left flex flex-col p-2">
                 <h3 className="text-primary">Profile</h3>

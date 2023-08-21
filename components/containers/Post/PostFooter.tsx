@@ -74,7 +74,6 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
 
   return (
     <div className="flex flex-row justify-around py-4">
-      <Tooltip title="Post">{FeedIcon}</Tooltip>
       <div>
         <ShrinkableIconButton
           icon={HeartIcon}

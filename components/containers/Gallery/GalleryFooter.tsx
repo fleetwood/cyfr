@@ -1,15 +1,12 @@
-import { useCommentContext } from "components/context/CommentContextProvider"
-import { useToast } from "components/context/ToastContextProvider"
+import {useCommentContext} from "components/context/CommentContextProvider"
+import {useToast} from "components/context/ToastContextProvider"
 import UserAvatarList from "components/ui/avatar/userAvatarList"
-import { ShareIcon, ReplyIcon, HeartIcon, GalleryIcon, EyeIcon } from "components/ui/icons"
+import {HeartIcon,ReplyIcon,ShareIcon} from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
 import useDebug from "hooks/useDebug"
-import { GalleryDetail, GalleryStub } from "prisma/prismaContext"
+import {GalleryDetail,GalleryStub} from "prisma/prismaContext"
 import useApi from "prisma/useApi"
-import { abbrNum } from "utils/helpers"
-import PermissionStubView from "../Permission/PermissionStubView"
-import OpenDialog from "components/ui/openDialog"
-import { Tooltip } from "@mui/material"
+import {abbrNum} from "utils/helpers"
 
 type GalleryFooterProps = {
   gallery:    GalleryDetail | GalleryStub
@@ -84,7 +81,6 @@ const GalleryFooter = ({
 
   return (
     <div className="min-w-full p-4 flex justify-around space-x-4">
-      <div className="flex space-x-2"><Tooltip title="Open Gallery Permissions">{GalleryIcon}</Tooltip> <OpenDialog label={EyeIcon} content={<PermissionStubView className='p-4' permission={gallery.permission} />} /> </div>
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={HeartIcon}

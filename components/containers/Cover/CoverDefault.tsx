@@ -1,11 +1,10 @@
-import useRocketQuery from 'hooks/useRocketQuery'
-import useCoverApi from 'prisma/useApi/cover'
-import React, {useEffect, useState} from 'react'
-import CoverStubView from './CoverStubView'
-import {CoverStub} from 'prisma/prismaContext'
-import useDebug from 'hooks/useDebug'
 import {SpinnerEllipse} from 'components/ui/spinnerEllipse'
-const{ debug} = useDebug('containers/Cover/CoverDefault', 'DEBUG')
+import useDebug from 'hooks/useDebug'
+import {CoverStub} from 'prisma/prismaContext'
+import useCoverApi from 'prisma/useApi/cover'
+import {useEffect,useState} from 'react'
+import CoverStubView from './CoverStubView'
+const{ debug} = useDebug('containers/Cover/CoverDefault')
 type CoverDefaultProps = {
     height:     number
     onSelect?: (cover:CoverStub) => any

@@ -1,9 +1,10 @@
 import React from "react"
-import { CreatorStub, PostStub, ShareStub, UserStub } from "prisma/prismaContext"
+import { CreatorStub, PostStub, ShareStub, UserStub, UserTypes } from "prisma/prismaContext"
 import { timeDifference } from "utils/helpers"
 import Link from "next/link"
 import UserAvatar from "components/ui/avatar/userAvatar"
 import UserAvatarList from "components/ui/avatar/userAvatarList"
+import {GetUserType} from "utils/helpers/user"
 
 type ShareHeaderProps = {
   share:      ShareStub
@@ -47,6 +48,7 @@ const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
     // event ? event.creator : 
     item.creator
     
+  const originalUserType = GetUserType(originalAuthor)
   
   const originalAuthors:UserStub[] = [] 
   // TODO: get authors for books or characters
@@ -57,7 +59,7 @@ const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
   return (
     <div className="pb-2">
       <div className="flex space-x-2 p-2">
-        <UserAvatar user={item.creator as UserStub} sz="sm" />
+        <UserAvatar user={item.creator as UserStub} sz="sm" userType={GetUserType(item.creator)} />
         <div>Shared {timeDifference(item.updatedAt)}</div>
           <span className="text-xs ml-4">{item.id}</span>
       </div>
@@ -65,7 +67,7 @@ const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
       <div className="p-2 bg-base-300">
         <div className="flex space-x-2 py-2">
           {originalAuthors && originalAuthors.length > 0 && <UserAvatarList users={originalAuthors} sz="md" /> }
-          {originalAuthor && <UserAvatar user={originalAuthor} sz="md" /> } 
+          {originalAuthor && <UserAvatar user={originalAuthor} userType={originalUserType} sz="md" /> } 
 
           <Link href={link} className="text-primary underline">
             <span>Posted {timeDifference(sharedTime)}</span>

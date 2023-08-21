@@ -9,6 +9,7 @@ type AvatarPillProps = {
   direction?: 'left'|'right'
   sz?:        SizeProps
   variant?:   AvatarVariants[]
+  className?: string
 }
 
 const AvatarPill = ({
@@ -16,9 +17,10 @@ const AvatarPill = ({
   sz = 'md',
   variant = ['no-profile', 'no-link'],
   direction = 'right',
+  className
 }: AvatarPillProps) => {
   return (
-    <div className="flex flex-row bg-base-200 rounded-full">
+    <div className={`flex flex-row bg-base-200 rounded-full max-w-fit ${className}`}>
       {direction === 'left' && (
         <IconButton sx={{ p: 0 }}>
           <UserAvatar user={user} variant={variant} sz={sz} />

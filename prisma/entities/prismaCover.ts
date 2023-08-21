@@ -11,7 +11,7 @@ import {
   PrismaShare,
   Share,
 } from 'prisma/prismaContext'
-const { debug, info, fileMethod } = useDebug('entities/prismaCover', 'DEBUG')
+const { debug, info, fileMethod } = useDebug('entities/prismaCover')
 
 const detail = async (id: string): Promise<CoverDetail | null> =>
   (await prisma.cover.findUnique({ where: { id } })) as unknown as CoverDetail

@@ -9,10 +9,12 @@ import {
   EditorStubInclude,
   GalleryStub,
   MembershipStubSelect,
+  Notif,
   ReaderStub,
   ReaderStubInclude,
   UserStub,
 } from 'prisma/prismaContext'
+import {now} from 'utils/helpers'
 
 export type CyfrUser = UserStub & {
   agent?: AgentStub // user is an agent
@@ -20,11 +22,13 @@ export type CyfrUser = UserStub & {
   author?: AuthorStub
   editor?: EditorStub // user is an editor
   reader?: ReaderStub // user is a reader
-  galleries: GalleryStub[]
+  notifs:  Notif[]
   _count: {
     posts: number
     follower: number
     following: number
+    books: number
+    galleries: number
   }
 }
 
@@ -33,320 +37,409 @@ export type CyfrUser = UserStub & {
  * @prop AuthorStub {@link AuthorStubInclude}
  * @prop AgentStub {@link AgentStubInclude}
  */
-export const CyfrUserInclude = { include: {
-
-  _count: {
-    select: {
-      posts: true,
-      follower: true,
-      following: true,
-    },
-  },
-
-  agent: {
-    include: {
-      user: {
-        select: {
-          name: true,
-          id: true,
-          slug: true,
-          image: true,
-        },
-      },
-      publisher: true,
-      _count: {
-        select: {
-          authors: true,
-          books: true,
-          likes: true,
-          reviews: true,
-        },
-      },
-    },
-  },
-
-  artist: { include: {
-    user: {
-      select: {
-        name: true,
-        id: true,
-        slug: true,
-        image: true,
-      },
-    },
-    books: {
-      take: 5,
-    },
-    galleries: {
-      take: 5,
-    },
-    reviews: true,
-    covers: {
-      take: 5,
-    },
+export const CyfrUserInclude = {
+  include: {
     _count: {
       select: {
+        posts: true,
+        follower: true,
+        following: true,
         books: true,
-        galleries: true,
-        covers: true,
-        reviews: true
+        galleries: true
+      },
+    },
+
+    notifs: {
+      where: {
+        visible: true,
+        seen: false,
+        expiresAt: {
+          lte: now().toISOString()
+        }
       }
     },
-  }},
 
-  author: {
-    include: {
-      user: {
-        select: {
-          name: true,
-          id: true,
-          slug: true,
-          image: true,
-        },
-      },
-      books: {
-        include: {
-          agent: true, // AgentStubInclude, // No stubs in stubs!
-          authors: true, // AuthorStubInclude,
-          artists: true, // ArtistStubInclude,
-          publisher: true,
-          genre: true,
-          gallery: true, // GalleryStubInclude,
-          cover: true, //
-          _count: {
-            select: {
-              chapters: true,
-              characters: true,
-              likes: true,
-              shares: true,
-              follows: true,
-              readers: true,
-              reviews: true,
-            },
-          },
-        },
-        take: 5,
-      },
-      reviews: {
-        take: 5,
-      },
-      _count: {
-        select: {
-          books: true,
-          reviews: true,
-        },
-      },
-    },
-  },
-
-  editor: {
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          slug: true,
-          membership: {
-            select: {
-              id: true,
-              expiresAt: true,
-              type: {
-                select: {
-                  id: true,
-                  name: true,
-                  level: true,
+    agent: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
                 },
               },
             },
           },
         },
-      },
-      books: {
-        include: {
-          agent: true, // AgentStubInclude, // No stubs in stubs!
-          // editors: true, // EditorStubInclude,
-          artists: true, // ArtistStubInclude,
-          publisher: true,
-          genre: true,
-          gallery: true, // GalleryStubInclude,
-          cover: true, //
-          // {
-          //   include: {
-          //     image: true,
-          //     artists: true
-          //   }
-          // },
-          _count: {
-            select: {
-              chapters: true,
-              characters: true,
-              likes: true,
-              shares: true,
-              follows: true,
-              readers: true,
-              reviews: true,
-            },
+        publisher: true,
+        _count: {
+          select: {
+            authors: true,
+            books: true,
+            likes: true,
+            reviews: true,
           },
-        },
-        take: 5,
-      },
-      reviews: {
-        take: 5,
-      },
-      _count: {
-        select: {
-          books: true,
-          reviews: true,
         },
       },
     },
-  },
 
-  reader: {
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          slug: true,
-          membership: {
-            select: {
-              id: true,
-              expiresAt: true,
-              type: {
-                select: {
-                  id: true,
-                  name: true,
-                  level: true,
+    artist: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
                 },
               },
             },
           },
         },
-      },
-      books: {
-        include: {
-          agent: true, // AgentStubInclude, // No stubs in stubs!
-          readers: true, // ReaderStubInclude,
-          artists: true, // ArtistStubInclude,
-          publisher: true,
-          genre: true,
-          gallery: true, // GalleryStubInclude,
-          cover: true, //
-          // {
-          //   include: {
-          //     image: true,
-          //     artists: true
-          //   }
-          // },
-          _count: {
-            select: {
-              chapters: true,
-              characters: true,
-              likes: true,
-              shares: true,
-              follows: true,
-              readers: true,
-              reviews: true,
-            },
-          },
+        books: {
+          take: 5,
         },
-        take: 5,
-      },
-      reviews: {
-        take: 5,
-      },
-      _count: {
-        select: {
-          books: true,
-          reviews: true,
-        },
-      },
-    },
-  },
-
-  galleries: {
-    include: {
-      creator: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          slug: true,
-          membership: {
-            select: {
-              id: true,
-              expiresAt: true,
-              type: {
-                select: {
-                  id: true,
-                  name: true,
-                  level: true,
-                },
-              },
-            },
-          },
-        },
-      },
-      images: {
-        include: {
-          _count: {
-            select: {
-              likes: true,
-              shares: true,
-            },
-          },
-        },
-      },
-      commentThread: {
-        include: {
-          comments: {
-            include: {
-              creator: {
-                select: {
-                  id: true,
-                  name: true,
-                  image: true,
-                  slug: true,
-                  membership: {
-                    select: {
-                      id: true,
-                      expiresAt: true,
-                      type: {
-                        select: {
-                          id: true,
-                          name: true,
-                          level: true,
+        galleries: {include: {
+            likes: {
+              include: {
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
                         },
                       },
                     },
                   },
                 },
               },
+              take: 10,
             },
-            take: 10,
+            shares: {
+              include: {
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              take: 10,
+            },
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            images: {
+              include: {
+              _count: {
+                select: {
+                  likes: true,
+                  shares: true
+                }
+              }}
+            },
+            commentThread: {
+              include: {
+                comments: {
+                  include: {
+                    creator: true
+                  },
+                  take: 10
+                },
+                _count: {
+                  select: {
+                    comments: true
+                  }
+                }
+              }
+            },
+            permission: true,
+            _count: {
+              select: {
+                likes: true,
+                shares: true
+              }
+            },
           },
-          _count: {
-            select: {
-              comments: true,
-            },
+          take: 5,
+        },
+        reviews: true,
+        covers: {
+          take: 5,
+        },
+        _count: {
+          select: {
+            books: true,
+            galleries: true,
+            covers: true,
+            reviews: true,
           },
         },
       },
-      permission: true,
-      _count: {
-        select: {
-          likes: true,
-          shares: true,
+    },
+
+    author: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        books: {
+          include: {
+            agent: true, // AgentStubInclude, // No stubs in stubs!
+            authors: true, // AuthorStubInclude,
+            artists: true, // ArtistStubInclude,
+            publisher: true,
+            genre: true,
+            gallery: true, // GalleryStubInclude,
+            cover: true, //
+            _count: {
+              select: {
+                chapters: true,
+                characters: true,
+                likes: true,
+                shares: true,
+                follows: true,
+                readers: true,
+                reviews: true,
+              },
+            },
+          },
+          take: 5,
+        },
+        reviews: {
+          take: 5,
+        },
+        _count: {
+          select: {
+            books: true,
+            reviews: true,
+          },
         },
       },
     },
-  },
-  membership: {
-    include: {
-      type: true,
+
+    editor: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        books: {
+          include: {
+            agent: true, // AgentStubInclude, // No stubs in stubs!
+            // editors: true, // EditorStubInclude,
+            artists: true, // ArtistStubInclude,
+            publisher: true,
+            genre: true,
+            gallery: true, // GalleryStubInclude,
+            cover: true, //
+            // {
+            //   include: {
+            //     image: true,
+            //     artists: true
+            //   }
+            // },
+            _count: {
+              select: {
+                chapters: true,
+                characters: true,
+                likes: true,
+                shares: true,
+                follows: true,
+                readers: true,
+                reviews: true,
+              },
+            },
+          },
+          take: 5,
+        },
+        reviews: {
+          take: 5,
+        },
+        _count: {
+          select: {
+            books: true,
+            reviews: true,
+          },
+        },
+      },
     },
-  },
+
+    reader: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        books: {
+          include: {
+            agent: true, // AgentStubInclude, // No stubs in stubs!
+            readers: true, // ReaderStubInclude,
+            artists: true, // ArtistStubInclude,
+            publisher: true,
+            genre: true,
+            gallery: true, // GalleryStubInclude,
+            cover: true, //
+            // {
+            //   include: {
+            //     image: true,
+            //     artists: true
+            //   }
+            // },
+            _count: {
+              select: {
+                chapters: true,
+                characters: true,
+                likes: true,
+                shares: true,
+                follows: true,
+                readers: true,
+                reviews: true,
+              },
+            },
+          },
+          take: 5,
+        },
+        reviews: {
+          take: 5,
+        },
+        _count: {
+          select: {
+            books: true,
+            reviews: true,
+          },
+        },
+      },
+    },
+
+    membership: {
+      select: {
+        id: true,
+        expiresAt: true,
+        type: {
+          select: {
+            id: true,
+            name: true,
+            level: true,
+          },
+        },
+      },
+    },
 }}

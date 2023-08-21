@@ -154,7 +154,6 @@ export type PostStub = Post & {
   share?: ShareStub
 }
 
-
 export const PostStubInclude = {
   include: {
     creator: PostCreatorSelect,
@@ -459,7 +458,61 @@ export const PostStubInclude = {
         },
       },
     },
-    images: PostImageInclude,
+    images: {include: {
+      creator: { select: {
+        id: true,
+        name: true,
+        image: true,
+        slug: true,
+        membership: { select: {
+            id: true,
+            expiresAt: true,
+            type: {select: {
+                id: true,
+                name: true,
+                level: true,
+            }},
+        }},
+      }},
+      _count: { select: {
+        likes: true,
+        shares: true
+      }},
+      likes: { include: {
+        creator: { select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: { select: {
+              id: true,
+              expiresAt: true,
+              type: {select: {
+                  id: true,
+                  name: true,
+                  level: true,
+              }},
+          }},
+        }}
+      }},
+      shares: { include: {
+        creator: { select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: { select: {
+              id: true,
+              expiresAt: true,
+              type: {select: {
+                  id: true,
+                  name: true,
+                  level: true,
+              }},
+          }},
+        }}
+      }}
+    }},
     commentThread: {
       include: {
         comments: {

@@ -54,9 +54,6 @@ const ArticleFooter = ({article, invalidate}:{article: ArticleStub, invalidate?:
 
   return (
     <div className="flex flex-row justify-around py-4">
-      <Tooltip title="Article">
-        <MuiArticleIcon />
-      </Tooltip>
       <div>
         <ShrinkableIconButton
           icon={HeartIcon}

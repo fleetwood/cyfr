@@ -337,7 +337,7 @@ model Address {
 model Notif {
   id        String    @id @default(cuid())
   createdAt DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime  @default(now()) @db.Timestamptz(3)
+updatedAt DateTime  @default(now()) @db.Timestamptz(3)
   expiresAt DateTime? @db.Timestamptz(3)
   visible   Boolean   @default(true)
   seen      Boolean   @default(false)

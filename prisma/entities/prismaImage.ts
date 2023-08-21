@@ -1,7 +1,6 @@
 import useDebug from "hooks/useDebug"
-import { Image, ImageDeleteProps, ImageEngageProps, ImageUpsertProps, Like, Post, PrismaLike, PrismaShare, Share } from "prisma/prismaContext"
-import { NotImplemented } from "utils/api"
-const {debug, info, fileMethod} = useDebug('entities/prismaImage', 'DEBUG')
+import {Image,ImageDeleteProps,ImageEngageProps,ImageUpsertProps,Like,Post,PrismaLike,PrismaShare,Share} from "prisma/prismaContext"
+const {debug, info, fileMethod} = useDebug('entities/prismaImage')
 
 const detail = async (id: string): Promise<Image | null> => await prisma.image.findUnique({where: {id}})
 const details = async (): Promise<Image[]> => await prisma.image.findMany()

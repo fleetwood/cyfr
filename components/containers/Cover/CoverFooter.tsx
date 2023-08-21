@@ -68,8 +68,7 @@ const CoverFooter = ({ cover, onUpdate, selectable = false, onSelect }: CoverFoo
   }
 
   return (cover && 
-    <div className="flex flex-row justify-around">
-      <div>{PhotoIcon}</div>
+    <div className="flex flex-row justify-around py-4">
       <div className="font-semibold uppercase">
         <ShrinkableIconButton
           icon={HeartIcon}

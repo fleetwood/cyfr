@@ -63,7 +63,6 @@ import PermissionsExplanation from '../Permission/PermissionsExplanation'
 
 const { debug, info, jsonDialog, jsonBlock } = useDebug(
   'components/containers/Books/CreateBook',
-  'DEBUG'
 )
 
 const CreateBook = () => {

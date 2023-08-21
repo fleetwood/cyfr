@@ -3,7 +3,7 @@ import useDebug from 'hooks/useDebug'
 import {FollowerTypes,Role,RoleString,UserTypes} from 'prisma/prismaContext'
 import React,{ReactNode,useEffect,useState} from 'react'
 
-const {debug, level}= useDebug('EditRole', 'DEBUG')
+const {debug, level}= useDebug('EditRole')
 
 type GridItemProps = {
     role:           UserTypes|FollowerTypes|string

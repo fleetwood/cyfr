@@ -1,23 +1,25 @@
 import useDebug from 'hooks/useDebug'
-import {UserInfoType} from 'prisma/prismaContext'
+import {CreatorStub, UserInfoType, UserStub, UserTypes} from 'prisma/prismaContext'
 import {KeyVal} from 'types/props'
 import {capFirstLetter} from './generic'
 
-const { debug } = useDebug('utils/helpers/user', )
+const { debug } = useDebug('utils/helpers/user')
 
-
-export const UserInfoValues = (result: UserInfoType) =>
-  [
+export const UserInfoValues = (result: UserInfoType) =>{
+  debug('UserInfoValues', {result})
+  return [
     'followers',
     'fans',
     'following',
     'stans',
     'likes',
+
     'reviews',
     'reads',
     'books',
     'covers',
     'galleries',
+    
     'agent',
     'publisher',
     'authors',
@@ -29,4 +31,12 @@ export const UserInfoValues = (result: UserInfoType) =>
         value: result[info] ?? null,
       } as KeyVal
     })
-    .filter((v) => v.value !== null)
+    .filter((v) => v.value !== null)}
+
+export const GetUserType = (user:UserStub|CreatorStub):UserTypes => {
+  try {
+    return user.membership.type.name as UserTypes
+  } catch (error) {
+    return 'Reader'
+  }
+}

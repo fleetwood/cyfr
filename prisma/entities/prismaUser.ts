@@ -38,7 +38,7 @@ import {
   ResponseError
 } from "types/response"
 import {dbDateFormat, dedupe, toSlug} from "utils/helpers"
-const { fileMethod, debug, info, err } = useDebug("entities/prismaUser", 'DEBUG')
+const { fileMethod, debug, info, err } = useDebug("entities/prismaUser")
 
 type AllPostQueryParams = {
   limit?: Number
@@ -119,7 +119,7 @@ const share = async (props:{userId:string, creatorId:string}):Promise<Share> => 
 
 
 const userInfo = async <T = UserInfoType>(id:string, userType?:UserTypes): Promise<T> => {
-  debug('userInfo', {id, userType})
+  // debug('userInfo', {id, userType})
   try {
     let select = GetInfoSelector(userType)
     const result = await prisma.user.findUnique({
@@ -128,7 +128,7 @@ const userInfo = async <T = UserInfoType>(id:string, userType?:UserTypes): Promi
     })
 
     if (result) {
-      // debug('userInfo result', result)
+      debug('userInfo result', {userType, select})
       return MapInfo<T>(result, userType)
     }
     
