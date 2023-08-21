@@ -1,10 +1,9 @@
-import {Button, Grid} from '@mui/material'
+import {Grid} from '@mui/material'
 import {Article, ArticleType} from '@prisma/client'
 import ArticleFeedItem from 'components/containers/Articles/ArticleFeedItem'
 import ArticleLayout from 'components/layouts/ArticleLayout'
 import useDebug from 'hooks/useDebug'
 import useUrlHash from 'hooks/useUrlHash'
-import {useRouter} from 'next/router'
 import {ArticleStub} from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import {useEffect, useState} from 'react'
@@ -38,7 +37,7 @@ const ArticlePage = (_props: any) => {
   }, [tag])
 
   return (
-    <ArticleLayout hash={tag} navMenu={true}>
+    <ArticleLayout hash={tag}>
       <Grid container columns={{ xs: 2, md: 4}} columnGap={2} rowGap={2}>
       {articles.map((a:ArticleStub) => (
         <ArticleFeedItem article={a} invalidate={updateArticles} />

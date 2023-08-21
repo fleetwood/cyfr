@@ -12,22 +12,24 @@ import SecondaryNavBar from 'components/containers/Navbar/SecondaryNavBar'
 import useUrlHash from 'hooks/useUrlHash'
 
 type ArticleLayoutProps = {
-  children?: ReactNode,
+  children?: ReactNode
   hash?:     string
+  navMenu?:  boolean | false
 }
 
 const ArticleLayout = ({
   children,
+  navMenu,
   ...props
 }: ArticleLayoutProps) => {
   const { toasts } = useToast()
   const articleRef = useRef<HTMLElement>(null)
 
-  const pages:NavPage[] = [
-    { label: 'All', url: '#all', icon: <MuiArticleIcon /> },
-    { label: 'News', url: '#news', icon: <MuiNewspaperIcon /> },
-    { label: 'Reviews', url: '#reviews', icon: <MuiReviewsIcon /> },
-    { label: 'Learn', url: '#learn', icon: <MuiSchoolIcon /> },
+  const pages: NavPage[] = [
+    { label: 'All', url: `/articles#all`, icon: <MuiArticleIcon /> },
+    { label: 'News', url: `/articles#news`, icon: <MuiNewspaperIcon /> },
+    { label: 'Reviews', url: `/articles#reviews`, icon: <MuiReviewsIcon /> },
+    { label: 'Learn', url: `/articles#learn`, icon: <MuiSchoolIcon /> },
   ]
 
   const selected = pages.findIndex(p => p.label.toLowerCase() === props.hash)
@@ -41,7 +43,9 @@ const ArticleLayout = ({
         <Navbar variant='secondary' className="min-w-full transition-all duration-200 ease-out" />
         <Toasts />
         <div className="min-h-full">
-          <SecondaryNavBar pages={pages} selected={selected} variant='primary' />
+          {navMenu &&
+            <SecondaryNavBar pages={pages} selected={selected} variant='primary' />
+          }
           <div className='p-4'>
             {children}
           </div>

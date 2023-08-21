@@ -1,4 +1,12 @@
-import {Article,CommentThread,CreatorStub,LikeStub,Review,ShareStub} from "prisma/prismaContext";
+import {
+  Article,
+  ArticleType,
+  CommentThread,
+  CreatorStub,
+  LikeStub,
+  Review,
+  ShareStub,
+} from 'prisma/prismaContext'
 
 export type ArticleQueryProps = {
   articleId?: string
@@ -17,12 +25,12 @@ export type ArticleCommentProps = {
 }
 
 export type ArticleStub = Article & {
-  creator:        CreatorStub
-  shares:         ShareStub[]
-  likes:          LikeStub[]
-  review?:        Review
+  creator: CreatorStub
+  shares: ShareStub[]
+  likes: LikeStub[]
+  review?: Review
   commentThread?: CommentThread & {
-    comments:     (Comment & {
+    comments: (Comment & {
       creator: CreatorStub
     })[]
     _count: {
@@ -30,7 +38,7 @@ export type ArticleStub = Article & {
     }
   }
   _count: {
-    likes:  number
+    likes: number
     shares: number
   }
 }
@@ -93,7 +101,7 @@ export const ArticleStubSelect = {
       },
     },
     take: 10,
-    skip: 0
+    skip: 0,
   },
   likes: {
     select: {
@@ -120,7 +128,7 @@ export const ArticleStubSelect = {
       },
     },
     take: 10,
-    skip: 0
+    skip: 0,
   },
   review: {
     include: {
@@ -170,7 +178,7 @@ export const ArticleStubSelect = {
           },
         },
         take: 10,
-        skip: 0
+        skip: 0,
       },
       likes: {
         select: {
@@ -197,7 +205,7 @@ export const ArticleStubSelect = {
           },
         },
         take: 10,
-        skip: 0
+        skip: 0,
       },
     },
   },
@@ -205,7 +213,7 @@ export const ArticleStubSelect = {
     include: {
       comments: {
         take: 10,
-        skip: 0
+        skip: 0,
       },
       _count: {
         select: {
@@ -221,7 +229,6 @@ export const ArticleStubSelect = {
     },
   },
 }
-
 
 export type ArticleDetail = Article & {
   creator: CreatorStub

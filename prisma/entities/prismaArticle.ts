@@ -43,6 +43,23 @@ const detailById = async (articleId:string):Promise<ArticleDetail> => {
   }
 }
 
+
+const detailBySlug = async (slug: string): Promise<ArticleDetail> => {
+  debug('detailBySlug', {slug})
+  try {
+    return (await prisma.article.findUnique({
+      //TODO: blocked users
+      where: {
+        slug,
+      },
+      include: ArticleDetailInclude,
+    })) as unknown as ArticleDetail
+  } catch (error) {
+    info('prismaArticle.feed ERROR', { error })
+    throw error
+  }
+}
+
 const likeArticle = async (props: ArticleEngageProps): Promise<Like> => PrismaLike.likeArticle(props)
 
 /**
@@ -105,4 +122,4 @@ const commentOnArticle = async (props: ArticleCommentProps): Promise<ArticleDeta
   }
 }
 
-export const PrismaArticle = { feed, commentOnArticle, likeArticle, shareArticle: share }
+export const PrismaArticle = { feed, detailById, detailBySlug, commentOnArticle, likeArticle, shareArticle: share }

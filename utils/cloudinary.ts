@@ -44,14 +44,15 @@ const cloudUrl = (url:string, mod:string) => {
  * @param height (optional) number Will maintain aspect ration at given width if no height is set
  * @param face (optional) boolean 
  */
-type cloudImageProps = {
+export type CloudImageProps = {
     url: string,
     width?: number
     height?: number | null
     face?: boolean | false
+    banner?: boolean | false
 }
 
-type getImagePropsType = cloudImageProps & {
+type getImagePropsType = CloudImageProps & {
     base: string
 }
 
@@ -66,29 +67,31 @@ const getImageProps = (base:string, {...props}) => {
 
 const defaultCover = 'https://res.cloudinary.com/drckf8gfc/image/upload/v1687710860/cyfr/cyfr-default-cover.png'
 
+const banner = ({ url, ...props }: CloudImageProps) => cloudUrl(url, getImageProps('t_blog_banner', props))
+
 /**
  * Create a thumbnail of the uploaded image
  * @param url string 
- * @param ...props {@link cloudImageProps}
+ * @param ...props {@link CloudImageProps}
  * @returns string (url)
  */
-const thumb = ({url, ...props}:cloudImageProps) => cloudUrl(url, getImageProps('c_thumb', props))
+const thumb = ({url, ...props}:CloudImageProps) => cloudUrl(url, getImageProps('c_thumb', props))
 
 /**
  * Exact width and height without distortion
  * @param url string 
- * @param ...props {@link cloudImageProps}
+ * @param ...props {@link CloudImageProps}
  * @returns string (url)
  */
-const resize = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps(`c_fill`, props))
+const resize = ({url, ...props}:CloudImageProps) =>  cloudUrl(url, getImageProps(`c_fill`, props))
 
 /**
  * Set to width and/or height with cropping
  * @param url string 
- * @param ...props {@link cloudImageProps}
+ * @param ...props {@link CloudImageProps}
  * @returns string (url)
  */
-const scale = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps('c_scale', props))
+const scale = ({url, ...props}:CloudImageProps) =>  cloudUrl(url, getImageProps('c_scale', props))
 
 /**
  * Create a thumbnail of the uploaded image
@@ -135,4 +138,4 @@ const upload = ({file, onProgress, onComplete}:UploadingProps) => new Promise((r
     xhr.send(formData)
 })
 
-export const cloudinary = {upload, isCloudinary, avatar, thumb, resize, scale, defaultCover}
+export const cloudinary = {upload, isCloudinary, avatar, banner, thumb, resize, scale, defaultCover}

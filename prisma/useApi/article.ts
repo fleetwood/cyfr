@@ -1,5 +1,6 @@
 import {
   Article,
+  ArticleDetail,
   ArticleEngageProps,
   ArticleQueryProps,
   ArticleStub,
@@ -7,6 +8,7 @@ import {
 } from 'prisma/prismaContext'
 import useDebug from 'hooks/useDebug'
 import { NotImplemented, getApi, sendApi } from 'utils/api'
+import useRocketQuery from 'hooks/useRocketQuery'
 
 const { debug, fileMethod } = useDebug('hooks/useArticleApi')
 const noArticleDetail = (method: string) => {
@@ -15,10 +17,12 @@ const noArticleDetail = (method: string) => {
 }
 
 const useArticleApi = () => {
-  const query = ({ articleId, articleSlug }: ArticleQueryProps) =>
-    articleId ? detailById(articleId) : detailBySlug(articleSlug!)
+  const query = ({ slug }:{slug:string}) => useRocketQuery<ArticleDetail>({
+    name: [`article-${slug}`, { type: 'article' }],
+    url: `/article/${slug}/detail`,
+  })
 
-  const detailById = (id: string): Article => {
+  const detailById = (id: string): ArticleDetail => {
     throw NotImplemented()
   }
   const detailBySlug = (slug: string): Article => {

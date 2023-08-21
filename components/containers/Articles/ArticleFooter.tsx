@@ -1,5 +1,6 @@
 import {Tooltip} from '@mui/material'
 import {useToast} from 'components/context/ToastContextProvider'
+import UserAvatarList from 'components/ui/avatar/userAvatarList'
 import {MuiArticleIcon,HeartIcon,ShareIcon} from 'components/ui/icons'
 import ShrinkableIconButton from 'components/ui/shrinkableIconButton'
 import useDebug from 'hooks/useDebug'
@@ -10,7 +11,7 @@ import {abbrNum} from 'utils/helpers'
 
 const { debug } = useDebug('containers/Articles/ArticleFeedItem')
 
-const ArticleFooter = ({article, invalidate}:{article: ArticleStub, invalidate?: () => void}) => {
+const ArticleFooter = ({article, invalidate, avatars}:{article: ArticleStub, avatars?: boolean|false, invalidate?: () => void}) => {
   const { cyfrUser, isLoading } = useApi.cyfrUser()
   const { like, share, comment } = useApi.article()
   const { notify, notifyLoginRequired } = useToast()
@@ -30,7 +31,7 @@ const ArticleFooter = ({article, invalidate}:{article: ArticleStub, invalidate?:
     const liked = await like({ articleId: article.id, creatorId: cyfrUser!.id })
     if (liked) {
       notify('You liked this article!!!!!!!!!!!', 'success')
-      invalidate && invalidate()
+      if (invalidate) invalidate()
       return
     }
     notify("Well that didn't work...", 'warning')
@@ -46,7 +47,7 @@ const ArticleFooter = ({article, invalidate}:{article: ArticleStub, invalidate?:
     })
     if (shared) {
       notify('You shared this articles', 'success')
-      invalidate && invalidate()
+      if (invalidate) invalidate()
       return
     }
     notify("Well that didn't work...", 'warning')
@@ -63,14 +64,13 @@ const ArticleFooter = ({article, invalidate}:{article: ArticleStub, invalidate?:
           label={`Like (${abbrNum(article._count.likes)})`}
           onClick={() => handleLike()}
         />
-        {/* @ts-ignore */}
-        {/* {article.likes && (
-              <UserAvatarList
-                users={article.likes.map((like) => like.creator)}
-                count={article.likes.length}
-                sz="sm"
-              />
-            )} */}
+        {avatars && article.likes && 
+            <UserAvatarList
+              users={article.likes.map((like) => like.creator)}
+              count={article.likes.length}
+              sz="sm"
+            />
+        }
       </div>
 
       <div>
@@ -82,13 +82,13 @@ const ArticleFooter = ({article, invalidate}:{article: ArticleStub, invalidate?:
           label={`Shares (${abbrNum(article._count.shares)})`}
           onClick={() => handleShare()}
         />
-        {/* {article.shares && (
-              <UserAvatarList
-                users={article.shares.map((share) => share.creator)}
-                sz="sm"
-                count={article.shares.length}
-              />
-            )} */}
+        {avatars && article.shares && 
+          <UserAvatarList
+            users={article.shares.map((share) => share.creator)}
+            sz="sm"
+            count={article.shares.length}
+          />
+        }
       </div>
 
       <div>
