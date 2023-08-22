@@ -1,2 +1,0 @@
-insert into "BookCategory"(id,"createdAt","updatedAt",title,description) values('clfw1q3sl0006buxb83fjasi38','2023-04-11 13:43:03','2023-04-11 13:43:05','Political','Dealing with politics or governments.');
-insert into "BookCategory"(id,"createdAt","updatedAt",title,description) values('clfw1q3sl0006b28sjfiejs821','2023-04-11 13:44:04','2023-04-11 13:44:06','Socio-Political','Dealing with the politics of social issues and concerns.');

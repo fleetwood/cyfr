@@ -1,1 +1,0 @@
-insert into "ChatRoom"(id,"createdAt","updatedAt",visible,party) values('clgeieo5s000nbupr3lmvugig','2023-04-13 02:36:47.4','2023-04-13 02:36:47.4','true','clgcwjzck0000bum67w3vb26f-clgehinjz0002bupr6d50tyil');
