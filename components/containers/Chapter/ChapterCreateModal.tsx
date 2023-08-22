@@ -1,16 +1,18 @@
-import React, { FormEvent, useRef, useState } from 'react'
-import useDebug from '../../../hooks/useDebug'
-import { useCyfrUserContext } from '../../context/CyfrUserProvider'
-import { useToast } from '../../context/ToastContextProvider'
-import { LoggedIn } from '../../ui/toasty'
-import Spinner from '../../ui/spinner'
-import { TailwindInput } from '../../forms'
-import EZButton from '../../ui/ezButton'
-import { BookApi, Chapter } from '../../../prisma/prismaContext'
-const {debug} = useDebug("components/containers/Chapter/CreateChapterModal")
+import { useCyfrUserContext } from 'components/context/CyfrUserProvider'
+import { useToast } from 'components/context/ToastContextProvider'
+import { TailwindInput } from 'components/forms'
+import EZButton from 'components/ui/ezButton'
+import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from 'components/ui/modalCheckbox'
+import Spinner from 'components/ui/spinner'
+import { LoggedIn } from 'components/ui/toasty'
+import useDebug from 'hooks/useDebug'
+import { BookDetail, Chapter, ChapterListItem } from 'prisma/prismaContext'
+import useApi from 'prisma/useApi'
+import { FormEvent, useRef, useState } from 'react'
+
+const {debug} = useDebug("components/containers/Chapter/CreateChapterModal", )
 
 const createChapterModal = 'createChapterModal'
-
 
 type ChapterModalButtonVariant = {
   variant?: 'button'|'plus'
@@ -18,25 +20,27 @@ type ChapterModalButtonVariant = {
 export const OpenChapterModalButton = ({variant='button'}:ChapterModalButtonVariant) => (
   variant === 'button' 
   ?
-    <label htmlFor={createChapterModal} className="btn btn-info space-x-2">
+    <ModalOpenButton id={createChapterModal} className="btn btn-info space-x-2">
       <span className="text-info-content">New Chapter</span>
-    </label>
+    </ModalOpenButton>
   :
-    <label htmlFor={createChapterModal} className="btn btn-sm btn-info btn-circle">+</label>
+    <ModalOpenButton id={createChapterModal} className="btn btn-sm btn-info btn-circle">+</ModalOpenButton>
 )
 
 type CreateChapterModalType = {
-  forBook: BookApi
+  bookDetail:   BookDetail
+  onSave?:      () => void
 }
 
-const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
-  const [cyfrUser, isLoading, error] = useCyfrUserContext()
-  const {bookDetail, addChapter} = forBook
+const CreateChapterModal = ({bookDetail, onSave}:CreateChapterModalType) => {
+  const {cyfrUser, isLoading, error} = useApi.cyfrUser()
   const { notify } = useToast()
+  const {addChapter} = useApi.book()
+
   const [valid, setIsValid] = useState<boolean>(false)
   const container = useRef<HTMLDivElement>(null)
 
-  const nextOrder = forBook.chapters.length+1
+  const nextOrder = (bookDetail?.chapters??[]).length+1
   const [chapterTitle, setChapterTitle] = useState<string | null>(null)
   const [chapterOrder, setChapterOrder] = useState<number>(nextOrder)
 
@@ -46,10 +50,12 @@ const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
       debug(`handleSubmit: sth is disabled....`, { cyfrUser, chapterTitle })
       return
     }
-    const result = await addChapter(chapterTitle!, chapterOrder)
+    debug('handleSubmit', {book: bookDetail.id, chapterTitle, chapterOrder})
+    const result = await addChapter(bookDetail.id, chapterTitle!, chapterOrder)
     if (result) {
       notify(`${chapterTitle} was added ${bookDetail?.title}!`)
       closeModal()
+      if (onSave) onSave()
     } else {
       notify('Hm, that dint work', 'warning')
     }
@@ -68,10 +74,10 @@ const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
 
   return (
     <>
-    <input type="checkbox" id={createChapterModal} className="modal-toggle" />
+    <ModalCheckbox id={createChapterModal} />
     <div ref={container} id='createChapterModalContainer' className="modal bg-opacity-0 modal-bottom sm:modal-middle">
       <div className="modal-box shadow-none overflow-visible scrollbar-hide">
-        <label htmlFor={createChapterModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+        <ModalCloseButton id={createChapterModal} />
         <div className="mb-3 rounded-xl w-full bg-primary text-primary-content  md:bg-blend-hard-light md:bg-opacity-80">
           {isLoading && <Spinner />}
           {!isLoading && !cyfrUser &&
@@ -85,7 +91,7 @@ const CreateChapterModal = ({forBook}:CreateChapterModalType) => {
                   <span className='text-primary font-bold'>Order</span>
                 </label>
                 <div className='flex'>
-                  {forBook.chapters.map((c:Chapter,i:number) => (
+                  {(bookDetail?.chapters??[]).map((c:ChapterListItem,i:number) => (
                   <div className={`btn btn-sm btn-circle ${i+1===chapterOrder ? 'btn-primary' :''}`} onClick={() => setChapterOrder(i+1)} key={c.id}>{i+1}</div>
                   ))}
                   <div className={`btn btn-sm btn-circle ${chapterOrder === nextOrder ? 'btn-primary' :''}}`} onClick={() => setChapterOrder(nextOrder)}>{nextOrder}</div>

@@ -1,44 +1,90 @@
-import React from 'react'
-import { valToLabel } from '../../../utils/helpers'
-import { HeartIcon, ShareIcon, UserIcon, ReplyIcon, BookIcon, StarIcon, DollarIcon } from '../../ui/icons'
-import { BookDetail, BookStub } from '../../../prisma/prismaContext'
+
+import { ToastNotifyType, useToast } from 'components/context/ToastContextProvider'
+import { BookIcon, DollarIcon, FireIcon, FollowIcon, HeartIcon, ReplyIcon, ShareIcon, StarIcon } from 'components/ui/icons'
+import ShrinkableIconLabel from 'components/ui/shrinkableIconLabel'
+import Spinner from 'components/ui/spinner'
+import { BookDetail, BookEngageProps, BookStub, UserFollow } from 'prisma/prismaContext'
+import useApi from 'prisma/useApi'
+import { abbrNum } from 'utils/helpers'
 
 type BookFooterProps = {
-    book: BookDetail|BookStub
+  bookStub?:    BookStub
+  bookDetail?:  BookDetail
+  onUpdate?:    () => void
 }
 
-const BookFooter = ({book}:BookFooterProps) => {
+const BookFooter = ({bookStub, bookDetail, onUpdate}:BookFooterProps) => {
+  const book = bookDetail ?? bookStub
+  if (!book) return <Spinner size='sm' />
+
+  const { notify, notifyLoginRequired } = useToast()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
+  const {share, follow, like} = useApi.book()
+  const bookId = book.id
+  const engageProps:BookEngageProps|undefined = cyfrUser ? {bookId, creatorId: cyfrUser.id} : undefined
+  const followProps = book && cyfrUser ? {bookId, followerId: cyfrUser.id} : undefined
+  const {likes, shares, follows} = bookDetail?._count ?? {likes: 0, shares: 0, follows: 0}
+  
+  const numLikes = abbrNum(likes)
+  const numShares = abbrNum(shares)
+  const numFollows = abbrNum(follows)
+  // TODO: follows is only taking 10, so this won't be accurate
+  const numFans = abbrNum((bookDetail?.follows??[]).filter((f:UserFollow) => f.isFan === true).length)
+
+  const update = (message:string, type:ToastNotifyType = 'info') => {
+    notify(message,type)
+    onUpdate ?  onUpdate() : {}
+  }
+
+  const onFan = () => onFollow(true)
+
+  const onFollow = async (fan=false) => {
+    if (!followProps) { 
+      notifyLoginRequired()
+      return null
+    }
+    const result = await follow({bookId, followerId: cyfrUser.id, isFan: fan===true})
+    result 
+      ? update(`You are now ${fan === true ? 'stanning' : 'following'} ${book?.title}. Nice!`)
+      : update('Ya that dint work', 'warning')
+  }
+
+  const onShare = async () => {
+    if (!engageProps) {
+      notifyLoginRequired()
+      return null
+    }
+    // the share author, not the book author
+    const result = await share(engageProps)
+    result 
+      ? update(`You shared ${book?.title}.`)
+      : update('Ya that dint work', 'warning')
+  }
+
+  const onLike = async () => {
+    if (!engageProps) {
+      notifyLoginRequired()
+      return null
+    }
+    const result = await like(engageProps)
+    
+    result 
+      ? update(`You liked ${book?.title}.`)
+      : update('Ya that dint work', 'warning')
+  }
+
+
   return (
-    <div className="flex">
-    <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-      <label className="font-semibold mr-2">{HeartIcon}</label>
-      <span className="text-primary">{(book.likes||[]).length}</span>
+    <div className="flex space-x-4">
+      <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label={numLikes} icon={HeartIcon} onClick={onLike} />
+      <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label={numShares} icon={ShareIcon} onClick={onShare} />
+      <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label={numFollows} icon={FollowIcon} onClick={onFollow} />
+      <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label={numFans} icon={FireIcon} onClick={onFan} />
+      <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label='(NI)' icon={ReplyIcon} />
+      <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label='(NI)' icon={BookIcon} />
+      <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label='(NI)' icon={StarIcon} />
+      <ShrinkableIconLabel className='border border-opacity-50 border-primary rounded-lg p-2' labelClassName='text-primary' iconClassName='text-primary' label='(NI)' icon={DollarIcon} />
     </div>
-    <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-      <label className="font-semibold mr-2">{ShareIcon}</label>
-      <span className="text-primary">{(book.shares||[]).length}</span>
-    </div>
-    <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-      <label className="font-semibold mr-2">{UserIcon}</label>
-      <span className="text-primary">{(book.follows||[]).length}</span>
-    </div>
-    <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-      <label className="font-semibold mr-2">{ReplyIcon}</label>
-      <span className="text-primary">(NI)</span>
-    </div>
-    <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-      <label className="font-semibold mr-2">{BookIcon}</label>
-      <span className="text-primary">(NI)</span>
-    </div>
-    <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-      <label className="font-semibold mr-2">{StarIcon}</label>
-      <span className="text-primary">(NI)</span>
-    </div>
-    <div className="flex px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-      <label className="font-semibold mr-2">{DollarIcon}</label>
-      <span className="text-primary">(NI)</span>
-    </div>
-  </div>
   )
 }
 

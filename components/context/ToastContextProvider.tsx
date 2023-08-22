@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useEffect, useState } from "react"
+import { createContext, ReactNode, useContext, useState } from "react"
 import { uuid } from "../../utils/helpers"
 import Toasty from "../ui/toasty"
 
@@ -6,11 +6,15 @@ type ToastProviderProps = {
   children?: ReactNode
 }
 
+export type ToastNotifyType = "info" | "success" | "warning"
+
 type ToastProviderType = {
-  notify:         (message:ReactNode|string, type?: "info" | "success" | "warning") => void
+  notify:         (message:ReactNode|string, type?: ToastNotifyType) => void
   slice:          (key: string) => void
   toasts:         ToastyElement[]
-  loginRequired:  () => void
+  notifyLoginRequired:  () => void
+  notifyNotImplemented: () => void
+  notifyError:          () => void
 }
 
 type ToastyElement = {
@@ -30,14 +34,14 @@ const ToastProvider = ({ children }: ToastProviderProps) => {
     )
   }
 
-  const notify = (message:ReactNode|string, type?: "info" | "success" | "warning") => {
+  const notify = (message:ReactNode|string, type?: ToastNotifyType) => {
     const toastId = uuid()
     const toast = {
       toastId,
       toast: (
         <Toasty
           message={message}
-          type={type || "info"}
+          type={type ?? "info"}
           key={uuid()}
           toastId={toastId}
         />
@@ -46,12 +50,20 @@ const ToastProvider = ({ children }: ToastProviderProps) => {
     setToasts([...toasts, toast])
   }
 
-  const loginRequired = () => {
-    notify(<div>Please <a href="/login" className="text-primary underline">log in</a> first</div>)
+  const notifyLoginRequired = () => {
+    notify(<div>Please <a href="/login" className="text-primary underline">log in</a> first</div>, 'warning')
+  }
+
+  const notifyNotImplemented = () => {
+    notify(<div><strong>Not Implemented</strong> Ya this ain't working rn.</div>, 'warning')
+  }
+
+  const notifyError = () => {
+    notify(<div>Ya that dint work.</div>, 'warning')
   }
 
   return (
-    <ToastContext.Provider value={{ toasts, notify, slice, loginRequired }}>
+    <ToastContext.Provider value={{ toasts, notify, slice, notifyLoginRequired, notifyNotImplemented, notifyError }}>
       {children}
     </ToastContext.Provider>
   )

@@ -73,6 +73,25 @@
     .accent {
         @apply text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-content
     }
+    .dot {
+        display: inline-block;
+        animation-name: bouncing;
+        animation-duration: 700ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-out;
+    }
+    .dot:nth-child(2) {
+        animation-delay: 125ms;
+      }
+    .dot:nth-child(3) {
+        animation-delay: 250ms;
+      }
+      
+    @keyframes bouncing {
+        0% { transform: none; }
+        50% { transform: translateY(-.25em); }
+    }
+
     .stroke-white {
         -webkit-text-stroke-width: 0.5px;
         -webkit-text-stroke-color: #ffffff;
@@ -168,12 +187,16 @@
         @apply bottom-0
     }
 
+    .image-header, .image-footer {
+        @apply text-primary font-sans
+    }
+
     .image-header {
-        @apply absolute w-full -top-20 transition-all duration-200 ease-linear p-4 bg-primary bg-opacity-50 flex justify-around space-x-4 
+        @apply absolute w-full -top-32 transition-all duration-150 ease-linear p-4 bg-white bg-opacity-75 flex justify-around space-x-4 
     }
 
     .image-footer {
-        @apply absolute w-full -bottom-20 transition-all duration-200 ease-linear p-4 bg-primary bg-opacity-50 flex justify-around space-x-4
+        @apply absolute w-full -bottom-32 transition-all duration-150 ease-linear p-4 bg-white bg-opacity-75 flex justify-around space-x-4
     }
 
     .user-mention {
@@ -186,24 +209,30 @@
     .scrollbar-only {
         @apply scrollbar-track-transparent scrollbar-thumb-primary
     }
+    
+    .border-reader { @apply border-[#3af] }
+    .bg-reader { @apply bg-[#3af] }
+    .text-reader { @apply text-[#3af] }
 
-    .avatar.member::after, .avatar.agent::after {
-        content: '\00a0';
-        border-radius: 9999px;
-        width: 15%;
-        height: 15%;
-        bottom: 7%;
-        right: 7%;
-        box-shadow: 0 0 0 2px hsl(var(--b1));
-        @apply block z-10 absolute
-    }
-    .avatar.member::after {
-        @apply bg-primary 
-    }
-    .avatar.agent::after {
-        @apply bg-yellow-500 
-    }
+    .border-author { @apply border-[#c36] }
+    .bg-author { @apply bg-[#c36] }
+    .text-author { @apply text-[#c36] }
+    
+    .border-artist { @apply border-[#f6f] }
+    .bg-artist { @apply bg-[#f6f] }
+    .text-artist { @apply text-[#f6f] }
+    
+    .border-editor { @apply border-[#93f] }
+    .bg-editor { @apply bg-[#93f] }
+    .text-editor { @apply text-[#93f] }
 
+    .border-agent { @apply border-[#fca] }
+    .bg-agent { @apply bg-[#fca] }
+    .text-agent { @apply text-[#fca] }
+    
+    .border-publisher { @apply border-[#f93] }
+    .bg-publisher { @apply bg-[#f93] }
+    .text-publisher { @apply text-[#f93] }
 }
 
 @layer utilities {

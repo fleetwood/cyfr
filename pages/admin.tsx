@@ -1,23 +1,20 @@
 import Link from "next/link"
-import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import {useEffect,useState} from "react"
 import GenreAdmin from "../components/containers/Genre/GenreAdmin"
 import AdminLayout from "../components/layouts/AdminLayout"
-import { CyfrLogo } from "../components/ui/icons"
-import { AudienceLevels, useAudience } from "../hooks/useAudience"
-import useDebug from "../hooks/useDebug"
-import { useSession } from "../lib/next-auth-react-query"
+import {CyfrLogo} from "../components/ui/icons"
+import useDebug from "hooks/useDebug"
+import {useSession} from "hooks/useSession"
 
-import { getApi } from "../utils/api"
-import { domRef } from "../utils/helpers"
-import { GenreStub } from "../prisma/prismaContext"
+import useApi from "prisma/useApi"
+import {GenreStub} from "prisma/prismaContext"
+import {domRef} from "utils/helpers"
 
-const { debug, jsonBlock } = useDebug("admin page", "DEBUG")
+const { debug, jsonBlock } = useDebug("admin page", )
 
 const AdminPage = ({}) => {
   useSession({ required: true, redirectTo: "/" })
-  const router = useRouter()
-  const {hasAccess} = useAudience(AudienceLevels.OWNER)
+  const {stubs} = useApi.genre()
   const [genres, setGenres] = useState<Array<GenreStub>>([])
   const [editGenre, setEditGenre] = useState<GenreStub|null>(null)
   
@@ -29,14 +26,10 @@ const AdminPage = ({}) => {
   )
 
   useEffect(() => {
-    if (!hasAccess) {
-      router.push('/')
-    }
-
     const getGenres = async () => {
-      const genreList = await getApi('genre/list')
-      if (genreList.result) {
-        setGenres(() => genreList.result)
+      const genreList = await stubs()
+      if (genreList) {
+        setGenres(() => genreList)
       }
     }
     getGenres()

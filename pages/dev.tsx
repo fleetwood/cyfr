@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 
 import Footer from '../components/containers/Footer'
 import LeftColumn from '../components/containers/LeftColumn'
-import Navbar from '../components/containers/Navbar'
+import Navbar from '../components/containers/Navbar/Navbar'
 import { useToast } from '../components/context/ToastContextProvider'
 import { CyfrLogo } from '../components/ui/icons'
 import { getApi, sendApi } from '../utils/api'

@@ -1,29 +1,12 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import useDebug from "../../../hooks/useDebug"
-import { GenreFeed, PrismaGenre } from "../../../prisma/prismaContext"
-import {
-    GetResponseError,
-    ResponseError,
-    ResponseResult
-} from "../../../types/response"
-const {debug, err} = useDebug('api/genre')
+import useApiHandler from "hooks/useApiHandler"
+import { PrismaGenre } from "prisma/prismaContext"
+import { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<GenreFeed>>
-) {
-  const { title, description, fiction } = req.body.body
-  try {
-    debug('handle', {title, description, fiction})
-    const result = await PrismaGenre.upsertGenre({title, description, fiction})
-    if (result) {
-      res.status(200).json({ result })
-    } else {
-      throw { code: "api/genre/upsert", message: "Failed to create genre" }
-    }
-  } catch (e: Error | ResponseError | any) {
-    err("\tFAIL", e)
-    const error = GetResponseError(e)
-    res.status(500).json({ error })
-  }
-}
+const request = (req:NextApiRequest, res: NextApiResponse) => {
+  const { title, description, fiction } = req.body
+  return useApiHandler(res,
+    '/api/genre/details',
+    PrismaGenre.upsertGenre({title, description, fiction})
+)}
+
+export default request

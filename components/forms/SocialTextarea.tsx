@@ -8,7 +8,9 @@ import {
   Remirror,
   useRemirror
 } from "@remirror/react"
+import useDebug from "hooks/useDebug"
 import dynamic from "next/dynamic"
+import useApi from "prisma/useApi"
 import {
   Dispatch,
   SetStateAction,
@@ -17,16 +19,16 @@ import {
   useState
 } from "react"
 import {
-  prosemirrorNodeToHtml, RemirrorEventListenerProps
+  RemirrorEventListenerProps,
+  prosemirrorNodeToHtml
 } from "remirror"
 import {
   BoldExtension, EmojiExtension, ItalicExtension,
   MentionAtomExtension, MentionAtomNodeAttributes, PlaceholderExtension
 } from "remirror/extensions"
 import data from "svgmoji/emoji.json"
-import useDebug from "../../hooks/useDebug"
-import { useCyfrUserContext } from "../context/CyfrUserProvider"
-const {debug, todo} = useDebug("RemirrorEditor")
+
+const {debug} = useDebug("SocialTextArea")
 
 type MentionItem = { id: string, label: string }
 
@@ -46,9 +48,10 @@ const SocialTextarea = ({
   maxChar = -1,
   setValid,
 }: SocialTextareaProps) => {
-  const [ cyfrUser ] = useCyfrUserContext()
-  const [mentions, setMentions] = useState<MentionItem[]>([])
-  const [search, setSearch] = useState("")
+  const  {cyfrUser } = useApi.cyfrUser()
+  const {mentions} = useApi.user()
+  const [mentionList, setMentionList] = useState<MentionItem[]>([])
+  const [search, setSearch] = useState<string>()
   const [count, setCount] = useState(-1)
   const [perc, setPerc] = useState(0)
 
@@ -101,10 +104,15 @@ const SocialTextarea = ({
     }
   }
 
-  const get = () => {
-    setMentions((m) => (cyfrUser?.canMention || [])
-      .map(m => {return {id: m.id, label: m.name}})
-      .filter((m) => m.label.toLowerCase().indexOf(search.toLowerCase()) >= 0))
+  const get = async () => {
+    const list = await mentions(search)
+    if (list) {
+      debug('get', list)
+      // setMentionList((m) => (list ?? [])
+      //   .map(m => {return {id: m.id, label: m.name}}
+      // ))
+    }
+    return;
   }
 
   useEffect(() => {
@@ -115,7 +123,7 @@ const SocialTextarea = ({
   }, [search])
 
   return (
-    <div className="remirror-theme bg-base-200 text-base-content rounded-md">
+    <div className="remirror-theme bg-base-200 text-base-content rounded-md grow">
       <Remirror
         manager={manager}
         initialContent={state}
@@ -123,11 +131,11 @@ const SocialTextarea = ({
         autoFocus
       >
         <EmojiPopupComponent />
-        <MentionAtomPopupComponent items={mentions} onChange={mentionSelect} />
+        <MentionAtomPopupComponent items={mentionList} onChange={mentionSelect} />
         <EditorComponent />
       </Remirror>
       {maxChar > 0 && (
-        <div className="w-full flex">
+        <div className="flex flex-grow">
             {/* @ts-ignore */}
             <progress className={`w-full -my-1 h-1 ${count >= maxChar ? 'progress-error' : perc > 90 ? 'progress-warning' : 'progress-primary'}`} value={perc} max={100} />
         </div>

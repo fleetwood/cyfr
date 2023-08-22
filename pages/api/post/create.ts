@@ -1,32 +1,13 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import {
-  GetResponseError,
-  ResponseError,
-  ResponseResult
-} from "../../../types/response"
-import { logError, todo } from "../../../utils/log"
-import { Post, PrismaPost } from "../../../prisma/prismaContext"
-import useDebug from "../../../hooks/useDebug"
+import useApiHandler from "hooks/useApiHandler"
+import { PrismaPost } from "prisma/prismaContext"
+import { NextApiRequest, NextApiResponse } from 'next'
 
-const {debug} = useDebug('api/post/create')
+const request = (req:NextApiRequest, res: NextApiResponse) => {
+  const { content, creatorId, images } = req.body
+  
+  return useApiHandler(res,
+    'api/post/create',
+    PrismaPost.createPost({content, creatorId, images})
+)}
 
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<Post>>
-) {
-  todo('Why is this posting req.body.body????')
-  debug('handle', {...req.body})
-  const { content, authorId, images } = req.body.body
-  try {
-    const result = await PrismaPost.createPost({content, authorId, images})
-    if (result) {
-      res.status(200).json({ result })
-    } else {
-      throw { code: "api/post/create", message: "Failed to create posts" }
-    }
-  } catch (e: Error | ResponseError | any) {
-    logError("\tFAIL", e)
-    const error = GetResponseError(e)
-    res.status(500).json({ error })
-  }
-}
+export default request

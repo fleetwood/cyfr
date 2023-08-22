@@ -15,7 +15,7 @@ import {
   WordpressSVG
 } from "../components/ui/svgs"
 import useDebug from "../hooks/useDebug"
-import { useSession } from "../lib/next-auth-react-query"
+import { useSession } from "../hooks/useSession"
 import { apiUrl } from "../utils/api"
 
 const {debug} = useDebug('pages/login')
@@ -29,7 +29,7 @@ const Login: FC = (props: InferGetServerSidePropsType<typeof getServerSideProps>
 
   const Router = useRouter()
   const [user, setUser] = useState<DefaultSession["user"]>()
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useCyfrUserContext()
   const [session, loading] = useSession({
     required: false,
     queryConfig: {

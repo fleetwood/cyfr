@@ -1,33 +1,13 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import useDebug from "../../../hooks/useDebug";
-import {
-    GalleryDetail,
-    PrismaGallery
-} from "../../../prisma/prismaContext";
-import {
-    GetResponseError,
-    ResponseError,
-    ResponseResult,
-} from "../../../types/response";
+import useApiHandler from "hooks/useApiHandler"
+import { PrismaGallery } from "prisma/entities"
+import { NextApiRequest, NextApiResponse } from 'next'
 
-const { debug, todo, err } = useDebug("api/gallery/[id]", "DEBUG");
+const request = (req:NextApiRequest, res: NextApiResponse) => {
+  const id = req.query.id?.toString() || ""
 
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<GalleryDetail>>
-) {
-  const id = req.query.id?.toString() || "";
-  try {
-    const gallery = await PrismaGallery.detail(id);
-    if (gallery) {
-      res.status(200).json({ result: gallery });
-    } else {
-      throw { code: "api/gallery/create", message: "Failed to create gallery" };
-    }
-  } catch (e: Error | ResponseError | any) {
-    err("handle.error", e);
-    const error = GetResponseError(e);
-    res.status(500).json({ error });
-  }
-}
-2964968594
+  return useApiHandler(res,
+    'api/gallery/[id]',
+    PrismaGallery.detail(id)
+)}
+
+export default request

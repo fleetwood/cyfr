@@ -1,6 +1,22 @@
+import { NotImplemented } from "utils/api"
 import useDebug from "../../hooks/useDebug"
-import { CommentThreadDetails, CommentThreadDetailsInclude, UpsertInboxProps } from "../prismaContext"
+import { AddCommentProps, CommentThread, CommentThreadDetails, CommentThreadDetailsInclude, CommentThreadStub, UpsertInboxProps } from "../prismaContext"
 const {debug, fileMethod} = useDebug('entities/prismaComment')
+
+const addComment = async ({creatorId, threadId, content}:AddCommentProps):Promise<CommentThread> => {
+  const comment = await prisma.commentThread.update({
+    where: {id: threadId},
+    data: {
+      comments: {
+        create: {
+          creatorId,
+          content
+        }
+      }
+    }
+  })
+  return comment
+}
 
 const threadById = async (threadId: string, userId: string): Promise<CommentThreadDetails> => {
   try {
@@ -35,16 +51,16 @@ const threadById = async (threadId: string, userId: string): Promise<CommentThre
 const userInbox = async (userId: string): Promise<any[]> => {
   try {
     debug(`userInbox`, userId)
+    throw NotImplemented()
     const inbox = await prisma.commentThread.findMany({
       where: {
-        entity: 'INBOX',
         commune: {
           users: {
             some: {
               userId
             },
             none: {
-              role: 'BLOCKED'
+              // role: 'BLOCKED'
             }
           }
         }
@@ -72,6 +88,7 @@ const upsertInbox = async ({
   messages
 }: UpsertInboxProps): Promise<any> => {
   try {
+    throw NotImplemented()
     const thread = await prisma.commentThread.upsert({
       where: {
         id: threadId,
@@ -84,8 +101,6 @@ const upsertInbox = async ({
         }
       },
       create: {
-        entity: "INBOX",
-        requiredRole: "OWNER",
         comments: {
           createMany: {
             data: messages?.map(m => { return {...m, threadType: 'INBOX'}}) || []
@@ -93,13 +108,12 @@ const upsertInbox = async ({
         },
         commune: {
           create: {
-            entity: "INBOX",
             ownerId: userId,
             users: {
               createMany: {
                 data: [
-                  { userId: userId, role: "OWNER" },
-                  { userId: partyId, role: "OWNER" },
+                  // { userId: userId, role: "OWNER" },
+                  // { userId: partyId, role: "OWNER" },
                 ],
               },
             },
@@ -123,4 +137,4 @@ const upsertInbox = async ({
   }
 }
 
-export const PrismaComment = { threadById, userInbox, upsertInbox }
+export const PrismaComment = { addComment, threadById, userInbox, upsertInbox }

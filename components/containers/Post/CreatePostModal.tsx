@@ -1,13 +1,14 @@
 import { FormEvent, useState } from "react"
-import useDebug from "../../../hooks/useDebug"
-import useFeed from "../../../hooks/useFeed"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { useToast } from "../../context/ToastContextProvider"
-import Dropzone from "../../forms/Dropzone"
-import RemirrorEditor from "../../forms/SocialTextarea"
-import { CyfrLogo } from "../../ui/icons"
-import { LoggedIn } from "../../ui/toasty"
-import { Image } from "./../../../prisma/prismaContext"
+import useDebug from "hooks/useDebug"
+import useFeed from "hooks/useFeed"
+
+import { Image } from "prisma/prismaContext"
+import { CyfrLogo } from "components/ui/icons"
+import { useToast } from "components/context/ToastContextProvider"
+import { Dropzone, SocialTextarea } from "components/forms"
+import { LoggedIn } from "components/ui/toasty"
+import { useCyfrUserContext } from "components/context/CyfrUserProvider"
+import useApi from "prisma/useApi"
 
 const {debug} = useDebug("components/containers/Post/CreatePost")
 const createPostModal = 'createPostModal'
@@ -20,15 +21,22 @@ export const CreatePostModalButton = () => (
 )
 
 const CreatePostModal = (): JSX.Element => { 
-  const [cyfrUser] = useCyfrUserContext()
+  const {cyfrUser} = useApi.cyfrUser()
   const { notify } = useToast()
   const [content, setContent] = useState<string | null>(null)
   const [valid, setIsValid] = useState<boolean>(false)
-  const { createPost, invalidateFeed } = useFeed({ type: "post" })
+  const {invalidate} = useFeed('post')
+  const {createPost } = useApi.post()
   const [images, setImages] = useState<Image[]>([])
 
   const onFilesComplete = async(files: Image[]) => {
     setImages((current) => [...current, ...files])
+  }
+
+  const toggleModal = (show?:boolean) => {
+    const createModal = document.getElementById(createPostModal)
+    // @ts-ignore
+    createModal!.checked = show || false
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -40,7 +48,7 @@ const CreatePostModal = (): JSX.Element => {
     debug('handleSubmit', images)
     const postData = {
       content: content!,
-      authorId: cyfrUser.id,
+      creatorId: cyfrUser.id,
       images: images,
     }
     const post = await createPost(postData)
@@ -50,16 +58,16 @@ const CreatePostModal = (): JSX.Element => {
     } else {
       setContent(null)
       setImages(() => [])
-      invalidateFeed()
+      invalidate()
     }
-    const createModal = document.getElementById(createPostModal)
-    // @ts-ignore
-    createModal!.checked = false
+
+    toggleModal()
   }
 
   return (
     <>
-    <input type="checkbox" id={createPostModal} className="modal-toggle" />
+    
+    <input type="checkbox" id={createPostModal} className="modal-toggle" onChange={() => {}} />
     <div className="modal modal-bottom sm:modal-middle">
       <div className="modal-box bg-opacity-0 shadow-none overflow-visible scrollbar-hide">
         <label htmlFor={createPostModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
@@ -73,10 +81,9 @@ const CreatePostModal = (): JSX.Element => {
             <div className="w-full mx-auto p-2 sm:p-6 lg:p-4">
               <form className=" flex flex-col" onSubmit={handleSubmit}>
                 <i className="tw twa-black-cat" />
-                <RemirrorEditor
+                <SocialTextarea
                   content={content}
                   setContent={setContent}
-                  maxChar={512}
                   setValid={setIsValid}
                 />
 

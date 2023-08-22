@@ -1,15 +1,14 @@
-import { useState } from "react";
-import { CommentThreadDetails, CyfrUser, UpsertInboxProps, User } from "../../../prisma/prismaContext";
-import { domRef, timeDifference } from "../../../utils/helpers";
-import TailwindInput from "../../forms/TailwindInput";
-import Avatar from "../../ui/avatar";
-import { ChatSendIcon } from "../../ui/icons";
-import RemirrorEditor from "../../forms/SocialTextarea";
-import ReactHtmlParser from "react-html-parser"
-import MentionsMenu from "../../ui/mentionsMenu";
-import useDebug from "../../../hooks/useDebug";
-import useFeed from "../../../hooks/useFeed";
-import { useToast } from "../../context/ToastContextProvider";
+import { useToast } from "components/context/ToastContextProvider"
+import { ChatSendIcon } from "components/ui/icons"
+import MentionsMenu from "components/ui/mentionsMenu"
+import useDebug from "hooks/useDebug"
+import useFeed from "hooks/useFeed"
+import { SocialTextarea } from "components/forms"
+import { CommentThreadDetails, CyfrUser, UpsertInboxProps, User, UserStub } from "prisma/prismaContext"
+import { useState } from "react"
+import { timeDifference, domRef } from "utils/helpers"
+import HtmlContent from "components/ui/htmlContent"
+import UserAvatar from "components/ui/avatar/userAvatar"
 
 const {debug} = useDebug('components/containers/SendMessageDetail')
 
@@ -21,8 +20,8 @@ type SendMessageDetailProps = {
 
 const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetailProps) => {
     const {notify} = useToast()
-    const {sendMessage, invalidateFeed} = useFeed({type: 'inbox'})
-   const [party, setParty] = useState<User|null>(null)
+    const {invalidate} = useFeed('inbox')
+   const [party, setParty] = useState<UserStub|null>(null)
    const [search, setSearch] = useState<string>('')
    const [message, setMessage] = useState<string|null>(null)
    const [thread, setThread] = useState<CommentThreadDetails|undefined>()
@@ -36,20 +35,22 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
         userId: cyfrUser.id,
         partyId: party!.id,
         messages: [{
-            authorId: cyfrUser.id,
+            creatorId: cyfrUser.id,
             content: message!
         }]
     }
-    const inbox = await (await sendMessage(inboxProps))?.data.result
-    if (inbox) {
-        notify('Message sent!')
-        onCreate(inbox)
-    } else {
-        notify(`Well that didn't work, sorry!`,'warning')
-    }
+    notify('not implemented')
+    return 
+    // const inbox = await (await sendMessage(inboxProps))?.data.result
+    // if (inbox) {
+    //     notify('Message sent!')
+    //     onCreate(inbox)
+    // } else {
+    //     notify(`Well that didn't work, sorry!`,'warning')
+    // }
    }
 
-   const onSelectParty = (user:User) => {
+   const onSelectParty = (user:UserStub) => {
     setParty(() => user)
     setShowMentions(() => false)
    }
@@ -57,9 +58,9 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
   return (
     <div className="min-w-fit m-0 overflow-y-scroll scrollbar-hide relative">
       <div className="grow flex justify-between place-items-end border-2 p-4">
-        <span><Avatar user={cyfrUser} sz="md" link={false} />{cyfrUser.name}</span>
+        <span><UserAvatar user={cyfrUser} sz="md" link={false} />{cyfrUser.name}</span>
         {party 
-          ? <span>{party.name}<Avatar user={party} sz="md" link={false} /></span> 
+          ? <span>{party.name}<UserAvatar user={party} sz="md" link={false} /></span> 
           : <MentionsMenu show={true} searchTerm={search} onSelect={onSelectParty} type='MESSAGABLE' />
         }
       </div>
@@ -71,22 +72,22 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
             key={domRef(thread, comment)}
           >
             <div>
-              <span>{comment.author.name}</span>
+              <span>{comment.creator.name}</span>
               <span>{timeDifference(comment.updatedAt)}</span>
             </div>
             <div
               className={`p-2 border rounded-md 
                 ${
-                  comment.authorId === cyfrUser.id ? "bg-base-200" : "bg-base-300"
+                  comment.creatorId === cyfrUser.id ? "bg-base-200" : "bg-base-300"
                 }`}
             >
-              {ReactHtmlParser(comment.content!)}
+              <HtmlContent content={comment.content} />
             </div>
           </div>
         ))}
       </div>
       <div className="pb-12">
-        <RemirrorEditor
+        <SocialTextarea
           content={message}
           setContent={setMessage}
           setValid={setValid}
@@ -104,6 +105,6 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
         </button>
       </div>
     </div>
-  );
-};
-export default SendMessageDetail;
+  )
+}
+export default SendMessageDetail

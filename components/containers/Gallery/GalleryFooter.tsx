@@ -1,55 +1,63 @@
-import { useCommentContext } from "../../context/CommentContextProvider"
-import { useToast } from "../../context/ToastContextProvider"
-import { HeartIcon, ReplyIcon, ShareIcon } from "../../ui/icons"
-import ShrinkableIconButton from "../../ui/shrinkableIconButton"
-import { LoggedIn } from "../../ui/toasty"
-
-import useDebug from "../../../hooks/useDebug"
-import useFeed, { FeedTypes } from "../../../hooks/useFeed"
-import { GalleryDetail, GalleryStub } from "../../../prisma/prismaContext"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import AvatarList from "../../ui/avatarList"
+import {useCommentContext} from "components/context/CommentContextProvider"
+import {useToast} from "components/context/ToastContextProvider"
+import UserAvatarList from "components/ui/avatar/userAvatarList"
+import {HeartIcon,ReplyIcon,ShareIcon} from "components/ui/icons"
+import ShrinkableIconButton from "components/ui/shrinkableIconButton"
+import useDebug from "hooks/useDebug"
+import {GalleryDetail,GalleryStub} from "prisma/prismaContext"
+import useApi from "prisma/useApi"
+import {abbrNum} from "utils/helpers"
 
 type GalleryFooterProps = {
-  gallery: GalleryDetail | GalleryStub
+  gallery:    GalleryDetail | GalleryStub
+  onUpdate?:  () => void
 }
 
 const {debug} = useDebug('components/containers/Gallery/GalleryFooter')
 
 const GalleryFooter = ({
-  gallery
+  gallery,
+  onUpdate
 }: GalleryFooterProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const { shareGallery, likeGallery, invalidateFeed } = useFeed({type: 'gallery'  })
-  const { notify, loginRequired } = useToast()
-  const { setCommentId, showComment, hideComment } = useCommentContext()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
+  const {feed, like, share} = useApi.gallery()
+  const {invalidate} = feed()
+  const { notify, notifyLoginRequired } = useToast()
+  const { setPostId, showComment, hideComment } = useCommentContext()
 
   const isLoggedIn = () => {
     if (!cyfrUser) {
-      loginRequired()
+      notifyLoginRequired()
       return false
     }
     return true
   }
 
+  const update = () => {
+    invalidate ? invalidate() : {}
+    onUpdate ?  onUpdate() : {}
+  }
+
   const handleComment = async () => {
     if (!isLoggedIn()) return
     debug('handleComment')
-    setCommentId(gallery.id)
+    notify('Not implemented')
+    // setPostId(gallery.id)
     showComment()
+    update()
   }
 
   const handleLike = async () => {
     if (!isLoggedIn()) return
 
     debug('handleLike')
-    const liked = await likeGallery({
+    const liked = await like({
       galleryId: gallery.id,
-      authorId: cyfrUser!.id,
+      creatorId: cyfrUser!.id,
     })
     if (liked) {
       notify("You liked this gallery!")
-      invalidateFeed()
+      update()
       return
     }
     notify(`Uh. Ya that didn't work. Weird.`,'warning')
@@ -59,13 +67,13 @@ const GalleryFooter = ({
     if (!isLoggedIn()) return
 
     debug(`handleShare`)
-    const shared = await shareGallery({
+    const shared = await share({
       galleryId: gallery.id,
-      authorId: cyfrUser!.id,
+      creatorId: cyfrUser!.id,
     })
     if (shared) {
       notify("You shared this gallery!!!")
-      invalidateFeed()
+      update()
       return
     }
     notify(`Uh. Ya that didn't work. Weird.`,'warning')
@@ -79,10 +87,10 @@ const GalleryFooter = ({
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Likes (${(gallery.likes||[]).length})`}
+          label={`Likes (${abbrNum(gallery._count.likes)})`}
           onClick={() => handleLike()}
         />
-        <AvatarList users={(gallery.likes||[])} sz="xs" />
+        <UserAvatarList users={[]} sz="xs" />
       </div>
 
       <div className="font-semibold uppercase">
@@ -91,10 +99,10 @@ const GalleryFooter = ({
           className="bg-opacity-0 hover:shadow-none"
           iconClassName="text-primary"
           labelClassName="text-primary"
-          label={`Shares (${(gallery.shares||[]).length})`}
+          label={`Shares (${abbrNum(gallery._count.shares)})`}
           onClick={() => handleShare()}
         />
-        <AvatarList users={(gallery.shares||[])} sz="xs" />
+        <UserAvatarList users={[]} sz="xs" />
       </div>
 
       <div className="font-semibold uppercase">
@@ -108,7 +116,7 @@ const GalleryFooter = ({
           // onClick={() => handleComment()}
         />
         {/* <AvatarList
-          users={(gallery.comments || []).map((a) => a.author)}
+          users={(gallery.comments || []).map((a) => a.creator)}
           sz="xs"
         /> */}
       </div>

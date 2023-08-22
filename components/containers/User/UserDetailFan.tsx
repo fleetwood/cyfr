@@ -1,17 +1,10 @@
-import { User } from '@prisma/client'
-import Avatar from '../../ui/avatar'
-import { uuid } from '../../../utils/helpers'
+import {UserStub} from 'prisma/types'
+import UserAvatar from '../../ui/avatar/userAvatar'
 
 type UserDetailFansProps = {
-    fan: User,
-    key?: string
+    fan: UserStub
 }
 
-const UserDetailFan = ({fan, ...props}:UserDetailFansProps) => {
-    return (
-    <div key={uuid(props.key)}>
-        <Avatar user={fan} sz='md' />
-    </div>
-)}
+const UserDetailFan = ({fan, ...props}:UserDetailFansProps) => <UserAvatar user={fan} sz='md' />
 
 export default UserDetailFan

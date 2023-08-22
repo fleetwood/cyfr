@@ -1,15 +1,16 @@
-import { useState } from "react"
-import useDebug from "../../../hooks/useDebug"
-import { User, UserStub } from "../../../prisma/prismaContext"
-import { now, domRef } from "../../../utils/helpers"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import Avatar from "../../ui/avatar"
-import ChatRoom, { ChatRoomProps } from "./ChatRoom"
+import {useState} from "react"
+import {GetUserType} from "utils/helpers/user"
+import useDebug from "hooks/useDebug"
+import {UserStub} from "prisma/prismaContext"
+import {domRef,now} from "utils/helpers"
+import {useCyfrUserContext} from "../../context/CyfrUserProvider"
+import UserAvatar, {AvatarUser} from "../../ui/avatar/userAvatar"
+import ChatRoom,{ChatRoomProps} from "./ChatRoom"
 
 const {debug} = useDebug("components/containers/ChatList.tpx")
 
 const ChatList = () => {
-    const [cyfrUser] = useCyfrUserContext()
+    const {cyfrUser} = useCyfrUserContext()
     const [show, setShow] = useState<boolean>(false)
     const [chatRooms, setChatRooms] = useState<ChatRoomProps[]>([])
 
@@ -45,12 +46,12 @@ const ChatList = () => {
   return cyfrUser ? (
     <div className={`flex flex-col space-y-2`}>
         <h2 className="h-subtitle">Chat</h2>
-        {cyfrUser.messagable && cyfrUser.messagable.map(u => 
+        {cyfrUser.messagable && cyfrUser.messagable.map((u: AvatarUser) => 
             <div key={domRef('chatList',cyfrUser,u)}
                 className="btn bg-opacity-10 hover:bg-opacity-25 bg-primary border-0 text-start"
-                onClick={() => addRoom(u)}
+                onClick={() => addRoom(u as UserStub)}
                 >
-                <Avatar user={u} sz="sm" link={false} className="float-left" />
+                <UserAvatar user={u} userType={GetUserType(u as UserStub)} sz="sm" link={false} className="float-left" />
                 <span className="ml-2">{u.name}</span>
             </div>
         )}

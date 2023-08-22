@@ -1,154 +1,123 @@
-import { Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
-import useDebug from "../../hooks/useDebug"
+import useDebug from "hooks/useDebug"
+import { Share, ShareStub } from "prisma/prismaContext"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaShare')
 
-const byId = async (id: string): Promise<Share | null> => {
-  try {
-    return await prisma.share.findFirst({
-      where: {
-        id: id,
-        visible: true
-      },
-      include: {
-       author: true,
-       post: true
-      },
-    })
-  } catch (error) {
-    throw { code: "prismaShare.byId()", message: "No share was returned!" }
-  }
+const share = async (creatorId: string, item: any):Promise<Share> => await prisma.share.create({
+    data: {
+        creator: { connect: {
+            id: creatorId
+        }},
+        attachingPost: { create: {
+            creatorId
+        }},
+        ...item
+    }
+})
+
+const shareAuthor = ({creatorId, authorId}:{creatorId: string, authorId: string}): Promise<Share> => share(creatorId, {
+    author: { connect: {
+        id: authorId
+    }}
+})
+
+const shareAgent = ({creatorId, agentId}:{creatorId: string, agentId: string}): Promise<Share> => share(creatorId, {
+    agent: { connect: {
+        id: agentId
+    }}
+})
+const sharePublisher = ({creatorId, publisherId}:{creatorId: string, publisherId: string}): Promise<Share> => share(creatorId, {
+    publisher: { connect: {
+        id: publisherId
+    }}
+})
+
+const shareSubmission = ({creatorId, submissionId}:{creatorId: string, submissionId: string}): Promise<Share> => share(creatorId, {
+    submissions: { connect: {
+        id: submissionId
+    }}
+})
+
+const shareEvent = ({creatorId, eventId}:{creatorId: string, eventId: string}): Promise<Share> => share(creatorId, {
+    event: { connect: {
+        id: eventId
+    }}
+})
+
+const shareReview = ({creatorId, reviewId}:{creatorId: string, reviewId: string}): Promise<Share> => share(creatorId, {
+    review: { connect: {
+        id: reviewId
+    }}
+})
+
+const shareBook = ({creatorId, bookId}:{creatorId: string, bookId: string}): Promise<Share> => share(creatorId, {
+    book: { connect: {
+        id: bookId
+    }}
+})
+
+const shareChapter = ({creatorId, chapterId}:{creatorId: string, chapterId: string}): Promise<Share> => share(creatorId, {
+    chapter: { connect: {
+        id: chapterId
+    }}
+})
+
+const shareCharacter = ({creatorId, characterId}:{creatorId: string, characterId: string}): Promise<Share> => share(creatorId, {
+    character: { connect: {
+        id: characterId
+    }}
+})
+
+const shareCover = ({creatorId, coverId}:{creatorId: string, coverId: string}): Promise<Share> => share(creatorId, {
+    cover: { connect: {
+        id: coverId
+    }}
+})
+
+const shareGallery = ({creatorId, galleryId}:{creatorId: string, galleryId: string}): Promise<Share> => share(creatorId, {
+    gallery: { connect: {
+        id: galleryId
+    }}
+})
+
+const shareImage = ({creatorId, imageId}:{creatorId: string, imageId: string}): Promise<Share> => share(creatorId, {
+    image: { connect: {
+        id: imageId
+    }}
+})
+
+const sharePost = ({creatorId, postId}:{creatorId: string, postId: string}) => share(creatorId, {
+    post: { connect: {
+        id: postId
+    }}
+})
+
+const shareArticle = ({creatorId, articleId}:{creatorId: string, articleId: string}): Promise<Share> => share(creatorId, {
+    article: { connect: {
+        id: articleId
+    }}
+})
+
+const shareUser = ({creatorId, userId}:{creatorId: string, userId: string}): Promise<Share> => share(creatorId, {
+    user: { connect: {
+        id: userId
+    }}
+})
+
+export const PrismaShare = { 
+    shareAgent,
+    shareArticle,
+    shareAuthor,
+    shareBook,
+    shareChapter,
+    shareCharacter,
+    shareCover,
+    shareEvent,
+    shareGallery,
+    shareImage,
+    sharePost,
+    sharePublisher,
+    shareReview,
+    shareSubmission,
+    shareUser,
 }
-
-/**
- * @satisfies visible:true
- * @satisfies commentId:null //don't include Shares
- * @returns PostFeed[]
- */
-const all = async (): Promise<ShareFeed[] | []> => {
-  try {
-    return await prisma.share.findMany({
-      where: {
-        visible: true
-      },
-      include: {
-        author: true,
-        post: {
-          include: {
-            author: true,
-            post_comments: {
-              include: {
-                author: true
-              }
-            },
-            shares: true,
-            likes: true,
-            images: true
-          }
-        }
-      },
-      orderBy: [
-        {
-          updatedAt: "desc",
-        },
-      ],
-    }) as unknown as ShareFeed[]
-  } catch (error) {
-    throw { code: fileMethod("all"), message: "No shares were returned!" }
-  }
-}
-
-// const createPost = async (props: PostCreateProps): Promise<Post> => {
-//   const data = { ...props }
-//   try {
-//     log("Posts.create", data)
-//     return await prisma.post.create({ data })
-//   } catch (error) {
-//     log("\tERROR: ", error)
-//     throw { code: "posts/create", message: "Post was not created!" }
-//   }
-// }
-
-// const likePost = async (props: PostEngageProps): Promise<Post> => {
-//   const data = { ...props }
-//   try {
-//     log("Posts.like", data)
-//     const user = await prisma.user.findUnique({ where: { id: data.authorId } })
-//     const post = await prisma.post.findUnique({ where: { id: data.postId } })
-//     if (user && post) {
-//       const success = await prisma.post.update({
-//         where: { id: post.id },
-//         data: { likes: { connect: { id: user.id } } },
-//       })
-//       if (success) {
-//         return success
-//       } else {
-//         throw {
-//           message: "Unable to connect like to post",
-//         }
-//       }
-//     }
-//     throw {
-//       message: "Unable to find user and post to like",
-//     }
-//   } catch (error) {
-//     log("\tERROR: ", error)
-//     throw { code: "posts/like", message: "Post not liked!" }
-//   }
-// }
-
-// const sharePost = async (props: PostEngageProps): Promise<Post> => {
-//   const { authorId, postId } = props
-//   try {
-//     log("Posts.share", props)
-//     const post = await prisma.post.findUnique({ where: { id: postId } })
-
-//     const newShare = await prisma.share.create({
-//       data: {
-//         authorId,
-//         postId
-//       },
-//     })
-//     const updatePost = await prisma.post.update({
-//       where: { id: postId },
-//       data: {
-//         shares: {
-//           connect: {
-//             id: newShare.id,
-//           },
-//         },
-//       },
-//     })
-//     return updatePost
-//   } catch (error) {
-//     log("\tERROR: ", error)
-//     throw { code: "posts/share", message: "Post not shared!" }
-//   }
-// }
-
-// const commentOnPost = async (props: PostCommentProps): Promise<Post> => {
-//   const {commentId, authorId, content} = props
-//   try {
-//     log("Posts.comment", {...props})
-//     const success = await prisma.post.create({
-//       data: {
-//         authorId,
-//         commentId,
-//         content
-//       }
-//     })
-//     if (success) {
-//       return success
-//     }
-//     else {
-//       throw ({
-//         message: 'Unable to comment on post'
-//       })
-//     }
-//   } catch (error) {
-//     log("\tERROR: ", error)
-//     throw { code: "posts/comment", message: "Post not commented!" }
-//   }
-// }
-
-export const PrismaShare = { all, byId }

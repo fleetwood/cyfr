@@ -1,115 +1,41 @@
-import { useRouter } from "next/router"
+import BookDetailHeader from "components/containers/Books/BookDetailHeader"
+import ChapterList from "components/containers/Chapter/ChapterList"
+import CreateCharacterModal, { OpenCharacterModalPlus } from "components/containers/Characters/CharacterCreateModal"
+import GalleryCreateModal, { OpenGalleryModalPlus } from "components/containers/Gallery/GalleryCreateModal"
+import GalleryPhotoswipe from "components/containers/Gallery/GalleryImages"
+import { useToast } from "components/context/ToastContextProvider"
+import { InlineTextarea } from "components/forms"
+import HtmlContent from "components/ui/htmlContent"
+import { PhotoIcon } from "components/ui/icons"
+import useDebug from "hooks/useDebug"
+import router from "next/router"
+import ErrorPage from "pages/404"
+import { AuthorStub, BookDetail, ChapterListItem } from "prisma/prismaContext"
 import { useState } from "react"
-import ReactHtmlParser from "react-html-parser"
-import useDebug from "../../../hooks/useDebug"
-import { BookApi, BookCategory, BookStatus, Chapter, Character, UserStub } from "../../../prisma/prismaContext"
-import { KeyVal } from "../../../types/props"
-import {
-  onlyFans,
-  domRef,
-  uuid,
-  valToLabel,
-  ymd
-} from "../../../utils/helpers"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { useToast } from "../../context/ToastContextProvider"
-import { InlineTextarea, TailwindSelectInput } from "../../forms"
-import Avatar from "../../ui/avatar"
-import EZButton from "../../ui/ezButton"
-import {
-  FireIcon,
-  FollowIcon,
-  HeartIcon,
-  PhotoIcon,
-  ReplyIcon,
-  ShareIcon
-} from "../../ui/icons"
-import ShrinkableIconLabel from "../../ui/shrinkableIconLabel"
-import Spinner from "../../ui/spinner"
-import Toggler from "../../ui/toggler"
 import CreateChapterModal, { OpenChapterModalButton } from "../Chapter/ChapterCreateModal"
-import ChapterList from "../Chapter/ChapterList"
-import CreateCharacterModal, { OpenCharacterModalPlus } from "../Characters/CharacterCreateModal"
-import CharacterList from "../Characters/CharacterList"
-import GalleryCreateModal, { OpenGalleryModalPlus } from "../Gallery/GalleryCreateModal"
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe"
-import BookCover, { BookCoverVariant } from "./BookCover"
-import HtmlContent from "../../ui/htmlContent"
+import useApi from "prisma/useApi"
+import AuthorAvatar from "components/ui/avatar/authorAvatar"
 
-const { jsonBlock, debug } = useDebug(
-  "components/Books/BookDetailComponent",
-  "DEBUG"
-)
+const { jsonBlock, debug } = useDebug("components/Books/BookDetailComponent","DEBUG")
 
-const ErrorPage = () => (
-  <div>
-    <h3>404 or smth</h3>
-    <p>Weird. That Didn't Work.</p>
-  </div>
-)
-
-
-/**
- * Description placeholder
- * @date 5/1/2023 - 12:38:57 PM
- *
- * @typedef {BookDetailComponentProps}
- * @param {bookApi:BookApi} {@link BookApi}
- */
-type BookDetailComponentProps = {
-  bookApi: BookApi
+export type BookViewProps = {
+  bookDetail: BookDetail
+  onUpdate?:  () => void
 }
 
-const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
-  const { notify, loginRequired } = useToast()
-  const [cyfrUser] = useCyfrUserContext()
-  const {bookDetail, isLoading, error, invalidate, isAuthor} = bookApi
-  const [saveReady, setSaveReady] = useState(false)
-  const router = useRouter()
+const BookDetailView = ({bookDetail, onUpdate}:BookViewProps) => {
+  const {save} = useApi.book()
 
-  const statusOptions: KeyVal[] = [
-    { key: "DRAFT" },
-    { key: "MANUSCRIPT" },
-    { key: "PRIVATE" },
-    { key: "PUBLISHED" },
-  ]
+  const { notify } = useToast()
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
 
-  if (isLoading) return <Spinner />
+  const [back, setBack] = useState<string|null|undefined>(bookDetail.back)
+  const [synopsis, setSynopsis] = useState<string|null|undefined>(bookDetail.synopsis)
+  const isAuthor = cyfrUser ? (bookDetail.authors??[]).filter(a => a.user.id === cyfrUser?.id).length > 0 : false
 
-  //TODO create an error page
-  if (error) return <ErrorPage />
-
-  const onFollow = async () => {
-    if (!cyfrUser) {
-      loginRequired()
-      return null
-    }
-    const result = await bookApi.follow(cyfrUser.id)
-    if (result) {
-      notify(`You are now following ${bookDetail?.title}. Nice!`)
-    }
-  }
-
-  const onShare = async () => {
-    if (!cyfrUser) {
-      loginRequired()
-      return null
-    }
-    const result = await bookApi.share(cyfrUser.id)
-    if (result) {
-      notify(`You shared ${bookDetail?.title}!`)
-    }
-  }
-
-  const onLike = async () => {
-    if (!cyfrUser) {
-      loginRequired()
-      return null
-    }
-    const result = await bookApi.like(cyfrUser.id)
-    if (result) {
-      notify(`You liked ${bookDetail?.title}.`)
-    }
+  const update = async () => {
+    debug('update')
+    if (onUpdate) onUpdate()
   }
 
   const onGalleryUpsert = async (galleryId?:string) => {
@@ -118,379 +44,129 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
       notify('Hm that dint work', 'info')
       return
     }
-    const added = await bookApi.addGallery(galleryId)
-    if (added) {
-      notify(`You created a gallery ${bookDetail?.title}.`)
+    // TODO add gallery
+    // const added = await bookApi.addGallery(galleryId)
+    // if (added) {
+    //   notify(`You created a gallery ${bookDetail.title}.`)
+    // }
+  }
+
+  const editChapter =(chapter:ChapterListItem) => {
+    const v = isAuthor ? '?v=edit' : ''
+    //TODO: Don't leave this page with unsaved changes
+    //TODO: add slug to chapter as a compound key
+    router.push(`/book/${bookDetail.slug}/chapter/${chapter.id}${v}`)
+  }
+
+  const onSave = async () => {
+    // @ts-ignore
+    const success = await save({
+      ...bookDetail
+      ,back: back ||''
+      ,synopsis: synopsis || ''
+    })
+    if (success) {
+      notify('Saved!')
+    } else {
+      notify('There was a problem saving', 'warning')
     }
   }
 
-  const updatePanel = (html?: string | null) => {
-    bookApi.update({ back: html?.toString() })
-    setSaveReady(true)
-  }
-
-  const updateSynopsis = (html?: string | null) => {
-    bookApi.update({ synopsis: html?.toString() })
-    setSaveReady(true)
-  }
-
-  const updateHook = (content:string) => {
-    bookApi.update({ hook: content.toString() })
-    setSaveReady(true)
-  }
-
-  const updateActive = (value: boolean) => {
-    bookApi.update({ active: value })
-    setSaveReady(true)
-  }
-
-  const updateProspect = (value: boolean) => {
-    bookApi.update({ prospect: value })
-    setSaveReady(true)
-  }
-
-  const updateFiction = (value: boolean) => {
-    bookApi.update({ fiction: value })
-    setSaveReady(true)
-  }
-
-  const updateStatus = (value: string) => {
-    bookApi.update({ status: value as BookStatus })
-    setSaveReady(true)
-  }
-
-  const updateGenre = (value: string) => {
-    bookApi.update({ genreId: value })
-    setSaveReady(true)
-  }
-
-  const editChapter =(chapter:Chapter) => {
-    const v = bookApi.isAuthor ? '?v=edit' : ''
-    //TODO: Don't leave this page with unsaved changes
-    //TODO: add slug to chapter as a compound key
-    router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
-  }
-
-  const editCharacter =(character:Character) => {
-    debug('editCharacter', character)
-    // const v = bookApi.isAuthor ? '?v=edit' : ''
-    //TODO: Don't leave this page with unsaved changes
-    //TODO: add slug to character as a compound key
-    // router.push(`/book/${bookDetail?.slug}/chapter/${chapter.id}${v}`)
-  }
-
-  const onSave = () => {
-    bookApi.save()
-    setSaveReady(false)
-  }
-
-  return bookDetail ? (
-
+  // TODO this should be handled by commune
+  if (bookDetail && bookDetail.visible === false && isAuthor === false) return (
     <div>
-      {isAuthor && (
-        <div className="fixed top-10 right-[232px] z-20 space-x-4 transition-all duration-200 ease-out">
-          <EZButton label="Refresh" onClick={invalidate} variant="info" />
-          {saveReady &&
-            <EZButton label="SAVE" onClick={onSave} variant="warning" className="shadow-black shadow-md" />
-          }
-        </div>
-      )}
-      {bookDetail.authors && bookDetail.authors.length > 1 && (
-        <div>
-          <h3>Authors</h3>
-          {bookDetail.authors.map((author:UserStub) => (
-            <Avatar user={author} sz="lg" key={domRef(bookDetail, author)} />
-          ))}
-        </div>
-      )}
-
-      {bookDetail.cover && (
-        <BookCover
-          book={bookDetail}
-          variant={BookCoverVariant.COVER}
-          link={false}
-        />
-      )}
-      {isAuthor && 
-        <div>
-          <label className="font-semibold w-[50%]">Cover</label>
-          <div>
-            <p className="text-xs">
-              TODO: Create cover upsert. This should be a modal to select a new cover from
-              a list of user-created covers, (eventually maybe?) or the default covers, or
-              upload one of their own.
-            </p>
-          </div>
-        </div>
-      }
-
+      <h3>You do not have permissions to perform that action.</h3>
       <div>
-        {isAuthor ? (
-          <div>
-            <label className="font-semibold w-[50%]">Fiction/Nonfiction</label>
-            <Toggler
-              checked={bookDetail?.fiction??false}
-              setChecked={updateFiction}
-              trueLabel="FICTION"
-              falseLabel="NON-FICTION"
-            />
-          </div>
-        ) : (
-          <div>{bookDetail?.fiction ? "FICTION" : "NON-FICTION"}</div>
-        )}
-        <div className="flex">
-          {isAuthor ? (
-            <div>
-              <label className="font-semibold w-[50%]">Genre</label>
-              <TailwindSelectInput
-                value={bookDetail?.genre.title}
-                setValue={updateGenre}
-                options={bookApi.genresToOptions}
-              />
-            </div>
-          ) : (
-            <span className="font-semibold text-primary-content mr-4">
-              {bookDetail.genre.title}
-            </span>
-          )}
-          {/* TODO Categories view is broken in db */}
-          {isAuthor ? (
-            <div>
-              <label className="font-semibold w-[50%]">Categories</label>
-              <div>
-                <p className="text-xs">
-                  TODO: Create categories upsert. Don't forget to include
-                  existing categories, and the ability to create new ones.
-                </p>
-                {bookApi.categories.map((cat:BookCategory) => (
-                    <span className="italic mr-2" key={uuid()}>
-                      {cat.title}
-                    </span>
-                ))}
-              </div>
-            </div>
-          ) : (
-            bookApi.categories.map((cat:BookCategory) => (
-              <span className="italic mr-2" key={uuid()}>
-                {cat.title}
-              </span>
-            ))
-          )}
-        </div>
-        <div>{bookDetail.words} words</div>
-        <div className="font-ibarra">
-          {isAuthor ? (
-            <InlineTextarea
-              content={bookDetail.hook}
-              setContent={updateHook}
-              onSave={bookApi.save}
-            />
-          ) : (
-            ReactHtmlParser(bookDetail.hook!)
-          )}
-        </div>
+        <label>Authors</label>
+        {bookDetail.authors.map((a: AuthorStub) => (
+          <AuthorAvatar author={a} sz="md" key={a.id} />
+        ))}
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <div className=" px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
-          {isAuthor ? (
-            <div>
-              <label className="font-semibold w-[50%]">Status</label>
-              <TailwindSelectInput
-                options={statusOptions}
-                value={bookDetail.status?.toString()}
-                setValue={updateStatus}
-              />
-            </div>
-          ) : (
-            <div className="flex justify-between">
-              <label className="font-semibold w-[50%]">Status</label>
-              <span className="text-secondary">{bookDetail.status}</span>
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg">
-          <label className="font-semibold w-[50%]">Completed</label>
-          <span className="text-secondary">
-            {bookDetail.completeAt ? ymd(new Date(bookDetail.completeAt)) : "TBD"}
-          </span>
-        </div>
-        <div
-          className={`${
-            isAuthor ? "" : "flex justify-between"
-          } px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg`}
-        >
-          <label className="font-semibold w-[50%]">Prospecting</label>
-          {isAuthor ? (
-            <div>
-              <Toggler
-                checked={bookDetail.prospect}
-                setChecked={updateProspect}
-                falseLabel="No Agents"
-                trueLabel="Allow Agents"
-              />
-            </div>
-          ) : (
-            <span className="text-secondary">
-              {bookDetail.prospect ? "YES" : "NO"}
-            </span>
-          )}
-        </div>
-        <div
-          className={`${
-            isAuthor ? "" : "flex justify-between"
-          } px-2 mb-2 mr-4 border border-opacity-50 border-secondary rounded-lg`}
-        >
-          <label className="font-semibold w-[50%]">Public</label>
-          {isAuthor ? (
-            <Toggler
-              checked={bookDetail.active}
-              setChecked={updateActive}
-              falseLabel="Not Visible"
-              trueLabel="Visible"
-            />
-          ) : (
-            <span className="text-secondary">
-              {bookDetail.active ? "PUBLIC" : "HIDDEN"}
-            </span>
-          )}
-        </div>
+      <div>
+        <label>Visibility</label>
+        <div>{bookDetail.visible}</div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-          <ShrinkableIconLabel
-            iconClassName="text-primary-content"
-            labelClassName="text-primary-content font-semibold"
-            label="Likes"
-            icon={HeartIcon}
-            onClick={onLike}
-          />
-          <span className="text-primary">
-            {bookDetail.likes?.length || 0}
-          </span>
-        </div>
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-          <ShrinkableIconLabel
-            iconClassName="text-primary-content"
-            labelClassName="text-primary-content font-semibold"
-            label="Shares"
-            icon={ShareIcon}
-            onClick={onShare}
-          />
-          <span className="text-primary">
-            {bookDetail.shares?.length || 0}
-          </span>
-        </div>
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-          <ShrinkableIconLabel
-            iconClassName="text-primary-content"
-            labelClassName="text-primary-content font-semibold"
-            label="Follows"
-            icon={FollowIcon}
-            onClick={onFollow}
-          />
-          <span className="text-primary">
-            {bookDetail.follows?.length || 0}
-          </span>
-        </div>
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-          <ShrinkableIconLabel
-            iconClassName="text-primary-content"
-            labelClassName="text-primary-content font-semibold"
-            label="Fans"
-            icon={FireIcon}
-            onClick={() => {}}
-          />
-          <span className="text-primary">
-            0
-          </span>
-        </div>
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-          <ShrinkableIconLabel
-            iconClassName="text-primary-content"
-            labelClassName="text-primary-content font-semibold"
-            label="Comments"
-            icon={ReplyIcon}
-            onClick={() => {}}
-          />
-          <span className="text-primary">(NI)</span>
-        </div>
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-          <label className="font-semibold w-[50%]">Reads</label>
-          <span className="text-primary">(NI)</span>
-        </div>
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-          <label className="font-semibold w-[50%]">Reviews</label>
-          <span className="text-primary">(NI)</span>
-        </div>
-        <div className="flex justify-between px-2 mb-2 mr-4 border border-opacity-50 border-primary rounded-lg">
-          <label className="font-semibold w-[50%]">Purchases</label>
-          <span className="text-primary">(NI)</span>
-        </div>
+      <div>
+        <label>Permission</label>
+        <div>TBD</div>
       </div>
-
-      <div className="my-4">
-        <h3>Back Panel</h3>
-        <div className="font-ibarra">
-          {isAuthor ? (
-            <InlineTextarea
-              content={bookDetail.back}
-              setContent={updatePanel}
-              onSave={bookApi.save}
-            />
-          ) : 
-            <HtmlContent content={bookDetail.back||''}/>
-          }
-        </div>
-      </div>
-
-      <div className="my-4">
-        <h3>Synopsis</h3>
-        <div className="font-ibarra">
-          {isAuthor ? (
-            <InlineTextarea
-              content={bookDetail.synopsis}
-              setContent={updateSynopsis}
-              onSave={bookApi.save}
-            />
-          ) : (
-            <HtmlContent content={bookDetail.synopsis!} />
-          )}
-        </div>
-      </div>
-
-      <div className="my-4">
-        <h3>Chapters {isAuthor && <OpenChapterModalButton variant="plus" />}</h3>
-          {isAuthor && <CreateChapterModal forBook={bookApi} />}
-        <div className="flex space-x-4">
-          <ChapterList forBook={bookApi} onSelect={editChapter} />
-        </div>
-      </div>
-
-      <div className="my-4">
-        <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
-          {isAuthor && <CreateCharacterModal forBook={bookApi} />}
-          <div className="flex space-x-4">
-          <CharacterList characters={bookApi.bookDetail?.characters} />
-        </div>
-      </div>
-
-        <div className="my-4">
-          <h3>Gallery {isAuthor && bookDetail.gallery===undefined ? <OpenGalleryModalPlus /> : <span>{PhotoIcon}</span> }</h3>
-          <div>
-          {(bookDetail.gallery || isAuthor) && (
-            <GalleryCreateModal onUpsert={onGalleryUpsert} />
-          )}
-          </div>
-          <GalleryPhotoswipe gallery={bookDetail.gallery} />
-        </div>
-
-      {isAuthor && jsonBlock(bookDetail)}
     </div>
   )
-  : <ErrorPage />
-}
 
-export default BookDetailComponent
+  return (
+    <div>
+      <BookDetailHeader bookDetail={bookDetail} onUpdate={update} />
+      <div>
+          <>
+            <h3>Back</h3>
+            <div className="my-4 font-ibarra">
+              {isAuthor ? (
+                <InlineTextarea
+                  content={bookDetail.back}
+                  setContent={setBack}
+                  onSave={onSave}
+                  />
+              ) : 
+              <HtmlContent content={bookDetail.back??''}/>
+              }
+            </div>
+          </>
+          <>
+            <h3>Synopsis</h3>
+            <div className="my-4">
+              <div className="font-ibarra">
+                {isAuthor ? (
+                  <InlineTextarea
+                    content={bookDetail.synopsis}
+                    setContent={setSynopsis}
+                    onSave={onSave}
+                  />
+                ) : (
+                  <HtmlContent content={bookDetail.synopsis??''} />
+                )}
+              </div>
+            </div>
+          </>
+          <>
+            <h3>Chapters</h3>
+            <div className="my-4">
+              <h3>Chapters </h3>
+              <div className="flex space-x-4">
+                {isAuthor && 
+                  <>
+                    <OpenChapterModalButton variant="plus" />
+                    <CreateChapterModal bookDetail={bookDetail} onSave={onSave} />
+                  </>
+                }
+                <ChapterList chapters={bookDetail.chapters??[]} onSelect={editChapter} />
+              </div>
+            </div>
+          </>
+          <>
+            <h3>Characters</h3>
+            <div className="my-4">
+              <h3>Characters{isAuthor && <OpenCharacterModalPlus />}</h3>
+                {isAuthor && <CreateCharacterModal bookDetail={bookDetail} />}
+                <div className="flex space-x-4">
+                {/* <CharacterList characters={bookDetail.characters} /> */}
+              </div>
+            </div>
+          </>
+          <>
+            <h3>Gallery</h3>
+            <div className="my-4">
+              <h3>Gallery {isAuthor && bookDetail.gallery===undefined ? <OpenGalleryModalPlus /> : <span>{PhotoIcon}</span> }</h3>
+              <div>
+              {(bookDetail.gallery || isAuthor) && (
+                <GalleryCreateModal onUpsert={onGalleryUpsert} />
+              )}
+              </div>
+              <GalleryPhotoswipe gallery={bookDetail.gallery} />
+            </div>
+          </>
+      </div>
+      {jsonBlock(bookDetail)}
+    </div>
+)}
+
+export default BookDetailView

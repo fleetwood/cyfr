@@ -1,20 +1,16 @@
-import { ReactNode, useEffect, useRef, useState } from "react"
-import useDebug from "../../../hooks/useDebug"
-import useFeed from "../../../hooks/useFeed"
-import { Gallery, ImageUpsertProps } from "../../../prisma/types"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import { useToast } from "../../context/ToastContextProvider"
-import { CompleteFile } from "../../forms/Dropzone"
-import { CyfrLogo } from "../../ui/icons"
+import { useRef } from "react"
+import useDebug from "hooks/useDebug"
+
 import GalleryUpsertForm from "./GalleryUpsertForm"
-import OpenModal from "../../ui/openModal"
+import useApi from "prisma/useApi"
+import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from "components/ui/modalCheckbox"
 
 const {debug} = useDebug('components/containers/GalleryGalleryCreateView')
 
 const createGalleryModal = "createGalleryModal"
 
-export const OpenGalleryModalButton = () => <OpenModal htmlFor={createGalleryModal} label='Create Character' />
-export const OpenGalleryModalPlus = () => <OpenModal htmlFor={createGalleryModal} variant='plus' />
+export const OpenGalleryModalButton = () => <ModalOpenButton id={createGalleryModal} label='Create Gallery' />
+export const OpenGalleryModalPlus = () => <ModalOpenButton id={createGalleryModal} variant='plus' />
 
 type GalleryCreateModalProps = {
   onUpsert?:  (galleryId?:string) => void
@@ -28,29 +24,33 @@ type GalleryCreateModalProps = {
 const GalleryCreateModal = ({onUpsert, limit=-1, }:GalleryCreateModalProps) => {
   const modal = useRef<HTMLInputElement>(null)
 
-  const [cyfrUser] = useCyfrUserContext()
-  const { notify } = useToast()
-  
-  const { invalidateFeed } = useFeed({ type: "gallery" })
+  const closeModal = (e?:any) => {
+    debug('closeModal TODO: create a manual close for modal')
+  }
+
+  const onGalleryUpsert = (galleryId?:string) => {
+    debug('onGalleryUpsert', galleryId||'')
+    closeModal()
+    if (onUpsert) onUpsert()
+  }
+
+  const {cyfrUser} = useApi.cyfrUser()
 
   return (
     <>
-    <input type="checkbox" ref={modal} id={createGalleryModal} className="modal-toggle" onChange={()=>{}} />
-      <div className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box bg-opacity-0 shadow-none">
-        <label htmlFor={createGalleryModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-          <div className="mb-3 rounded-xl w-full bg-primary text-primary-content md:bg-blend-hard-light md:bg-opacity-80">
-            {cyfrUser && (
-              <div className="w-full mx-auto p-2 sm:p-6 lg:p-4 drop-shadow-xl">
-                <form className="flex flex-col space-y-2 bg-secondary p-2 rounded-lg drop-shadow-lg border border-base-100 border-opacity-50" onSubmit={(e) => {e.preventDefault()}}>
-                  <GalleryUpsertForm limit={limit} onUpsert={(galleryId) => {invalidateFeed(); onUpsert ? onUpsert(galleryId) : {}}} />
-                </form>
-              </div>
-            )}
+    <ModalCheckbox id={createGalleryModal} />
+    <div className="modal modal-bottom sm:modal-middle">
+      <div className="modal-box bg-opacity-0 shadow-none">
+        {cyfrUser && (
+          <div className="w-full mx-auto drop-shadow-xl">
+            <form className="bg-base-100 p-2 rounded-lg drop-shadow-lg" onSubmit={(e) => {e.preventDefault()}}>
+              <GalleryUpsertForm limit={limit} onUpsert={onGalleryUpsert} className="flex flex-col space-y-2" />
+            </form>
           </div>
-        </div>
+        )}
+        <ModalCloseButton id={createGalleryModal} />Z
       </div>
-      
+    </div>
     </>
   )
 }
