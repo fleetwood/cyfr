@@ -4,7 +4,7 @@ import { CoverStub, GenreStub, Image } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import { useState } from 'react'
 import { cloudinary } from 'utils/cloudinary'
-import { uniqueKey } from 'utils/helpers'
+import { domRef } from 'utils/helpers'
 
 const {debug} = useDebug('containers/Cover/CoverGenreEdit', )
 
@@ -35,7 +35,7 @@ const CoverGenreEdit = ({genre, cardClassName, labelClassName, label, onUpdate}:
         }
         <div className="flex space-x-4 my-2">
         {covers && covers.map((cover:any, i:number) => (
-          <img src={cloudinary.thumb({ url: cover.image.url, width: 40 })} key={uniqueKey(genre,cover)} />
+          <img src={cloudinary.thumb({ url: cover.image.url, width: 40 })} key={domRef(genre,cover)} />
         ))}
         </div>
         </label>

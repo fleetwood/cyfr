@@ -8,7 +8,7 @@ import useApi from "prisma/useApi"
 import { useEffect, useState } from "react"
 import { Item, Gallery as PhotoGallery } from "react-photoswipe-gallery"
 import { cloudinary } from "utils/cloudinary"
-import { uniqueKey, uuid } from "utils/helpers"
+import { domRef, uuid } from "utils/helpers"
 import ImageFooter from "../Image/ImageFooter"
 import {Card, CardActionArea, CardContent} from "@mui/material"
 
@@ -137,7 +137,7 @@ const GalleryImages = ({
       <div className="min-w-full">
         <div className="columns-2 md:columns-4 lg:columns-6 space-y-1 justify-evenly">
           {imageList.map(item => (
-            <Item {...item} key={uniqueKey(key,item)}>
+            <Item {...item} key={domRef(key,item)}>
               {({ ref, open }) => (
                 <Card>
                   <CardActionArea ref={ref}>

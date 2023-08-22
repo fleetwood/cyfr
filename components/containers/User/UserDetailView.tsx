@@ -1,17 +1,16 @@
-import { Grid } from "@mui/material"
-import { useCyfrUserContext } from "components/context/CyfrUserProvider"
-import { useToast } from "components/context/ToastContextProvider"
+import {Grid} from "@mui/material"
+import {useToast} from "components/context/ToastContextProvider"
 import UserAvatar from "components/ui/avatar/userAvatar"
-import { FireIcon, HeartIcon } from "components/ui/icons"
-import JsonBlock from "components/ui/jsonBlock"
+import {FireIcon,HeartIcon} from "components/ui/icons"
 import ShrinkableIconButton from "components/ui/shrinkableIconButton"
-import { BookStub, FollowStub, GalleryStub, PostStub, UserFollow, UserStub } from "prisma/prismaContext"
+import {BookStub,FollowStub,GalleryStub,PostStub} from "prisma/prismaContext"
 import useApi from "prisma/useApi"
-import { useState } from "react"
-import { abbrNum, uniqueKey } from 'utils/helpers'
-import PostStubView from "../Post/PostStubView"
+import {useState} from "react"
+import {abbrNum, domRef} from 'utils/helpers'
+
 import BookCover from "../Books/BookCover"
 import GalleryStubView from "../Gallery/GalleryStubView"
+import PostStubView from "../Post/PostStubView"
 
 type UserDetailViewProps = {slug: string}
 const UserDetailView = ({slug}:UserDetailViewProps) => {
@@ -144,7 +143,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
           <div className="bg-base-100 my-4 p-4 rounded-md">
             {currentUser?.galleries && 
               currentUser.galleries.map((gallery: GalleryStub) => 
-              <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
+              <div className="relative" key={domRef('user-gallery',currentUser,gallery)} >
                 <GalleryStubView gallery={gallery}/>
               </div>
             )}
@@ -180,7 +179,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
           <h2 className="h-subtitle">Fans</h2>
           <div className="flex space-x-2 space-y-2">
             {fans.map((follow:FollowStub) => (
-              <UserAvatar user={follow.follower} sz='md' key={uniqueKey(currentUser, follow)} />
+              <UserAvatar user={follow.follower} sz='md' key={domRef(currentUser, follow)} />
             ))}
           </div>
         </div>
@@ -188,7 +187,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
           <h2 className="h-subtitle">Followers</h2>
           <div className="flex space-x-2 space-y-2">
             {followers.map((follow:FollowStub) => (
-              <UserAvatar user={follow.follower} sz='md' key={uniqueKey(currentUser, follow)} />
+              <UserAvatar user={follow.follower} sz='md' key={domRef(currentUser, follow)} />
             ))}
           </div>
         </div>
@@ -201,7 +200,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
           <h2 className="h-subtitle">Stans</h2>
           <div className="flex space-x-2 space-y-2">
             {stans.map((follow:FollowStub) => (
-              <UserAvatar user={follow.following} sz='md' key={uniqueKey(currentUser, follow)} />
+              <UserAvatar user={follow.following} sz='md' key={domRef(currentUser, follow)} />
             ))}
           </div>
         </div>
@@ -209,7 +208,7 @@ const UserDetailView = ({slug}:UserDetailViewProps) => {
           <h2 className="h-subtitle">Following</h2>
           <div className="flex space-x-2 space-y-2">
             {following.map((follow:FollowStub) => (
-              <UserAvatar user={follow.following} sz='md' key={uniqueKey(currentUser, follow)} />
+              <UserAvatar user={follow.following} sz='md' key={domRef(currentUser, follow)} />
             ))}
           </div>
         </div>

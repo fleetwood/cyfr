@@ -2,7 +2,7 @@ import { PrevIcon, NextIcon } from "components/ui/icons"
 import ShrinkableIconLink from "components/ui/shrinkableIconLink"
 import useDebug from "hooks/useDebug"
 import { Chapter, ChapterDetail, ChapterListItem, ChapterStub } from "prisma/prismaContext"
-import { uniqueKey } from "utils/helpers"
+import { domRef } from "utils/helpers"
 
 const { debug, jsonBlock } = useDebug("ChapterFooter")
 
@@ -35,7 +35,7 @@ const ChapterNav = ({
             label={chapter.title}
             className="btn-primary"
             href={`/book/${bookSlug}/chapter/${chapter.id}`}
-            key={uniqueKey(chapter)}
+            key={domRef(chapter)}
           />
         ) : i + 1 === i ? (
           <ShrinkableIconLink
@@ -44,7 +44,7 @@ const ChapterNav = ({
             className="btn-primary text-primary-content"
             href={`/book/${bookSlug}/chapter/${chapter.id}`}
             dir="left"
-            key={uniqueKey(chapter)}
+            key={domRef(chapter)}
           />
         ) : null
       )}

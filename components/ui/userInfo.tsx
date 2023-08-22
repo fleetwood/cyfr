@@ -1,6 +1,6 @@
 import {SizeProps} from 'types/props'
 import {UserStub} from 'prisma/prismaContext'
-import {uniqueKey,uuid} from 'utils/helpers'
+import {domRef,uuid} from 'utils/helpers'
 import UserAvatar from './avatar/userAvatar'
 
 export type UserInfoProps = {
@@ -11,7 +11,7 @@ export type UserInfoProps = {
 }
 
 const UserInfo = ({user,link,sz,variant}:UserInfoProps) => {
-  const popover = uniqueKey(user)+uuid()
+  const popover = domRef(user)+uuid()
   const count = (prop:any[]|number):number => Array.isArray(prop) ? prop.length : prop
   return (
     <div>

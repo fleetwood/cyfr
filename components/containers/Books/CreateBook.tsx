@@ -37,7 +37,7 @@ import {
 } from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, { useEffect, useState } from 'react'
-import { dedupe, now, toSlug, uniqueKey } from 'utils/helpers'
+import { dedupe, now, toSlug, domRef } from 'utils/helpers'
 import GenreSelector from '../Genre/GenreSelector'
 import UserSelector from '../User/UserSelector'
 import EditRole from '../Permission/EditRole'

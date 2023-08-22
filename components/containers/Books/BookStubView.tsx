@@ -1,13 +1,12 @@
-import HtmlContent from "components/ui/htmlContent"
 import useDebug from "hooks/useDebug"
-import Link from "next/link"
-import { BookStub } from "prisma/prismaContext"
-import { SizeProps } from "types/props"
-import { uniqueKey } from "utils/helpers"
-import BookCover, { BookCoverVariant } from "./BookCover"
+import {BookStub} from "prisma/prismaContext"
+
+import BookCover,{BookCoverVariant} from "./BookCover"
 import BookFooter from "./BookFooter"
+import {SizeProps} from "types/props"
 import AuthorAvatar from "components/ui/avatar/authorAvatar"
-import UserAvatar from "components/ui/avatar/userAvatar"
+import {domRef} from "utils/helpers"
+import HtmlContent from "components/ui/htmlContent"
 
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent')
 
@@ -25,22 +24,22 @@ const BookStubView = ({book, authorAvatars, size = "md", showAuthors = true, sho
   return (
     <div className="border-2 border-primary rounded-lg">
       
-      <div className="bg-primary text-primary-content p-4">
-        <h3><Link href={`/book/${book.slug}`}>{book.title}</Link></h3>
-        {showAuthors && book.authors && book.authors.length > 0 && 
-          <div className="flex my-4">
-            <span className="pr-2">by</span>
-            {book.authors.map((author) => 
-              <AuthorAvatar author={author} sz={size} key={uniqueKey(book, author)} />
-            )}
-          </div>
-        }
-      </div>
-        
-      <div className="p-4">
-        <BookCover book={book} 
-          variant={ size === 'sm' || size === 'xs' ? BookCoverVariant.THUMB : BookCoverVariant.COVER} 
-          authorAvatars={authorAvatars} />
+      <h2>{book.title}</h2>
+
+      {book.authors && book.authors.length > 1 && 
+        <div className="flex my-4">
+          <span>by </span>
+          {book.authors.map((author) => 
+            <AuthorAvatar author={author} sz="lg" key={domRef(book, author)} />
+          )}
+        </div>
+      }
+
+      {book.cover &&
+        <BookCover book={book} variant={BookCoverVariant.COVER} link={false} authorAvatars={authorAvatars} />
+      }
+      
+      <div>
         <div className="flex">
           <span>{book.fiction ? 'FICTION' : 'NON-FICTION'}</span>
           {book.genre && <span>{book.genre?.title}</span>}

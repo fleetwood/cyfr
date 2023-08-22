@@ -6,7 +6,7 @@ import Spinner from "components/ui/spinner"
 import useDebug from "hooks/useDebug"
 import ErrorPage from "pages/404"
 import useApi from "prisma/useApi"
-import { uniqueKey } from "utils/helpers"
+import { domRef } from "utils/helpers"
 
 const {debug, jsonBlock} = useDebug('user/[slug]/gallery',)
 
@@ -38,7 +38,7 @@ const UserGalleryPage = ({ user, slug }:UserGalleryPageProps) => {
       {isLoading && <Spinner  size="md" />}
       {error && <ErrorPage message="Could not load galleries..." />}
       {data && data.map((gallery:GalleryStub) => (
-        <div className="relative" key={uniqueKey(user, gallery)}>
+        <div className="relative" key={domRef(user, gallery)}>
           <GalleryStubView gallery={gallery} key={gallery.id}/>
         </div>
       ))}

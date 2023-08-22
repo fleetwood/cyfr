@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import BookCover from "../../components/containers/Books/BookCover";
-import TailwindInput from "../../components/forms/TailwindInput";
-import MainLayout from '../../components/layouts/MainLayout';
-import EZButton from "../../components/ui/ezButton";
-import useDebug from "../../hooks/useDebug";
-import { BookStub, GenreStub, PrismaBook, PrismaGenre } from '../../prisma/prismaContext';
-import { uniqueKey } from "../../utils/helpers";
-import BookStubView from "components/containers/Books/BookStubView";
+import BookCover from "components/containers/Books/BookCover";
+import TailwindInput from "components/forms/TailwindInput";
+import MainLayout from 'components/layouts/MainLayout';
+import EZButton from "components/ui/ezButton";
+import useDebug from "hooks/useDebug";
+import { BookStub, GenreStub, PrismaBook, PrismaGenre } from 'prisma/prismaContext';
+import { domRef } from "utils/helpers";
 
 const {debug, jsonBlock} = useDebug('books/index', )
 
@@ -53,13 +52,13 @@ const BooksPage = ({genres, books}: BooksPageProps) => {
           }
           <TailwindInput type="text" inputClassName="w-[50%]" placeholder="TODO: What are you interested in?" setValue={setSearch} value={search} />
           <div className="grid grid-cols-4 justify-between gap-2 py-4">
-            {genres.map((g:GenreStub) => (
-              <EZButton label={`${g.title} (${g._count.books})`} variant={visibleGenres.filter(v => v.id === g.id).length> 0 ? 'primary' : 'secondary'} key={uniqueKey(g)} onClick={() => setSearch(() => g.title)}/>
-            ))}
+            {/* {genres.map((g:GenreStub) => (
+              <EZButton label={`${g.title} (${g.books?.filter(b => b !== null).length})`} variant={visibleGenres.filter(v => v.id === g.id).length> 0 ? 'primary' : 'secondary'} key={domRef(g)} onClick={() => setSearch(() => g.title)}/>
+            ))} */}
           </div>
           <div className="grid grid-cols-3 justify-between gap-2 py-4">
-            {books.filter(b => b !== null).map((book) => (
-              <BookStubView book={book} key={uniqueKey(book)} showFooter={false} />
+            {visibleBooks.filter(b => b !== null).map((book) => (
+                <BookCover book={book} key={domRef(book)} />
             ))}
           </div>
         </div>

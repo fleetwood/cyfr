@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack'
 import {KeyVal} from 'types/props'
 import {MuiArrowDownIcon} from './icons'
 import {Grid} from '@mui/material'
-import {uniqueKey, uuid} from 'utils/helpers'
+import {domRef, uuid} from 'utils/helpers'
 
 type DropdownMenuProps = {
   label?:           string

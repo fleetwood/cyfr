@@ -141,7 +141,7 @@ export type BookStub = Book & {
   publisher?:   Publisher
   genre:        Genre
   gallery?:     Gallery
-  cover?:       Cover
+  cover?:       CoverStub
   _count: {
     chapters:   number
     characters: number
@@ -153,79 +153,124 @@ export type BookStub = Book & {
   }
 }
 
-export const BookStubInclude = { include: {
-  agent:      true, // AgentStubInclude, // No stubs in stubs!
-  authors:    {include: {
-    user: {
-      select: {
-        name: true,
-        id: true,
-        slug: true,
-        image: true,
-      },
-    },
-    books: {
+export const BookStubInclude = {
+  include: {
+    agent: true, // AgentStubInclude, // No stubs in stubs!
+    authors: {
       include: {
-        agent:      true, // AgentStubInclude, // No stubs in stubs!
-        authors:    true, // AuthorStubInclude,
-        artists:    true, // ArtistStubInclude,
-        publisher:  true,
-        genre:      true,
-        gallery:    true, // GalleryStubInclude,
-        cover: true, // 
-        // {
-        //   include: {
-        //     image: true,
-        //     artists: true
-        //   }
-        // },
+        user: {
+          select: {
+            name: true,
+            id: true,
+            slug: true,
+            image: true,
+          },
+        },
+        books: {
+          include: {
+            agent: true, // AgentStubInclude, // No stubs in stubs!
+            authors: true, // AuthorStubInclude,
+            artists: true, // ArtistStubInclude,
+            publisher: true,
+            genre: true,
+            gallery: true, // GalleryStubInclude,
+            cover: {
+              include: {
+                image: true,
+                artists: {
+                  include: {
+                    user: {
+                      select: {
+                        name: true,
+                        id: true,
+                        slug: true,
+                        image: true,
+                        membership: {
+                          select: {
+                            id: true,
+                            expiresAt: true,
+                            type: {
+                              select: {
+                                id: true,
+                                name: true,
+                                level: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                    books: {
+                      take: 5,
+                    },
+                    galleries: {
+                      take: 5,
+                    },
+                    reviews: true,
+                    covers: {
+                      take: 5,
+                    },
+                    _count: {
+                      select: {
+                        books: true,
+                        galleries: true,
+                        covers: true,
+                        reviews: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            _count: {
+              select: {
+                chapters: true,
+                characters: true,
+                likes: true,
+                shares: true,
+                follows: true,
+                readers: true,
+                reviews: true,
+              },
+            },
+          },
+          take: 5,
+        },
+        reviews: {
+          take: 5,
+        },
         _count: {
           select: {
-            chapters: true,
-            characters: true,
-            likes: true,
-            shares: true,
-            follows: true,
-            readers: true,
-            reviews: true
-          }
-        }
+            books: true,
+            reviews: true,
+          },
+        },
       },
-      take: 5
-    },
-    reviews: {
-      take: 5
-    },
+    }, // AuthorStubInclude,
+    artists: true, // ArtistStubInclude,
+    publisher: true,
+    genre: true,
+    gallery: true, // GalleryStubInclude,
+    cover: true, //
+    // {
+    //   include: {
+    //     image: true,
+    //     artists: true
+    //   }
+    // },
     _count: {
       select: {
-        books: true,
-        reviews: true
-      }
-    }
-  }}, // AuthorStubInclude,
-  artists:    true, // ArtistStubInclude,
-  publisher:  true,
-  genre:      true,
-  gallery:    true, // GalleryStubInclude,
-  cover: true, // 
-  // {
-  //   include: {
-  //     image: true,
-  //     artists: true
-  //   }
-  // },
-  _count: {
-    select: {
-      chapters: true,
-      characters: true,
-      likes: true,
-      shares: true,
-      follows: true,
-      readers: true,
-      reviews: true
-    }
-  }
-}}
+        chapters: true,
+        characters: true,
+        likes: true,
+        shares: true,
+        follows: true,
+        readers: true,
+        reviews: true,
+      },
+    },
+  },
+}
 
 export type BookDetail = Book & {
   agent?:         AgentStub

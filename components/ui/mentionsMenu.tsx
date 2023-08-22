@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import useDebug from "../../hooks/useDebug"
-import { UserDetail, UserStub } from "../../prisma/prismaContext"
-import { uniqueKey } from "../../utils/helpers"
-import { useCyfrUserContext } from "../context/CyfrUserProvider"
+import useDebug from "hooks/useDebug"
+import { UserDetail, UserStub } from "prisma/prismaContext"
+import { domRef } from "utils/helpers"
 import UserAvatar from "./avatar/userAvatar"
 import Spinner from "./spinner"
-import UserApi from "../../prisma/useApi/user"
+import UserApi from "prisma/useApi/user"
+import useApi from "prisma/useApi"
 
 const {debug} = useDebug('components/ui/mentionsMenu')
 
@@ -17,7 +17,7 @@ type MentionsMenuProps = {
 }
 
 const MentionsMenu = ({onSelect, show = true, type='MENTION'}:MentionsMenuProps) => {
-    const {cyfrUser} = useCyfrUserContext()
+    const {cyfrUser} = useApi.cyfrUser()
     const [showMenu, setShowMenu] = useState(show)
     const {mentions} = UserApi()
     const [list, setList] = useState<Array<UserStub>>([])
@@ -59,7 +59,7 @@ const MentionsMenu = ({onSelect, show = true, type='MENTION'}:MentionsMenuProps)
             : cyfrUser && list.map((user:any) => (
                 <li 
                     onClick={() => chooseMention(user)} 
-                    key={uniqueKey(user,list)} 
+                    key={domRef(user,list)} 
                     className="
                         flex justify-items-start space-x-1 
                         cursor-pointer px-2 rounded-sm 

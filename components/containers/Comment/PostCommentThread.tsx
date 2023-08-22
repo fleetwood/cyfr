@@ -9,7 +9,7 @@ import useFeed from "hooks/useFeed"
 import { CreatorStub, PostDetail, PostStub } from "prisma/types"
 import useApi from "prisma/useApi"
 import { useState } from "react"
-import { timeDifference, uniqueKey } from "utils/helpers"
+import { timeDifference, domRef } from "utils/helpers"
 
 type CommentThreadTypes = {
   postStub?:    PostStub
@@ -75,7 +75,7 @@ const CommentThread = ({postStub, postDetail}:CommentThreadTypes) => {
       }
       
       {commentThread?.comments && commentThread?.comments.map((comment:any) => (
-      <Grid columns={12} container className="bg-base-100 even:bg-opacity-50 p-1 mt-1 rounded-md" key={uniqueKey(postStub??postDetail,comment)}>
+      <Grid columns={12} container className="bg-base-100 even:bg-opacity-50 p-1 mt-1 rounded-md" key={domRef(postStub??postDetail,comment)}>
         <Grid item xs={2}>
           <Chip
             color='info'

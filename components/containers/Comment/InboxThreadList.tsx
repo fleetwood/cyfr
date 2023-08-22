@@ -1,7 +1,7 @@
-import { useState } from "react"
-import { CommentThreadDetails, CyfrUser } from "../../../prisma/prismaContext"
-import { uniqueKey } from "../../../utils/helpers"
-import UserAvatar from "../../ui/avatar/userAvatar"
+import UserAvatar from "components/ui/avatar/userAvatar"
+import {useState} from "react"
+import {CommentThreadDetails,CyfrUser} from "../../../prisma/prismaContext"
+import {domRef} from "../../../utils/helpers"
 
 type InboxThreadListProps = {
   cyfrUser: CyfrUser
@@ -25,7 +25,7 @@ const InboxThreadList = ({
   return (
     <div className="w-full min-h-screen max-h-screen">
       {threads && threads.map((thread) => (
-          <div className="w-full" key={uniqueKey(cyfrUser, thread)}>
+          <div className="w-full" key={domRef(cyfrUser, thread)}>
             {thread.commune.users
               .filter((u) => u.userId !== cyfrUser.id)
               .map((u) => (
@@ -38,7 +38,7 @@ const InboxThreadList = ({
                       : ""
                   }
                   hover:bg-base-300`}
-                  key={uniqueKey(cyfrUser, thread, u)}
+                  key={domRef(cyfrUser, thread, u)}
                   onClick={() => onThreadClick(thread)}
                 >
                   <UserAvatar user={u.user} sz="sm" link={false} />

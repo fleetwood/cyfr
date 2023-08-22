@@ -6,7 +6,7 @@ import useFeed from "hooks/useFeed"
 import { SocialTextarea } from "components/forms"
 import { CommentThreadDetails, CyfrUser, UpsertInboxProps, User, UserStub } from "prisma/prismaContext"
 import { useState } from "react"
-import { uniqueKey, timeDifference } from "utils/helpers"
+import { timeDifference, domRef } from "utils/helpers"
 import HtmlContent from "components/ui/htmlContent"
 import UserAvatar from "components/ui/avatar/userAvatar"
 
@@ -69,7 +69,7 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
         {thread && thread.comments.map((comment) => (
           <div
             className={`p-2 mt-2 w-full text-base-content`}
-            key={uniqueKey(thread, comment)}
+            key={domRef(thread, comment)}
           >
             <div>
               <span>{comment.creator.name}</span>
@@ -105,6 +105,6 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
         </button>
       </div>
     </div>
-  );
-};
-export default SendMessageDetail;
+  )
+}
+export default SendMessageDetail

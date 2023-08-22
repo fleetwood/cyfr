@@ -1,14 +1,14 @@
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import {useEffect,useState} from "react"
 import GenreAdmin from "../components/containers/Genre/GenreAdmin"
 import AdminLayout from "../components/layouts/AdminLayout"
-import { CyfrLogo } from "../components/ui/icons"
-import useDebug from "../hooks/useDebug"
-import { useSession } from "../hooks/useSession"
+import {CyfrLogo} from "../components/ui/icons"
+import useDebug from "hooks/useDebug"
+import {useSession} from "hooks/useSession"
 
-import { GenreStub } from "prisma/prismaContext"
-import { uniqueKey } from "utils/helpers"
 import useApi from "prisma/useApi"
+import {GenreStub} from "prisma/prismaContext"
+import {domRef} from "utils/helpers"
 
 const { debug, jsonBlock } = useDebug("admin page", )
 
@@ -48,7 +48,7 @@ const AdminPage = ({}) => {
         <div className="flex flex-wrap justify-items-center">
           {genres.length>0 && genres.map(genre => 
             <div 
-              key={uniqueKey(genre)} 
+              key={domRef(genre)} 
               className='btn btn-primary text-primary-content rounded-md px-2 mr-2 mb-2 sm:w-1/3 md:w-1/6' 
               onClick={() => setEditGenre(genre)}>
               {genre.title}

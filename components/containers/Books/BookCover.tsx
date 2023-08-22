@@ -1,12 +1,15 @@
-import { useCyfrUserContext } from "components/context/CyfrUserProvider"
-import { CheckBadge } from "components/ui/icons"
+import {Avatar} from "@mui/material"
+import {useCyfrUserContext} from "components/context/CyfrUserProvider"
+import AuthorAvatar from "components/ui/avatar/authorAvatar"
+import {CheckBadge} from "components/ui/icons"
 import useDebug from "hooks/useDebug"
 import Link from "next/link"
-import { BookDetail, BookStub, Cover, CoverStub, Image } from "prisma/prismaContext"
-import { cloudinary } from "utils/cloudinary"
-import { isAuthor } from "utils/helpers"
+import {BookDetail,BookStub, Cover, CoverStub} from "prisma/prismaContext"
+import useApi from "prisma/useApi"
+import {cloudinary} from "utils/cloudinary"
+import {domRef,isAuthor} from "utils/helpers"
 
-const {debug} = useDebug('BookCover')
+const {debug} = useDebug('containers/Books/BookCover')
 
 export enum BookCoverVariant {
   THUMB = 100,
@@ -41,12 +44,13 @@ const BookImage = ({cover, title, width, owner}:{cover?: Cover | CoverStub, titl
  * @property variant {@link BookCoverVariant} 
  * @returns 
  */
-const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true}:BookCoverProps) => {
-  const {cyfrUser} = useCyfrUserContext()
+const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true, authorAvatars=true}:BookCoverProps) => {
+  const {cyfrUser} = useApi.cyfrUser()
   const isOwner = isAuthor({book,cyfrUser})
-  const {cover} = book
-  // @ts-ignore
-  const width = cover?.image?.width ?? variant
+  const cover = book.cover || null
+  const width = (variant === BookCoverVariant.FULL && cover !== null)
+    ? cover.image.width
+    : Number(variant) as number
   debug('BookCover', {cyfrUser: cyfrUser?.name ?? 'No cyfrUser', isOwner})
 
   const Booky = () => <BookImage cover={book.cover} title={book.title} width={width!} owner={isOwner} />
@@ -57,7 +61,15 @@ const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true}:BookCov
       ? <Link href={`/book/${book.slug ?? book.id}`}><Booky /></Link> 
       : <Booky />
     }
-    </div>)
-}
+    {authorAvatars && 
+      <div className="flex pt-2 space-x-2">
+        {book.authors?.map(author => (
+          <AuthorAvatar author={author} sz="sm" link={false} className="absolute bottom-0 float-right" key={domRef(book,author)} />
+        ))}
+      </div>
+    }
+    {/* <JsonBlock data={book} /> */}
+    </div>
+)}
 
 export default BookCover

@@ -36,10 +36,20 @@ const PostDetailPage = ({ postId }:PostDetailPageProps) => {
         </div>
       </div>
       <div className="bg-base-100 rounded-lg p-4 relative">
-        <div className="flex justify-end pr-4">Posted {timeDifference((post.createdAt || '').toString())}</div>
-        <HtmlContent className="clear-both" content={post.content!} /> 
-        {post.images && post.images[0] !== null && <GalleryPhotoswipe images={post.images} />}
-        <PostFooter post={post} onUpdate={invalidate} />
+        <div className="absolute right-0 pr-4">
+          Posted {timeDifference((post.createdAt || '').toString())}
+        </div>
+        <HtmlContent content={post.content!} /> 
+        {post.images?.length > 0 && post.images[0] !== null &&
+          <GalleryPhotoswipe images={post.images} />
+        }
+        {/* {post.post_comments && post.post_comments.map(c => (
+          <div className="text-base-content m-8 font-ibarra" key={domRef('post-comment',post,c)}>
+            {ReactHtmlParser(c.content!)}
+          </div>
+          ))} */}
+         
+        <PostFooter post={post} />
       </div>
     </MainLayout>
   )

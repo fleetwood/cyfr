@@ -1,11 +1,12 @@
-import {MembershipType} from '@prisma/client'
-import {useToast} from 'components/context/ToastContextProvider'
-import {CheckBadge} from 'components/ui/icons'
-import useDebug from 'hooks/useDebug'
-import useApi from 'prisma/useApi'
-import {cadenceInterval} from 'prisma/useApi/cyfrUser'
-import {useEffect, useState} from 'react'
-import {uniqueKey} from 'utils/helpers'
+
+import { useEffect, useState } from "react"
+import { CheckBadge } from "../../ui/icons"
+import {MembershipType} from "prisma/prismaContext"
+import {useToast} from "components/context/ToastContextProvider"
+import useDebug from "hooks/useDebug"
+import useApi from "prisma/useApi"
+import {cadenceInterval} from "prisma/useApi/cyfrUser"
+import {domRef} from "utils/helpers"
 
 const { debug } = useDebug('UserBillingDetail')
 
@@ -59,7 +60,7 @@ const UserBillingDetail = () => {
               hover:shadow-lg hover:border-primary
               ${isPlan(t) ? 'border-secondary' : 'border-base-100'}
             `}
-              key={uniqueKey(cyfrUser, t)}
+              key={domRef(cyfrUser, t)}
               onClick={() => setMembershipType(t)}
             >
               <h2 className="text-2xl font-semibold leading-6 text-base-content ">

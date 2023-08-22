@@ -3,7 +3,7 @@ import { CommentThreadDetails, CyfrUser, UserStub } from "prisma/prismaContext"
 import UserAvatar from "../../ui/avatar/userAvatar"
 import ReactHtmlParser from "react-html-parser"
 import RemirrorEditor from "../../forms/SocialTextarea"
-import { timeDifference, uniqueKey } from "utils/helpers"
+import { domRef, timeDifference } from "utils/helpers"
 import useFeed from "hooks/useFeed"
 import { ChatSendIcon } from "../../ui/icons"
 import useDebug from "hooks/useDebug"
@@ -68,7 +68,7 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
         <div className="flex flex-col">
             <div>{thread.id}</div>
             {thread.comments.map(comment => (
-                <div className={`p-2 mt-2 w-full text-base-content`} key={uniqueKey(thread,comment)}>
+                <div className={`p-2 mt-2 w-full text-base-content`} key={domRef(thread,comment)}>
                     <div><span>{comment.creator.name}</span><span>{timeDifference(comment.updatedAt)}</span></div>
                     <div className={`p-2 border rounded-md 
                     ${comment.creatorId===user.id ? 'bg-base-200' : 'bg-base-300'}`}>{ReactHtmlParser(comment.content!)}</div>

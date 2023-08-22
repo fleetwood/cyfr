@@ -7,7 +7,7 @@ import useDebug from 'hooks/useDebug'
 import {FollowerTypes, UserSearchProps, UserSearchStub, UserStub, UserTypes} from 'prisma/prismaContext'
 import useApi from 'prisma/useApi'
 import React, {useEffect, useState} from 'react'
-import {uniqueKey} from 'utils/helpers'
+import {domRef} from 'utils/helpers'
 
 const {debug} = useDebug('containers/User/UserSelector')
 
@@ -114,7 +114,7 @@ const UserSelector = (props:UserSelectorProps) => {
       <Grid>
         {isLoading && <SpinnerEllipse />}
         {users.map((u: UserSearchStub) => (
-          <div onClick={() => toggle(false)} key={uniqueKey(u.id)}>
+          <div onClick={() => toggle(false)} key={domRef(u.id)}>
             <UserAvatar
               user={u as UserStub}
               sz="sm"
