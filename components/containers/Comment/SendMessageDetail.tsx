@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CommentThreadDetails, CyfrUser, UpsertInboxProps, User } from "../../../prisma/prismaContext";
-import { uniqueKey, timeDifference } from "../../../utils/helpers";
+import { domRef, timeDifference } from "../../../utils/helpers";
 import TailwindInput from "../../forms/TailwindInput";
 import Avatar from "../../ui/avatar";
 import { ChatSendIcon } from "../../ui/icons";
@@ -68,7 +68,7 @@ const SendMessageDetail = ({cyfrUser, activeThreads, onCreate}:SendMessageDetail
         {thread && thread.comments.map((comment) => (
           <div
             className={`p-2 mt-2 w-full text-base-content`}
-            key={uniqueKey(thread, comment)}
+            key={domRef(thread, comment)}
           >
             <div>
               <span>{comment.author.name}</span>

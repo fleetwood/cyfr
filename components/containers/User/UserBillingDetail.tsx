@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useCyfrUserApi } from "../../../hooks/useCyfrUser";
 import useDebug from "../../../hooks/useDebug";
 import { sendApi } from "../../../utils/api";
-import { uniqueKey } from "../../../utils/helpers";
+import { domRef } from "../../../utils/helpers";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import { CheckBadge } from "../../ui/icons";
 
@@ -112,7 +112,7 @@ const UserBillingDetail = () => {
                             ? 'border-secondary' 
                             : 'border-base-100'}
                     `}
-                    key={uniqueKey(cyfrUser,p)}
+                    key={domRef(cyfrUser,p)}
                     onClick={() => setPlan(p)}
                     >
                         <h2 className="text-2xl font-semibold leading-6 text-base-content ">{p.label}</h2>

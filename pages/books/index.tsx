@@ -5,7 +5,7 @@ import MainLayout from '../../components/layouts/MainLayout';
 import EZButton from "../../components/ui/ezButton";
 import useDebug from "../../hooks/useDebug";
 import { BookStub, GenreStub, PrismaGenre } from '../../prisma/prismaContext';
-import { uniqueKey } from "../../utils/helpers";
+import { domRef } from "../../utils/helpers";
 
 const {debug, jsonBlock} = useDebug('books/index')
 
@@ -51,12 +51,12 @@ const BooksPage = ({genres}: BooksPageProps) => {
           <TailwindInput type="text" inputClassName="w-[50%]" placeholder="What are you interested in?" setValue={setSearch} value={search} />
           <div className="grid grid-cols-4 justify-between gap-2 py-4">
             {genres.map((g:GenreStub) => (
-              <EZButton label={`${g.title} (${g.books?.filter(b => b !== null).length})`} variant={visibleGenres.filter(v => v.id === g.id).length> 0 ? 'primary' : 'secondary'} key={uniqueKey(g)} onClick={() => setSearch(() => g.title)}/>
+              <EZButton label={`${g.title} (${g.books?.filter(b => b !== null).length})`} variant={visibleGenres.filter(v => v.id === g.id).length> 0 ? 'primary' : 'secondary'} key={domRef(g)} onClick={() => setSearch(() => g.title)}/>
             ))}
           </div>
           <div className="grid grid-cols-3 justify-between gap-2 py-4">
             {visibleBooks.filter(b => b !== null).map((book) => (
-                <BookCover book={book} key={uniqueKey(book)} />
+                <BookCover book={book} key={domRef(book)} />
             ))}
           </div>
           {/* {jsonBlock(visibleGenres)} */}

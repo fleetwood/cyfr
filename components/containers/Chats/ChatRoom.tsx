@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useChatRoomFeed } from "../../../hooks/useChatQuery"
 import useDebug from "../../../hooks/useDebug"
 import { ChatMessage, User, UserStub } from "../../../prisma/prismaContext"
-import { now, timeDifference, uniqueKey } from "../../../utils/helpers"
+import { now, timeDifference, domRef } from "../../../utils/helpers"
 import TailwindInput from "../../forms/TailwindInput"
 import Avatar from "../../ui/avatar"
 import { ChatSendIcon } from "../../ui/icons"
@@ -97,14 +97,14 @@ const ChatRoom = ({firstPerson, secondPerson, onCloseRoom, lastUpdated=now()}:Ch
             <div className="text-xs opacity-50">{room.id}</div>
             {room.messages?.map((message:ChatMessage) => isFirstPerson(message.authorId) 
                 ?
-                <div className="chat chat-end" key={`chatmessage-${uniqueKey(firstPerson, secondPerson)}-${message.updatedAt}`}>
+                <div className="chat chat-end" key={`chatmessage-${domRef(firstPerson, secondPerson)}-${message.updatedAt}`}>
                     <div className="chat-header">
                         <time className="text-xs opacity-50">{timeDifference(message.updatedAt)}</time>
                     </div>
                     <div className="chat-bubble text-sm chat-bubble-secondary">{message.content}</div>
                 </div>
                 :
-                <div className="chat chat-start" key={`chatmessage-${uniqueKey(firstPerson, secondPerson)}-${message.updatedAt}`}>
+                <div className="chat chat-start" key={`chatmessage-${domRef(firstPerson, secondPerson)}-${message.updatedAt}`}>
                     <div className="chat-header">
                         <time className="text-xs opacity-50">{timeDifference(message.updatedAt)}</time>
                     </div>

@@ -140,7 +140,7 @@ export const randArray = (arr:any[]) => arr[rand(0, arr.length-1)]
 
 export const uuid = (key?:string) => key || uid()
 
-export const uniqueKey = (...items:any) => {
+export const domRef = (...items:any) => {
   if (!items) return uuid()
   const key = items.flatMap((item:any) => typeof item === "object" 
     ? `${item?.id || uuid()}`

@@ -6,7 +6,7 @@ import Avatar from "../ui/avatar";
 import { BookIcon, CyfrLogo, HouseIcon, UserIcon } from "../ui/icons";
 import ShrinkableIconLink from "../ui/shrinkableIconLink";
 import ShrinkableLink from "../ui/shrinkableLink";
-import { onlyFans, uniqueKey } from "../../utils/helpers";
+import { onlyFans, domRef } from "../../utils/helpers";
 
 type NavbarProps = {
   className?: string
@@ -91,7 +91,7 @@ const Navbar = ({
                     {/* <h3 className="w-[100%]"><Link href={`/user/${userUrl}/books`} className='min-w-full rounded-lg hover:bg-opacity-100 hover:bg-secondary hover:drop-shadow-md'>Books</Link></h3> */}
                     {/* <ul className="col-1 p-2 text-primary-content mt-2 space-y-2"> */}
                       {cyfrUser.books?.map(book => (
-                      <li key={uniqueKey(book)}><Link className="hover:bg-opacity-100 hover:bg-primary hover:drop-shadow-md" href={`/book/${book.slug}`}>{book.title}</Link></li>
+                      <li key={domRef(book)}><Link className="hover:bg-opacity-100 hover:bg-primary hover:drop-shadow-md" href={`/book/${book.slug}`}>{book.title}</Link></li>
                       ))}
                     {/* </ul> */}
                   </ul>

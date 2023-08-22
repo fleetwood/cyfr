@@ -1,7 +1,7 @@
 import { Router, useRouter } from "next/router"
 import useDebug from "../../../hooks/useDebug"
 import { BookStub } from "../../../prisma/prismaContext"
-import { isBookAuthor, onlyFans, uniqueKey, valToLabel } from "../../../utils/helpers"
+import { isBookAuthor, onlyFans, domRef, valToLabel } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import Avatar from "../../ui/avatar"
 import EZButton from "../../ui/ezButton"
@@ -30,7 +30,7 @@ const BookStubView = ({book, authorAvatars}: BookComponentProps) => {
         <div className="flex my-4">
           <span>by </span>
           {book.authors.map((author) => 
-            <Avatar user={author} sz="lg" key={uniqueKey(book, author)} />
+            <Avatar user={author} sz="lg" key={domRef(book, author)} />
           )}
         </div>
       }

@@ -5,7 +5,7 @@ import { CyfrLogo } from "../components/ui/icons"
 import useDebug from "../hooks/useDebug"
 import useFeed from "../hooks/useFeed"
 import { MainFeed } from "../prisma/types"
-import { uniqueKey } from "../utils/helpers"
+import { domRef } from "../utils/helpers"
 const {debug, jsonBlock} = useDebug('pages/index')
 
 
@@ -22,7 +22,7 @@ const HomePage = (props:HomePageProps) => {
   return (
     <MainLayout sectionTitle={CyfrHome} subTitle="The Creative Site">
       <CreatePostModalButton />
-      {feed && feed.map((item:MainFeed) => <FeedItem item={item} key={uniqueKey(item)} />)}
+      {feed && feed.map((item:MainFeed) => <FeedItem item={item} key={domRef(item)} />)}
     </MainLayout>
   )
 }

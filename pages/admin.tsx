@@ -9,7 +9,7 @@ import useDebug from "../hooks/useDebug"
 import { useSession } from "../lib/next-auth-react-query"
 
 import { getApi } from "../utils/api"
-import { uniqueKey } from "../utils/helpers"
+import { domRef } from "../utils/helpers"
 import { GenreStub } from "../prisma/prismaContext"
 
 const { debug, jsonBlock } = useDebug("admin page", "DEBUG")
@@ -55,7 +55,7 @@ const AdminPage = ({}) => {
         <div className="flex flex-wrap justify-items-center">
           {genres.length>0 && genres.map(genre => 
             <div 
-              key={uniqueKey(genre)} 
+              key={domRef(genre)} 
               className='btn btn-primary text-primary-content rounded-md px-2 mr-2 mb-2 sm:w-1/3 md:w-1/6' 
               onClick={() => setEditGenre(genre)}>
               {genre.title}

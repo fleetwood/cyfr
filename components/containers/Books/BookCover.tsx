@@ -2,7 +2,7 @@ import Link from "next/link";
 import useDebug from "../../../hooks/useDebug";
 import { BookDetail, BookStub, Image } from "../../../prisma/prismaContext";
 import { cloudinary } from "../../../utils/cloudinary";
-import { isBookAuthor, uniqueKey } from "../../../utils/helpers";
+import { isBookAuthor, domRef } from "../../../utils/helpers";
 import { useCyfrUserContext } from "../../context/CyfrUserProvider";
 import Avatar from "../../ui/avatar";
 import { CheckBadge } from "../../ui/icons";
@@ -66,7 +66,7 @@ const BookCover = ({book, variant = BookCoverVariant.THUMB, link = true, authorA
     {authorAvatars && 
       <div className="flex pt-2 space-x-2">
         {book.authors?.map(author => (
-          <Avatar user={author} sz="sm" link={false} className="absolute bottom-0 float-right" key={uniqueKey(book,author)} />
+          <Avatar user={author} sz="sm" link={false} className="absolute bottom-0 float-right" key={domRef(book,author)} />
         ))}
       </div>
     }

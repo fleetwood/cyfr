@@ -6,7 +6,7 @@ import { BookApi, BookCategory, BookStatus, Chapter, Character, UserStub } from 
 import { KeyVal } from "../../../types/props"
 import {
   onlyFans,
-  uniqueKey,
+  domRef,
   uuid,
   valToLabel,
   ymd
@@ -199,7 +199,7 @@ const BookDetailComponent = ({bookApi}:BookDetailComponentProps) => {
         <div>
           <h3>Authors</h3>
           {bookDetail.authors.map((author:UserStub) => (
-            <Avatar user={author} sz="lg" key={uniqueKey(bookDetail, author)} />
+            <Avatar user={author} sz="lg" key={domRef(bookDetail, author)} />
           ))}
         </div>
       )}

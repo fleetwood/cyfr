@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import useDebug from "../../hooks/useDebug"
 import { UserDetail, UserStub } from "../../prisma/prismaContext"
-import { uniqueKey } from "../../utils/helpers"
+import { domRef } from "../../utils/helpers"
 import { useCyfrUserContext } from "../context/CyfrUserProvider"
 import Avatar from "./avatar"
 import Spinner from "./spinner"
@@ -60,7 +60,7 @@ const MentionsMenu = ({onSelect, searchTerm, show = true, type='MENTION'}:Mentio
             : cyfrUser && list.map((user:any) => (
                 <li 
                     onClick={() => chooseMention(user)} 
-                    key={uniqueKey(user,list)} 
+                    key={domRef(user,list)} 
                     className="
                         flex justify-items-start space-x-1 
                         cursor-pointer px-2 rounded-sm 

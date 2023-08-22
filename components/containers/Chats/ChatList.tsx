@@ -1,7 +1,7 @@
 import { useState } from "react"
 import useDebug from "../../../hooks/useDebug"
 import { User, UserStub } from "../../../prisma/prismaContext"
-import { now, uniqueKey } from "../../../utils/helpers"
+import { now, domRef } from "../../../utils/helpers"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import Avatar from "../../ui/avatar"
 import ChatRoom, { ChatRoomProps } from "./ChatRoom"
@@ -46,7 +46,7 @@ const ChatList = () => {
     <div className={`flex flex-col space-y-2`}>
         <h2 className="h-subtitle">Chat</h2>
         {cyfrUser.messagable && cyfrUser.messagable.map(u => 
-            <div key={uniqueKey('chatList',cyfrUser,u)}
+            <div key={domRef('chatList',cyfrUser,u)}
                 className="btn bg-opacity-10 hover:bg-opacity-25 bg-primary border-0 text-start"
                 onClick={() => addRoom(u)}
                 >
@@ -59,7 +59,7 @@ const ChatList = () => {
                 <label className="z-10 absolute btn btn-sm right-0 -top-12" onClick={onCloseAll}>CLOSE ALL ►</label>
             </div>
             {chatRooms.slice(0,3).map(room => 
-                <ChatRoom {...room} key={uniqueKey('chatroom',room.firstPerson,room.secondPerson)} />
+                <ChatRoom {...room} key={domRef('chatroom',room.firstPerson,room.secondPerson)} />
             )}
         </div>
     </div>

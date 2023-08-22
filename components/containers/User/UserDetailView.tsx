@@ -1,7 +1,7 @@
 import { useState } from "react"
 import useUserDetail from "../../../hooks/useUserDetail"
 import { UserFollow } from "../../../prisma/prismaContext"
-import { uniqueKey } from '../../../utils/helpers'
+import { domRef } from '../../../utils/helpers'
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
 import Avatar from "../../ui/avatar"
@@ -174,7 +174,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
           <div className="bg-base-100 my-4 p-4 rounded-md">
             {currentUser?.galleries && 
               currentUser.galleries.map(gallery => 
-              <div className="relative" key={uniqueKey('user-gallery',currentUser,gallery)} >
+              <div className="relative" key={domRef('user-gallery',currentUser,gallery)} >
                 {/* <JsonBlock data={gallery} /> */}
                 <GalleryStubView gallery={gallery}/>
               </div>
@@ -211,7 +211,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
           <h2 className="h-subtitle">Followers</h2>
           <div className="flex space-x-2 space-y-2">
             {followers.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
+              <Avatar user={follow} sz='md' key={domRef(currentUser, follow)} />
             ))}
           </div>
         </div>
@@ -219,7 +219,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
           <h2 className="h-subtitle">Follows</h2>
           <div className="flex space-x-2 space-y-2">
             {follows.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)} />
+              <Avatar user={follow} sz='md' key={domRef(currentUser, follow)} />
             ))}
           </div>
         </div>
@@ -232,7 +232,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
           <h2 className="h-subtitle">Fans</h2>
           <div className="flex space-x-2 space-y-2">
             {fans.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)}/>
+              <Avatar user={follow} sz='md' key={domRef(currentUser, follow)}/>
             ))}
           </div>
         </div>
@@ -240,7 +240,7 @@ const UserDetailView = ({ userId }: UserDetailViewProps) => {
           <h2 className="h-subtitle">Stans</h2>
           <div className="flex space-x-2 space-y-2">
             {stans.map((follow:UserFollow) => (
-              <Avatar user={follow} sz='md' key={uniqueKey(currentUser, follow)}/>
+              <Avatar user={follow} sz='md' key={domRef(currentUser, follow)}/>
             ))}
           </div>
         </div>

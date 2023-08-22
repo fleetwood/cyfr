@@ -1,7 +1,7 @@
 import React from 'react'
 import { CyfrUser, UserStub, v_author_stub } from '../../prisma/prismaContext'
 import Avatar from './avatar'
-import { uniqueKey, uuid } from '../../utils/helpers'
+import { domRef, uuid } from '../../utils/helpers'
 import { AvatarSizeProps } from '../../utils/cloudinary'
 
 export type UserInfoProps = {
@@ -12,7 +12,7 @@ export type UserInfoProps = {
 }
 
 const UserInfo = ({user,link,sz,variant}:UserInfoProps) => {
-    const popover = uniqueKey(user)+uuid()
+    const popover = domRef(user)+uuid()
     const count = (prop:any[]|number):number => Array.isArray(prop) ? prop.length : prop
   return (
     <div>

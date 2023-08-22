@@ -41,7 +41,7 @@ const PostDetailPage = ({ post }:PostDetailPageProps) => {
           <GalleryPhotoswipe images={post.images} />
         }
         {/* {post.post_comments && post.post_comments.map(c => (
-          <div className="text-base-content m-8 font-ibarra" key={uniqueKey('post-comment',post,c)}>
+          <div className="text-base-content m-8 font-ibarra" key={domRef('post-comment',post,c)}>
             {ReactHtmlParser(c.content!)}
           </div>
           ))} */}
