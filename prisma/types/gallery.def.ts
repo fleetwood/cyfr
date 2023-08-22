@@ -7,25 +7,25 @@ import {
   Gallery,
   Image,
   Like,
-  Permission
-} from "prisma/prismaContext";
-import {ImageStub,ImageUpsertProps} from './image.def';
+  Permission,
+} from 'prisma/prismaContext'
+import { ImageStub, ImageUpsertProps } from './image.def'
 
 export type GalleryUpsertProps = {
-  galleryId?: string|null
+  galleryId?: string | null
   creatorId: string
-  title?: string|null
-  description?: string|null
-  images?: ImageStub[]|Image[]|null
-  files?: ImageUpsertProps[]|null
+  title?: string | null
+  description?: string | null
+  images?: ImageStub[] | Image[] | null
+  files?: ImageUpsertProps[] | null
 }
 
 export type GalleryCreateProps = {
-  galleryId?: string|null
+  galleryId?: string | null
   creatorId: string
-  title?: string|null
-  description?: string|null
-  images?: ImageUpsertProps[]|Image[]|null
+  title?: string | null
+  description?: string | null
+  images?: ImageUpsertProps[] | Image[] | null
 }
 
 export type GalleryEngageProps = {
@@ -124,161 +124,316 @@ export const GalleryFeedInclude = {
   },
 }
 
-export type GalleryStub = Gallery & CreatorSharesLikes & {
-  permission:     Permission
-  commentThread:  CommentThreadStub
-  images:         ImageStub[]
-  _count: {
-    likes:  number,
-    shares: number
+export type GalleryStub = Gallery &
+  CreatorSharesLikes & {
+    permission: Permission
+    commentThread: CommentThreadStub
+    images: ImageStub[]
+    _count: {
+      likes: number
+      shares: number
+    }
   }
-}
 
-export const GalleryStubInclude = {include: {
-  likes: {
-    include: {
-      creator: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          slug: true,
-          membership: {
-            select: {
-              id: true,
-              expiresAt: true,
-              type: {
-                select: {
-                  id: true,
-                  name: true,
-                  level: true,
+export const GalleryStubInclude = {
+  include: {
+    likes: {
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
                 },
               },
             },
           },
         },
       },
+      take: 10,
     },
-    take: 10,
-  },
-  shares: {
-    include: {
-      creator: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-          slug: true,
-          membership: {
-            select: {
-              id: true,
-              expiresAt: true,
-              type: {
-                select: {
-                  id: true,
-                  name: true,
-                  level: true,
+    shares: {
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
                 },
               },
             },
           },
         },
       },
+      take: 10,
     },
-    take: 10,
-  },
-  creator: {
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      slug: true,
-      membership: {
-        select: {
-          id: true,
-          expiresAt: true,
-          type: {
-            select: {
-              id: true,
-              name: true,
-              level: true,
+    creator: {
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        slug: true,
+        membership: {
+          select: {
+            id: true,
+            expiresAt: true,
+            type: {
+              select: {
+                id: true,
+                name: true,
+                level: true,
+              },
             },
           },
         },
       },
     },
-  },
-  images: {
-    include: {
+    images: {
+      include: {
+        _count: {
+          select: {
+            likes: true,
+            shares: true,
+          },
+        },
+      },
+    },
+    commentThread: {
+      include: {
+        comments: {
+          include: {
+            creator: true,
+          },
+          take: 10,
+        },
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
+      },
+    },
+    permission: true,
     _count: {
       select: {
         likes: true,
-        shares: true
-      }
-    }}
-  },
-  commentThread: {
-    include: {
-      comments: {
-        include: {
-          creator: true
-        },
-        take: 10
+        shares: true,
       },
-      _count: {
-        select: {
-          comments: true
-        }
-      }
-    }
-  },
-  permission: true,
-  _count: {
-    select: {
-      likes: true,
-      shares: true
-    }
-  },
-}}
-
-export const GalleriesStubInclude = {include: {
-  galleries: {
-    where: {
-      visible: true
     },
-    ...GalleryStubInclude
-  }
-}}
+  },
+}
+
+export const GalleriesStubInclude = {
+  include: {
+    galleries: {
+      where: {
+        visible: true,
+      },
+      // GalleryStubInclude
+      include: {
+        likes: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          take: 10,
+        },
+        shares: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          take: 10,
+        },
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        images: {
+          include: {
+            _count: {
+              select: {
+                likes: true,
+                shares: true,
+              },
+            },
+          },
+        },
+        commentThread: {
+          include: {
+            comments: {
+              include: {
+                creator: true,
+              },
+              take: 10,
+            },
+            _count: {
+              select: {
+                comments: true,
+              },
+            },
+          },
+        },
+        permission: true,
+        _count: {
+          select: {
+            likes: true,
+            shares: true,
+          },
+        },
+      },
+    },
+  },
+}
 
 export type GalleryDetail = Gallery & {
   commune?: Commune
-  creator:  CreatorStub
-  likes:    (Like & {
+  creator: CreatorStub
+  likes: (Like & {
     creator: CreatorStub
   })[]
   images: (Image & {
-    likes:  (Like & {
+    likes: (Like & {
       creator: CreatorStub
     })[]
     _count: {
       shares: number
-      likes:  number
+      likes: number
     }
   })[]
-  permission: Permission,
+  permission: Permission
   _count: {
     shares: number
-    likes:  number
+    likes: number
   }
 }
 
 export const GalleryDetailInclude = {
   include: {
     commune: true,
-    creator: CreatorStubSelect,
+    // CreatorStubSelect,
+    creator: {
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        slug: true,
+        membership: {
+          select: {
+            id: true,
+            expiresAt: true,
+            type: {
+              select: {
+                id: true,
+                name: true,
+                level: true,
+              },
+            },
+          },
+        },
+      },
+    },
     likes: {
       include: {
-        creator: CreatorStubSelect,
+        // CreatorStubSelect,
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
       take: 10,
       // orderBy: {
@@ -289,7 +444,28 @@ export const GalleryDetailInclude = {
       include: {
         likes: {
           include: {
-            creator: CreatorStubSelect,
+            // CreatorStubSelect,
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
           take: 10,
         },

@@ -1,4 +1,4 @@
-import { ArtistStub, CommentThreadStub, CommentThreadStubInclude, Cover, CreatorSharesLikes, CreatorStubSelect, Genre, Image } from "prisma/prismaContext"
+import {ArtistStub,CommentThreadStub,Cover,CreatorSharesLikes,Genre,Image} from "prisma/prismaContext"
 
 export type CoverUpsertProps = {
   id?:          string

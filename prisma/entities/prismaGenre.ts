@@ -17,8 +17,29 @@ const { debug, info, fileMethod } = useDebug("entities/prismaGenre")
 const details = async (): Promise<Genre[]> => await prisma.genre.findMany()
 const detail = async (id:string): Promise<Genre|null> => await prisma.genre.findUnique({where: {id}})
 
-const stubs = async (): Promise<GenreStub[]> => await prisma.genre.findMany({...GenreStubInclude}) as GenreStub[]
-const stub = async (id:string): Promise<GenreStub|null> => await prisma.genre.findUnique({where: {id}, ...GenreStubInclude}) as GenreStub
+const stubs = async (): Promise<GenreStub[]> => await prisma.genre.findMany({
+  // ...GenreStubInclude
+  include: {
+  _count: {
+    select: {
+      books: true,
+      covers: true
+    },
+  },
+  }
+}) as GenreStub[]
+const stub = async (id: string): Promise<GenreStub | null> =>
+  (await prisma.genre.findUnique({
+    where: { id }, // ...GenreStubInclude
+    include: {
+      _count: {
+        select: {
+          books: true,
+          covers: true,
+        },
+      },
+    },
+  })) as GenreStub
 
 const covers = async (byGenre?: string): Promise<Cover[] | null> => {
   try {

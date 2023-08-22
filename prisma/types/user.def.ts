@@ -1,4 +1,4 @@
-import { Agent, AgentStub, AgentStubInclude, Artist, ArtistStub, ArtistStubInclude, Author, AuthorStub, AuthorStubInclude, BookStub, Editor, EditorStub, EditorStubInclude, Follow, FollowStub, GalleriesStubInclude, GalleryStub, Membership, MembershipStub, MembershipStubSelect, MembershipType, Post, PostStub, PostStubInclude, Reader, ReaderStub, ReaderStubInclude, User } from "prisma/prismaContext"
+import {AgentStub,ArtistStub,AuthorStub,BookStub,EditorStub,Follow,FollowStub,GalleryStub,Membership,MembershipStub,Post,PostStub,ReaderStub,User} from "prisma/prismaContext"
 
 export type FollowerTypes = 'Friends'|'Fans'|'Followers'|'Following'|'Stans'
 export type UserTypes = 'Author' | 'Artist' | 'Editor' | 'Agent' | 'Reader' | 'Public'
@@ -48,13 +48,28 @@ export type UserStub = {
  *  slug: String
  * }
  */
-export const UserStubSelect = { select: {
-  id: true,
-  name: true,
-  image: true,
-  slug: true,
-  membership: MembershipStubSelect
-}}
+export const UserStubSelect = {
+  select: {
+    id: true,
+    name: true,
+    image: true,
+    slug: true,
+    // MembershipStubSelect
+    membership: {
+      select: {
+        id: true,
+        expiresAt: true,
+        type: {
+          select: {
+            id: true,
+            name: true,
+            level: true,
+          },
+        },
+      },
+    },
+  },
+}
 
 export type UserDetail = User & {
   membership?:  MembershipStub
@@ -75,53 +90,1071 @@ export type UserDetail = User & {
   }
 }
 
-export const UserDetailInclude = { include: {
-  membership: MembershipStubSelect,
-  galleries: GalleriesStubInclude,
-  posts: {...PostStubInclude, take: 10, orderBy: {updatedAt: 'desc'}},
-  // books: {
-  //   where: {
-  //     visible: true
-  //   },
-  //   include: {
-  //     cover: true,
-  //     authors: true,
-  //     _count: {
-  //       select: {
-  //         chapters: true,
-  //         characters: true,
-  //         likes: true,
-  //         shares: true
-  //       }
-  //     }
-  //   }
-  // },
-  follower: {
-    include: {
-      following: UserStubSelect,
+export const UserDetailInclude = {
+  include: {
+    // MembershipStubSelect,
+    membership: {
+      select: {
+        id: true,
+        expiresAt: true,
+        type: {
+          select: {
+            id: true,
+            name: true,
+            level: true,
+          },
+        },
+      },
     },
-    orderBy: {createdAt: 'desc'},
-    take: 10
-  },
-  following: {
-    include: {
-      follower: UserStubSelect,
+    galleries: {
+      include: {
+        galleries: {
+          where: {
+            visible: true,
+          },
+          // GalleryStubInclude
+          include: {
+            likes: {
+              include: {
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              take: 10,
+            },
+            shares: {
+              include: {
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              take: 10,
+            },
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            images: {
+              include: {
+                _count: {
+                  select: {
+                    likes: true,
+                    shares: true,
+                  },
+                },
+              },
+            },
+            commentThread: {
+              include: {
+                comments: {
+                  include: {
+                    creator: true,
+                  },
+                  take: 10,
+                },
+                _count: {
+                  select: {
+                    comments: true,
+                  },
+                },
+              },
+            },
+            permission: true,
+            _count: {
+              select: {
+                likes: true,
+                shares: true,
+              },
+            },
+          },
+        },
+      },
     },
-    orderBy: {createdAt: 'desc'},
-    take: 10
+    posts: {
+      include: {
+        // PostCreatorSelect,
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        likes: {
+          include: {
+            // PostCreatorSelect,
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          take: 10,
+        },
+        shares: {
+          include: {
+            // PostCreatorSelect,
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          take: 10,
+        },
+        share: {
+          include: {
+            // PostCreatorSelect,
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+
+            // INCLUDE SHARED BOOK
+            book: {
+              include: {
+                likes: {
+                  include: {
+                    // PostCreatorSelect,
+                    creator: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        slug: true,
+                        membership: {
+                          select: {
+                            id: true,
+                            expiresAt: true,
+                            type: {
+                              select: {
+                                id: true,
+                                name: true,
+                                level: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  take: 10,
+                },
+                shares: {
+                  include: {
+                    // PostCreatorSelect,
+                    creator: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        slug: true,
+                        membership: {
+                          select: {
+                            id: true,
+                            expiresAt: true,
+                            type: {
+                              select: {
+                                id: true,
+                                name: true,
+                                level: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  take: 10,
+                },
+                // AuthorStubInclude,
+                authors: {
+                  include: {
+                    user: {
+                      select: {
+                        name: true,
+                        id: true,
+                        slug: true,
+                        image: true,
+                      },
+                    },
+                    books: {
+                      include: {
+                        agent: true, // AgentStubInclude, // No stubs in stubs!
+                        authors: true, // AuthorStubInclude,
+                        artists: true, // ArtistStubInclude,
+                        publisher: true,
+                        genre: true,
+                        gallery: true, // GalleryStubInclude,
+                        cover: true, //
+                        // {
+                        //   include: {
+                        //     image: true,
+                        //     artists: true
+                        //   }
+                        // },
+                        _count: {
+                          select: {
+                            chapters: true,
+                            characters: true,
+                            likes: true,
+                            shares: true,
+                            follows: true,
+                            readers: true,
+                            reviews: true,
+                          },
+                        },
+                      },
+                      take: 5,
+                    },
+                    reviews: {
+                      take: 5,
+                    },
+                    _count: {
+                      select: {
+                        books: true,
+                        reviews: true,
+                      },
+                    },
+                  },
+                },
+                cover: {
+                  include: {
+                    image: true,
+                    _count: {
+                      select: {
+                        likes: true,
+                        shares: true,
+                      },
+                    },
+                  },
+                },
+                characters: true,
+                chapters: {
+                  where: {
+                    visible: true,
+                  },
+                  select: {
+                    order: true,
+                    title: true,
+                    reads: true,
+                    words: true,
+                  },
+                },
+                _count: {
+                  select: {
+                    likes: true,
+                    shares: true,
+                  },
+                },
+              },
+            },
+
+            // INCLUDE SHARED COVER
+            cover: {
+              include: {
+                // PostCreatorSelect,
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                likes: {
+                  include: {
+                    // PostCreatorSelect,
+                    creator: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        slug: true,
+                        membership: {
+                          select: {
+                            id: true,
+                            expiresAt: true,
+                            type: {
+                              select: {
+                                id: true,
+                                name: true,
+                                level: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  take: 10,
+                },
+                shares: {
+                  include: {
+                    // PostCreatorSelect,
+                    creator: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        slug: true,
+                        membership: {
+                          select: {
+                            id: true,
+                            expiresAt: true,
+                            type: {
+                              select: {
+                                id: true,
+                                name: true,
+                                level: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  take: 10,
+                },
+                image: {
+                  include: {
+                    // PostCreatorSelect,
+                    creator: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        slug: true,
+                        membership: {
+                          select: {
+                            id: true,
+                            expiresAt: true,
+                            type: {
+                              select: {
+                                id: true,
+                                name: true,
+                                level: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                    likes: {
+                      include: {
+                        // PostCreatorSelect,
+                        creator: {
+                          select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                            slug: true,
+                            membership: {
+                              select: {
+                                id: true,
+                                expiresAt: true,
+                                type: {
+                                  select: {
+                                    id: true,
+                                    name: true,
+                                    level: true,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      take: 10,
+                    },
+                    shares: {
+                      include: {
+                        // PostCreatorSelect,
+                        creator: {
+                          select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                            slug: true,
+                            membership: {
+                              select: {
+                                id: true,
+                                expiresAt: true,
+                                type: {
+                                  select: {
+                                    id: true,
+                                    name: true,
+                                    level: true,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      take: 10,
+                    },
+                  },
+                },
+                _count: {
+                  select: {
+                    likes: true,
+                    shares: true,
+                  },
+                },
+              },
+            },
+
+            // INCLUDE SHARED POST
+            // SharedPostFeedInclude,
+            post: {
+              include: {
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                likes: {
+                  include: {
+                    creator: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        slug: true,
+                        membership: {
+                          select: {
+                            id: true,
+                            expiresAt: true,
+                            type: {
+                              select: {
+                                id: true,
+                                name: true,
+                                level: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  take: 10,
+                },
+                shares: {
+                  include: {
+                    creator: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        slug: true,
+                        membership: true,
+                      },
+                    },
+                  },
+                  take: 10,
+                },
+                _count: {
+                  select: {
+                    likes: true,
+                    shares: true,
+                  },
+                },
+                commentThread: {
+                  include: {
+                    comments: {
+                      include: {
+                        // PostCreatorSelect
+                        creator: {
+                          select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                            slug: true,
+                            membership: {
+                              select: {
+                                id: true,
+                                expiresAt: true,
+                                type: {
+                                  select: {
+                                    id: true,
+                                    name: true,
+                                    level: true,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      take: 10,
+                    },
+                    commune: true,
+                    blocked: true,
+                    _count: {
+                      select: {
+                        comments: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+
+            // INCLUDE SHARED ARTICLE
+            article: {
+              select: {
+                id: true,
+                banner: true,
+                createdAt: true,
+                updatedAt: true,
+                startDate: true,
+                endDate: true,
+                hook: true,
+                priority: true,
+                title: true,
+                slug: true,
+                type: true,
+                views: true,
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+                shares: {
+                  select: {
+                    creator: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        slug: true,
+                        membership: {
+                          select: {
+                            id: true,
+                            expiresAt: true,
+                            type: {
+                              select: {
+                                id: true,
+                                name: true,
+                                level: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  take: 10,
+                  skip: 0,
+                },
+                likes: {
+                  select: {
+                    creator: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        slug: true,
+                        membership: {
+                          select: {
+                            id: true,
+                            expiresAt: true,
+                            type: {
+                              select: {
+                                id: true,
+                                name: true,
+                                level: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  take: 10,
+                  skip: 0,
+                },
+                review: {
+                  include: {
+                    creator: {
+                      select: {
+                        id: true,
+                        name: true,
+                        image: true,
+                        slug: true,
+                        membership: {
+                          select: {
+                            id: true,
+                            expiresAt: true,
+                            type: {
+                              select: {
+                                id: true,
+                                name: true,
+                                level: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                    shares: {
+                      select: {
+                        creator: {
+                          select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                            slug: true,
+                            membership: {
+                              select: {
+                                id: true,
+                                expiresAt: true,
+                                type: {
+                                  select: {
+                                    id: true,
+                                    name: true,
+                                    level: true,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      take: 10,
+                      skip: 0,
+                    },
+                    likes: {
+                      select: {
+                        creator: {
+                          select: {
+                            id: true,
+                            name: true,
+                            image: true,
+                            slug: true,
+                            membership: {
+                              select: {
+                                id: true,
+                                expiresAt: true,
+                                type: {
+                                  select: {
+                                    id: true,
+                                    name: true,
+                                    level: true,
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      take: 10,
+                      skip: 0,
+                    },
+                  },
+                },
+                commentThread: {
+                  include: {
+                    comments: {
+                      take: 10,
+                      skip: 0,
+                    },
+                    _count: {
+                      select: {
+                        comments: true,
+                      },
+                    },
+                  },
+                },
+                _count: {
+                  select: {
+                    shares: true,
+                    likes: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        images: {
+          include: {
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                slug: true,
+                membership: {
+                  select: {
+                    id: true,
+                    expiresAt: true,
+                    type: {
+                      select: {
+                        id: true,
+                        name: true,
+                        level: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            _count: {
+              select: {
+                likes: true,
+                shares: true,
+              },
+            },
+            likes: {
+              include: {
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            shares: {
+              include: {
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        commentThread: {
+          include: {
+            comments: {
+              include: {
+                // PostCreatorSelect,
+                creator: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                    slug: true,
+                    membership: {
+                      select: {
+                        id: true,
+                        expiresAt: true,
+                        type: {
+                          select: {
+                            id: true,
+                            name: true,
+                            level: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              take: 10,
+            },
+            commune: true,
+            blocked: true,
+            _count: {
+              select: {
+                comments: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            likes: true,
+            shares: true,
+          },
+        },
+      },
+      take: 10,
+      orderBy: { updatedAt: 'desc' },
+    },
+    // books: {
+    //   where: {
+    //     visible: true
+    //   },
+    //   include: {
+    //     cover: true,
+    //     authors: true,
+    //     _count: {
+    //       select: {
+    //         chapters: true,
+    //         characters: true,
+    //         likes: true,
+    //         shares: true
+    //       }
+    //     }
+    //   }
+    // },
+    follower: {
+      include: {
+        // UserStubSelect,
+        following: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            // MembershipStubSelect
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 10,
+    },
+    following: {
+      include: {
+        // UserStubSelect,
+        follower: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            // MembershipStubSelect
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 10,
+    },
+    _count: {
+      select: {
+        likes: true,
+        posts: true,
+        follower: true,
+        following: true,
+        books: true,
+        galleries: true,
+        submissions: true,
+      },
+    },
   },
-  _count: {
-    select: {
-      likes: true,
-      posts: true,
-      follower: true,
-      following: true,
-      books: true,
-      galleries: true,
-      submissions: true
-    }
-  }
-}}
+}
 
 /**
  * NOTE! Use a `select` instead of `include`
@@ -183,18 +1216,68 @@ export type UserSearchStub = UserStub & {
 
 export const UserSearchStubSelect = (id:string) => {
   return {
-    ...UserStubSelect.select,
+    // ...UserStubSelect.select,
+    user: {
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        slug: true,
+        // MembershipStubSelect
+        membership: {
+          select: {
+            id: true,
+            expiresAt: true,
+            type: {
+              select: {
+                id: true,
+                name: true,
+                level: true,
+              },
+            },
+          },
+        },
+      },
+    },
 
-    author: { include: {
-      user: UserStubSelect,
-      books: { where: {
-        visible: true
-      }},
-      _count: { select: {
-        shares: true,
-        reviews: true
-      }}
-    }},
+    author: {
+      include: {
+        // UserStubSelect,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            // MembershipStubSelect
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        books: {
+          where: {
+            visible: true,
+          },
+        },
+        _count: {
+          select: {
+            shares: true,
+            reviews: true,
+          },
+        },
+      },
+    },
     artist: true,
     editor: true,
     agent: true,
@@ -202,25 +1285,69 @@ export const UserSearchStubSelect = (id:string) => {
 
     follower: {
       where: {
-        followingId: id
+        followingId: id,
       },
       select: {
         isFan: true,
         followingId: true,
-        follower: UserStubSelect,
+        // UserStubSelect,
+        follower: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            // MembershipStubSelect
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
     following: {
       where: {
-        followerId: id
+        followerId: id,
       },
       select: {
         isFan: true,
         followerId: true,
-        following: UserStubSelect,
+        // UserStubSelect,
+        following: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            // MembershipStubSelect
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
-}}
+  }}
 
 export const membershipToType = (membership:MembershipStub):UserTypes=> {
   try {

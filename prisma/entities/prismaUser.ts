@@ -1,17 +1,12 @@
 import dayjs from "dayjs"
 import useDebug from "hooks/useDebug"
 import {NextApiRequest} from "next"
-import {getSession, GetSessionParams} from "next-auth/react"
+import {getSession,GetSessionParams} from "next-auth/react"
 import {
-  AgentInfoSelect,
-  ArtistInfoSelect,
   AudienceLevels,
   audienceToLevel,
-  AuthorInfoSelect,
-  BookStubInclude,
   CyfrUser,
   CyfrUserInclude,
-  EditorInfoSelect,
   Follow,
   GalleryStub,
   GetInfoSelector,
@@ -19,12 +14,10 @@ import {
   MapInfo,
   Membership,
   MembershipStub,
-  MembershipStubSelect,
   membershipToType,
-  prisma, PrismaLike, PrismaShare, ReaderInfoSelect, Share, User, UserDetail,
+  prisma,PrismaLike,PrismaShare,
+  Share,User,UserDetail,
   UserFollowProps,
-  UserInfo,
-  UserInfoSelect,
   UserInfoType,
   UserSearchProps,
   UserSearchStub,
@@ -37,7 +30,7 @@ import {
   GenericResponseError,
   ResponseError
 } from "types/response"
-import {dbDateFormat, dedupe, toSlug} from "utils/helpers"
+import {dbDateFormat,dedupe,toSlug} from "utils/helpers"
 const { fileMethod, debug, info, err } = useDebug("entities/prismaUser")
 
 type AllPostQueryParams = {
@@ -232,7 +225,16 @@ const detail = async (props:UserDetailProps): Promise<UserDetail> => {
         orderBy: {createdAt: 'desc'},
         take: 10
       },
-      membership: MembershipStubSelect,
+      // MembershipStubSelect,
+      membership: {select: {
+  id:         true,
+  expiresAt:  true,
+  type:       { select: {
+    id:     true,
+    name:   true,
+    level:  true
+  }}
+}},
       _count: {
         select: {
           likes: true,
@@ -591,20 +593,40 @@ const setMembership = async (
           typeId,
           expiresAt,
         },
-        ...MembershipStubSelect
+        // MembershipStubSelect,
+        select: {
+          id:         true,
+          expiresAt:  true,
+          type:       { select: {
+            id:     true,
+            name:   true,
+            level:  true
+          }}
+        }
       }))
 
     if (membership.type?.id !== typeId || !(dayjs(membership.expiresAt).isSame(expiresAt))) {
       debug('setMembership updating')
       membership = await prisma.membership.update({
         where: {
-          id: membership.id
+          id: membership.id,
         },
         data: {
           typeId,
-          expiresAt
+          expiresAt,
         },
-        ...MembershipStubSelect
+        // MembershipStubSelect,
+        select: {
+          id: true,
+          expiresAt: true,
+          type: {
+            select: {
+              id: true,
+              name: true,
+              level: true,
+            },
+          },
+        },
       })
     }
 
@@ -645,11 +667,22 @@ const setMembership = async (
       },
       data: {
         membershipId: membership.id,
-        ...userType
+        ...userType,
       },
       include: {
-        membership: MembershipStubSelect
-      }
+        // MembershipStubSelect,
+        membership: {select: {
+          id: true,
+          expiresAt: true,
+          type: {
+            select: {
+              id: true,
+              name: true,
+              level: true,
+            },
+          },
+        }},
+      },
     })
     debug('setMembership update', result)
 

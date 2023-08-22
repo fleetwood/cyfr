@@ -1,4 +1,4 @@
-import {CommentThread,CreatorSharesLikes,CreatorStub,CreatorStubSelect,Gallery,GalleryStub,Image,LikeStub,PostStub,ShareStub,User} from "prisma/prismaContext"
+import {CommentThread,CreatorSharesLikes,CreatorStub,Gallery,GalleryStub,Image,LikeStub,PostStub,ShareStub,User} from "prisma/prismaContext"
 
 export type ImageUpsertProps = {
   id?:              string
@@ -92,10 +92,33 @@ export type PostImage = Image & CreatorSharesLikes & {
   }
 }
 
-export const ImageFeedInclude = {include: {
-  creator: CreatorStubSelect,
-  gallery: true
-}}
+export const ImageFeedInclude = {
+  include: {
+    // CreatorStubSelect,
+    creator: {
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        slug: true,
+        membership: {
+          select: {
+            id: true,
+            expiresAt: true,
+            type: {
+              select: {
+                id: true,
+                name: true,
+                level: true,
+              },
+            },
+          },
+        },
+      },
+    },
+    gallery: true,
+  },
+}
 
 export type ImageStub = Image & {
   creator: CreatorStub
@@ -113,25 +136,100 @@ export type ImageStub = Image & {
   }
 }
 
-export const ImageStubInclude = { include : {
-  creator: CreatorStubSelect,
-  _count: { select: {
-    likes: true,
-    shares: true
-  }},
-  likes: { include: {
-    creator: CreatorStubSelect
-  }},
-  shares: { include: {
-    creator: CreatorStubSelect
-  }},
-  gallery: true,
-  commentThread: { include: {
-    comments: { include: {
-      creator: true
-    }}
-  }}
-}}
+export const ImageStubInclude = {
+  include: {
+    // CreatorStubSelect,
+    creator: {
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        slug: true,
+        membership: {
+          select: {
+            id: true,
+            expiresAt: true,
+            type: {
+              select: {
+                id: true,
+                name: true,
+                level: true,
+              },
+            },
+          },
+        },
+      },
+    },
+    _count: {
+      select: {
+        likes: true,
+        shares: true,
+      },
+    },
+    likes: {
+      include: {
+        // CreatorStubSelect,
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    shares: {
+      include: {
+        // CreatorStubSelect,
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    gallery: true,
+    commentThread: {
+      include: {
+        comments: {
+          include: {
+            creator: true,
+          },
+        },
+      },
+    },
+  },
+}
 
 export type ImageDetail = ImageStub & {
   gallery?: GalleryStub
@@ -139,23 +237,117 @@ export type ImageDetail = ImageStub & {
 }
 
 export const ImageDetailInclude = {
-  creator: CreatorStubSelect,
-  _count: { select: {
-    likes: true,
-    shares: true
-  }},
-  likes: { include: {
-    creator: CreatorStubSelect
-  }},
-  shares: { include: {
-    creator: CreatorStubSelect
-  }},
-  post: true,
-  gallery: { include: {
-    creator: CreatorStubSelect,
-    _count: { select: {
+  // CreatorStubSelect,
+  creator: {
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true,
+      membership: {
+        select: {
+          id: true,
+          expiresAt: true,
+          type: {
+            select: {
+              id: true,
+              name: true,
+              level: true,
+            },
+          },
+        },
+      },
+    },
+  },
+  _count: {
+    select: {
       likes: true,
-      shares: true
-    }}
-  }},
+      shares: true,
+    },
+  },
+  likes: {
+    include: {
+      // CreatorStubSelect,
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: {
+            select: {
+              id: true,
+              expiresAt: true,
+              type: {
+                select: {
+                  id: true,
+                  name: true,
+                  level: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  shares: {
+    include: {
+      // CreatorStubSelect,
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: {
+            select: {
+              id: true,
+              expiresAt: true,
+              type: {
+                select: {
+                  id: true,
+                  name: true,
+                  level: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  post: true,
+  gallery: {
+    include: {
+      // CreatorStubSelect,
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: {
+            select: {
+              id: true,
+              expiresAt: true,
+              type: {
+                select: {
+                  id: true,
+                  name: true,
+                  level: true,
+                },
+              },
+            },
+          },
+        },
+      },
+      _count: {
+        select: {
+          likes: true,
+          shares: true,
+        },
+      },
+    },
+  },
 }

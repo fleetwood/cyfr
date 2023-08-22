@@ -1,4 +1,4 @@
-import {CreatorStub,CreatorStubSelect,Notif, NotifType} from "prisma/prismaContext"
+import {CreatorStub,Notif,NotifType} from "prisma/prismaContext"
 
 export type NotifSendProps = {
   userId: string
@@ -26,6 +26,29 @@ export type NotifStub = Notif & {
   creator: CreatorStub
 }
 
-export const NotifStubInclude = {include: {
-  creator: CreatorStubSelect
-}}
+export const NotifStubInclude = {
+  include: {
+    // CreatorStubSelect,
+    creator: {
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        slug: true,
+        membership: {
+          select: {
+            id: true,
+            expiresAt: true,
+            type: {
+              select: {
+                id: true,
+                name: true,
+                level: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}

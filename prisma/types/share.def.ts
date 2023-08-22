@@ -80,16 +80,58 @@ export type SharesLikes = {
 export const SharesLikesInclude = {
   likes: {
     include: {
-      creator: CreatorStubSelect
+      // CreatorStubSelect,
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: {
+            select: {
+              id: true,
+              expiresAt: true,
+              type: {
+                select: {
+                  id: true,
+                  name: true,
+                  level: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
-    take: 10
+    take: 10,
   },
   shares: {
     include: {
-      creator: CreatorStubSelect
+      // CreatorStubSelect,
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: {
+            select: {
+              id: true,
+              expiresAt: true,
+              type: {
+                select: {
+                  id: true,
+                  name: true,
+                  level: true,
+                },
+              },
+            },
+          },
+        },
+      },
     },
-    take: 10
-  }
+    take: 10,
+  },
 }
 
 export type CreatorSharesLikes = SharesLikes & {
@@ -569,6 +611,29 @@ export type ShareList = Share & {
   creator: CreatorStub
 }
 
-export const ShareListInclude = { include: {
-  creator: CreatorStubSelect
-}}
+export const ShareListInclude = {
+  include: {
+    // CreatorStubSelect,
+    creator: {
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        slug: true,
+        membership: {
+          select: {
+            id: true,
+            expiresAt: true,
+            type: {
+              select: {
+                id: true,
+                name: true,
+                level: true,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}

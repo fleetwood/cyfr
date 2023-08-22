@@ -1,4 +1,4 @@
-import { CommentThread, Comment, Commune, CommuneUser, User, Block, CreatorStub, CreatorStubSelect, UserStubSelect, UserStub } from "prisma/prismaContext";
+import {Block,Comment,CommentThread,Commune,CommuneUser,CreatorStub,User,UserStub} from "prisma/prismaContext";
 
 export type AddCommentProps = {
   creatorId:  string
@@ -47,27 +47,49 @@ export const CommentThreadDetailsInclude = {
     include: {
       users: {
         include: {
-          user: UserStubSelect
-        }
-      }
-    }
+          // UserStubSelect
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              slug: true,
+              // MembershipStubSelect
+              membership: {
+                select: {
+                  id: true,
+                  expiresAt: true,
+                  type: {
+                    select: {
+                      id: true,
+                      name: true,
+                      level: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   comments: {
     where: {
-      visible: true
+      visible: true,
     },
     orderBy: {
-      updatedAt: 'desc'
+      updatedAt: 'desc',
     },
     include: {
       creator: true,
       _count: {
         select: {
-          likes: true
-        }
-      }
-    }
-  }
+          likes: true,
+        },
+      },
+    },
+  },
 }
 
 export type CommentThreadStub = Comment & {
@@ -82,18 +104,41 @@ export type CommentThreadStub = Comment & {
   }
 }
 
-export const CommentThreadStubInclude = { include: {
-  comments: {
-    include: {
-      creator: CreatorStubSelect
+export const CommentThreadStubInclude = {
+  include: {
+    comments: {
+      include: {
+        // CreatorStubSelect
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      take: 10,
     },
-    take: 10
+    commune: true,
+    blocked: true,
+    _count: {
+      select: {
+        comments: true,
+      },
+    },
   },
-  commune: true,
-  blocked: true,
-  _count: {
-    select: {
-      comments: true
-    }
-  },
-}}
+}
