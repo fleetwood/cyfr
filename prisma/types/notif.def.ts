@@ -6,6 +6,12 @@ export type NotifSendProps = {
   message: string
 }
 
+export type NotifMarkProps = {
+  id:       string
+  seen?:    boolean
+  visible?: boolean
+}
+
 export type NotifProps = {
   creatorId:    string
   postId?:      string
