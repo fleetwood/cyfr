@@ -4,7 +4,6 @@ import {
   ChapterStub,
   Character,
   CreatorSharesLikes,
-  CreatorSharesLikesInclude,
   CyfrUser,
   Gallery,
   GalleryStub,
@@ -30,7 +29,79 @@ export type CharacterStub = Character &
 // TODO: Stubs cannot include other stubs
 export const CharacterStubInclude = {
   include: {
-    ...CreatorSharesLikesInclude,
+    likes: {
+    include: {
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: {
+            select: {
+              id: true,
+              expiresAt: true,
+              type: {
+                select: {
+                  id: true,
+                  name: true,
+                  level: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    take: 10,
+  },
+  shares: {
+    include: {
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: {
+            select: {
+              id: true,
+              expiresAt: true,
+              type: {
+                select: {
+                  id: true,
+                  name: true,
+                  level: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    take: 10,
+  },
+  creator: {
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      slug: true,
+      membership: {
+        select: {
+          id: true,
+          expiresAt: true,
+          type: {
+            select: {
+              id: true,
+              name: true,
+              level: true,
+            },
+          },
+        },
+      },
+    },
+  },
     authors: {
       select: {
         id: true,

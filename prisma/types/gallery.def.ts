@@ -2,16 +2,14 @@ import {
   CommentThreadStub,
   Commune,
   CreatorSharesLikes,
-  CreatorSharesLikesInclude,
   CreatorStub,
   CreatorStubSelect,
   Gallery,
   Image,
   Like,
-  Permission,
-  UserStub
+  Permission
 } from "prisma/prismaContext";
-import { ImageStub, ImageUpsertProps } from './image.def';
+import {ImageStub,ImageUpsertProps} from './image.def';
 
 export type GalleryUpsertProps = {
   galleryId?: string|null
@@ -35,23 +33,96 @@ export type GalleryEngageProps = {
   galleryId: string
 }
 
-export const GalleryFeedInclude = { include: {
-  ...CreatorSharesLikesInclude,
-  images: {
-    include: {
-      creator: {
-        select: {
-          name: true,
-          email: true,
-          slug: true,
-          image: true
-        }
+export const GalleryFeedInclude = {
+  include: {
+    likes: {
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
-      gallery: true
-    }
+      take: 10,
+    },
+    shares: {
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      take: 10,
+    },
+    creator: {
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        slug: true,
+        membership: {
+          select: {
+            id: true,
+            expiresAt: true,
+            type: {
+              select: {
+                id: true,
+                name: true,
+                level: true,
+              },
+            },
+          },
+        },
+      },
+    },
+    images: {
+      include: {
+        creator: {
+          select: {
+            name: true,
+            email: true,
+            slug: true,
+            image: true,
+          },
+        },
+        gallery: true,
+      },
+    },
   },
-  
-}}
+}
 
 export type GalleryStub = Gallery & CreatorSharesLikes & {
   permission:     Permission
