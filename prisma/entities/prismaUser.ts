@@ -257,15 +257,131 @@ const books = async (props:UserDetailProps): Promise<any> => {
       : { id : id}
   debug('books', {props, user})
   const books = await prisma.book.findMany({
-    where: { 
+    where: {
       authors: {
         some: {
           user,
-          visible: true
-        }
-      }
+          visible: true,
+        },
+      },
     },
-    ...BookStubInclude
+    // ...BookStubInclude
+    include: {
+      agent: true, // AgentStubInclude, // No stubs in stubs!
+      authors: {
+        include: {
+          user: {
+            select: {
+              name: true,
+              id: true,
+              slug: true,
+              image: true,
+            },
+          },
+          books: {
+            include: {
+              agent: true, // AgentStubInclude, // No stubs in stubs!
+              authors: true, // AuthorStubInclude,
+              artists: true, // ArtistStubInclude,
+              publisher: true,
+              genre: true,
+              gallery: true, // GalleryStubInclude,
+              cover: {
+                include: {
+                  image: true,
+                  artists: {
+                    include: {
+                      user: {
+                        select: {
+                          name: true,
+                          id: true,
+                          slug: true,
+                          image: true,
+                          membership: {
+                            select: {
+                              id: true,
+                              expiresAt: true,
+                              type: {
+                                select: {
+                                  id: true,
+                                  name: true,
+                                  level: true,
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      books: {
+                        take: 5,
+                      },
+                      galleries: {
+                        take: 5,
+                      },
+                      reviews: true,
+                      covers: {
+                        take: 5,
+                      },
+                      _count: {
+                        select: {
+                          books: true,
+                          galleries: true,
+                          covers: true,
+                          reviews: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              _count: {
+                select: {
+                  chapters: true,
+                  characters: true,
+                  likes: true,
+                  shares: true,
+                  follows: true,
+                  readers: true,
+                  reviews: true,
+                },
+              },
+            },
+            take: 5,
+          },
+          reviews: {
+            take: 5,
+          },
+          _count: {
+            select: {
+              books: true,
+              reviews: true,
+            },
+          },
+        },
+      }, // AuthorStubInclude,
+      artists: true, // ArtistStubInclude,
+      publisher: true,
+      genre: true,
+      gallery: true, // GalleryStubInclude,
+      cover: true, //
+      // {
+      //   include: {
+      //     image: true,
+      //     artists: true
+      //   }
+      // },
+      _count: {
+        select: {
+          chapters: true,
+          characters: true,
+          likes: true,
+          shares: true,
+          follows: true,
+          readers: true,
+          reviews: true,
+        },
+      },
+    },
   })
   debug('books result', books)
   return books

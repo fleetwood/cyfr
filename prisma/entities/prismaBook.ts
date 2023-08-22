@@ -49,7 +49,123 @@ const details = async (): Promise<BookDetail[]> =>
 const stub = async (slug: string): Promise<BookStub> =>
   (await prisma.book.findUnique({
     where: { slug },
-    ...BookStubInclude,
+    // ...BookStubInclude,
+    include: {
+      agent: true, // AgentStubInclude, // No stubs in stubs!
+      authors: {
+        include: {
+          user: {
+            select: {
+              name: true,
+              id: true,
+              slug: true,
+              image: true,
+            },
+          },
+          books: {
+            include: {
+              agent: true, // AgentStubInclude, // No stubs in stubs!
+              authors: true, // AuthorStubInclude,
+              artists: true, // ArtistStubInclude,
+              publisher: true,
+              genre: true,
+              gallery: true, // GalleryStubInclude,
+              cover: {
+                include: {
+                  image: true,
+                  artists: {
+                    include: {
+                      user: {
+                        select: {
+                          name: true,
+                          id: true,
+                          slug: true,
+                          image: true,
+                          membership: {
+                            select: {
+                              id: true,
+                              expiresAt: true,
+                              type: {
+                                select: {
+                                  id: true,
+                                  name: true,
+                                  level: true,
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      books: {
+                        take: 5,
+                      },
+                      galleries: {
+                        take: 5,
+                      },
+                      reviews: true,
+                      covers: {
+                        take: 5,
+                      },
+                      _count: {
+                        select: {
+                          books: true,
+                          galleries: true,
+                          covers: true,
+                          reviews: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              _count: {
+                select: {
+                  chapters: true,
+                  characters: true,
+                  likes: true,
+                  shares: true,
+                  follows: true,
+                  readers: true,
+                  reviews: true,
+                },
+              },
+            },
+            take: 5,
+          },
+          reviews: {
+            take: 5,
+          },
+          _count: {
+            select: {
+              books: true,
+              reviews: true,
+            },
+          },
+        },
+      }, // AuthorStubInclude,
+      artists: true, // ArtistStubInclude,
+      publisher: true,
+      genre: true,
+      gallery: true, // GalleryStubInclude,
+      cover: true, //
+      // {
+      //   include: {
+      //     image: true,
+      //     artists: true
+      //   }
+      // },
+      _count: {
+        select: {
+          chapters: true,
+          characters: true,
+          likes: true,
+          shares: true,
+          follows: true,
+          readers: true,
+          reviews: true,
+        },
+      },
+    },
   })) as unknown as BookStub
 
 const stubs = async (): Promise<BookStub[]> =>
@@ -321,7 +437,123 @@ const changeCover = async (props: ChangeCoverProps): Promise<BookStub> => {
       const result = await prisma.book.update({
         where: { id: book.id },
         data: { cover: { connect: { id: cover!.id } } },
-        ...BookStubInclude,
+        // ...BookStubInclude,
+        include: {
+          agent: true, // AgentStubInclude, // No stubs in stubs!
+          authors: {
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  id: true,
+                  slug: true,
+                  image: true,
+                },
+              },
+              books: {
+                include: {
+                  agent: true, // AgentStubInclude, // No stubs in stubs!
+                  authors: true, // AuthorStubInclude,
+                  artists: true, // ArtistStubInclude,
+                  publisher: true,
+                  genre: true,
+                  gallery: true, // GalleryStubInclude,
+                  cover: {
+                    include: {
+                      image: true,
+                      artists: {
+                        include: {
+                          user: {
+                            select: {
+                              name: true,
+                              id: true,
+                              slug: true,
+                              image: true,
+                              membership: {
+                                select: {
+                                  id: true,
+                                  expiresAt: true,
+                                  type: {
+                                    select: {
+                                      id: true,
+                                      name: true,
+                                      level: true,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                          books: {
+                            take: 5,
+                          },
+                          galleries: {
+                            take: 5,
+                          },
+                          reviews: true,
+                          covers: {
+                            take: 5,
+                          },
+                          _count: {
+                            select: {
+                              books: true,
+                              galleries: true,
+                              covers: true,
+                              reviews: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  _count: {
+                    select: {
+                      chapters: true,
+                      characters: true,
+                      likes: true,
+                      shares: true,
+                      follows: true,
+                      readers: true,
+                      reviews: true,
+                    },
+                  },
+                },
+                take: 5,
+              },
+              reviews: {
+                take: 5,
+              },
+              _count: {
+                select: {
+                  books: true,
+                  reviews: true,
+                },
+              },
+            },
+          }, // AuthorStubInclude,
+          artists: true, // ArtistStubInclude,
+          publisher: true,
+          genre: true,
+          gallery: true, // GalleryStubInclude,
+          cover: true, //
+          // {
+          //   include: {
+          //     image: true,
+          //     artists: true
+          //   }
+          // },
+          _count: {
+            select: {
+              chapters: true,
+              characters: true,
+              likes: true,
+              shares: true,
+              follows: true,
+              readers: true,
+              reviews: true,
+            },
+          },
+        },
       })
       return result as unknown as BookStub
     } else if (book && newImage) {
@@ -337,7 +569,123 @@ const changeCover = async (props: ChangeCoverProps): Promise<BookStub> => {
             },
           },
         },
-        ...BookStubInclude,
+        // ...BookStubInclude,
+        include: {
+          agent: true, // AgentStubInclude, // No stubs in stubs!
+          authors: {
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  id: true,
+                  slug: true,
+                  image: true,
+                },
+              },
+              books: {
+                include: {
+                  agent: true, // AgentStubInclude, // No stubs in stubs!
+                  authors: true, // AuthorStubInclude,
+                  artists: true, // ArtistStubInclude,
+                  publisher: true,
+                  genre: true,
+                  gallery: true, // GalleryStubInclude,
+                  cover: {
+                    include: {
+                      image: true,
+                      artists: {
+                        include: {
+                          user: {
+                            select: {
+                              name: true,
+                              id: true,
+                              slug: true,
+                              image: true,
+                              membership: {
+                                select: {
+                                  id: true,
+                                  expiresAt: true,
+                                  type: {
+                                    select: {
+                                      id: true,
+                                      name: true,
+                                      level: true,
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                          books: {
+                            take: 5,
+                          },
+                          galleries: {
+                            take: 5,
+                          },
+                          reviews: true,
+                          covers: {
+                            take: 5,
+                          },
+                          _count: {
+                            select: {
+                              books: true,
+                              galleries: true,
+                              covers: true,
+                              reviews: true,
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  _count: {
+                    select: {
+                      chapters: true,
+                      characters: true,
+                      likes: true,
+                      shares: true,
+                      follows: true,
+                      readers: true,
+                      reviews: true,
+                    },
+                  },
+                },
+                take: 5,
+              },
+              reviews: {
+                take: 5,
+              },
+              _count: {
+                select: {
+                  books: true,
+                  reviews: true,
+                },
+              },
+            },
+          }, // AuthorStubInclude,
+          artists: true, // ArtistStubInclude,
+          publisher: true,
+          genre: true,
+          gallery: true, // GalleryStubInclude,
+          cover: true, //
+          // {
+          //   include: {
+          //     image: true,
+          //     artists: true
+          //   }
+          // },
+          _count: {
+            select: {
+              chapters: true,
+              characters: true,
+              likes: true,
+              shares: true,
+              follows: true,
+              readers: true,
+              reviews: true,
+            },
+          },
+        },
       })
       return result as unknown as BookStub
     } else if (book && imageId) {
@@ -355,7 +703,123 @@ const changeCover = async (props: ChangeCoverProps): Promise<BookStub> => {
               },
             },
           },
-          ...BookStubInclude,
+          // ...BookStubInclude,
+          include: {
+            agent: true, // AgentStubInclude, // No stubs in stubs!
+            authors: {
+              include: {
+                user: {
+                  select: {
+                    name: true,
+                    id: true,
+                    slug: true,
+                    image: true,
+                  },
+                },
+                books: {
+                  include: {
+                    agent: true, // AgentStubInclude, // No stubs in stubs!
+                    authors: true, // AuthorStubInclude,
+                    artists: true, // ArtistStubInclude,
+                    publisher: true,
+                    genre: true,
+                    gallery: true, // GalleryStubInclude,
+                    cover: {
+                      include: {
+                        image: true,
+                        artists: {
+                          include: {
+                            user: {
+                              select: {
+                                name: true,
+                                id: true,
+                                slug: true,
+                                image: true,
+                                membership: {
+                                  select: {
+                                    id: true,
+                                    expiresAt: true,
+                                    type: {
+                                      select: {
+                                        id: true,
+                                        name: true,
+                                        level: true,
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                            books: {
+                              take: 5,
+                            },
+                            galleries: {
+                              take: 5,
+                            },
+                            reviews: true,
+                            covers: {
+                              take: 5,
+                            },
+                            _count: {
+                              select: {
+                                books: true,
+                                galleries: true,
+                                covers: true,
+                                reviews: true,
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                    _count: {
+                      select: {
+                        chapters: true,
+                        characters: true,
+                        likes: true,
+                        shares: true,
+                        follows: true,
+                        readers: true,
+                        reviews: true,
+                      },
+                    },
+                  },
+                  take: 5,
+                },
+                reviews: {
+                  take: 5,
+                },
+                _count: {
+                  select: {
+                    books: true,
+                    reviews: true,
+                  },
+                },
+              },
+            }, // AuthorStubInclude,
+            artists: true, // ArtistStubInclude,
+            publisher: true,
+            genre: true,
+            gallery: true, // GalleryStubInclude,
+            cover: true, //
+            // {
+            //   include: {
+            //     image: true,
+            //     artists: true
+            //   }
+            // },
+            _count: {
+              select: {
+                chapters: true,
+                characters: true,
+                likes: true,
+                shares: true,
+                follows: true,
+                readers: true,
+                reviews: true,
+              },
+            },
+          },
         })
         return result as unknown as BookStub
       }
