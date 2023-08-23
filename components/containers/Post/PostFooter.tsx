@@ -24,7 +24,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
   const { notify, notifyLoginRequired } = useToast()
   const { setPostId, showComment, hideComment } = useCommentContext()
   const {share, like} = useApi.post()
-  const {send} = useApi.notif()
+  const {post: notifyPost} = useApi.notif().Like
 
   const isLoggedIn = () => {
     if (!cyfrUser) {
@@ -54,9 +54,7 @@ const PostFooter = ({ post, onUpdate }: PostFooterProps) => {
     const liked = await like({ postId: post.id, creatorId: cyfrUser!.id })
     if (liked) {
       notify("You liked this post!!!!!!!!!!!", "success")
-      send({userId: post.creator.id, notifType: 'LIKE', message: `
-        <p>${cyfrUser.name} liked your <a href='/post/${post.id}'>Post</a>!</p>
-      `})
+      notifyPost({userId: post.creator.id, postId: post.id})
       update()
       return
     }
