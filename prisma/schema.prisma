@@ -854,17 +854,21 @@ enum BlockType {
 }
 
 enum NotifType {
-  BOOK
-  REVIEW
-  SUBMISSION
-  COMMENT
-  LIKE
-  SHARE
-  FOLLOW
-  FAN
-  CHAT
-  EVENT
   BLOCK
+  BOOK
+  CHAT
+  COMMENT
+  COMMUNE
+  EVENT
+  FAN
+  FEEDBACK
+  FOLLOW
+  LIKE
+  MESSAGE
+  REVIEW
+  SHARE
+  SUBMISSION
+  BILLING
 }
 
 enum ArticleType {
