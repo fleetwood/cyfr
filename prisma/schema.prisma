@@ -855,6 +855,7 @@ enum BlockType {
 
 enum NotifType {
   BLOCK
+  BILLING
   BOOK
   CHAT
   COMMENT
@@ -865,10 +866,12 @@ enum NotifType {
   FOLLOW
   LIKE
   MESSAGE
+  PUBLISH
+  PURCHASE
   REVIEW
   SHARE
+  STAN
   SUBMISSION
-  BILLING
 }
 
 enum ArticleType {

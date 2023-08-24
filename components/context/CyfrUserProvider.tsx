@@ -10,7 +10,7 @@ export const CyfrUserContext = createContext({} as any)
 export const useCyfrUserContext = () => useContext(CyfrUserContext)
 
 const CyfrUserProvider = ({ children }: CyfrUserProviderProps) => {
-  const value = useRocketQuery<CyfrUser>({name: 'cyfrUser', url: '/me'})
+  const value = useRocketQuery<CyfrUser>({name: 'cyfrUser', url: 'me'})
   return (
     <CyfrUserContext.Provider value={value}>
       {children}

@@ -1,10 +1,10 @@
-import { __host__, __port__ } from "./constants"
+import { __host__, __port__, __site__ } from "./constants"
 import axios from "axios"
 
 export const NotImplemented = (file?:string) => {return {code: 500, message: `${file ? file + ': ' : ''}Not implemented`}}
 
 export const apiUrl = (url: string) =>
-  `http://${__host__}:${__port__}/api/${url}`
+  `${__site__}/api/${url}`
 
 const postData = (body: any) => {
   return {
