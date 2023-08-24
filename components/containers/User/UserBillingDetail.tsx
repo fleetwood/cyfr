@@ -1,156 +1,133 @@
-import { Audience } from "@prisma/client";
-import { useState } from "react";
-import { useCyfrUserApi } from "../../../hooks/useCyfrUser";
-import useDebug from "../../../hooks/useDebug";
-import { sendApi } from "../../../utils/api";
-import { domRef } from "../../../utils/helpers";
-import { useCyfrUserContext } from "../../context/CyfrUserProvider";
-import { CheckBadge } from "../../ui/icons";
 
-const {debug} = useDebug("UserBillingDetail")
+import { useEffect, useState } from "react"
+import { CheckBadge } from "../../ui/icons"
+import {MembershipType} from "prisma/prismaContext"
+import {useToast} from "components/context/ToastContextProvider"
+import useDebug from "hooks/useDebug"
+import useApi from "prisma/useApi"
+import {cadenceInterval} from "prisma/useApi/cyfrUser"
+import {domRef} from "utils/helpers"
 
-type PlanType = {
-    audience: Audience
-    label: string
-    description: string
-    cta: {
-        monthly: string
-        annually: string
-    }
-    price: {
-        monthly: number
-        annually: number
-    }
-}
-const plans:PlanType[] = [
-    {
-        audience: Audience.USER,
-        label: 'Free Tier',
-        description: 'Everything you need to write a story and get feedback from the larger Cyfr community!',
-        cta: {
-            monthly: `What's better than free???`,
-            annually: `What's better than free???`,
-        },
-        price: {
-            monthly: 0,
-            annually: 0
-        }
-    },
-    {
-        audience: Audience.MEMBER,
-        label: 'Author Tier',
-        description: `Once your story is ready, switch to Author Tier to sell your book! Or use the additional
-                      features to collaborate even more deeply during the writing process, including collaboration
-                      groups, Agent prospecting, story and author dashboards, A/B testing and more!`,
-        cta: {
-            monthly: `Budget-friendly monthly subscription!`,
-            annually: `Get two free months!! Eeeep!!`,
-        },
-        price: {
-            monthly: 9,
-            annually: 89
-        }
-    },
-    {
-        audience: Audience.AGENT,
-        label: 'Agent',
-        description: `Interact with Authors: track your favorites, including collaboration and analytics, conduct
-                      manuscript events and wishlists, and a submission form and tracker!`,
-        cta: {
-            monthly: ``,
-            annually: `Get two months free!!! So much coolness!`,
-        },
-        price: {
-            monthly: 49,
-            annually: 499
-        }
-    },
-]
+const { debug } = useDebug('UserBillingDetail')
 
 const UserBillingDetail = () => {
-    const [cyfrUser] = useCyfrUserContext()
-    const {invalidateUser} = useCyfrUserApi()
-    const initialPlan = cyfrUser.membership ? plans.find(p => p.audience === cyfrUser.membership!.level) : plans[0]
-    const [plan, setPlan] = useState<PlanType>(initialPlan || plans[0])
+  const { cyfrUser, isLoading, error, invalidate, updateUser, setMembership } = useApi.cyfrUser()
+  const { notify } = useToast()
+  const [ types, setTypes] = useState<MembershipType[]>()
+  const [membershipType, setMembershipType] = useState<MembershipType|null>(types?.find(t => t.id === cyfrUser?.membership?.type.id) ?? (types ? types[0] : null))
 
-    const isPlan = (plan:PlanType) => cyfrUser && cyfrUser.membership?.level===plan.audience
+  const isPlan = (p: MembershipType) => p.id === membershipType?.id ?? false
+  const currentPlan = (p:MembershipType) => cyfrUser?.membership?.type.id === p.id
 
-    const choosePlan = async (plan:PlanType, cadence: string) => {
-        debug('choosePlan', {plan: plan.audience.toString(), cadence})
-        const user = await sendApi('user/membership/choose', {audience: plan.audience, cadence})
-        if (user && user.data.result) {
-            debug('choosePlan', {result: user.data.result})
-        }
-        invalidateUser()
+  const chooseMembership = async (typeId: string, cadence: cadenceInterval) => {
+    debug('chooseMembership', { id: typeId, cadence })
+    const result = await setMembership({typeId, cadence})
+    if (result) {
+      notify('Congratulations on your new membership!', 'success')
     }
+    invalidate()
+  }
+
+  useEffect(() => {
+    const getTypes = async() => {
+      const t = await useApi.membership().types()
+      if (t) {
+        setTypes(() => t)
+        setMembershipType(() => t.find((p) => p.id === cyfrUser?.membership?.type.id) ?? t[0])
+      }
+    }
+    getTypes()
+  }, [])
 
   return (
     <div className="lg:flex lg:flex-row items-center justify-between my-6 p-4 rounded-lg bg-base-200">
       <div className="lg:w-1/2 w-full">
+        
         <p className="text-base leading-4 text-base-content text-opacity-70">
-          Choose your plan
-        </p>
-        <h1
-          role="heading"
-          className="md:text-5xl text-3xl font-bold leading-10 mt-3 text-base-content "
-        >
-          Our pricing plan
-        </h1>
-        <p
-          role="contentinfo"
-          className="text-base leading-5 mt-5 text-base-content text-opacity-70"
-        >
-          We’re working on a suite of tools to make writing a social effort, for everyone for free.
-        </p>
+          Choose your plan</p>
+        <h1 role="heading" className="md:text-5xl text-3xl font-bold leading-10 mt-3 text-base-content">
+          Our pricing plan</h1>
+        <p role="contentinfo" className="text-base leading-5 mt-5 text-base-content text-opacity-70">
+          We’re working on a suite of tools to make writing a social effort, for
+          everyone for free.</p>
+
         <div className="flex flex-col space-y-6 mt-6">
-            {plans.map(p => (
-                    <div className={`w-full py-4 px-6 transition-all duration-200 flex justify-between
-                        text-base leading-none text-base-content text-opacity-70 bg-base-100 rounded-md 
-                        cursor-pointer shadow border-l-8
-                        hover:shadow-lg hover:border-primary
-                        ${p === plan 
-                            ? 'border-secondary' 
-                            : 'border-base-100'}
-                    `}
-                    key={domRef(cyfrUser,p)}
-                    onClick={() => setPlan(p)}
-                    >
-                        <h2 className="text-2xl font-semibold leading-6 text-base-content ">{p.label}</h2>
-                        {p.audience  === cyfrUser.membership?.level && <span className="text-success text-xl">{CheckBadge}</span>}
-                    </div>
-            ))}
+          {types && types.map((t:MembershipType) => (
+            <div
+              className={`w-full py-4 px-6 transition-all duration-200 flex justify-between
+              text-base leading-none text-base-content text-opacity-70 bg-base-100 rounded-md 
+              cursor-pointer shadow border-l-8
+              hover:shadow-lg hover:border-primary
+              ${isPlan(t) ? 'border-secondary' : 'border-base-100'}
+            `}
+              key={domRef(cyfrUser, t)}
+              onClick={() => setMembershipType(t)}
+            >
+              <h2 className="text-2xl font-semibold leading-6 text-base-content ">
+                {t.name}
+              </h2>
+              {currentPlan(t) && (
+                <span className="text-success text-xl">{CheckBadge}</span>
+              )}
+            </div>
+          ))}
         </div>
       </div>
+
+      {membershipType &&
       <div className="xl:w-1/2 lg:w-7/12 relative w-full px-8 flex-grow">
+        <h2 className="text-2xl font-semibold leading-6 text-base-content">
+          {membershipType.name}
+        </h2>
+        <p className="md:w-80 text-base leading-6 mt-4 text-base-content text-opacity-70">
+          {membershipType.description}
+        </p>
+        <div className="md:flex justify-between space-x-4">
+          <div className="my-2 p-2 bg-base-100 rounded-md shadow flex-grow">
+            <p className="font-semibold">Monthly</p>
             <h2 className="text-2xl font-semibold leading-6 text-base-content">
-              {plan.label}
+              ${membershipType.monthlyPrice}/mo
             </h2>
-          <p className="md:w-80 text-base leading-6 mt-4 text-base-content text-opacity-70">
-            {plan.description}
-          </p>
-          <div className="md:flex justify-between space-x-4">
-            <div className="my-2 p-2 bg-base-100 rounded-md shadow flex-grow">
-                <p className="font-semibold">Monthly</p>
-                <h2 className="text-2xl font-semibold leading-6 text-base-content">${plan.price.monthly}/mo</h2>
-                <p className="my-2 text-sm flex-grow">{plan.cta.monthly}</p>
-                {plan.audience !== Audience.USER && 
-                    <button className="btn bg-base-content bottom-0" onClick={() => choosePlan(plan, 'monthly')}>Choose {plan.label} monthly</button>
-                }
-            </div>
-            <div className="my-2 p-2 bg-base-100 rounded-md shadow flex-grow">
-                <p className="font-semibold">Annually</p>
-                <h2 className="text-2xl font-semibold leading-6 text-primary">${plan.price.annually}/yr</h2>
-                <p className="my-2 text-sm flex-grow">{plan.cta.annually}</p>
-                {plan.audience !== Audience.USER && 
-                <button className="btn btn-success bottom-0" onClick={() => choosePlan(plan, 'annually')}>Choose {plan.label} annually</button>
-                }
-            </div>
+            <p className="my-2 text-sm flex-grow">{membershipType.monthlyDescription}</p>
+            {membershipType.paid && (
+              <button
+                className="btn bg-base-content bottom-0"
+                onClick={() => chooseMembership(membershipType.id, 'M')}
+              >
+                Choose {membershipType.name} monthly
+              </button>
+            )}
           </div>
-            {plan.audience === Audience.USER && 
-                <div><button className="btn bg-base-content" onClick={() => choosePlan(plan, 'free')}>Choose {plan.label}</button></div>
-            }
+          <div className="my-2 p-2 bg-base-100 rounded-md shadow flex-grow">
+            <p className="font-semibold">Annually</p>
+            <h2 className="text-2xl font-semibold leading-6 text-primary">
+              ${membershipType.annualPrice}/yr
+            </h2>
+            <p className="my-2 text-sm flex-grow">{membershipType.annualDescription}</p>
+            {membershipType.paid && (
+              <button
+                className="btn btn-success bottom-0"
+                onClick={() => chooseMembership(membershipType.id, 'y')}
+              >
+                Choose {membershipType.name} annually
+              </button>
+            )}
+          </div>
         </div>
+        {!membershipType.paid && (
+          <div>
+            <button
+              className="btn bg-base-content"
+              onClick={() => chooseMembership(membershipType.id, 'M')}
+            >
+              Choose {membershipType.name}
+            </button>
+          </div>
+        )}
+      </div>
+      }
+
     </div>
-  );
-};
-export default UserBillingDetail;
+  )
+}
+export default UserBillingDetail

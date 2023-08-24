@@ -1,4 +1,10 @@
-import { CommentThread, Comment, Commune, CommuneUser, User } from "./../prismaContext";
+import {Block,Comment,CommentThread,Commune,CommuneUser,CreatorStub,User,UserStub} from "prisma/prismaContext";
+
+export type AddCommentProps = {
+  creatorId:  string
+  threadId:   string
+  content:    string
+}
 
 /**
  * @property threadId Will create a new CommentThread if undefined
@@ -11,7 +17,7 @@ export type UpsertInboxProps = {
   userId: string;
   partyId: string;
   messages?: ({
-    authorId: string,
+    creatorId: string,
     content: string
   })[]
 }
@@ -25,11 +31,11 @@ export type StartInboxThreadProps = {
 export type CommentThreadDetails = CommentThread & {
   commune: Commune & {
     users: (CommuneUser & {
-      user: User
+      user: UserStub
     })[];
   };
   comments: (Comment & {
-    author: User;
+    creator: User;
     _count: {
       likes: number;
     };
@@ -41,25 +47,98 @@ export const CommentThreadDetailsInclude = {
     include: {
       users: {
         include: {
-          user: true
-        }
-      }
-    }
+          // UserStubSelect
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              slug: true,
+              // MembershipStubSelect
+              membership: {
+                select: {
+                  id: true,
+                  expiresAt: true,
+                  type: {
+                    select: {
+                      id: true,
+                      name: true,
+                      level: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   comments: {
     where: {
-      visible: true
+      visible: true,
     },
     orderBy: {
-      updatedAt: 'desc'
+      updatedAt: 'desc',
     },
     include: {
-      author: true,
+      creator: true,
       _count: {
         select: {
-          likes: true
-        }
-      }
-    }
+          likes: true,
+        },
+      },
+    },
+  },
+}
+
+export type CommentThreadStub = Comment & {
+  creator: CreatorStub
+  comments: (Comment & {
+    creator: CreatorStub
+  })[]
+  commune:  Commune
+  blocked:  Block[]
+  _count: {
+    comments: number
   }
+}
+
+export const CommentThreadStubInclude = {
+  include: {
+    comments: {
+      include: {
+        // CreatorStubSelect
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            slug: true,
+            membership: {
+              select: {
+                id: true,
+                expiresAt: true,
+                type: {
+                  select: {
+                    id: true,
+                    name: true,
+                    level: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      take: 10,
+    },
+    commune: true,
+    blocked: true,
+    _count: {
+      select: {
+        comments: true,
+      },
+    },
+  },
 }

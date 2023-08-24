@@ -1,15 +1,45 @@
-import { Like, UserStub } from "./../prismaContext"
+import {CreatorStub,Like} from "prisma/prismaContext"
 
 export type LikeProps = {
-  authorId:     String
-  postId?:      String
-  galleryId?:   String
-  imageId?:     String
-  commentId?:   String
-  characterId?: String
-  bookId?:      String
+  creatorId:    string
+  postId?:      string
+  galleryId?:   string
+  imageId?:     string
+  commentId?:   string
+  characterId?: string
+  bookId?:      string
 }
 
 export type LikeStub = Like & {
-  author: UserStub
+  creator: CreatorStub
+}
+
+export const LikeStubInclude = {
+  likes: {
+    include: {
+      // CreatorStubSelect,
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          slug: true,
+          membership: {
+            select: {
+              id: true,
+              expiresAt: true,
+              type: {
+                select: {
+                  id: true,
+                  name: true,
+                  level: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    take: 10,
+  },
 }

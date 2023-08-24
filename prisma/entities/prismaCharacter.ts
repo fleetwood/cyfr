@@ -1,30 +1,22 @@
-import { Chapter, Character, CharacterDetail, CharacterStub, CharacterUpsertProps, PrismaBook, Share, ShareDeleteProps, ShareFeed } from "../prismaContext"
-import useDebug from "../../hooks/useDebug"
-import { now, sortChapters } from "../../utils/helpers"
+import useDebug from 'hooks/useDebug'
+import {
+  Character,
+  CharacterUpsertProps,
+  Like,
+  PrismaLike,
+  PrismaShare,
+  Share,
+} from 'prisma/prismaContext'
 
-const {debug, info, fileMethod} = useDebug('entities/prismaCharacter')
+const { debug, info, fileMethod } = useDebug('entities/prismaCharacter')
 
-const detail = async (id: string): Promise<CharacterDetail | null> => {
-  debug('detail', id)
-  try {
-    return await prisma.character.findUnique({where: {id}}) as CharacterDetail
-  } catch (error) {
-    debug('detail ERROR', error)
-    throw error
-  }
-}
+const detail = async (id: string): Promise<Character | null> =>
+  await prisma.character.findUnique({ where: { id } })
 
-const stub = async (id: string): Promise<CharacterStub | null> => {
-  debug('stub', id)
-  try {
-    return await prisma.character.findUnique({where: {id}}) as CharacterStub
-  } catch (error) {
-    debug('stub ERROR', error)
-    throw error
-  }
-}
+const stub = async (id: string): Promise<Character | null> =>
+  await prisma.character.findUnique({ where: { id } })
 
-const upsert = async (character:CharacterUpsertProps) => {
+const upsert = async (character: CharacterUpsertProps) => {
   debug('upsert', character)
   try {
     const {
@@ -40,7 +32,7 @@ const upsert = async (character:CharacterUpsertProps) => {
       backstory,
       title,
       archetype,
-      bookId
+      bookId,
     } = character
     const data = {
       active,
@@ -57,26 +49,52 @@ const upsert = async (character:CharacterUpsertProps) => {
       archetype,
       books: {
         connect: {
-          id: bookId
-        }
-      }
+          id: bookId,
+        },
+      },
     }
-    debug('upsert data', {data})
+    debug('upsert data', { data })
     //TODO bc for some stupid reason if id is undefined the where statement is just empty oy
-    const result = character.id !== undefined 
-      ? await prisma.character.update({where: {id: character.id}, data})
-      : await prisma.character.create({data})
+    const result =
+      character.id !== undefined
+        ? await prisma.character.update({ where: { id: character.id }, data })
+        : await prisma.character.create({ data })
 
     if (result) {
       debug('upsert', result)
       return result
     }
 
-    throw {code: fileMethod('upsert'), message :'Did not obtain an upsert result'}
+    throw {
+      code: fileMethod('upsert'),
+      message: 'Did not obtain an upsert result',
+    }
   } catch (error) {
     debug('upsert ERROR', error)
     throw error
   }
 }
 
-export const PrismaCharacter = { detail, stub, upsert }
+/**
+ * Method references {@link PrismaLike.likeCharacter}
+ * @param characterId: String
+ * @param creatorId: String
+ * @returns: {@link Like}
+ */
+const like = async (props: {
+  characterId: string
+  creatorId: string
+}): Promise<Like> => PrismaLike.likeCharacter(props)
+
+/**
+ * Method references {@link PrismaShare.shareCharacter}
+ * @param characterId: String
+ * @param creatorId: String
+ * @returns: {@link Like}
+ */
+const share = async (props: {
+  characterId: string
+  creatorId: string
+}): Promise<Share> => PrismaShare.shareCharacter(props)
+
+export const PrismaCharacter = { detail, like, share, stub, upsert }

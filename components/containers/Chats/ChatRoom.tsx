@@ -4,7 +4,7 @@ import useDebug from "../../../hooks/useDebug"
 import { ChatMessage, User, UserStub } from "../../../prisma/prismaContext"
 import { now, timeDifference, domRef } from "../../../utils/helpers"
 import TailwindInput from "../../forms/TailwindInput"
-import Avatar from "../../ui/avatar"
+import UserAvatar from "../../ui/avatar/userAvatar"
 import { ChatSendIcon } from "../../ui/icons"
 
 
@@ -27,7 +27,7 @@ const ChatRoom = ({firstPerson, secondPerson, onCloseRoom, lastUpdated=now()}:Ch
     
     const onSendClick = async () => {
         const data = {
-            authorId: firstPerson.id,
+            creatorId: firstPerson.id,
             content: message!,
             chatRoomId: room!.id
         }
@@ -89,13 +89,13 @@ const ChatRoom = ({firstPerson, secondPerson, onCloseRoom, lastUpdated=now()}:Ch
             <label className="z-10 absolute btn btn-xs btn-circle -right-1 -top-1" onClick={closeChatRoom}>X</label>
         </div>
         <div className="flex bg-base-200 space-x-2 font-semibold">
-            <Avatar user={secondPerson} link={false} sz="sm" />
+            <UserAvatar user={secondPerson} link={false} sz="sm" />
             <span className="my-auto">{secondPerson.name}</span>
         </div>
         {room && (
             <div className="h-[240px] overflow-y-scroll scrollbar-thin space-y-2 my-2">
             <div className="text-xs opacity-50">{room.id}</div>
-            {room.messages?.map((message:ChatMessage) => isFirstPerson(message.authorId) 
+            {room.messages?.map((message:ChatMessage) => isFirstPerson(message.creatorId) 
                 ?
                 <div className="chat chat-end" key={`chatmessage-${domRef(firstPerson, secondPerson)}-${message.updatedAt}`}>
                     <div className="chat-header">

@@ -3,7 +3,9 @@ import useFeed from "../../hooks/useFeed"
 import { useToast } from "./ToastContextProvider"
 
 import useDebug from "../../hooks/useDebug"
-import { useCyfrUserContext } from "./CyfrUserProvider"
+import usePostApi from "../../prisma/useApi/post"
+import useApi from "prisma/useApi"
+import ModalCheckbox, { ModalCloseButton } from "components/ui/modalCheckbox"
 const {debug} = useDebug("CommentContextProvider")
 
 type CommentProviderProps = {
@@ -11,8 +13,8 @@ type CommentProviderProps = {
 }
 
 type CommentProviderType = {
-  commentId: string|null
-  setCommentId: Function
+  postId: string|null
+  setPostId: Function
   showComment: Function
   hideComment: Function
 }
@@ -21,16 +23,15 @@ export const CommentContext = createContext({} as CommentProviderType)
 export const useCommentContext = () => useContext(CommentContext)
 
 const CommentProvider = ({ children }: CommentProviderProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const {commentOnPost, invalidateFeed} = useFeed({type: 'post'})
-  const {notify} = useToast()
+  const {cyfrUser} = useApi.cyfrUser()
+  
+  const {notify, notifyNotImplemented} = useToast()
   
   const commentPostModal = 'commentPostModal'
-  const modal = useRef<HTMLInputElement>(null)
   
   const [checked, setChecked] = useState(false)
   const [content, setContent] = useState<string | null>(null)
-  const [commentId, setCommentId] = useState<string|null>(null)
+  const [postId, setPostId] = useState<string|null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
 
   // @ts-ignore
@@ -39,7 +40,7 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
   // @ts-ignore
   const hideComment = () => {
     setContent(null)
-    setCommentId(null)
+    setPostId(null)
     setChecked(() => false)
   }
 
@@ -49,36 +50,37 @@ const CommentProvider = ({ children }: CommentProviderProps) => {
       return
     }
 
-    const post = await commentOnPost({
-      content: content!,
-      authorId: cyfrUser.id,
-      commentId: commentId!,
-    })
+    notifyNotImplemented()
+    // const post = await commentOnPost({
+    //   content: content!,
+    //   creatorId: cyfrUser.id,
+    //   postId: postId!,
+    // })
 
-    hideComment()
+    // hideComment()
 
-    if (post) {
-      debug(`handleSubmit success`)
-      invalidateFeed()
-    } else {
-      notify(`Hm. That didn't work....`,'warning')
-    }
+    // if (post) {
+    //   debug(`handleSubmit success`)
+    //   invalidate()
+    // } else {
+    //   notify(`Hm. That didn't work....`,'warning')
+    // }
   }
 
   useEffect(() => {
-    const disabled = !cyfrUser || !commentId || !content || content.length < 1
+    const disabled = !cyfrUser || !postId || !content || content.length < 1
     setIsDisabled(() => disabled)
   }, [content])
 
-  const value={commentId, setCommentId, showComment, hideComment}
+  const value={postId, setPostId, showComment, hideComment}
 
   return (
     <CommentContext.Provider value={value}>
-        <input type="checkbox" ref={modal} id={commentPostModal} className="modal-toggle" checked={checked} onChange={()=>{}} />
+        <ModalCheckbox id={commentPostModal} />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box bg-opacity-0 overflow-visible scrollbar-hide">
             
-            <label onClick={hideComment} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+            <ModalCloseButton id={commentPostModal} />
 
             <div className="
               mb-3 rounded-xl w-full 

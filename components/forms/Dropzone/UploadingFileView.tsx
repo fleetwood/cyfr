@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react"
-import { cloudinary } from "../../../utils/cloudinary"
+import { cloudinary } from "utils/cloudinary"
 import { FileError } from "react-dropzone"
-import Spinner from "../../ui/spinner"
 import { CompleteFile, UploadFileViewProps } from "./types.defs"
-import useDebug from "../../../hooks/useDebug"
-import { sendApi } from "../../../utils/api"
-import { ImageUpsertProps, Image } from "../../../prisma/prismaContext"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
+import useDebug from "hooks/useDebug"
+import { sendApi } from "utils/api"
+import { ImageUpsertProps, Image } from "prisma/prismaContext"
 import Link from "next/link"
-const {debug} = useDebug("components/forms/Dropzone/UploadingFileView")
+import Spinner from "components/ui/spinner"
+import useApi from "prisma/useApi"
+const {debug} = useDebug("forms/Dropzone/UploadingFileView")
 
-const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileViewProps) => {
-  const [cyfrUser, loading] = useCyfrUserContext()
+const UploadFileView = ({file, showUploadProgress = true, onUploadComplete, onUploadChange}: UploadFileViewProps) => {
+  const {cyfrUser, isLoading} = useApi.cyfrUser()
+  const {upsert} = useApi.image()
   const [fileProgress, setFileProgress] = useState<number>(0)
   const [fileErrors, setFileErrors] = useState<FileError[]>([])
   const [image, setImage] = useState<Image | null>(null)
 
-  if (loading) return <Spinner />
+  if (isLoading) return <Spinner size="sm" center={true} />
   else if (!cyfrUser) return <>Please <Link href='/login'>login</Link> first...</>
 
   const progressStyle = (e: boolean, p: number) =>
@@ -33,19 +34,19 @@ const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileView
   const uploadComplete = async (file:CompleteFile) => {
     debug('uploadComplete', file)
     // convert completeFile to ImageUpsertProps
-    const props = {
-      authorId: cyfrUser.id,
+    const props:ImageUpsertProps = {
+      creatorId: cyfrUser.id,
       url: file.secure_url,
       visible: true,
       height: file.height,
       width: file.width,
       title: file.original_filename
     }
-    const image = await(await sendApi('image/upsert', props)).data.result
+    const image = await upsert(props)
     if (image) {
       debug('uploadComplete.image', image)
       setImage(image)
-      if (onUploadComplete) onUploadComplete(image)
+      if (onUploadComplete) onUploadComplete([image])
     }else{
       debug('uploadComplete image upsert failed')
     }
@@ -80,7 +81,7 @@ const UploadFileView = ({file, onUploadComplete, onUploadChange}: UploadFileView
 
   return (
     <div className="relative mb-2 h-32" key={file.id}>
-      {image && 
+      {showUploadProgress && image && 
         <div>
             <img src={image.url} className={`mask mask-squircle max-h-32 h-32 ${image.visible ? '' : 'opacity-30'}`} />
             <div className="bg-success text-success-content overflow-hidden text-xs opacity-80 absolute bottom-6 mx-2 px-2 rounded-md">{image.title}</div>

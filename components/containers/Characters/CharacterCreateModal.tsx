@@ -1,28 +1,27 @@
 import React, { FormEvent, useRef, useState } from 'react'
-import useDebug from '../../../hooks/useDebug'
-import { useCyfrUserContext } from '../../context/CyfrUserProvider'
-import { useToast } from '../../context/ToastContextProvider'
-import { LoggedIn } from '../../ui/toasty'
-import Spinner from '../../ui/spinner'
-import { InlineTextarea, TailwindInput } from '../../forms'
-import EZButton from '../../ui/ezButton'
-import { BookApi, Character } from '../../../prisma/prismaContext'
-import { sendApi } from '../../../utils/api'
-import OpenModal from '../../ui/openModal'
+import useDebug from 'hooks/useDebug'
+import { BookDetail, BookDetailHook, Character } from 'prisma/prismaContext'
+import { sendApi } from 'utils/api'
+import ModalCheckbox, { ModalCloseButton, ModalOpenButton } from 'components/ui/modalCheckbox'
+import useApi from 'prisma/useApi'
+import { useToast } from 'components/context/ToastContextProvider'
+import Spinner from 'components/ui/spinner'
+import { TailwindInput, InlineTextarea } from 'components/forms'
+import EZButton from 'components/ui/ezButton'
+import { LoggedIn } from 'components/ui/toasty'
 const {debug} = useDebug("components/containers/Character/CreateCharacterModal")
 
 const createCharacterModal = 'createCharacterModal'
 
-export const OpenCharacterModalButton = () => <OpenModal htmlFor={createCharacterModal} label='Create Character' />
-export const OpenCharacterModalPlus = () => <OpenModal htmlFor={createCharacterModal} variant='plus' />
+export const OpenCharacterModalButton = () => <ModalOpenButton id={createCharacterModal} label='Create Character' />
+export const OpenCharacterModalPlus = () => <ModalOpenButton id={createCharacterModal} variant='plus' />
 
 type CreateCharacterModalType = {
-  forBook: BookApi
+  bookDetail: BookDetail
 }
 
-const CreateCharacterModal = ({forBook}:CreateCharacterModalType) => {
-  const [cyfrUser, isLoading, error] = useCyfrUserContext()
-  const {bookDetail} = forBook
+const CreateCharacterModal = ({bookDetail}:CreateCharacterModalType) => {
+  const {cyfrUser, isLoading, error} = useApi.cyfrUser()
   const { notify } = useToast()
   const container = useRef<HTMLDivElement>(null)
 
@@ -47,35 +46,37 @@ const CreateCharacterModal = ({forBook}:CreateCharacterModalType) => {
   const handleSubmit = async (e?: FormEvent) => {
     e?.preventDefault()
     
-    const result = await (await sendApi('character/upsert', {
-      name: displayName,
-      givenName,
-      middleName: middleName??'',
-      familyName,
-      title: title??'',
-      age: age??'',
-      description,
-      role: role??'',
-      archetype: archetype??'',
-      backstory,
-      thumbnail: thumbnail??'',
-      active,
-      bookId: bookDetail!.id
-    })).data
-    if (result) {
-      const {name, givenName, familyName} = result as Character
-      let char = givenName || name || null
-      if (char === null) {
-        char = 'Your character'
-      }
-      else if (givenName && familyName) {
-        char += ' ' + familyName
-      }
-      notify(`${char} was added to ${bookDetail?.title}!`)
-      closeModal()
-    } else {
-      notify('Hm, that dint work', 'warning')
-    }
+    // const result = await (await sendApi('character/upsert', {
+    //   name: displayName,
+    //   givenName,
+    //   middleName: middleName??'',
+    //   familyName,
+    //   title: title??'',
+    //   age: age??'',
+    //   description,
+    //   role: role??'',
+    //   archetype: archetype??'',
+    //   backstory,
+    //   thumbnail: thumbnail??'',
+    //   active,
+    //   bookId: bookDetail!.id
+    // })).data
+    // if (result) {
+    //   const {name, givenName, familyName} = result as Character
+    //   let char = givenName || name || null
+    //   if (char === null) {
+    //     char = 'Your character'
+    //   }
+    //   else if (givenName && familyName) {
+    //     char += ' ' + familyName
+    //   }
+    //   notify(`${char} was added to ${bookDetail?.title}!`)
+    //   closeModal()
+    // } else {
+    //   notify('Hm, that dint work', 'warning')
+    // }
+    notify('No Implemented', 'warning')
+    closeModal()
   }
 
   const buttonGotThis = (e: { preventDefault: () => void }) => {
@@ -83,18 +84,15 @@ const CreateCharacterModal = ({forBook}:CreateCharacterModalType) => {
   }
 
   const closeModal = (e?:any) => {
-    debug('closeModal')
-    const createModal = document.getElementById(createCharacterModal)
-    // @ts-ignore
-    createModal!.checked = false
+    debug('closeModal needs manual toggle')
   }
 
   return (
     <>
-    <input type="checkbox" id={createCharacterModal} className="modal-toggle" />
+    <ModalCheckbox id={createCharacterModal} />
     <div ref={container} id='createCharacterModalContainer' className="modal bg-opacity-0 modal-bottom sm:modal-middle">
       <div className="modal-box shadow-none scrollbar-hide">
-        <label htmlFor={createCharacterModal} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+        <ModalCloseButton id={createCharacterModal} />
         <div className="mb-3 rounded-xl w-full bg-primary text-primary-content  md:bg-blend-hard-light md:bg-opacity-80 max-h-fit">
           {isLoading && <Spinner />}
           {!isLoading && !cyfrUser &&

@@ -1,12 +1,13 @@
 import { ReactNode, useRef, useState } from "react"
 import Footer from "../containers/Footer"
 import LeftColumn from "../containers/LeftColumn"
-import Navbar from "../containers/Navbar"
+import Navbar from "../containers/Navbar/Navbar"
 import CreatePostModal from "../containers/Post/CreatePostModal"
 import RightColumn from "../containers/RightColumn"
-import SendMessageModal from "../containers/Comment/SendMessageModal"
 import { useToast } from "../context/ToastContextProvider"
 import Section from "../ui/section"
+import Toasts from "../ui/toasts"
+import CreateCommentModal from "components/containers/Comment/CreateCommentModal"
 
 type MainLayoutProps = {
   sectionTitle: string | ReactNode
@@ -41,11 +42,11 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
                 onScroll={handleScroll}
                 ref={mainRef}
               >
-                <Navbar className="min-w-full transition-all duration-200 ease-out" pageScrolled={scrollActive} />
+                <Navbar 
+                  className="min-w-full transition-all duration-200 ease-out" 
+                  pageScrolled={scrollActive} />
 
-                <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
-                  {toasts.map((toast) => toast.toast)}
-                </div>
+                <Toasts />
                 <Section
                   className="box-border snap-y min-h-full"
                   sectionTitle={sectionTitle}
@@ -59,6 +60,7 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
                 <RightColumn />
               </div>
               <CreatePostModal />
+              <CreateCommentModal />
             </div>
       //     </div>
       //   </div>

@@ -1,10 +1,10 @@
-import { MouseEventHandler } from "react"
+import { MouseEventHandler, ReactNode } from "react"
+import { VariantProps } from "types/props"
 
-export type EZButtonVariant = "base" | "primary" | "secondary" | "accent" | "success" | "info" | "warning" | undefined
-
+// TODO Add SizeProps, and Rounded props
 type EzButtonProps = {
-    variant?: EZButtonVariant
-    label: string
+    variant?: VariantProps
+    label: ReactNode
     onClick?: MouseEventHandler<HTMLButtonElement> | undefined
     disabled?: boolean
     className?: string

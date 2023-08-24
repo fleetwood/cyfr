@@ -1,40 +1,43 @@
-import GalleryPhotoswipe from "../../components/containers/Gallery/GalleryPhotoswipe";
-import PostFooter from "../../components/containers/Post/PostFooter";
-import MainLayout from "../../components/layouts/MainLayout";
-import Avatar from "../../components/ui/avatar";
-import HtmlContent from "../../components/ui/htmlContent";
-import { PostDetail, PrismaPost } from "../../prisma/prismaContext";
-import { timeDifference } from '../../utils/helpers';
+import GalleryPhotoswipe from "components/containers/Gallery/GalleryImages"
+import PostFooter from "components/containers/Post/PostFooter"
+import MainLayout from "components/layouts/MainLayout"
+import UserAvatar from "components/ui/avatar/userAvatar"
+import HtmlContent from "components/ui/htmlContent"
+import {UserTypes} from "prisma/types"
+import useApi from "prisma/useApi"
+import { timeDifference } from 'utils/helpers'
 
 type PostDetailPageProps = {
-  post: PostDetail
+  postId: string
 }
 
 export async function getServerSideProps(context: any) {
-  const postid = context.params.id
-  const post = await PrismaPost.postDetail(postid)
+  const postId = context.params.id
 
   return {
     props: {
-      post,
+      postId,
     },
   }
 }
 
-const PostDetailPage = ({ post }:PostDetailPageProps) => {
+const PostDetailPage = ({ postId }:PostDetailPageProps) => {
+  const {data, isLoading, error, invalidate} = useApi.post().detail(postId)
+  const post = data
+
   return (post && 
     <MainLayout
-      pageTitle={`${post.author.name}`}
+      pageTitle={`${post.creator.name}`}
       sectionTitle=''
     >
       <div className="flex flex-row justify-between relative">
         <div className="flex justify-end w-full -mb-4 mr-4 z-10">
-          <Avatar user={post.author} sz="lg" />
+          <UserAvatar user={post.creator} sz="lg" userType={post.creator.membership.type.name as UserTypes} />
         </div>
       </div>
       <div className="bg-base-100 rounded-lg p-4 relative">
         <div className="absolute right-0 pr-4">
-          Posted {timeDifference((post.createdat || '').toString())}
+          Posted {timeDifference((post.createdAt || '').toString())}
         </div>
         <HtmlContent content={post.content!} /> 
         {post.images?.length > 0 && post.images[0] !== null &&

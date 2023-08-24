@@ -1,32 +1,19 @@
-import { ImageStubViewProps } from "../../../prisma/prismaContext"
+import { ImageStub } from "prisma/prismaContext"
+import ImageFooter from "./ImageFooter"
 
-const ImageStubView = ({ image, className }:ImageStubViewProps) => {
+export type ImageStubViewProps = {
+  image:      ImageStub
+  onClick?:   (image: ImageStub) => any
+  className?: string
+  footer?:    boolean
+  header?:    boolean
+}
 
-  return(
-  <div className={`relative rounded-lg overflow-clip ${className} image-preview`}>
-      {image && 
-      <>
-        <img className="rounded-lg drop-shadow-md" src={image.url} />
-
-        {image.title &&
-          <div className="image-header">
-            <span>{image.title}</span>
-          </div>
-        }
-        <div className="image-footer">
-           {/* @ts-ignore */}
-          {image.likes !== undefined &&
-           // @ts-ignore
-            <span>Likes {image.likes.length || 0}</span>
-          }
-          {/* @ts-ignore */}
-          {image.shares !== undefined &&
-            // @ts-ignore
-            <span>Shares {image.shares.length || 0}</span>
-          }
-        </div>
-      </>
-      }
+const ImageStubView = ({ image, className, header=true, footer=true }:ImageStubViewProps) => (
+  <div className={`relative rounded-lg overflow-hidden ${className} image-preview`}>
+    {header && <img className="rounded-lg drop-shadow-md" src={image.url} />}
+    {image.title && <div className="image-header">{image.title}</div>}
+    {footer && <div className="image-footer w-full"><ImageFooter image={image} /></div>}
   </div>
-)}
+)
 export default ImageStubView

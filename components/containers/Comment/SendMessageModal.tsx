@@ -1,7 +1,8 @@
-import { Dispatch, FormEvent, ReactNode, SetStateAction, useEffect, useRef, useState } from "react"
+import { Dispatch, FormEvent, ReactNode, SetStateAction, useEffect, useState } from "react"
 import useFeed from "../../../hooks/useFeed"
 import { useToast } from "../../context/ToastContextProvider"
 
+import ModalCheckbox, { ModalCloseButton } from "components/ui/modalCheckbox"
 import useDebug from "../../../hooks/useDebug"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 const {debug} = useDebug("components/containers/Comment/InboxContextProvider")
@@ -13,19 +14,16 @@ type InboxProviderProps = {
 }
 
 const SendMessageModal = ({checked, setChecked, children }: InboxProviderProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const {sendMessage, invalidateFeed} = useFeed({type: 'inbox'})
+  const {cyfrUser} = useCyfrUserContext()
+  const {invalidate} = useFeed('inbox')
   const {notify} = useToast()
   
   const inboxUserModal = 'inboxUserModal'
-  const modal = useRef<HTMLInputElement>(null)
   
   const [content, setContent] = useState<string | null>(null)
   const [partyId, setPartyId] = useState<string|null>(null)
   const [isDisabled, setIsDisabled] = useState<boolean>(true)
 
-  // @ts-ignore
-  const show = () => setChecked(() => true)
 
   // @ts-ignore
   const hide = () => {
@@ -40,20 +38,23 @@ const SendMessageModal = ({checked, setChecked, children }: InboxProviderProps) 
       return
     }
 
-    const thread = await sendMessage({
-      partyId: partyId!,
-      userId: cyfrUser.id,
-      messages: [{authorId: cyfrUser.id, content: content!}]
-    })
+    notify('not implemented')
+    return 
 
-    hide()
+    // const thread = await sendMessage({
+    //   partyId: partyId!,
+    //   userId: cyfrUser.id,
+    //   messages: [{creatorId: cyfrUser.id, content: content!}]
+    // })
 
-    if (thread) {
-      debug(`handleSubmit success`)
-      invalidateFeed()
-    } else {
-      notify(`Hm. That didn't work....`,'warning')
-    }
+    // hide()
+
+    // if (thread) {
+    //   debug(`handleSubmit success`)
+    //   invalidate()
+    // } else {
+    //   notify(`Hm. That didn't work....`,'warning')
+    // }
   }
 
   useEffect(() => {
@@ -63,11 +64,11 @@ const SendMessageModal = ({checked, setChecked, children }: InboxProviderProps) 
 
   return (
     <div>
-        <input type="checkbox" ref={modal} id={inboxUserModal} className="modal-toggle" checked={checked} onChange={()=>{}} />
+        <ModalCheckbox id={inboxUserModal} />
         <div className="modal modal-bottom sm:modal-middle">
           <div className="modal-box bg-opacity-0 overflow-visible scrollbar-hide">
             
-            <label onClick={hide} className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+            <ModalCloseButton id={inboxUserModal} />
 
             <div className="
               mb-3 rounded-xl w-full 

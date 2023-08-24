@@ -1,106 +1,66 @@
-import { useEffect, useState } from "react"
-import ReactHtmlParser from "react-html-parser"
 import useDebug from "../../../hooks/useDebug"
-import { ChapterViews } from '../../../pages/book/[bookId]/chapter/[chapterId]'
-import { BookApi, ChapterApi } from '../../../prisma/prismaContext'
+import { ChapterViews } from '../../../pages/book/[bookSlug]/chapter/[chapterId]'
+import useChapterApi from "../../../prisma/useApi/chapter"
+import { ChapterDetail } from "../../../prisma/prismaContext"
+import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
-import { TailwindInput } from '../../forms'
-import WritingFocusedEditor from "../../forms/WritingFocusedEditor"
-import EZButton from "../../ui/ezButton"
-import Spinner from "../../ui/spinner"
+import HtmlContent from "../../ui/htmlContent"
 import CharacterList from "../Characters/CharacterList"
-import ChapterFooter from "./ChapterFooter"
+import ChapterEditView from "./ChapterEditView"
+import ChapterNav from "./ChapterNav"
+import { currentView } from "./ChapterViewSelector"
 
-const {debug} = useDebug('ChapterDetailComponent')
+const {debug, jsonBlock} = useDebug('ChapterDetailView')
 
-type ChapterDetailComponentProps = {
-  bookApi: BookApi
-  chapterApi: ChapterApi
-  view?: ChapterViews
+type ChapterDetailViewProps = {
+  chapterDetail:  ChapterDetail
+  view?:          ChapterViews
 }
 
-const ChapterDetailComponent = ({bookApi, chapterApi, view}:ChapterDetailComponentProps) => {
+const ChapterDetailView = ({chapterDetail, view}:ChapterDetailViewProps) => {
   const {notify} = useToast()
-  const detailView = view === ChapterViews.DETAIL
-  const editView = view === ChapterViews.EDIT
-  const readView = view === ChapterViews.READ
-  const reviewView = view === ChapterViews.REVIEW
+  const {cyfrUser} = useCyfrUserContext()
+  const {isAuthor} = useChapterApi()
+  const showEdit = isAuthor({chapter: chapterDetail, cyfrUser})
+  const {detailView, reviewView, editView, readView} = currentView(view)
 
-  const [title, setTitle] = useState<string|null>(null)
-  const [content, setContent] = useState('')
-  const [words, setWords] = useState(0)
-  
   const onSave = async () => {
     debug('onSave')
     //TODO validate this natch
-    const save = await chapterApi.save({title: title!, content: content!, words})
-    if (save) {
-      debug('save', save)
-      notify(`Chapter saved!`)
-      chapterApi.invalidate()
-    } else {
-      notify(`There was an error saving your content! :( ${save}`, 'warning')
-    }
+    // const save = await api.save(chapterDetail!)
+    // if (save) {
+    //   debug('save', save)
+    //   notify(`Chapter saved!`)
+    // } else {
+    //   notify(`There was an error saving your content! :( ${save}`, 'warning')
+    // }
   }
-
-  useEffect(() => {
-    setTitle(() => chapterApi.chapterDetail?.title??'')
-    setContent(() => chapterApi.chapterDetail?.content??'')
-    setWords(() => chapterApi.chapterDetail?.words??0)
-  }, [chapterApi.chapterDetail])
 
   return (
     <div>
-      {chapterApi.isLoading && 
-        <Spinner />
-      }
-
-      {(detailView || readView) && chapterApi.chapterDetail &&
-        <div className='font-ibarra'>
-          <h2>{chapterApi.chapterDetail?.title}</h2>
-          <div>
-            <h4>Characters</h4>
-            <CharacterList characters={chapterApi.chapterDetail?.characters} />
-          </div>
-          {ReactHtmlParser(chapterApi.chapterDetail.content??'')}
-          <div>
-            <ChapterFooter bookDetail={bookApi.bookDetail} chapters={bookApi.chapters} currentChapter={chapterApi.chapterDetail} />
-          </div>
-        </div>
-      }
-      {editView && bookApi.isAuthor && chapterApi.chapterDetail &&
+      <div className='font-ibarra'>
+        <h2>{chapterDetail.title}</h2>
         <div>
-
-          <EZButton disabled={false} label="Save" onClick={onSave} />
-          <h2>
-            <TailwindInput type="text" value={title} setValue={setTitle} />
-          </h2>
-          <div>
-            <h4>Characters</h4>
-            <div className="font-bold text-lg">Book</div>
-            <CharacterList characters={bookApi.bookDetail?.characters} />
-            <div className="font-bold text-lg">Chapter</div>
-            <CharacterList characters={chapterApi.chapterDetail?.characters} />
-          </div>
-          <div className="relative max-h-max">
-            <WritingFocusedEditor content={content} setContent={setContent} words={words} setWords={setWords} onSave={onSave} />
-          </div>
+          <h4>Characters</h4>
+          <CharacterList characters={chapterDetail.characters} />
         </div>
-      }
-      {reviewView && chapterApi.chapterDetail &&
+        <HtmlContent content={chapterDetail.content} />
+        {/* TODO: Include the chapters that the characters show up in */}
+        {/* <div>
+          <ChapterNav bookSlug={chapterDetail.book.slug} chapters={chapterDetail.book.chapters} currentChapter={chapterDetail}/>
+        </div> */}
+      </div>
+      <div>
         <div>
-          <div>
-            <h4>Characters</h4>
-            <div className="font-bold text-lg">Chapter</div>
-            <CharacterList characters={chapterApi.chapterDetail?.characters} />
-          </div>
-          {ReactHtmlParser(chapterApi.chapterDetail?.content??'')}
+          <h4>Characters</h4>
+          <div className="font-bold text-lg">Chapter</div>
+          <CharacterList characters={chapterDetail?.characters} />
         </div>
-      }
-
+        <HtmlContent content={chapterDetail.content} />
+      </div>
       {/* TODO Add Gallery stuff cuz chapters need mood board yo */}
+      {jsonBlock(chapterDetail)}
     </div>
-  )
-}
+)}
 
-export default ChapterDetailComponent
+export default ChapterDetailView

@@ -1,3 +1,4 @@
+import { SizeProps } from "types/props"
 import useDebug from "../hooks/useDebug"
 const {debug, info} = useDebug('utils/cloudinary')
 
@@ -27,7 +28,7 @@ export const config:{
 
 const unsignedUploadPreset = "cyfr_unsigned"
 
-const isCloudinary = (url?:string) => url && url.indexOf(config.cdn) >= 0
+const isCloudinary = (url?:string) => url && url.indexOf(config.fetch) >= 0
 
 const cloudUrl = (url:string, mod:string) => {
     if (!isCloudinary(url)) return `${config.fetch}/${mod}/${url}`
@@ -43,14 +44,15 @@ const cloudUrl = (url:string, mod:string) => {
  * @param height (optional) number Will maintain aspect ration at given width if no height is set
  * @param face (optional) boolean 
  */
-type cloudImageProps = {
+export type CloudImageProps = {
     url: string,
-    width: number
+    width?: number
     height?: number | null
     face?: boolean | false
+    banner?: boolean | false
 }
 
-type getImagePropsType = cloudImageProps & {
+type getImagePropsType = CloudImageProps & {
     base: string
 }
 
@@ -63,38 +65,41 @@ const getImageProps = (base:string, {...props}) => {
     return m
 }
 
+const defaultCover = 'https://res.cloudinary.com/drckf8gfc/image/upload/v1687710860/cyfr/cyfr-default-cover.png'
+
+const banner = ({ url, ...props }: CloudImageProps) => cloudUrl(url, getImageProps('t_blog_banner', props))
+
 /**
  * Create a thumbnail of the uploaded image
  * @param url string 
- * @param ...props {@link cloudImageProps}
+ * @param ...props {@link CloudImageProps}
  * @returns string (url)
  */
-const thumb = ({url, ...props}:cloudImageProps) => cloudUrl(url, getImageProps('c_thumb', props))
+const thumb = ({url, ...props}:CloudImageProps) => cloudUrl(url, getImageProps('c_thumb', props))
 
 /**
  * Exact width and height without distortion
  * @param url string 
- * @param ...props {@link cloudImageProps}
+ * @param ...props {@link CloudImageProps}
  * @returns string (url)
  */
-const resize = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps(`c_fill`, props))
+const resize = ({url, ...props}:CloudImageProps) =>  cloudUrl(url, getImageProps(`c_fill`, props))
 
 /**
  * Set to width and/or height with cropping
  * @param url string 
- * @param ...props {@link cloudImageProps}
+ * @param ...props {@link CloudImageProps}
  * @returns string (url)
  */
-const scale = ({url, ...props}:cloudImageProps) =>  cloudUrl(url, getImageProps('c_scale', props))
+const scale = ({url, ...props}:CloudImageProps) =>  cloudUrl(url, getImageProps('c_scale', props))
 
-export type AvatarSizeProps = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 /**
  * Create a thumbnail of the uploaded image
  * @param url string
- * @param size {@link AvatarSizeProps}
+ * @param size {@link SizeProps}
  * @returns string
  */
-const avatar = (url:string, size: AvatarSizeProps) => cloudUrl(url, `t_avatar_${size}`)
+const avatar = (url:string, size: SizeProps) => cloudUrl(url, `t_avatar_${size}`)
 
 /**
  * Upload a file to cloudinary
@@ -133,4 +138,4 @@ const upload = ({file, onProgress, onComplete}:UploadingProps) => new Promise((r
     xhr.send(formData)
 })
 
-export const cloudinary = {upload, isCloudinary, avatar, thumb, resize, scale}
+export const cloudinary = {upload, isCloudinary, avatar, banner, thumb, resize, scale, defaultCover}

@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react"
-import useDebug from "../../../hooks/useDebug"
-import { CommentThreadDetails, CyfrUser, User } from "../../../prisma/prismaContext"
-import Avatar from "../../ui/avatar"
+import { CommentThreadDetails, CyfrUser, UserStub } from "prisma/prismaContext"
+import UserAvatar from "../../ui/avatar/userAvatar"
 import ReactHtmlParser from "react-html-parser"
 import RemirrorEditor from "../../forms/SocialTextarea"
-import { timeDifference, domRef } from "../../../utils/helpers"
-import useFeed from "../../../hooks/useFeed"
+import { domRef, timeDifference } from "utils/helpers"
+import useFeed from "hooks/useFeed"
 import { ChatSendIcon } from "../../ui/icons"
-import { useToast } from "../../context/ToastContextProvider"
+import useDebug from "hooks/useDebug"
+import {useToast} from "components/context/ToastContextProvider"
 const {debug} = useDebug('components/containers/CommentThreadDetail')
 
 type CommentThreadDetailProps = {
-    user: CyfrUser | User
+    user: CyfrUser | UserStub
     thread: CommentThreadDetails
 }
 
 const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
-    const {sendMessage, invalidateFeed} = useFeed({type: 'inbox'})
+    const {invalidate} = useFeed('inbox')
     const {notify} = useToast()
     const [message, setMessage] = useState<string|null>(null)
     const [valid, setValid] = useState<boolean>(true)
@@ -34,18 +34,19 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
             userId: user.id, 
             partyId: party!.id, 
             messages: [
-                { authorId: user.id, content: message! }
+                { creatorId: user.id, content: message! }
             ]
         }
         debug('onSend', data)
+        notify('not implemented')
+        return
+        // const send = await sendMessage(data)
         
-        const send = await sendMessage(data)
-        
-        if (send) {
-            notify("Message sent!")
-            setMessage(() => null)
-            invalidateFeed({type: 'inbox'})
-        }
+        // if (send) {
+        //     notify("Message sent!")
+        //     setMessage(() => null)
+        //     invalidate()
+        // }
     }
 
     useEffect(() => {
@@ -61,16 +62,16 @@ const CommentThreadDetail = ({user, thread}:CommentThreadDetailProps) => {
   : (
     <div className="min-h-fit border-1">
         <div className="flex justify-between border-2 p-4">
-            <span><Avatar user={user} sz="md" link={false} />{user.name}</span>
-            <span>{party.name}<Avatar user={party} sz="md" link={false} /></span>
+            <span><UserAvatar user={user} sz="md" link={false} />{user.name}</span>
+            <span>{party.name}<UserAvatar user={party} sz="md" link={false} /></span>
         </div>
         <div className="flex flex-col">
             <div>{thread.id}</div>
             {thread.comments.map(comment => (
                 <div className={`p-2 mt-2 w-full text-base-content`} key={domRef(thread,comment)}>
-                    <div><span>{comment.author.name}</span><span>{timeDifference(comment.updatedAt)}</span></div>
+                    <div><span>{comment.creator.name}</span><span>{timeDifference(comment.updatedAt)}</span></div>
                     <div className={`p-2 border rounded-md 
-                    ${comment.authorId===user.id ? 'bg-base-200' : 'bg-base-300'}`}>{ReactHtmlParser(comment.content!)}</div>
+                    ${comment.creatorId===user.id ? 'bg-base-200' : 'bg-base-300'}`}>{ReactHtmlParser(comment.content!)}</div>
                 </div>
             ))}
         </div>

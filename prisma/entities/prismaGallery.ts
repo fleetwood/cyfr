@@ -1,8 +1,15 @@
-import useDebug from "../../hooks/useDebug"
-import { now } from "../../utils/helpers"
+import useDebug from "hooks/useDebug"
 import {
-  Book, Chapter, GalleryCreateProps, GalleryDetail, GalleryEngageProps, GalleryStub, GalleryStubInclude, GalleryUpsertProps, ImageUpsertProps, Like, Share
-} from "../prismaContext"
+  Book, Chapter, Gallery, GalleryCreateProps,
+  GalleryDetail,
+  GalleryDetailInclude, GalleryEngageProps,
+  GalleryStub,
+  GalleriesStubInclude,
+  GalleryUpsertProps, ImageUpsertProps, Like, Post, PrismaShare, Share
+} from "prisma/prismaContext"
+import { NotImplemented } from "utils/api"
+import { now } from "utils/helpers"
+import {PrismaLike} from "./prismaLike"
 
 const {debug, info, fileMethod} = useDebug('entities/prismaGallery')
 
@@ -13,126 +20,57 @@ export type GalleryAddImageProps = {
 
 /**
  * Using `f_user_galleries` FNX
- * @param authorId :string
+ * @param creatorId :string
  * @returns `json`
  */
-const userGalleries = async (authorId: string): Promise<GalleryDetail[]> => {
-  debug('userGalleries', {authorId})
-  try {
-    const result = await prisma.$queryRaw`select * from v_gallery_detail WHERE "authorId" = ${authorId}`
-    if (result) {
-      return result as GalleryDetail[]
+const userGalleries = async (creatorId: string): Promise<GalleryStub[]> => await prisma.gallery.findMany({
+  where: {
+    creatorId,
+    visible: true
+  },
+  include: {
+    creator: true,
+    images: {
+      include: {
+      _count: {
+        select: {
+          likes: true,
+          shares: true
+        }
+      }}
+    },
+    _count: {
+      select: {
+        likes: true,
+        shares: true
+      }
     }
-    throw {code: fileMethod, message: 'Could not find galleries for that user id'}
-  } catch (error) {
-    throw error
   }
-}
+}) as unknown as GalleryStub[]
 
-const details = async () : Promise<GalleryDetail[]> => {
-  debug("details")
-  try {
-    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_gallery_detail`
-    if (result) return result as GalleryDetail[]
-    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
-  } catch (error) {
-    info(`getDetail ERROR`, error)
-    throw error
-  }
-}
-const stubs = async () : Promise<GalleryStub[]> => {
-  debug("details")
-  try {
-    const result:any[] = await prisma.$queryRaw`SELECT * FROM v_gallery_stub`
-    if (result) return result as GalleryStub[]
-    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
-  } catch (error) {
-    info(`getDetail ERROR`, error)
-    throw error
-  }
-}
+const details = async () : Promise<GalleryDetail[]> => await prisma.gallery.findMany(GalleryDetailInclude) as GalleryDetail[]
+const detail = async (id: string): Promise<GalleryDetail> => await prisma.gallery.findUnique({where: {id}, ...GalleryDetailInclude})as GalleryDetail
+
+const stubs = async () : Promise<Gallery[]> => await prisma.gallery.findMany()
+const stub = async (id: string): Promise<Gallery|null> => await prisma.gallery.findUnique({where: {id}})
 
 /**
- * Using `f_gallery_detail` FNX
- * @param galleryId: string
- * @returns: {@link GalleryDetail}
- */
-const detail = async (galleryId: string): Promise<GalleryDetail> => {
-  debug("getDetail", { galleryId })
-  try {
-    const result:any[] = await prisma.$queryRaw`SELECT * FROM f_gallery_detail(${galleryId})`
-    if (result[0]) return result[0] as GalleryDetail
-    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
-  } catch (error) {
-    info(`getDetail ERROR`, error)
-    throw error
-  }
-}
-
-/**
- * Using `v_gallery_stub` 
- * @param galleryId: string
- * @returns: {@link GalleryDetail}
- */
-const stub = async (galleryId: string): Promise<GalleryStub> => {
-  debug("getDetail", { galleryId })
-  try {
-    const result = await prisma.$queryRaw`SELECT * FROM v_gallery_stub WHERE "id" = ${galleryId}`
-    if (result) return result as GalleryStub
-    throw { code: fileMethod, message: "Unable to find a gallery by that key" }
-  } catch (error) {
-    info(`getDetail ERROR`, error)
-    throw error
-  }
-}
-
-/**
+ * Method references {@link PrismaLike.likeGallery}
  * Params {@link GalleryEngageProps}
  * @param galleryId: String
- * @param authorId: String
+ * @param creatorId: String
  * @returns: {@link Like}
  */
-const like = async ({
-  galleryId,
-  authorId,
-}: GalleryEngageProps): Promise<Like> => {
-  try {
-    const like = await prisma.like.create({
-      data: {
-        galleryId,
-        authorId
-      }
-    })
-    if (like) return like
-    throw {code: fileMethod('like'), message: 'Unable to create like'}
-  } catch (error) {
-    throw error
-  }
-}
+const like = async (props:GalleryEngageProps):Promise<Like> => PrismaLike.likeGallery(props)
 
 /**
- * Using `prisma.share.create`
+ * Method references {@link PrismaShare.shareGallery}
  * Params {@link GalleryEngageProps}
  * @param galleryId: String
- * @param authorId: String
+ * @param creatorId: String
  * @returns: {@link Share}
  */
-const share = async ({
-  galleryId,
-  authorId,
-}: GalleryEngageProps): Promise<Share> => {
-  debug(`share`, { galleryId, authorId })
-  const share = await prisma.share.create({
-    data: {
-      authorId,
-      galleryId
-    }
-  })
-  if (share) {
-    return share
-  }
-  throw { code: fileMethod, message: "Feature not implemented" }
-}
+const share = async (props: GalleryEngageProps):Promise<Share> => PrismaShare.shareGallery(props)
 
 /**
  * 
@@ -178,12 +116,12 @@ const upsertGallery = async(props:GalleryUpsertProps) => {
           updatedAt: now(),
           title: props.title,
           description: props.description,
-          authorId: props.authorId,
+          creatorId: props.creatorId,
           images: {
             connectOrCreate: [
               props.images?.map(img => { return {
                 id: img.id,
-                authorId: img.authorId,
+                creatorId: img.creatorId,
                 url: img.url,
                 visible: img.visible,
                 height: img.height,
@@ -206,18 +144,18 @@ const upsertGallery = async(props:GalleryUpsertProps) => {
 
 /**
  * 
- * @param authorId :String
+ * @param creatorId :String
  * @param title :String | null
  * @param description: String | null
  * @param images: {@link ImageUpsertProps}[] | null | undefined
  * @returns: {@link Gallery}
  */
-const createGallery = async ({authorId,title,description,images,}: GalleryCreateProps) => {
+const createGallery = async ({creatorId,title,description,images,}: GalleryCreateProps) => {
   try {
-    debug(`createGallery`, {authorId, title, description, images})
+    debug(`createGallery`, {creatorId, title, description, images})
     const result = await prisma.gallery.create({
       data: {
-        authorId,
+        creatorId,
         title,
         description,
         images: {

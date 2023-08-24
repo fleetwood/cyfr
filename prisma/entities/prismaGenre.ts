@@ -1,86 +1,59 @@
+import {toSlug} from "utils/helpers"
 import useDebug from "../../hooks/useDebug"
 import {
-  Gallery,
+  Cover,
   Genre,
+  GenreAddCoverProps,
   GenreDeleteProps,
-  GenreDetail,
   GenreFeed,
-  GenreFeedInclude,
   GenreStub,
+  GenreStubInclude,
   GenreUpsertProps,
-  prisma,
+  prisma
 } from "../prismaContext"
 
 const { debug, info, fileMethod } = useDebug("entities/prismaGenre")
 
-const details = async (): Promise<GenreDetail[]> => {
-  try {
-    debug("details")
-    return (await prisma.$queryRaw`
-      SELECT * 
-      FROM v_genre_detail
-    `) as GenreDetail[]
-  } catch (error) {
-    info("details", { error })
-    throw { code: fileMethod("byId"), message: "No genre was returned!" }
-  }
-}
+const details = async (): Promise<Genre[]> => await prisma.genre.findMany()
+const detail = async (id:string): Promise<Genre|null> => await prisma.genre.findUnique({where: {id}})
 
-const detail = async (idOrSlugOrName: string): Promise<GenreDetail> => {
-  try {
-    debug("detail", idOrSlugOrName)
-    return (await prisma.$queryRaw`
-      SELECT * 
-      FROM v_genre_detail detail
-      WHERE detail.id = ${idOrSlugOrName}
-      OR    LOWER(detail.name) = LOWER(${idOrSlugOrName})
-      OR    LOWER(detail.slug) = LOWER(${idOrSlugOrName})
-    `) as GenreDetail
-  } catch (error) {
-    info("detail", { error })
-    throw { code: fileMethod("byId"), message: "No genre was returned!" }
+const stubs = async (): Promise<GenreStub[]> => await prisma.genre.findMany({
+  // ...GenreStubInclude
+  include: {
+  _count: {
+    select: {
+      books: true,
+      covers: true
+    },
+  },
   }
-}
-
-const stubs = async (): Promise<GenreStub[]> => {
-  try {
-    debug("stubs")
-    return (await prisma.$queryRaw`
-      SELECT * 
-      FROM v_genre_stub
-    `) as GenreStub[]
-  } catch (error) {
-    info("stubs", { error })
-    throw { code: fileMethod("byId"), message: "No genre was returned!" }
-  }
-}
-
-const stub = async (idOrSlugOrName: string): Promise<GenreDetail> => {
-  try {
-    debug("stub", idOrSlugOrName)
-    return (await prisma.$queryRaw`
-      SELECT * 
-      FROM v_genre_stub
-      WHERE detail.id = ${idOrSlugOrName}
-      OR    LOWER(detail.name) = LOWER(${idOrSlugOrName})
-      OR    LOWER(detail.slug) = LOWER(${idOrSlugOrName})
-    `) as GenreStub
-  } catch (error) {
-    info("stub", { error })
-    throw { code: fileMethod("byId"), message: "No genre was returned!" }
-  }
-}
-
-const gallery = async (byGenre?: string): Promise<Gallery | null> => {
-  try {
-    const results: (Genre & { gallery: Gallery | null }) | null =
-      await prisma.genre.findFirst({
-        include: {
-          gallery: true,
+}) as GenreStub[]
+const stub = async (id: string): Promise<GenreStub | null> =>
+  (await prisma.genre.findUnique({
+    where: { id }, // ...GenreStubInclude
+    include: {
+      _count: {
+        select: {
+          books: true,
+          covers: true,
         },
-      })
+      },
+    },
+  })) as GenreStub
+
+const covers = async (byGenre?: string): Promise<Cover[] | null> => {
+  try {
+    const results = await prisma.cover.findMany({
+      where: {
+        visible: true,
+        genreId: byGenre
+      },
+      include: {
+        image: true
+      },
+    })
     if (results) {
-      return results.gallery
+      return results
     }
     throw {
       code: fileMethod("covers"),
@@ -96,7 +69,7 @@ const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
   const method = "upsertGenre"
   try {
     const { title, description } = props
-    const slug = title.replace(" ", "-").toLowerCase().trim()
+    const slug = toSlug(title)
     debug(method, { title, description })
 
     return (await prisma.genre.upsert({
@@ -125,6 +98,39 @@ const upsertGenre = async (props: GenreUpsertProps): Promise<GenreFeed> => {
   }
 }
 
+/**
+ * 
+ * @param id (String) Genre id
+ * @param image (Image) Image to add
+ * @returns Promise<GenreStub>
+ */
+const addCover = async (props:GenreAddCoverProps):Promise<GenreStub> => {
+  try {
+    const cover = await prisma.cover.create({
+      data: {
+        visible: true,
+        imageId: props.image.id,
+        creatorId: props.image.creatorId,
+        genreId: props.id
+      }
+    })
+    if (!cover) {
+      throw ({code: 'genre/addCover', message: 'Failed creating cover'})
+    }
+    const result = await prisma.genre.update({
+      where: { id: props.id},
+      data: { covers: {connect: {id: cover!.id}}},
+      ...GenreStubInclude
+    })
+    if (result) {
+      return result as unknown as GenreStub
+    }
+    throw ({code: 'genre/addCover', message: 'Failed connecting cover'})
+  } catch (error) {
+    throw error
+  }
+}
+
 const deleteGenre = async ({
   id,
   title,
@@ -145,11 +151,12 @@ const deleteGenre = async ({
 }
 
 export const PrismaGenre = {
+  addCover,
   detail,
   details,
   stub,
   stubs,
-  gallery,
+  covers,
   upsertGenre,
   deleteGenre,
 }

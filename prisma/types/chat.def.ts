@@ -6,7 +6,7 @@ export type ChatCreateProps = {
 
 export type SendMessageProps = {
   content: string
-  authorId: string
+  creatorId: string
   chatRoomId: string
 }
 

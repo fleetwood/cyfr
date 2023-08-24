@@ -19,7 +19,7 @@ export default function SocketHandler(
 
 
   if (req.body?.body?.users) {
-    const users = req.body.body.users
+    const users = req.body.users
 
     const room = SocketListeners.chat.room(users),
           announce = SocketListeners.chat.announce(users),

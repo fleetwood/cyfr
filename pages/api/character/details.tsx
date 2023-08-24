@@ -1,31 +1,13 @@
-import { NextApiRequest, NextApiResponse } from "next"
-import useDebug from "../../../hooks/useDebug"
-import { PrismaCharacter } from "../../../prisma/prismaContext"
-import {
-  GetResponseError,
-  ResponseError,
-  ResponseResult
-} from "../../../types/response"
+import useApiHandler from "hooks/useApiHandler"
+import { NextApiRequest, NextApiResponse } from 'next'
+import { PrismaCharacter } from "prisma/prismaContext"
 
-const {debug, err, fileMethod} = useDebug('api/character/detail', 'DEBUG')
-
-export default async function handle(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseResult<unknown>>
-) {
-  try {
-    const {id} = req.body.body
-    debug('handle',{id})
-    const result = await PrismaCharacter.detail(id)
-    if (result) {
-      debug('detail', result)
-      res.status(200).json({ result })
-    } else {
-      throw { code: fileMethod('detail'), message: "Fail detail characterrrrr!!!!" }
-    }
-  } catch (e: Error | ResponseError | any) {
-    err("\tFAIL", e)
-    const error = GetResponseError(e)
-    res.status(500).json({ error })
-  }
+const request = (req:NextApiRequest, res: NextApiResponse) => {
+  const {id} = req.body
+  return useApiHandler(res,
+    'api/character/details',
+    PrismaCharacter.detail(id)
+  )
 }
+
+export default request

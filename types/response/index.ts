@@ -9,7 +9,7 @@ export type ResponseResult<T> = {
 };
 
 export const ResponseErrorList = {
-  loginRequired: {
+  notifyLoginRequired: {
     code: "auth/no-user-session",
     message: "Please login to continue",
   },

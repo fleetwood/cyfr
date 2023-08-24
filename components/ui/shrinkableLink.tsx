@@ -9,7 +9,7 @@ type ShrinkableIconLinkProps = LinkProps & {
   titleClassName?: string
   linkColor?: string
   dir?: 'right' | 'left' | 'center'
-  children: ReactNode
+  children?: ReactNode
 }
 
 const ShrinkableLink = (props: ShrinkableIconLinkProps) => {
@@ -42,9 +42,9 @@ const ShrinkableLink = (props: ShrinkableIconLinkProps) => {
     >
       <>
         {dir === 'left' && label && (
-            <span className={`hidden lg:inline-block ${titleClassName || ""}`}>
-              {label}
-            </span>
+          <span className={`hidden lg:inline-block ${titleClassName || ""}`}>
+            {label}
+          </span>
         )}
         {children}
         {dir !== 'left' && label && (

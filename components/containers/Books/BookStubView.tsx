@@ -1,28 +1,28 @@
-import { Router, useRouter } from "next/router"
-import useDebug from "../../../hooks/useDebug"
-import { BookStub } from "../../../prisma/prismaContext"
-import { isBookAuthor, onlyFans, domRef, valToLabel } from "../../../utils/helpers"
-import { useCyfrUserContext } from "../../context/CyfrUserProvider"
-import Avatar from "../../ui/avatar"
-import EZButton from "../../ui/ezButton"
-import { BookIcon, DollarIcon, HeartIcon, ReplyIcon, ShareIcon, StarIcon, UserIcon } from "../../ui/icons"
-import BookCover, { BookCoverVariant } from "./BookCover"
-import HtmlContent from "../../ui/htmlContent"
+import useDebug from "hooks/useDebug"
+import {BookStub} from "prisma/prismaContext"
+
+import BookCover,{BookCoverVariant} from "./BookCover"
+import BookFooter from "./BookFooter"
+import {SizeProps} from "types/props"
+import AuthorAvatar from "components/ui/avatar/authorAvatar"
+import {domRef} from "utils/helpers"
+import HtmlContent from "components/ui/htmlContent"
 
 const {jsonBlock, debug} = useDebug('components/Books/BookDetailComponent')
 
 type BookComponentProps = {
-  book: BookStub
+  book:           BookStub
   authorAvatars?: Boolean
+  size?:          SizeProps
+  showAuthors?:   boolean
+  showCovers?:    boolean
+  showFooter?:    boolean
 }
 
-const BookStubView = ({book, authorAvatars}: BookComponentProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const isOwner = isBookAuthor(book, cyfrUser)
-  const router = useRouter()
+const BookStubView = ({book, authorAvatars, size = "md", showAuthors = true, showCovers = true, showFooter = true}: BookComponentProps) => {
 
   return (
-    <div>
+    <div className="border-2 border-primary rounded-lg">
       
       <h2>{book.title}</h2>
 
@@ -30,7 +30,7 @@ const BookStubView = ({book, authorAvatars}: BookComponentProps) => {
         <div className="flex my-4">
           <span>by </span>
           {book.authors.map((author) => 
-            <Avatar user={author} sz="lg" key={domRef(book, author)} />
+            <AuthorAvatar author={author} sz="lg" key={domRef(book, author)} />
           )}
         </div>
       }
@@ -43,14 +43,15 @@ const BookStubView = ({book, authorAvatars}: BookComponentProps) => {
         <div className="flex">
           <span>{book.fiction ? 'FICTION' : 'NON-FICTION'}</span>
           {book.genre && <span>{book.genre?.title}</span>}
-          {book.categories?.filter(m => m !== null).map(cat => (<span className="" key={cat.id}>{cat.title}</span>))}
+          {/* TODO: categories */}
+          {/* {book.categories?.filter(m => m !== null).map(cat => (<span className="" key={cat.id}>{cat.title}</span>))} */}
         </div>
         <div>{book.words} words</div>
         {book.hook &&
           <div className="my-4 text-xl font-ibarra"><HtmlContent content={book.hook} /></div>
         }
+        {showFooter && <BookFooter bookStub={book} />}
       </div>
-
     </div>
   )
 }

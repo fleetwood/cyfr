@@ -1,37 +1,46 @@
+import { AuthorStub, BookDetail, GenreStub, UserStub } from "prisma/prismaContext"
 import { useRef, useState } from "react"
-import useBookApi from "../../hooks/useBookApi"
-import { BookDetail, GenreStub, UserStub } from "../../prisma/prismaContext"
-import BookDetailComponent from "../containers/Books/BookDetailView"
-import Footer from "../containers/Footer"
-import LeftColumn from "../containers/LeftColumn"
-import Navbar from "../containers/Navbar"
-import RightColumn from "../containers/RightColumn"
-import { useCyfrUserContext } from "../context/CyfrUserProvider"
-import { useToast } from "../context/ToastContextProvider"
-import Section from "../ui/section"
-import BookDetailView from "../containers/Books/BookDetailView"
+
+import BookDetailView from "components/containers/Books/BookDetailView"
+import Footer from "components/containers/Footer"
+import LeftColumn from "components/containers/LeftColumn"
+import RightColumn from "components/containers/RightColumn"
+import Section from "components/ui/section"
+import Toasts from "components/ui/toasts"
+import ErrorPage from "pages/404"
+
+import Spinner from "components/ui/spinner"
+import useDebug from "hooks/useDebug"
+import useApi from "prisma/useApi"
+import Navbar from "components/containers/Navbar/Navbar"
+const {debug} = useDebug('components/layouts/BookDetailLayout', )
 
 export type BookDetailLayoutProps = {
-  bookDetail: BookDetail
+  // bookId?:    string
+  bookSlug:  string
   genres:     GenreStub[]
 }
 
-const BookDetailLayout = (props:BookDetailLayoutProps) => {
+export type BookDetailProps = {
+  bookDetail: BookDetail
+  onUpdate?:  () => void
+}
 
-  const [cyfrUser] = useCyfrUserContext()
-  const bookApi = useBookApi({...props, cyfrUser})
-  const {bookDetail} = bookApi
-  const by = (bookDetail?.authors||[]).flatMap((author:UserStub) => author.name).join(" and ");
-  //todo: This should be handled by a commune...
-  // const isAuthor = (bookDetail?.author`s||[]).filter((a:UserStub) => a.id === cyfrUser?.id).length > 0
+const BookDetailLayout = (props:BookDetailLayoutProps) => {
+  const {detailBySlug} = useApi.book()
+  const {data: book, error, isLoading, invalidate} = detailBySlug(props.bookSlug)
   
   const [scrollActive, setScrollActive] = useState(false)
-  const {toasts} = useToast()
   const mainRef = useRef<HTMLElement>(null)
 
   const handleScroll = (e:any) => {
     const position = mainRef?.current?.scrollTop
     setScrollActive(() => position && position > 120 || false)
+  }
+
+  const update = () => {
+    debug('update')
+    invalidate()
   }
 
   return (
@@ -45,17 +54,18 @@ const BookDetailLayout = (props:BookDetailLayoutProps) => {
         onScroll={handleScroll}
         ref={mainRef}
       >
-        <Navbar className="min-w-full transition-all duration-200 ease-out" pageScrolled={scrollActive} />
-
-        <div className="toast toast-top toast-center w-4/6 mt-10 z-10">
-          {toasts.map((toast) => toast.toast)}
-        </div>
+        <Navbar 
+          className="min-w-full transition-all duration-200 ease-out" 
+          pageScrolled={scrollActive} />
+        <Toasts />
         <Section
           className="box-border snap-y min-h-full"
-          sectionTitle={bookDetail?.title}
-          subTitle={bookDetail?.authors?.flatMap(a => a.name).join(' and ')}
+          sectionTitle={book?.title}
+          subTitle={book?.authors?.map((a:AuthorStub) => a.user).flatMap((a:UserStub) => a.name).join(' and ')}
         >
-          <BookDetailView bookApi={bookApi} />
+          {error && <ErrorPage />}
+          {isLoading && <Spinner />}
+          {book && <BookDetailView bookDetail={book!} onUpdate={update} />}
         </Section>
         <Footer />
       </main>

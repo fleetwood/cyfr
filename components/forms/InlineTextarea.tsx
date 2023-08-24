@@ -25,7 +25,7 @@ import useDebug from "../../hooks/useDebug"
 import EZButton from "../ui/ezButton"
 import { InlineTextareaProps } from "../../types/props"
 import { IsRequired } from "./TailwindInput"
-const {debug, todo} = useDebug("InlineTextArea")
+const {debug} = useDebug("InlineTextArea")
 
 const InlineTextarea = ({
   placeholder,

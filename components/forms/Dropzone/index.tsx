@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { FileRejection, useDropzone } from 'react-dropzone'
-import { dedupe, uuid } from "../../../utils/helpers"
+import { dedupe, uuid } from "utils/helpers"
 import UploadFileView from "./UploadingFileView"
 import { UploadableFile, CompleteFile, DropzoneProps } from "./types.defs"
-import {Image as PrismaImage} from './../../../prisma/prismaContext'
-import useDebug from "../../../hooks/useDebug"
-const {debug, jsonBlock} = useDebug("components/forms/Dropzone/index")
+import {Image as PrismaImage} from 'prisma/prismaContext'
+import useDebug from "hooks/useDebug"
+const {debug, jsonBlock} = useDebug('forms/Dropzone/index')
 
-function Dropzone({limit=-1, onDropComplete, onDropChange, children}:DropzoneProps) {
+function Dropzone({limit=-1, showUploadProgress = true, onDropComplete, onDropChange, children}:DropzoneProps) {
   const [files, setFiles] = useState<UploadableFile[]>([])
   const [rejected, setRejected] = useState<UploadableFile[]>([])
   const [completedFiles, setCompletedFiles] = useState<PrismaImage[]>([])
@@ -30,7 +30,8 @@ function Dropzone({limit=-1, onDropComplete, onDropChange, children}:DropzonePro
   }, [])
 
   const onFileComplete = useCallback((e:any) => {
-    setCompletedFiles((current) => [...current, e])
+    debug('onFileComplete', e)
+    setCompletedFiles((current) => [...current, ...e])
   }, [])
 
   const onFileChange = (file:any) => onDropChange ? onDropChange(file) : {}
@@ -82,7 +83,7 @@ function Dropzone({limit=-1, onDropComplete, onDropChange, children}:DropzonePro
             </div>
           )}
           {files.map(file => (
-            <UploadFileView {...{file}} onUploadComplete={onFileComplete} onUploadChange={onFileChange} key={file.id} />
+            <UploadFileView {...{file}} onUploadComplete={onFileComplete} onUploadChange={onFileChange} key={file.id} showUploadProgress={showUploadProgress} />
           ))}
         </div>
       </div>

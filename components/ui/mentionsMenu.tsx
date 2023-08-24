@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
-import useDebug from "../../hooks/useDebug"
-import { UserDetail, UserStub } from "../../prisma/prismaContext"
-import { domRef } from "../../utils/helpers"
-import { useCyfrUserContext } from "../context/CyfrUserProvider"
-import Avatar from "./avatar"
+import useDebug from "hooks/useDebug"
+import { UserDetail, UserStub } from "prisma/prismaContext"
+import { domRef } from "utils/helpers"
+import UserAvatar from "./avatar/userAvatar"
 import Spinner from "./spinner"
+import UserApi from "prisma/useApi/user"
+import useApi from "prisma/useApi"
 
 const {debug} = useDebug('components/ui/mentionsMenu')
 
@@ -15,9 +16,10 @@ type MentionsMenuProps = {
     type?: 'MENTION' | 'MESSAGABLE'
 }
 
-const MentionsMenu = ({onSelect, searchTerm, show = true, type='MENTION'}:MentionsMenuProps) => {
-    const [cyfrUser] = useCyfrUserContext()
+const MentionsMenu = ({onSelect, show = true, type='MENTION'}:MentionsMenuProps) => {
+    const {cyfrUser} = useApi.cyfrUser()
     const [showMenu, setShowMenu] = useState(show)
+    const {mentions} = UserApi()
     const [list, setList] = useState<Array<UserStub>>([])
     const [search, setSearch] = useState<string>('')
     const [isLoading, setIsLoading] = useState(true)
@@ -27,26 +29,23 @@ const MentionsMenu = ({onSelect, searchTerm, show = true, type='MENTION'}:Mentio
         onSelect(user)
     }
 
-    const cyfrUserList = ():UserStub[] => type === 'MENTION'
-        ? cyfrUser.canMention  // FOR MENTION TYPE, use the cyfrUser mentions
-        : cyfrUser.messagable // FOR MESSAGE TYPE, use the cyfrUSer messagables
-    || []
-
-    useEffect(() => {
-        debug('search change', {
-            search,
-            searchTerm,
-            list
-        })
-        setShowMenu(() => true)
-        setList(() => cyfrUserList().filter(m => m.name.toLowerCase().indexOf(search.toLowerCase()) >= 0))
-    }, [search])
-
-    useEffect(() => {
-        setList(() => cyfrUserList())
+    const getMentions = async (search?:string) => {
+        setIsLoading(() => true)
+        const list = type === 'MENTION' 
+            ? await mentions(search)
+            : [] // TODO: cyfrUser.canMessage.filter(u => u.name.toLowerCase().indexOf((search??'').toLowerCase()) >= 0)
+        setList(() => list)
         setIsLoading(() => false)
-        setShowMenu(() => false)
+    }
+
+    useEffect(() => {
+        getMentions()
+        setShowMenu(() => true)
     },[])
+
+    useEffect(() => {
+        getMentions(search)
+    }, [search])
 
   return (
     <div className="relative">
@@ -65,7 +64,7 @@ const MentionsMenu = ({onSelect, searchTerm, show = true, type='MENTION'}:Mentio
                         flex justify-items-start space-x-1 
                         cursor-pointer px-2 rounded-sm 
                         hover:bg-opacity-30 hover:bg-primary">
-                    <Avatar user={user} link={false} sz="xs" />
+                    <UserAvatar user={user} link={false} sz="xs" />
                     <span>{user.name}</span>
                 </li>
         ))}

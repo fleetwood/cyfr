@@ -1,32 +1,36 @@
-import { PostStub } from "../../../prisma/prismaContext";
+import { PostStub } from 'prisma/prismaContext'
 
-import useDebug from "../../../hooks/useDebug";
-import HtmlContent from "../../ui/htmlContent";
-import GalleryPhotoswipe from "../Gallery/GalleryPhotoswipe";
-const { debug, jsonBlock } = useDebug("MainFeedItem", "DEBUG");
+import HtmlContent from 'components/ui/htmlContent'
+import useDebug from 'hooks/useDebug'
+import PostCommentThread from '../Comment/PostCommentThread'
+import GalleryPhotoswipe from '../Gallery/GalleryImages'
+import SharedPostStubView from '../Share/ShareStubView'
+import { Grid } from '@mui/material'
+import MuiGallery from '../Gallery/MuiGallery'
+import GalleryImages from '../Gallery/GalleryImages'
+
+const { debug, jsonBlock } = useDebug('PostStubView',)
 
 type PostFeedItemProps = {
-  post: PostStub;
-};
+  post:        PostStub
+  invalidate?: () => void
+}
 
-const PostStubView = ({ post }: PostFeedItemProps) => {
-  const comments: any[] = [];
-
-  return post ? (
-    <div>
+const PostStubView = ({ post, invalidate }: PostFeedItemProps) => (
+  <Grid container rowGap={2}>
+    <div className='p-2 min-w-full'>
       {post.content && <HtmlContent content={post.content} className="font-feed" />}
 
-      {post.images?.length > 0 && post.images[0] !== null && (
-        <GalleryPhotoswipe images={post.images} />
-      )}
+      {post.images && post.images[0] && <GalleryImages images={post.images} />}
 
-      {comments && comments.length > 0 && (
-        <div className="mt-4 text-sm font-semibold">⤵ Replies</div>
-      )}
+      {post.share && <SharedPostStubView share={post.share} />}
     </div>
-  ) : (
-    <></>
-  );
-};
-
-export default PostStubView;
+    
+    {post.commentThread && 
+      <div className='border border-neutral border-opacity-50 rounded-md p-2 m-2 grow'>
+        <PostCommentThread postStub={post} /> 
+      </div>
+    }
+  </Grid>
+)
+export default PostStubView

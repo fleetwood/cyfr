@@ -1,23 +1,23 @@
-import { useEffect, useRef, useState } from "react"
-import useBookApi from "../../../hooks/useBookApi"
-import useChapterApi from "../../../hooks/useChapterApi"
-import { ChapterLayoutProps } from "../../../pages/book/[bookId]/chapter/[chapterId]"
-import ChapterDetailComponent from "../../containers/Chapter/ChapterDetailView"
+import Link from "next/link"
+import { useRef, useState } from "react"
+import { ChapterLayoutProps } from "../../../pages/book/[bookSlug]/chapter/[chapterId]"
+import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
 import Footer from "../../containers/Footer"
 import LeftColumn from "../../containers/LeftColumn"
-import Navbar from "../../containers/Navbar"
+import Navbar from "../../containers/Navbar/Navbar"
 import RightColumn from "../../containers/RightColumn"
 import { useCyfrUserContext } from "../../context/CyfrUserProvider"
 import { useToast } from "../../context/ToastContextProvider"
-import ChapterViewSelector from "../../containers/Chapter/ChapterViewSelector"
-import Link from "next/link"
+import ChapterDetailView from "../../containers/Chapter/ChapterDetailView"
+import useDebug from "../../../hooks/useDebug"
+import useChapterApi from "../../../prisma/useApi/chapter"
 
-const ChapterDetailLayout = (props:ChapterLayoutProps) => {
-  const [cyfrUser] = useCyfrUserContext()
-  const bookApi = useBookApi({bookDetail: props.bookDetail, cyfrUser})
-  const chapterApi = useChapterApi({chapterDetail: props.chapterDetail, cyfrUser})
-  //todo: This should be handled by a commune...
-  // const isAuthor = (bookDetail?.author`s||[]).filter((a:UserStub) => a.id === cyfrUser?.id).length > 0
+const {debug, jsonBlock} = useDebug('ChapterDetailLayout')
+
+const ChapterDetailLayout = ({chapterDetail, genres, view, setView}:ChapterLayoutProps) => {
+  const {cyfrUser} = useCyfrUserContext()
+  const {isAuthor} = useChapterApi()
+  const showEdit = isAuthor({chapter: chapterDetail, cyfrUser})
   
   const [scrollActive, setScrollActive] = useState(false)
   const {toasts} = useToast()
@@ -25,7 +25,7 @@ const ChapterDetailLayout = (props:ChapterLayoutProps) => {
 
   const handleScroll = (e:any) => {
     const position = mainRef?.current?.scrollTop
-    setScrollActive(current => position && position > 120 || false)
+    setScrollActive(() => position && position > 120 || false)
   }
 
   return (
@@ -44,11 +44,13 @@ const ChapterDetailLayout = (props:ChapterLayoutProps) => {
         <div className="toast toast-top toast-center w-4/6 mt-10 z-12 p-0">
           {toasts.map((toast) => toast.toast)}
         </div>
-        <div className="box-border snap-y min-h-full flex-1">
-          <h3><Link href={`/book/${bookApi.bookDetail?.slug}`}>{bookApi.bookDetail?.title}</Link></h3>
-          <ChapterViewSelector setView={props.setView} view={props.view} showEdit={bookApi.isAuthor} />
-          <ChapterDetailComponent bookApi={bookApi} chapterApi={chapterApi} view={props.view} />
-        </div>
+          {chapterDetail && 
+          <div className="box-border snap-y min-h-full flex-1">
+            <h3><Link href={`/book/${chapterDetail.book?.slug}`}>{chapterDetail.book?.title}</Link></h3>
+            <ChapterViewSelector chapter={chapterDetail} setView={setView} view={view} />
+            <ChapterDetailView chapterDetail={chapterDetail} view={view} />
+          </div>
+          }
         <Footer />
       </main>
       <div className="w-fixed w-full flex-shrink flex-grow-0 px-2">

@@ -1,20 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import useDebug from "../../../hooks/useDebug";
-import { PrismaGenre } from "../../../prisma/prismaContext";
-const {err, stringify} = useDebug('api/genre/stubs')
+import useApiHandler from "hooks/useApiHandler"
+import { PrismaGenre } from "prisma/prismaContext"
+import { NextApiRequest, NextApiResponse } from 'next'
 
-const handle = async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    const result = await PrismaGenre.stubs();
-    if (result) {
-      res.status(200).json({ result });
-    } else {
-      res.status(200).json({ result: null });
-    }
-  } catch (e) {
-    err("\tFAIL", e);
-    res.status(500).json({ error: { code: "api/error", message: stringify(e) } });
-  }
-};
-
-export default handle;
+const request = (req:NextApiRequest, res: NextApiResponse) => useApiHandler(res,'/api/genre/stubs',PrismaGenre.stubs())
+export default request
