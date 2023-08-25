@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import useDebug from 'hooks/useDebug'
 import {Notif, NotifMarkProps, NotifSendProps, NotifType} from 'prisma/prismaContext'
-import {dbDateFormat} from 'utils/helpers'
+import {dbDateFormat, now} from 'utils/helpers'
 
 const { debug, info, fileMethod } = useDebug('entities/prismaNotif', 'DEBUG')
 
@@ -33,7 +33,7 @@ const notifShare = ({userId, message}: {userId: string, message: string}): Promi
 
 const send  = (props:NotifSendProps): Promise<Notif> => notif(props)
 
-const markAs = async ({id, visible=true, seen=false}:NotifMarkProps):Promise<Notif> => await prisma.notif.update({where: {id}, data: { visible, seen}})
+const markAs = async ({id, visible=true, seen}:NotifMarkProps):Promise<Notif> => await prisma.notif.update({where: {id}, data: { visible, seen: seen ?? now()}})
 
 export const PrismaNotif = {
   markAs,

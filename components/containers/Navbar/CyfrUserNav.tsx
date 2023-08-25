@@ -1,3 +1,4 @@
+import {SignUp, UserButton} from '@clerk/nextjs'
 import {Badge, Box, Grid, IconButton, Menu, MenuList, Typography, withStyles} from '@mui/material'
 import LinkWithIcon from 'components/ui/avatar/linkWithIcon'
 import UserAvatar from 'components/ui/avatar/userAvatar'
@@ -67,12 +68,18 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
               </Typography>
             </div>
             <IconButton onClick={toggleMenu} sx={{ p: 0 }}>
-              <Badge badgeContent={cyfrUser.notifs.length} max={100} color="primary" overlap='circular' anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}>
+              <Badge
+                badgeContent={cyfrUser.notifs.length}
+                max={100}
+                color="primary"
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              >
                 <UserAvatar
                   user={cyfrUser}
                   variant={['no-profile', 'no-link']}
                   sz="md"
-                  />
+                />
               </Badge>
             </IconButton>
           </div>
@@ -206,6 +213,8 @@ const CyfrUserNav = ({pages}:CyfrUserNavProps) => {
         </Box>
       ) : !isLoading ? (
         <Box sx={{ flexGrow: 0 }}>
+          <SignUp />
+          <UserButton afterSignOutUrl="/" />
           <IconButton onClick={toggleMenu} sx={{ p: 0, color: 'white' }}>
             <MuiPersonIcon
               fontSize="large"

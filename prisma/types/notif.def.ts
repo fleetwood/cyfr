@@ -8,7 +8,7 @@ export type NotifSendProps = {
 
 export type NotifMarkProps = {
   id:       string
-  seen?:    boolean
+  seen?:    Date
   visible?: boolean
 }
 

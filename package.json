@@ -19,6 +19,7 @@
     "stop:redis": "redis-cli shutdown"
   },
   "dependencies": {
+    "@clerk/nextjs": "^4.23.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.7",

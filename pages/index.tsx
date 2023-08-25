@@ -8,6 +8,7 @@ import useFeed from "../hooks/useFeed"
 import {PostStub} from "../prisma/types"
 import {domRef} from "../utils/helpers"
 import ErrorPage from "./404"
+import {SignIn, SignUp,UserButton} from "@clerk/nextjs"
 const {debug, jsonBlock} = useDebug('pages/index')
 
 
@@ -22,9 +23,19 @@ const HomePage = () => {
   return (
     <MainLayout sectionTitle={CyfrHome} subTitle="The Creative Site">
       <CreatePostModalButton />
+
+      <SignIn />
+      <SignUp />
+      <UserButton afterSignOutUrl="/" />
+      
       {isLoading && <Spinner size="md" center={true} />}
       {error && <ErrorPage message="Error loading feed" />}
-      {!isLoading && !error && data && data.map((item:any, idx:number) => <FeedItem post={item} key={`feed-${idx}-${domRef(item)}`} />)}
+      {!isLoading &&
+        !error &&
+        data &&
+        data.map((item: any, idx: number) => (
+          <FeedItem post={item} key={`feed-${idx}-${domRef(item)}`} />
+        ))}
     </MainLayout>
   )
 }

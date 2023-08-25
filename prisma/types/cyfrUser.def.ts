@@ -47,7 +47,6 @@ export const CyfrUserInclude = {
     notifs: {
       where: {
         visible: true,
-        seen: false,
         expiresAt: {
           gte: now().toISOString()
         }

@@ -12,7 +12,7 @@ datasource db {
 model Block {
   id             String         @id @default(cuid())
   createdAt      DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt
   expiresAt      DateTime?
   visible        Boolean        @default(true)
   blockType      BlockType
@@ -31,6 +31,7 @@ model Block {
 
 model User {
   id                            String            @id @default(cuid())
+  clerkId                       String?           @unique
   name                          String?           @unique
   email                         String?           @unique
   emailVerified                 DateTime?
@@ -80,7 +81,7 @@ model User {
 model Author {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
   visible   Boolean  @default(true)
   userId    String   @unique
   user      User     @relation("user_author", fields: [userId], references: [id])
@@ -92,7 +93,7 @@ model Author {
 model Artist {
   id        String    @id @default(cuid())
   createdAt DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime
+  updatedAt DateTime  @updatedAt
   visible   Boolean   @default(true)
   userId    String    @unique
   user      User      @relation("user_artist", fields: [userId], references: [id])
@@ -105,7 +106,7 @@ model Artist {
 model Editor {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
   visible   Boolean  @default(true)
   userId    String   @unique
   user      User     @relation("user_editor", fields: [userId], references: [id])
@@ -116,7 +117,7 @@ model Editor {
 model Reader {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
   visible   Boolean  @default(true)
   userId    String   @unique
   user      User     @relation("user_reader", fields: [userId], references: [id])
@@ -127,7 +128,7 @@ model Reader {
 model Agent {
   id          String     @id @default(cuid())
   createdAt   DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime
+  updatedAt   DateTime   @updatedAt
   visible     Boolean    @default(true)
   description String?
   publisherId String?
@@ -146,7 +147,7 @@ model Agent {
 model Article {
   id              String         @id @default(cuid())
   createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime       @updatedAt
   visible         Boolean        @default(true)
   slug            String         @unique
   title           String         @unique
@@ -173,7 +174,7 @@ model Article {
 model Gallery {
   id                String         @id @default(cuid())
   createdAt         DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt         DateTime
+  updatedAt         DateTime       @updatedAt
   visible           Boolean        @default(true)
   title             String?
   description       String?
@@ -197,7 +198,7 @@ model Gallery {
 model Image {
   id              String         @id @default(cuid())
   createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime       @updatedAt
   visible         Boolean        @default(true)
   title           String?
   creatorId       String
@@ -220,7 +221,7 @@ model Image {
 model Cover {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
   visible     Boolean  @default(true)
   creatorId   String
   exclusive   Boolean  @default(false)
@@ -241,7 +242,7 @@ model Cover {
 model Follow {
   id          String     @id @default(cuid())
   createdAt   DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime   @updatedAt
   isFan       Boolean    @default(false)
   /// User is ollowed by
   followerId  String
@@ -260,7 +261,7 @@ model Follow {
 model ChatRoom {
   id        String        @id @default(cuid())
   createdAt DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime
+  updatedAt DateTime      @updatedAt
   visible   Boolean       @default(true)
   party     String        @unique
   messages  ChatMessage[]
@@ -270,7 +271,7 @@ model ChatRoom {
 model ChatMessage {
   id         String   @id @default(cuid())
   createdAt  DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt  DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime @updatedAt
   visible    Boolean  @default(true)
   seen       Boolean  @default(false)
   chatRoomId String
@@ -283,7 +284,7 @@ model ChatMessage {
 model CommentThread {
   id        String     @id @default(cuid())
   createdAt DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime
+  updatedAt DateTime   @updatedAt
   blocked   Block[]    @relation("blocked_from_thread")
   book      Book?      @relation("book_comments")
   chapter   Chapter?   @relation("chapter_comments")
@@ -313,7 +314,7 @@ model Address {
 model Notif {
   id                           String    @id @default(cuid())
   createdAt                    DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt                    DateTime
+  updatedAt                    DateTime  @updatedAt
   expiresAt                    DateTime? @db.Timestamptz(3)
   visible                      Boolean   @default(true)
   notifType                    NotifType
@@ -330,7 +331,7 @@ model Notif {
 model Publisher {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
   visible     Boolean  @default(true)
   name        String
   addressId   String?  @unique
@@ -347,7 +348,7 @@ model Publisher {
 model Event {
   id              String            @id @default(cuid())
   createdAt       DateTime          @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime
+  updatedAt       DateTime          @updatedAt
   startAt         DateTime          @db.Timestamptz(3)
   endAt           DateTime          @db.Timestamptz(3)
   attendeeLimit   Int               @default(0)
@@ -372,7 +373,7 @@ model Event {
 model Submission {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
   visible   Boolean  @default(true)
   creatorId String
   likes     Like[]   @relation("submission_likes")
@@ -384,7 +385,7 @@ model Submission {
 model Review {
   id              String         @id @default(cuid())
   createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime
+  updatedAt       DateTime       @updatedAt
   visible         Boolean        @default(true)
   creatorId       String
   commentThreadId String?        @unique
@@ -418,7 +419,7 @@ model Review {
 model Comment {
   id        String        @id @default(cuid())
   createdAt DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime
+  updatedAt DateTime      @updatedAt
   threadId  String
   creatorId String
   content   String
@@ -431,7 +432,7 @@ model Comment {
 model Commune {
   id           String         @id @default(cuid())
   createdAt    DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt    DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime       @updatedAt
   description  String?
   ownerId      String
   galleryId    String?        @unique
@@ -447,7 +448,7 @@ model Commune {
 model CommuneUser {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
   communeId String
   userId    String
   commune   Commune  @relation("commune_users", fields: [communeId], references: [id])
@@ -457,7 +458,7 @@ model CommuneUser {
 model Membership {
   id          String         @id @default(cuid())
   createdAt   DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime       @updatedAt
   expiresAt   DateTime?
   visible     Boolean        @default(true)
   description String?
@@ -471,7 +472,7 @@ model Membership {
 model MembershipType {
   id                 String       @id @default(cuid())
   createdAt          DateTime     @default(now()) @db.Timestamptz(3)
-  updatedAt          DateTime
+  updatedAt          DateTime     @updatedAt
   level              Int          @default(-1)
   name               String       @default("Need a name")
   annualDescription  String       @default("No description")
@@ -488,7 +489,7 @@ model MembershipType {
 model Genre {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
   slug        String   @unique
   title       String   @unique
   description String
@@ -499,7 +500,7 @@ model Genre {
 model BookCategory {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime
+  updatedAt   DateTime @updatedAt
   title       String
   description String?
   books       Book[]   @relation("book_categories")
@@ -508,7 +509,7 @@ model BookCategory {
 model Book {
   id              String         @id @default(cuid())
   createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime       @updatedAt
   ownerId         String
   startedAt       DateTime?      @db.Timestamptz(3)
   completeAt      DateTime?      @db.Timestamptz(3)
@@ -555,7 +556,7 @@ model Book {
 model Permission {
   id        String     @id @default(cuid())
   createdAt DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime
+  updatedAt DateTime   @updatedAt
   public    Role[]
   member    Role[]
   agent     Role[]
@@ -578,7 +579,7 @@ model Permission {
 model Character {
   id              String         @id @default(cuid())
   createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime       @updatedAt
   visible         Boolean        @default(true)
   name            String
   familyName      String
@@ -608,7 +609,7 @@ model Character {
 model Chapter {
   id              String         @id @default(cuid())
   createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime       @updatedAt
   visible         Boolean        @default(true)
   order           Int
   title           String
@@ -630,7 +631,7 @@ model Chapter {
 model Post {
   id              String         @id @default(cuid())
   createdAt       DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime
+  updatedAt       DateTime       @updatedAt
   visible         Boolean        @default(true)
   creatorId       String
   content         String?
@@ -648,7 +649,7 @@ model Post {
 model Share {
   id              String      @id @default(cuid())
   createdAt       DateTime    @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime
+  updatedAt       DateTime    @updatedAt
   creatorId       String
   postId          String?
   imageId         String?
@@ -684,7 +685,7 @@ model Share {
 model Like {
   id           String      @id @default(cuid())
   createdAt    DateTime    @default(now()) @db.Timestamptz(3)
-  updatedAt    DateTime    @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime    @updatedAt
   creatorId    String
   authorId     String?
   agentId      String?

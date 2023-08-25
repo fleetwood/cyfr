@@ -42,9 +42,9 @@ const MainLayout = ({ sectionTitle, children, ...props }: MainLayoutProps) => {
                 onScroll={handleScroll}
                 ref={mainRef}
               >
-                <Navbar 
+                {/* <Navbar 
                   className="min-w-full transition-all duration-200 ease-out" 
-                  pageScrolled={scrollActive} />
+                  pageScrolled={scrollActive} /> */}
 
                 <Toasts />
                 <Section

@@ -432,7 +432,7 @@ const galleries = async (props:UserDetailProps): Promise<GalleryStub[]> => {
   return result
 }
 
-const cyfrUser = async (email:string): Promise<CyfrUser> => await prisma.user.findUnique({where: { email }, ...CyfrUserInclude}) as unknown as CyfrUser
+const cyfrUser = async (clerkId:string): Promise<CyfrUser> => await prisma.user.findUnique({where: { clerkId }, ...CyfrUserInclude}) as unknown as CyfrUser
 
 type FriendStub = {
   follower: {
@@ -571,10 +571,6 @@ const canMention = async ({search, all = false}:MentionSearchProps):Promise<any>
     throw error
   }
 }
-
-const userInSessionReq = async (req: NextApiRequest): Promise<CyfrUser> => cyfrUser((await getSession({ req }))?.user?.email||'')
-
-const userInSessionContext = async (context: GetSessionParams | undefined): Promise<CyfrUser> => cyfrUser((await getSession(context))?.user?.email||'')
 
 const setMembership = async (
   user:     CyfrUser,
@@ -759,8 +755,6 @@ export const PrismaUser = {
   search,
   galleries,
   userInfo,
-  userInSessionContext,
-  userInSessionReq,
   userCurrentlyOnline,
   follow,
   setMembership,
