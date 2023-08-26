@@ -3,7 +3,7 @@ import {CreatorStub, UserInfoType, UserStub, UserTypes} from 'prisma/prismaConte
 import {KeyVal} from 'types/props'
 import {capFirstLetter} from './generic'
 
-const { debug } = useDebug('utils/helpers/user')
+const { debug } = useDebug('utils/helpers/user', 'DEBUG')
 
 export const UserInfoValues = (result: UserInfoType) =>{
   debug('UserInfoValues', {result})
@@ -35,6 +35,7 @@ export const UserInfoValues = (result: UserInfoType) =>{
 
 export const GetUserType = (user:UserStub|CreatorStub):UserTypes => {
   try {
+    debug('GetUserType', { user, name: user.membership.type.name ?? 'unknown'})
     return user.membership.type.name as UserTypes
   } catch (error) {
     return 'Reader'

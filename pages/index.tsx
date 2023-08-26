@@ -1,12 +1,11 @@
 import Spinner from "components/ui/spinner"
+import useDebug from "hooks/useDebug"
+import useFeed from "hooks/useFeed"
+import {PostStub} from "prisma/types"
+import {domRef} from "utils/helpers"
 import FeedItem from "../components/containers/Feed/FeedItem"
 import {CreatePostModalButton} from "../components/containers/Post/CreatePostModal"
 import MainLayout from "../components/layouts/MainLayout"
-import {CyfrLogo} from "../components/ui/icons"
-import useDebug from "../hooks/useDebug"
-import useFeed from "../hooks/useFeed"
-import {PostStub} from "../prisma/types"
-import {domRef} from "../utils/helpers"
 import ErrorPage from "./404"
 const {debug, jsonBlock} = useDebug('pages/index')
 
@@ -14,13 +13,8 @@ const {debug, jsonBlock} = useDebug('pages/index')
 const HomePage = () => {
   const {data, isLoading, error} = useFeed<PostStub[]>('post')
 
-  const CyfrHome = 
-    <div className="flex">
-      <CyfrLogo className="animate-pulse text-primary w-[3.75rem] mt-2" /><div>Cyfr</div>
-    </div>
-
   return (
-    <MainLayout sectionTitle={CyfrHome} subTitle="The Creative Site">
+    <MainLayout>
       <CreatePostModalButton />
       {isLoading && <Spinner size="md" center={true} />}
       {error && <ErrorPage message="Error loading feed" />}

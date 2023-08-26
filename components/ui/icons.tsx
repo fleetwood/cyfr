@@ -19,6 +19,7 @@ import PortraitIcon from '@mui/icons-material/Portrait'
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark'
 import ReviewsIcon from '@mui/icons-material/Reviews'
 import SchoolIcon from '@mui/icons-material/School'
+import {SVGAttributes} from 'react'
 
 export const MuiArrowLeftIcon      = (props?: SvgIconProps) => <KeyboardArrowLeftIcon {...props} />
 export const MuiArrowDownIcon      = (props?: SvgIconProps) => <KeyboardArrowDownIcon {...props} />
@@ -41,9 +42,7 @@ export const MuiReviewsIcon       = (props?:SvgIconProps) => <ReviewsIcon {...pr
 export const MuiSchoolIcon       = (props?:SvgIconProps) => <SchoolIcon {...props} />
 export const MuiWrenchIcon         = (props?:SvgIconProps) => <BuildIcon {...props} />
 
-export type svgProps = {
-  fill?: string
-  stroke?: string
+export type svgProps = SVGAttributes<SVGElement> & {
   className?: string
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'
 }
@@ -97,6 +96,19 @@ export const CyfrLogo = ({...props}:svgProps) => (
   </svg>
 )
 
+export const CommaDoorLogo = ({strokeWidth=0, stroke="currentColor", size='md', fill='#993399', ...props}: svgProps) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 480 460"
+    stroke={stroke}
+    strokeWidth={strokeWidth}
+    fill={fill}
+    className={[sizeToClass(size),props.className].join(' ')}
+    {...props}
+  >
+    <path d="M208.902,52.528 C281.898,52.024 331.373,91.614 331.373,91.614 L333.097,-0.000 L440.005,13.829 C440.005,13.829 440.005,180.636 440.005,276.571 C427.073,444.819 292.583,484.000 292.583,484.000 L256.330,376.829 C256.330,376.829 334.427,353.781 332.200,261.014 C330.762,201.108 277.309,149.303 216.671,148.657 C149.713,147.944 97.607,204.183 96.884,261.801 C95.711,355.138 175.287,378.557 175.287,378.557 L140.800,477.086 C140.800,477.086 -7.296,405.141 0.303,264.471 C6.735,145.409 99.695,53.681 208.902,52.528 Z" />
+  </svg>
+)
 export const HouseIcon = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
