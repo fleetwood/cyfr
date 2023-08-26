@@ -7,6 +7,7 @@ import {
 } from '@mui/material'
 import {
   BookIcon,
+  CommaDoorLogo,
   CyfrLogo,
   EventIcon,
   GalleryIcon,
@@ -47,28 +48,13 @@ const Navbar = ({
   ]
 
   return (
-    <AppBar position="sticky">
-      <Container maxWidth="xl" className={`bg-${variant}`}>
+    <AppBar position="sticky" className={`bg-${variant}`}>
+      <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Typography
-            variant="h4"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              px: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontWeight: 700,
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            Cyfr
-          </Typography>
+          <CommaDoorLogo fill="#F6F6F4" />
+          <h4 className="text-4xl font-semibold pl-2">commadoor</h4>
 
           <CyfrUserNavSm pages={pages} />
-
-          <CyfrLogo size="sm" />
           <Typography
             variant="h4"
             noWrap
@@ -80,7 +66,7 @@ const Navbar = ({
               textDecoration: 'none',
             }}
           >
-            <Link href="/">Cyfr</Link>
+            <Link href="/">commadoor</Link>
           </Typography>
 
           <Grid

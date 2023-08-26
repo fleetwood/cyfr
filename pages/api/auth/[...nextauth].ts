@@ -5,9 +5,9 @@ import GoogleProvider from "next-auth/providers/google"
 import FacebookProvider from "next-auth/providers/facebook"
 import WordpressProvider from "next-auth/providers/wordpress"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { prisma } from "./../../../prisma/prismaContext"
-import useDebug from "../../../hooks/useDebug"
-const {debug, err} = useDebug("api/auth/nextauth", )
+import { prisma } from "prisma/prismaContext"
+import useDebug from "hooks/useDebug"
+const {debug, err} = useDebug("api/auth/nextauth", 'DEBUG')
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options

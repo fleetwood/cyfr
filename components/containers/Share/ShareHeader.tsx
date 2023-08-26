@@ -39,17 +39,17 @@ const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
                    item.id
 
   // TODO: get creator for shared items
-  const originalAuthor:CreatorStub = 
-    article ? article.creator :
-    post ? post.creator :
-    image ? image.creator :
-    gallery ? gallery.creator : 
-    cover ? cover.creator : 
-    // event ? event.creator : 
-    item.creator
-    
-  const originalUserType = GetUserType(originalAuthor)
-  
+  const originalAuthor: CreatorStub = 
+        article ? article.creator :
+        // book ? book.creator :
+        character ? character.creator :
+        cover ? cover.creator :
+        // event ? event.creator :
+        image ? image.creator :
+        gallery ? gallery.creator :
+        post ? post.creator :
+        item.creator
+      
   const originalAuthors:UserStub[] = [] 
   // TODO: get authors for books or characters
     // : book ? book.authors
@@ -59,20 +59,16 @@ const ShareHeader = ({ share: item, isShared }: ShareHeaderProps) => {
   return (
     <div className="pb-2">
       <div className="flex space-x-2 p-2">
-        <UserAvatar user={item.creator as UserStub} sz="sm" userType={GetUserType(item.creator)} />
+        <UserAvatar user={item.creator as UserStub} sz="sm" />
         <div>Shared {timeDifference(item.updatedAt)}</div>
-          <span className="text-xs ml-4">{item.id}</span>
       </div>
       
       <div className="p-2 bg-base-300">
         <div className="flex space-x-2 py-2">
           {originalAuthors && originalAuthors.length > 0 && <UserAvatarList users={originalAuthors} sz="md" /> }
-          {originalAuthor && <UserAvatar user={originalAuthor} userType={originalUserType} sz="md" /> } 
+          {originalAuthor && <UserAvatar user={originalAuthor} sz="md" /> } 
 
-          <Link href={link} className="text-primary underline">
-            <span>Posted {timeDifference(sharedTime)}</span>
-            <span className="text-xs ml-4">{sharedId}</span>
-          </Link>
+          <Link href={link} className="text-primary underline">Posted {timeDifference(sharedTime)}</Link>
         </div>
       </div>
 

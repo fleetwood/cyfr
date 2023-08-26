@@ -1,12 +1,13 @@
-import type { AppProps } from "next/app";
-import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
-import CyfrUserProvider from "../components/context/CyfrUserProvider";
-import "../styles/globals.css";
-import ToastProvider from "./../components/context/ToastContextProvider";
+import "../styles/globals.css"
+import type { AppProps } from "next/app"
+import { Hydrate, QueryClient, QueryClientProvider } from "react-query"
+import { ReactQueryDevtools } from "react-query/devtools"
+import CyfrUserProvider from "../components/context/CyfrUserProvider"
+import ToastProvider from "./../components/context/ToastContextProvider"
+import {__prod__} from "utils/constants"
 
 function MyApp({ Component, pageProps }:AppProps) {
-  const qc = new QueryClient();
+  const qc = new QueryClient()
 
   return (
     <QueryClientProvider client={qc}>
@@ -17,10 +18,11 @@ function MyApp({ Component, pageProps }:AppProps) {
           </CyfrUserProvider>
         </ToastProvider>
       </Hydrate>
-
-      <ReactQueryDevtools initialIsOpen={false} />
+      {!__prod__ &&
+        <ReactQueryDevtools initialIsOpen={false} />
+      }
     </QueryClientProvider>
-  );
+  )
 }
 
-export default MyApp;
+export default MyApp

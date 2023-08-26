@@ -6,7 +6,7 @@ import { __prod__ } from "utils/constants"
 
 const LeftColumn = ({variant='primary'}:{variant?: VariantProps}) => {
   return (
-    <div className="sticky top-0 p-4 rounded-xl w-full h-full">
+    <div className="sticky top-0 p-4 rounded-xl w-full h-full grow-0">
       <ul className="flex sm:flex-col overflow-hidden content-center justify-center">
         {!__prod__ && 
           <li>

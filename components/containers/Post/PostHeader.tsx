@@ -15,10 +15,7 @@ const PostHeader = ({ post }: PostHeaderProps) => {
     <div className="p-2 bg-base-300">
       <div className="flex space-x-2 py-2">
         <UserAvatar user={post.creator} userType={userType} sz="md" />
-        <Link href={link} className="text-primary underline">
-          <span>{userType??'?'} Posted {timeDifference(post.updatedAt)}</span>
-          <span className="text-xs ml-4">{post.id}</span>
-        </Link>
+        <Link href={link} className="text-primary underline">{timeDifference(post.updatedAt)}</Link>
       </div>
     </div>
   )

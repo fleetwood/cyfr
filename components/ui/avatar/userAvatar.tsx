@@ -14,6 +14,7 @@ import {SizeProps, stringToColour, wh} from "types/props"
 import {cloudinary} from "utils/cloudinary"
 import Semibold from "../semibold"
 import UserInfoMenu from "./userInfoMenu"
+import {GetUserType} from "utils/helpers/user"
 
 const {debug, jsonBlock} = useDebug('avatar')
 
@@ -74,7 +75,7 @@ const UserAvatar = ({
     >
       {!onClick && variant.indexOf('no-link')<0 && user ? <a href={`/user/${user.slug}`}>{content}</a> : content}
       {allowProfile && 
-        <UserInfoMenu user={user} showProfile={showProfile} setShowProfile={setShowProfile} userType={userType} />
+        <UserInfoMenu user={user} showProfile={showProfile} setShowProfile={setShowProfile} userType={GetUserType(user as UserStub)} />
       }
     </div>
   )
